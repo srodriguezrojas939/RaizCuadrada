@@ -1,0 +1,1053 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>√(Raiz) Cuadrada² | Educación Matemática</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600&family=Playfair+Display:ital,wght@0,700;0,900;1,700&display=swap" rel="stylesheet">
+    
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <style>
+        :root {
+            /* Paleta de colores Estricta */
+            --bg-color: #ffffff;
+            --text-color: #000000;
+            --accent-grey: #f4f4f4;
+            --border-color: #e0e0e0;
+            --sidebar-width: 280px;
+            --transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        [data-theme="dark"] {
+            --bg-color: #0a0a0a;
+            --text-color: #ffffff;
+            --accent-grey: #1a1a1a;
+            --border-color: #333333;
+        }
+        
+        a {
+    text-decoration: none; /* Elimina la línea azul/subrayado por defecto */
+    color: inherit;        /* Obliga al link a usar el color del texto que lo rodea */
+    transition: var(--transition); /* Mantiene las animaciones suaves */
+}
+
+a:hover {
+    text-decoration: none; /* Asegura que no aparezca al pasar el mouse */
+    color: inherit;
+}
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Open Sans', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            transition: var(--transition);
+            overflow-x: hidden;
+        }
+
+        h1, h2, h3 {
+            font-family: 'Playfair Display', serif;
+        }
+
+        /* --- LAYOUT --- */
+        .wrapper {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* --- SIDEBAR / NAV --- */
+        .sidebar {
+            width: var(--sidebar-width);
+            height: 100vh;
+            position: fixed;
+            left: 0;
+            top: 0;
+            background: var(--bg-color);
+            border-right: 1px solid var(--border-color);
+            padding: 2rem;
+            display: flex;
+            flex-direction: column;
+            z-index: 1000;
+            transition: var(--transition);
+        }
+
+        .nav-header {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 3rem;
+        }
+
+        .icon-btn {
+            background: var(--accent-grey);
+            border: none;
+            padding: 10px;
+            border-radius: 12px;
+            cursor: pointer;
+            color: var(--text-color);
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .icon-btn:hover {
+            transform: translateY(-3px);
+            background: var(--text-color);
+            color: var(--bg-color);
+        }
+
+        .nav-links {
+            list-style: none;
+        }
+
+        .nav-links li {
+            margin-bottom: 0.5rem;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: var(--text-color);
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 12px;
+            border-radius: 8px;
+            font-weight: 600;
+            transition: var(--transition);
+        }
+
+        .nav-links a:hover {
+            background: var(--accent-grey);
+            padding-left: 20px;
+        }
+
+        /* --- MAIN CONTENT --- */
+        .content {
+            flex: 1;
+            margin-left: var(--sidebar-width);
+            padding: 4rem;
+            max-width: 1400px;
+        }
+
+        /* --- HERO SECTION --- */
+        .hero {
+            margin-top: 2rem;
+            padding-bottom: 5rem;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+    .main-title {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(6rem, 10vw, 6rem);
+    font-weight: 900;
+    line-height: 1.1;
+    margin-bottom: 2rem;
+    
+    /* Centrado absoluto */
+    text-align: center;
+    width: 100%;
+    display: block;
+
+    /* Animación de entrada original */
+    opacity: 0;
+    transform: translateY(30px);
+    animation: reveal 1s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    
+    /* Preparación para la interacción */
+    cursor: default;
+    transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+/* Animación al pasar el mouse */
+.main-title:hover {
+    transform: scale(1.03); /* Crece sutilmente */
+    letter-spacing: -1px;    /* Se vuelve más "compacto" y elegante */
+    text-shadow: 0 10px 30px rgba(0,0,0,0.1); /* Sombra suave para dar profundidad */
+}
+
+/* Ajuste específico para Modo Noche del título */
+[data-theme="dark"] .main-title:hover {
+    text-shadow: 0 0 20px rgba(255,255,255,0.15);
+}
+
+
+
+/* --- SECCIÓN BIENVENIDA --- */
+.welcome-section {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+         padding-bottom: 3rem;
+              padding-top: 5rem;
+    text-align: center;
+}
+
+.welcome-hero-title {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(4rem, 8vw, 4rem);
+    font-weight: 900;
+    color: var(--text-color);
+    margin-bottom: 40px;
+    line-height: 1;
+}
+
+/* --- EL RECUADRO ESTILO INPUT --- */
+.search-box-premium {
+    width: 100%;
+    max-width: 600px;
+    height: 70px;
+    background: #f9f9f9; /* Igual que tus inputs */
+    border-radius: 35px; /* Súper redondeado */
+    display: flex;
+    align-items: center;
+    padding: 0 30px;
+    gap: 20px;
+    position: relative;
+    border: 2px solid transparent;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.02) inset; /* Sombra interna */
+    transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    cursor: text;
+}
+
+/* Animación de la caja al hacer Hover */
+.search-box-premium:hover {
+    background: #ffffff;
+    transform: translateY(-5px) scale(1.02);
+    border-color: #1a1a1a;
+    box-shadow: 0 20px 40px rgba(0,0,0,0.08);
+}
+
+.search-icon {
+    width: 24px;
+    height: 24px;
+    color: #999;
+    transition: color 0.3s;
+}
+
+.search-box-premium:hover .search-icon {
+    color: #1a1a1a;
+    animation: wiggle 0.8s ease infinite;
+}
+
+/* --- ANIMACIÓN ÉPICA DEL TEXTO --- */
+.rotator-container {
+    position: relative;
+    height: 30px;
+    overflow: hidden;
+    flex-grow: 1;
+}
+
+.rotating-text {
+    position: absolute;
+    left: 0;
+    width: 100%;
+    font-family: 'Open Sans', sans-serif;
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: #666;
+    opacity: 0;
+    transform: translateY(30px);
+    transition: all 0.6s cubic-bezier(0.76, 0, 0.24, 1);
+}
+
+.rotating-text.active {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.rotating-text.exit {
+    opacity: 0;
+    transform: translateY(-30px);
+}
+
+/* --- FOOTER DE BIENVENIDA --- */
+.welcome-footer {
+    margin-top: 40px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    opacity: 0.6;
+    transition: opacity 0.3s;
+}
+
+.welcome-footer:hover { opacity: 1; }
+
+.welcome-footer p {
+    font-family: 'Open Sans', sans-serif;
+    font-size: 1rem;
+    color: var(--text-color);
+}
+
+.arrow-icon {
+    width: 20px;
+    animation: bounceDown 2s infinite;
+}
+
+/* ANIMACIONES COMPLEMENTARIAS */
+@keyframes bounceDown {
+    0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+    40% { transform: translateY(-5px); }
+    60% { transform: translateY(-3px); }
+}
+
+/* MODO NOCHE */
+[data-theme="dark"] .search-box-premium {
+    background: #222222;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.3) inset;
+}
+
+[data-theme="dark"] .search-box-premium:hover {
+    background: #2a2a2a;
+    border-color: #ffffff;
+    box-shadow: 0 20px 40px rgba(0,0,0,0.5);
+}
+
+[data-theme="dark"] .search-box-premium:hover .search-icon {
+    color: #ffffff;
+}
+
+
+
+        /* --- GRID SECTIONS --- */
+        .section-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+
+        .card {
+            border: 1px solid var(--border-color);
+            padding: 2rem;
+            border-radius: 16px;
+            transition: var(--transition);
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card:hover {
+            background: var(--text-color);
+            color: var(--bg-color);
+            transform: scale(1.02);
+        }
+
+        .card h3 {
+            font-size: 1.8rem;
+            margin-bottom: 1rem;
+        }
+
+       /* --- ESTILOS EXACTOS DEL FORMULARIO --- */
+.wrapper-feedback {
+    max-width: 550px; 
+    width: 100%;
+         padding-top: 5rem;
+    margin:  auto; /* Centrado en tu página */
+}
+
+.card-comentarios {
+    background: transparent;
+    border-radius: 40px;
+    padding: 40px 35px;
+    font-family: 'Open Sans', sans-serif;
+    box-shadow: 0 20px 40px rgba(0,0,0,0.08);
+    animation: fadeUp 0.8s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+    opacity: 0;
+}
+
+@keyframes fadeUp {
+    from { opacity: 0; transform: translateY(30px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.card-comentarios h3 {
+    font-family: 'Playfair Display', serif;
+    text-align: center;
+    margin-top: 0;
+    margin-bottom: 35px;
+    color: #1a1a1a;
+    line-height: 1.1;
+}
+
+.title-big { font-size: clamp(24px, 6vw, 32px); font-weight: 700; display: block; }
+.title-small { font-size: clamp(20px, 4vw, 24px); font-weight: 400; color: #666; }
+
+.pregunta-pro {
+    display: block; text-align: center; font-size: 13px; font-weight: 700;
+    color: #999; margin-bottom: 20px; text-transform: uppercase; letter-spacing: 1.5px;
+}
+
+.selector-experiencia { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin-bottom: 30px; }
+@media (min-width: 480px) { .selector-experiencia { grid-template-columns: repeat(4, 1fr); } }
+
+.chip-option { position: relative; cursor: pointer; }
+.chip-option input { display: none; }
+.chip-text {
+    display: flex; align-items: center; justify-content: center; background: #f4f4f4;
+    border: 2px solid transparent; padding: 14px 10px; border-radius: 999px;
+    text-align: center; font-size: 13px; font-weight: 600; color: #666;
+    transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+}
+
+.chip-option input:checked + .chip-text {
+    background: #1a1a1a; color: white; border-color: #1a1a1a;
+    box-shadow: 0 8px 15px rgba(0,0,0,0.15); animation: bounceSelection 0.4s ease-out;
+}
+
+@keyframes bounceSelection { 0% { transform: scale(1); } 50% { transform: scale(1.05); } 100% { transform: scale(1); } }
+
+.form-group { margin-bottom: 25px; position: relative; }
+.form-group label {
+    display: block; font-size: 12px; font-weight: 700; margin-bottom: 10px;
+    margin-left: 15px; color: #555; text-transform: uppercase; letter-spacing: 0.5px;
+}
+
+.form-group input, .form-group textarea {
+    width: 100%; background: #f9f9f9; border: 2px solid transparent;
+    padding: 16px 22px; border-radius: 25px; font-family: inherit;
+    font-size: 15px; color: #333; transition: all 0.3s ease;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.02) inset;
+}
+
+.form-group input:focus, .form-group textarea:focus {
+    background: white; outline: none; border-color: #1a1a1a;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.08); transform: translateY(-3px);
+}
+
+/* BOTÓN Y ANIMACIONES DE ICONO */
+.btn-premium {
+    background: #1a1a1a; color: white; border: none; border-radius: 999px;
+    padding: 0 35px; height: 60px; font-weight: 700; font-size: 16px;
+    cursor: pointer; display: flex; align-items: center; justify-content: center;
+    gap: 15px; transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    overflow: hidden; position: relative; margin: 0 auto;
+}
+
+.btn-premium img { width: 22px; filter: invert(1); transition: transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+.btn-premium:hover { transform: translateY(-3px) scale(1.02); background: #000; }
+.btn-premium:hover img { animation: wiggle 0.8s ease-in-out infinite; }
+
+@keyframes wiggle { 0%, 100% { transform: rotate(0deg); } 25% { transform: rotate(-10deg); } 75% { transform: rotate(10deg); } }
+
+/* CLASE PARA CUANDO SE ENVÍA */
+.btn-premium.enviando { width: 60px; padding: 0; }
+.btn-premium.enviando span { display: none; }
+.btn-premium.enviando img:first-of-type {
+    transform: scale(1.2) rotate(-45deg) translate(50px, -50px); opacity: 0;
+}
+
+.btn-premium .check-icon {
+    position: absolute; width: 24px; opacity: 0; transform: scale(0);
+}
+
+.btn-premium.enviando .check-icon {
+    opacity: 1; transform: scale(1);
+}
+
+/* Animación Profesional de Contador */
+.counter-bounce {
+    animation: professionalPop 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+@keyframes professionalPop {
+    0% { 
+        transform: scale(1); 
+        opacity: 0.5; 
+    }
+    50% { 
+        transform: scale(1.3); 
+        opacity: 1; 
+        color: var(--text-color); /* Se ilumina al escribir */
+        text-shadow: 0 0 8px rgba(128, 128, 128, 0.3); 
+    }
+    100% { 
+        transform: scale(1); 
+        opacity: 0.7; 
+    }
+}
+
+/* --- AJUSTES ESPECÍFICOS PARA MODO NOCHE  --- */
+
+[data-theme="dark"] .card-comentarios h3 {
+    color: #ffffff; /* Título principal en blanco */
+}
+
+[data-theme="dark"] .title-small {
+    color: #888888; /* "y sugerencias" en gris suave */
+}
+
+[data-theme="dark"] .pregunta-pro {
+    color: #aaaaaa;
+}
+
+/* Chips (Píldoras) en modo noche */
+[data-theme="dark"] .chip-text {
+    background: #eeeeee; /* Fondo claro para las no seleccionadas (como en tu imagen) */
+    color: #1a1a1a;
+}
+
+[data-theme="dark"] .chip-option input:checked + .chip-text {
+    background: #1a1a1a; /* La seleccionada se vuelve oscura */
+    color: #ffffff;
+    border: 1px solid #333;
+}
+
+/* Campos de texto (Inputs) en modo noche - Estilo alto contraste de la imagen */
+[data-theme="dark"] .form-group label {
+    color: #888888;
+}
+
+[data-theme="dark"] .form-group input, 
+[data-theme="dark"] .form-group textarea {
+    background: #1e1e1e; /* Fondo blanco para resaltar sobre el negro */
+    color: #000000;      /* Texto negro dentro */
+    border: none;
+}
+
+[data-theme="dark"] .form-group input::placeholder,
+[data-theme="dark"] .form-group textarea::placeholder {
+    color: #1e1e1e;
+}
+
+/* Botón en modo noche */
+[data-theme="dark"] .btn-premium {
+    background: #1a1a1a;
+    color: #FFFFFF;
+    border: 1px solid #333333;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+}
+
+[data-theme="dark"] .btn-premium:hover {
+    background: #222222;
+    border-color: #444444;
+}
+
+/* Contador de caracteres */
+[data-theme="dark"] .char-counter {
+    color: #666666;
+}
+
+
+        /* --- MOBILE ADAPTATION --- */
+        .mobile-header {
+            display: none;
+            position: fixed;
+            top: 0;
+            width: 100%;
+            background: var(--bg-color);
+            padding: 1rem;
+            z-index: 1001;
+            border-bottom: 1px solid var(--border-color);
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        @keyframes reveal {
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @media (max-width: 1024px) {
+            .sidebar {
+                transform: translateY(-100%);
+                width: 100%;
+                height: auto;
+                border-right: none;
+                border-bottom: 1px solid var(--border-color);
+                padding-top: 5rem;
+            }
+
+            .sidebar.active {
+                transform: translateY(0);
+            }
+
+            .content {
+                margin-left: 0;
+                padding: 2rem;
+                padding-top: 6rem;
+            }
+
+            .mobile-header {
+                display: flex;
+            }
+
+            .nav-header {
+                display: none; /* In sidebar on mobile */
+            }
+        }
+
+        /* Animación de entrada para los elementos al hacer scroll */
+        .reveal-on-scroll {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.8s ease-out;
+        }
+
+        .reveal-on-scroll.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
+        
+        
+        
+        /* --- PERSONALIZACIÓN MODO NOCHE: GRIS OSCURO Y CHIPS --- */
+
+[data-theme="dark"] .card-comentarios {
+    background: transparent; /* Mantiene la transparencia del contenedor */
+}
+
+/* 1. Recuadros de texto en Gris Oscuro */
+[data-theme="dark"] .form-group input, 
+[data-theme="dark"] .form-group textarea {
+    background: #222222; /* Gris muy oscuro */
+    color: #ffffff;      /* Letras blancas para legibilidad */
+    border: 1px solid #333333;
+}
+
+[data-theme="dark"] .form-group input:focus, 
+[data-theme="dark"] .form-group textarea:focus {
+    background: #2a2a2a;
+    border-color: #ffffff; /* Borde blanco al seleccionar para resaltar */
+}
+
+/* 2. Botones de experiencia (Chips) */
+[data-theme="dark"] .chip-text {
+    background: #1a1a1a; /* Botones oscuros por defecto */
+    color: #ffffff;      /* Letras blancas */
+    border: 1px solid #333333;
+}
+
+/* 3. Botón seleccionado en Blanco */
+[data-theme="dark"] .chip-option input:checked + .chip-text {
+    background: #ffffff; /* Fondo blanco */
+    color: #000000;      /* Letras negras para contraste */
+    border-color: #ffffff;
+    box-shadow: 0 0 15px rgba(255, 255, 255, 0.2);
+}
+
+/* 4. Botón de envío (Submit) */
+[data-theme="dark"] .btn-premium {
+    background: #111111;
+    color: #ffffff;
+    border: 1px solid #444444;
+}
+
+[data-theme="dark"] .btn-premium:hover {
+    background: #000000;
+    border-color: #ffffff;
+}
+
+/* Ajuste de iconos para que se vean bien en el botón oscuro */
+[data-theme="dark"] .btn-premium img {
+    filter: invert(1); /* Mantiene los iconos blancos */
+}
+
+
+/* --- ESTILOS DEL FOOTER MEJORADO --- */
+.footer-global {
+    background-color: var(--bg-color);
+    border-top: 1px solid var(--border-color);
+    padding: 60px 0;
+    margin-top: 100px;
+    width: 100%;
+}
+
+.footer-wrapper {
+    display: flex;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+    width: 100%;
+    max-width: 1400px;
+    margin: 0 auto;
+}
+
+.footer-section {
+    flex: 0 0 100%; /* Una sección por pantalla en móvil */
+    scroll-snap-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 20px;
+}
+
+/* Tipografía */
+.footer-h4 {
+    font-family: 'Playfair Display', serif;
+    font-size: 20px;
+    letter-spacing: 2px;
+    color: var(--text-color);
+    margin-bottom: 20px;
+    opacity: 0.6;
+}
+
+.footer-title {
+    font-family: 'Playfair Display', serif;
+    font-weight: 900;
+    font-size: clamp(28px, 5vw, 42px);
+    color: var(--text-color);
+    transition: var(--transition);
+}
+
+.footer-title:hover {
+    transform: scale(1.05);
+}
+
+.footer-email {
+    font-family: 'Open Sans', sans-serif;
+    color: var(--text-color);
+    text-decoration: none;
+    font-weight: 600;
+    margin-bottom: 25px;
+    border-bottom: 1px solid transparent;
+    transition: var(--transition);
+}
+
+.footer-email:hover {
+    border-bottom-color: var(--text-color);
+}
+
+/* Iconos Sociales Lucide */
+.footer-socials {
+    display: flex;
+    gap: 25px;
+}
+
+.footer-socials a {
+    color: var(--text-color);
+    transition: var(--transition);
+    opacity: 0.7;
+}
+
+.footer-socials a:hover {
+    opacity: 1;
+    transform: translateY(-5px);
+}
+
+.visitor-counter img {
+    filter: grayscale(1); /* Lo hace gris para que no rompa el diseño */
+    opacity: 0.8;
+    transition: 0.3s;
+}
+
+.visitor-counter img:hover {
+    filter: grayscale(0); /* Al pasar el mouse vuelve el color */
+    opacity: 1;
+}
+
+/* Scrollbar minimalista */
+.footer-wrapper::-webkit-scrollbar { height: 3px; }
+.footer-wrapper::-webkit-scrollbar-thumb { background: var(--border-color); border-radius: 10px; }
+
+/* AJUSTE PARA PC */
+@media (min-width: 850px) {
+    .footer-wrapper {
+        overflow-x: hidden;
+        justify-content: space-around;
+        gap: 40px;
+    }
+    .footer-section {
+        flex: 1;
+    }
+}
+
+    </style>
+</head>
+<body>
+
+    <header class="mobile-header">
+        <div class="nav-header">
+            <button class="icon-btn"><i data-lucide="search"></i></button>
+            <button class="icon-btn" onclick="toggleTheme()"><i data-lucide="moon"></i></button>
+        </div>
+        <button class="icon-btn" onclick="toggleMenu()"><i data-lucide="menu"></i></button>
+    </header>
+
+    <div class="wrapper">
+        <aside class="sidebar" id="sidebar">
+            <div class="nav-header">
+                <button class="icon-btn" title="Buscar"><i data-lucide="search"></i></button>
+                <button class="icon-btn" title="Modo" onclick="toggleTheme()"><i id="theme-icon" data-lucide="moon"></i></button>
+                <button class="icon-btn" onclick="toggleMenu()" id="close-menu"><i data-lucide="x"></i></button>
+            </div>
+
+            <nav>
+                <ul class="nav-links">
+                    <li><a href="#"><i data-lucide="home"></i> Página Principal</a></li>
+                    <li><a href="#"><i data-lucide="book-open"></i> CURSOS</a></li>
+                    <li><a href="#"><i data-lucide="calculator"></i> CALCULADORAS</a></li>
+                    <li><a href="#"><i data-lucide="wrench"></i> HERRAMIENTAS</a></li>
+                    <li><a href="#"><i data-lucide="activity"></i> GRAFICADORAS</a></li>
+                    <li><a href="#"><i data-lucide="file-text"></i> TABLAS DE FORMULAS</a></li>
+                    <li><a href="#"><i data-lucide="youtube"></i> Canal de YouTube</a></li>
+                    <li><a href="#"><i data-lucide="user"></i> Sobre el autor</a></li>
+                </ul>
+            </nav>
+        </aside>
+
+        <main class="content">
+            <section class="hero">
+                <h1 class="main-title">√(Raiz) <br>Cuadrada²</h1>
+ <main class="welcome-section">
+    <h1 class="welcome-hero-title">Bienvenido</h1>
+
+    <div class="search-box-premium">
+        <i data-lucide="search" class="search-icon"></i>
+        <div class="rotator-container">
+            <span class="rotating-text active">Calculadoras</span>
+            <span class="rotating-text">Graficadoras</span>
+            <span class="rotating-text">Herramientas</span>
+            <span class="rotating-text">Cursos</span>
+            <span class="rotating-text">Formularios</span>
+        </div>
+    </div>
+
+    <div class="welcome-footer">
+        <i data-lucide="arrow-down" class="arrow-icon"></i>
+        <p>En esta web podrás encontrar los siguientes recursos:</p>
+    </div>
+
+
+            </section>
+
+            <section class="section-grid reveal-on-scroll">
+                <div class="card">
+                    <i data-lucide="calculator" size="40"></i>
+                    <h3>Calculadoras</h3>
+                    <p>Resolución paso a paso de ecuaciones, derivadas e integrales.</p>
+                </div>
+                <div class="card">
+                    <i data-lucide="activity" size="40"></i>
+                    <h3>Graficadoras</h3>
+                    <p>Visualiza funciones en 2D y 3D con alta precisión.</p>
+                </div>
+                <div class="card">
+                    <i data-lucide="wrench" size="40"></i>
+                    <h3>Herramientas</h3>
+                    <p>Convertidores, solucionadores y utilidades matemáticas.</p>
+                </div>
+                <div class="card">
+                    <i data-lucide="file-spreadsheet" size="40"></i>
+                    <h3>Formularios</h3>
+                    <p>Biblioteca completa de fórmulas listas para usar.</p>
+                </div>
+                <div class="card">
+                    <i data-lucide="graduation-cap" size="40"></i>
+                    <h3>Cursos</h3>
+                    <p>Rutas de aprendizaje desde aritmética hasta cálculo avanzado.</p>
+                </div>
+                <div class="card">
+                    <i data-lucide="play-circle" size="40"></i>
+                    <h3>Videos</h3>
+                    <p>Contenido exclusivo de nuestro canal de YouTube.</p>
+                </div>
+            </section>
+
+          <section class="reveal-on-scroll">
+    <div class="wrapper-feedback">
+        <div class="card-comentarios">
+            <form action="mailto:s.rodriguezrojas939@gmail.com" method="post" enctype="text/plain" onsubmit="animarEnvio(event, this)">
+                
+                <h3>
+                    <span class="title-big">Comentarios</span>
+                    <span class="title-small">y sugerencias</span>
+                </h3>
+
+                <span class="pregunta-pro">¿Cómo describiría su experiencia?</span>
+                
+                <div class="selector-experiencia">
+                    <label class="chip-option">
+                        <input type="radio" name="Experiencia" value="Mal">
+                        <span class="chip-text">Mal</span>
+                    </label>
+                    <label class="chip-option">
+                        <input type="radio" name="Experiencia" value="Algo fallo">
+                        <span class="chip-text">Algo falló</span>
+                    </label>
+                    <label class="chip-option">
+                        <input type="radio" name="Experiencia" value="Bueno" checked>
+                        <span class="chip-text">Bueno</span>
+                    </label>
+                    <label class="chip-option">
+                        <input type="radio" name="Experiencia" value="Excelente">
+                        <span class="chip-text">Excelente</span>
+                    </label>
+                </div>
+
+                <div class="form-group">
+                    <label for="name">Nombre</label>
+                    <input type="text" id="name" name="Nombre" placeholder="Tu nombre completo" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="msg">Mensaje</label>
+                    <textarea id="msg" name="Comentario" rows="4" placeholder="¿Qué podemos mejorar?" maxlength="300" oninput="actualizarContador(this)" required></textarea>
+                    <span class="char-counter" id="contadorMsg">0 / 300</span>
+                </div>
+
+                <div class="container-boton">
+                    <button type="submit" class="btn-premium" id="btnSubmit">
+                        <span>Enviar comentarios</span>
+                        <img src="https://cdn-icons-png.flaticon.com/512/10322/10322382.png" alt="enviar">
+                        <img class="check-icon" src="https://cdn-icons-png.flaticon.com/512/5290/5290058.png" alt="listo">
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</section>
+
+<footer class="footer-global">
+    <div class="footer-wrapper">
+        
+        <div class="footer-section">
+            <h4 class="footer-h4">Contacto</h4>
+            <a href="mailto:s.rodriguezrojas939@gmail.com" class="footer-email">
+                s.rodriguezrojas939@gmail.com
+            </a>
+            <div class="footer-socials">
+                <a href="https://wa.me/573196510401" target="_blank" title="WhatsApp">
+                    <i data-lucide="message-circle"></i>
+                </a>
+                <a href="https://www.youtube.com/@ElRaizCuadrada" target="_blank" title="YouTube">
+                    <i data-lucide="youtube"></i>
+                </a>
+                <a href="mailto:s.rodriguezrojas939@gmail.com" title="Correo">
+                    <i data-lucide="mail"></i>
+                </a>
+                <a href="https://github.com" target="_blank" title="GitHub">
+                    <i data-lucide="github"></i>
+                </a>
+            </div>
+        </div>
+
+        <div class="footer-section">
+            <a href="https://www.youtube.com/@ElRaizCuadrada" target="_blank" class="footer-logo-link">
+                <h1 class="footer-title">√(Raiz) Cuadrada²</h1>
+            </a>
+        </div>
+
+        <div class="footer-section">
+            <h4 class="footer-h4">Visitas al sitio</h4>
+            <div class="visitor-counter">
+                <img src="https://hitwebcounter.com/counter/counter.php?page=21465053&style=0024&nbdigits=5&type=page&initCount=0" alt="Visitas">
+            </div>
+        </div>
+
+    </div>
+</footer>
+           
+        </main>
+    </div>
+
+    <script>
+        // Inicializar Iconos
+        lucide.createIcons();
+
+        // Modo Noche/Día
+        function toggleTheme() {
+            const body = document.body;
+            const currentTheme = body.getAttribute('data-theme');
+            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            body.setAttribute('data-theme', newTheme);
+            
+            // Cambiar icono
+            const iconName = newTheme === 'dark' ? 'sun' : 'moon';
+            document.querySelectorAll('[data-lucide="moon"], [data-lucide="sun"]').forEach(el => {
+                el.setAttribute('data-lucide', iconName);
+            });
+            lucide.createIcons();
+        }
+
+        // Menú Móvil
+        function toggleMenu() {
+            document.getElementById('sidebar').classList.toggle('active');
+        }
+
+        // Animación de scroll
+        const observerOptions = {
+            threshold: 0.1
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.reveal-on-scroll').forEach(el => observer.observe(el));
+        
+      function animarEnvio(e, form) {
+    // Activamos la clase que hace que el botón se vuelva circular y muestre el check
+    const btn = document.getElementById('btnSubmit');
+    btn.classList.add('enviando');
+    
+    // El formulario se enviará por mailto después de la animación visual
+}
+
+function actualizarContador(textarea) {
+    const contador = document.getElementById('contadorMsg');
+    const largo = textarea.value.length;
+    const max = textarea.getAttribute('maxlength');
+    
+    contador.textContent = `${largo} / ${max}`;
+    
+    // Efecto de pulso y color rojo si llega al límite
+    if (largo > max * 0.9) {
+        contador.style.color = '#1a1a1a';
+        contador.classList.add('pulse');
+    } else {
+        contador.style.color = '#bbb';
+    contador.classList.remove('counter-bounce'); void contador.offsetWidth; contador.classList.add('counter-bounce');
+    }
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    const words = document.querySelectorAll('.rotating-text');
+    let currentIndex = 0;
+
+    function rotateWords() {
+        const currentWord = words[currentIndex];
+        const nextIndex = (currentIndex + 1) % words.length;
+        const nextWord = words[nextIndex];
+
+        // Sacar la palabra actual
+        currentWord.classList.remove('active');
+        currentWord.classList.add('exit');
+
+        // Meter la siguiente
+        nextWord.classList.add('active');
+        nextWord.classList.remove('exit');
+
+        // Limpiar la clase exit después de la animación
+        setTimeout(() => {
+            currentWord.classList.remove('exit');
+        }, 600);
+
+        currentIndex = nextIndex;
+    }
+
+    // Cambiar cada 2.5 segundos
+    setInterval(rotateWords, 2500);
+    
+    // Inicializar iconos de Lucide (por si acaso)
+    lucide.createIcons();
+});
+
+    </script>
+</body>
+</html>
