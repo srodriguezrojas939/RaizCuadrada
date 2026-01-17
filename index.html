@@ -763,6 +763,57 @@ a:hover {
     }
 }
 
+/* --- BOTÓN FLOTANTE MÓVIL --- */
+.mobile-theme-toggle {
+    display: none; /* Oculto por defecto en PC */
+    position: fixed;
+    bottom: 25px;
+    right: 25px;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    z-index: 9999;
+    border: none;
+    cursor: pointer;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+/* Solo mostrar en pantallas pequeñas (Celulares/Tablets) */
+@media (max-width: 900px) {
+    .mobile-theme-toggle {
+        display: flex;
+        animation: popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) 1s forwards;
+        opacity: 0;
+        transform: scale(0);
+    }
+    @keyframes popIn { to { opacity: 1; transform: scale(1); } }
+}
+
+/* INTERACCIÓN AL TOCAR */
+.mobile-theme-toggle:active { transform: scale(0.9); }
+
+/* --- COLORES Y LÓGICA DE ICONOS --- */
+
+/* MODO DÍA (Por defecto) */
+.mobile-theme-toggle {
+    background: #1a1a1a; /* Botón Negro */
+    color: #ffffff;      /* Icono Blanco */
+}
+.mobile-theme-toggle .icon-moon { display: block; }
+.mobile-theme-toggle .icon-sun { display: none; }
+
+/* MODO NOCHE (Cuando se activa) */
+[data-theme="dark"] .mobile-theme-toggle {
+    background: #ffffff; /* Botón Blanco */
+    color: #1a1a1a;      /* Icono Negro */
+    box-shadow: 0 0 20px rgba(255,255,255,0.3); /* Resplandor blanco */
+}
+[data-theme="dark"] .mobile-theme-toggle .icon-moon { display: none; }
+[data-theme="dark"] .mobile-theme-toggle .icon-sun { display: block; }
+
     </style>
 </head>
 <body>
@@ -1050,4 +1101,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
     </script>
 </body>
+<button class="mobile-theme-toggle" onclick="toggleTheme()" aria-label="Cambiar tema">
+    <i data-lucide="sun" class="icon-sun"></i>
+    <i data-lucide="moon" class="icon-moon"></i>
+</button>
+
 </html>
