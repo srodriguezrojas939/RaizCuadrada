@@ -320,33 +320,45 @@ a:hover {
 /* --- GRID SECTIONS (Estilo Premium Renovado) --- */
 .section-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-    gap: 2rem;
+    /* Aumentamos a 320px para que el icono gigante quepa holgado */
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); 
+    gap: 2.5rem; /* Un poco más de separación entre tarjetas */
     margin-top: 4rem;
     padding: 0 1rem;
 }
 
 .card {
-    background: #f9f9f9; /* Gris interno (Input) */
-    
-
-    
-    /* MAGIA DE SOMBRAS (Doble capa) */
+    background: #f9f9f9; 
     box-shadow: 
-        inset 0 2px 5px rgba(0,0,0,0.05),  /* 1. Profundidad interna */
-        0 10px 20px rgba(0,0,0,0.08);      /* 2. Sombra externa que acompaña al borde */
+        inset 0 2px 5px rgba(0,0,0,0.05),
+        0 10px 20px rgba(0,0,0,0.08);
 
-    /* Estilos base (Centrado y forma) */
-    padding: 3rem 2rem;
-    border-radius: 40px; /* Borde muy redondeado */
+    /* --- CAMBIOS CLAVE PARA ANIMACIÓN 170PX --- */
+    padding: 0; /* Reiniciamos padding para controlarlo mejor */
+    padding-top: 3rem;    /* Espacio arriba para que el icono flote */
+    padding-bottom: 3rem; /* Espacio abajo para el texto */
+    padding-left: 2rem;
+    padding-right: 2rem;
+    
+    min-height: 450px; /* Forzamos altura mínima para uniformidad */
+    
+    border-radius: 40px;
     transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
     cursor: pointer;
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: center;
+    justify-content: flex-start; /* Alineamos al inicio para que el icono mande */
     text-align: center;
+    overflow: visible; /* IMPORTANTE: Para que la animación no se corte si flota mucho */
 }
+
+/* Ajuste del título para equilibrar el peso visual del icono */
+.card h3 {
+    margin-top: 0.5rem; /* Pegadito al wrapper del icono */
+    font-size: 2rem;    /* Título un poco más grande */
+}
+
 
 .card i, .card svg {
     margin-bottom: 1.5rem;
@@ -877,6 +889,583 @@ body[data-theme="dark"] .card:hover {
 [data-theme="dark"] .mobile-theme-toggle .icon-moon { display: none; }
 [data-theme="dark"] .mobile-theme-toggle .icon-sun { display: block; }
 
+
+
+
+
+/* --- ANIMACIÓN ICONO VIDEO (Adaptada) --- */
+
+.anim-scale-wrapper {
+    /* Dimensiones exactas para contener el icono de 170px + la animación */
+    width: 170px;
+    height: 190px; /* 170 del icono + 20px de espacio para flotar hacia arriba */
+    min-width: 170px; /* Evita aplastamiento */
+    
+    display: flex;
+    justify-content: center;
+    align-items: flex-end; /* Alinea el icono abajo para que flote hacia arriba */
+    
+    margin-bottom: 1.5rem; /* Separación con el título */
+    position: relative;
+    
+    /* Para depurar si no lo ves, descomenta esto temporalmente: */
+    /* border: 1px dashed red; */ 
+}
+
+
+/* 2. El Dibujo Original: Mantiene sus 170x170 SIEMPRE */
+.device-icon {
+    /* Dimensiones originales INTOCABLES */
+   width: 170px;      
+    height: 170px;     
+    min-width: 170px;
+    min-height: 170px;
+    aspect-ratio: 1 / 1;   /* Fuerza proporción cuadrada perfecta */
+    
+    /* Variables de color */
+    --calc-body: #f0f0f0;
+    --screen-inner: #ffffff;
+    --btn-face: #a0a0a0; 
+    --btn-edge: #606060;
+    --accent-gray: #dcdcdc;
+    --depth-shadow: 0 10px 20px rgba(0,0,0,0.15);
+    --base-edge: 0 6px 0 #bbb;
+    --inner-shadow: inset 0 2px 5px rgba(0,0,0,0.15);
+
+    /* Estilos del cuerpo */
+    background: var(--calc-body);
+    border-radius: 30px;
+    padding: 12px;
+    box-shadow: var(--base-edge), var(--depth-shadow);
+    border: 1.5px solid #fff;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    box-sizing: border-box;
+    
+    
+     
+    /* Animación flotante */
+    animation: zenFloating 5s ease-in-out infinite;
+
+}
+
+@keyframes zenFloating {
+    0%, 100% { 
+        transform: translateY(0); 
+    }
+    50% { 
+        transform: translateY(-15px); /* Aquí es donde flota hacia arriba */
+    }
+}
+
+
+  
+
+    /* Dimensiones originales fijas */
+    width: 170px; 
+    height: 170px;
+    background: var(--calc-body);
+    border-radius: 30px;
+    padding: 12px;
+    box-shadow: var(--base-edge), var(--depth-shadow);
+    border: 1.5px solid #fff;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    box-sizing: border-box;
+    
+   
+
+/* Pantalla */
+.device-icon .screen-container {
+    background: #d0d0d0;
+    padding: 2px 0;
+    border-radius: 15px;
+    box-shadow: inset 0 2px 4px rgba(0,0,0,0.15);
+}
+
+.device-icon .screen {
+    background: var(--screen-inner);
+    height: 70px;
+    border-radius: 13px;
+    overflow: hidden;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+  
+}
+
+/* Botón Play */
+.device-icon .play-button {
+    width: 25px;
+    height: 25px;
+    background: var(--btn-edge);
+    clip-path: polygon(25% 15%, 85% 50%, 25% 85%);
+    animation: pulsePlay 2s infinite ease-in-out;
+    margin-bottom: 8px;
+}
+
+@keyframes pulsePlay {
+    0%, 100% { transform: scale(1); opacity: 0.8; }
+    50% { transform: scale(1.1); opacity: 1; }
+}
+
+/* Barra de Progreso */
+.device-icon .progress-bar {
+    width: 70%;
+    height: 4px;
+    background: #eee;
+    border-radius: 2px;
+    overflow: hidden;
+}
+
+.device-icon .progress-fill {
+    width: 100%;
+    height: 100%;
+    background: var(--btn-face);
+    animation: progressFill 4s infinite ease-in-out;
+    transform-origin: left;
+}
+
+@keyframes progressFill {
+    0% { transform: scaleX(0); }
+    50% { transform: scaleX(0.7); }
+    100% { transform: scaleX(1); }
+}
+
+/* Módulos inferiores */
+.device-icon .course-modules {
+    background: var(--accent-gray);
+    border-radius: 18px;
+    padding: 8px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: 5px;
+    box-shadow: var(--inner-shadow);
+    flex-grow: 1;
+}
+
+.device-icon .module-item {
+    height: 12px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.device-icon .dot {
+    width: 12px;
+    height: 12px;
+    background: var(--btn-face);
+    border-radius: 4px;
+    box-shadow: 0 2px 0 var(--btn-edge);
+}
+
+.device-icon .bar {
+    flex-grow: 1;
+    height: 6px;
+    background: rgba(255,255,255,0.5);
+    border-radius: 3px;
+}
+
+/* Carga simulada */
+.device-icon .module-item:nth-child(1) .bar { background: var(--btn-face); width: 80%; }
+.device-icon .module-item:nth-child(2) .bar { background: var(--btn-face); width: 40%; }
+.device-icon .module-item:nth-child(3) .bar { background: #bbb; width: 10%; }
+
+
+
+
+/* --- ANIMACIÓN ICONO CURSOS (Notebook) --- */
+
+.course-icon {
+    /* 1. ESTRUCTURA IDÉNTICA AL ICONO DE VIDEO */
+    width: 170px !important;
+    height: 170px !important;
+    min-width: 170px;
+    min-height: 170px;
+    aspect-ratio: 1 / 1;
+    
+    /* 2. VARIABLES LOCALES (Para que se vea igual que tu diseño) */
+    --calc-body: #f0f0f0;
+    --screen-inner: #ffffff;
+    --btn-face: #a0a0a0; 
+    --btn-edge: #606060;
+    --paper-edge: #e0e0e0; /* Nuevo color para hojas */
+    --depth-shadow: 0 10px 20px rgba(0,0,0,0.15);
+    --base-edge: 0 6px 0 #bbb;
+    --inner-shadow: inset 0 2px 5px rgba(0,0,0,0.15);
+
+    /* 3. ESTILOS DEL CUERPO (Caja) */
+    background: var(--calc-body);
+    border-radius: 30px;
+    padding: 12px;
+    box-shadow: var(--base-edge), var(--depth-shadow);
+    border: 1.5px solid #fff;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    box-sizing: border-box;
+
+    /* 4. ANIMACIÓN FLOTANTE (Reutilizamos la que ya tienes creada) */
+    animation: zenFloating 5s ease-in-out infinite;
+    /* Retraso ligero para que no flote igual que el video (se ve más natural) */
+    animation-delay: 0.5s; 
+}
+
+/* --- INTERNOS DEL ICONO DE CURSOS --- */
+
+/* Pantalla / Hojas */
+.course-icon .screen-container {
+    background: #d0d0d0;
+    padding: 2px 0;
+    border-radius: 15px;
+    box-shadow: inset 0 2px 4px rgba(0,0,0,0.15);
+    position: relative;
+}
+
+.course-icon .screen {
+    background: var(--screen-inner);
+    height: 75px;
+    border-radius: 13px;
+    overflow: hidden;
+    position: relative;
+
+}
+
+/* Animación de páginas */
+.course-icon .page-slider {
+    display: flex;
+    width: 300%;
+    height: 100%;
+    animation: slidePage 9s infinite cubic-bezier(0.645, 0.045, 0.355, 1);
+}
+
+@keyframes slidePage {
+    0%, 25% { transform: translateX(0); }
+    33%, 58% { transform: translateX(-33.33%); }
+    66%, 91% { transform: translateX(-66.66%); }
+    100% { transform: translateX(0); }
+}
+
+.course-icon .page {
+    width: 33.33%;
+    height: 100%;
+    padding: 10px;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    border-left: 1px solid rgba(0,0,0,0.05);
+    background: white;
+}
+
+/* Elementos dibujados en las hojas */
+.course-icon .math-draw {
+    border-bottom: 1.5px solid var(--btn-face);
+    width: 60%;
+    margin-bottom: 6px;
+    color: #333; /* Color oscuro por defecto */
+}
+.course-icon .exercise-line {
+    width: 80%;
+    height: 4px;
+    background: #f0f0f0;
+    margin: 2px 0;
+    border-radius: 2px;
+}
+
+/* Panel de Anillado */
+.course-icon .binding-panel {
+    background: #dcdcdc;
+    border-radius: 18px;
+    padding: 10px 15px;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    box-shadow: var(--inner-shadow);
+    flex-grow: 1;
+}
+
+.course-icon .ring {
+    width: 8px;
+    height: 22px;
+    background: var(--btn-edge);
+    border-radius: 10px;
+    box-shadow: inset -2px 0 3px rgba(0,0,0,0.3), 2px 0 3px rgba(255,255,255,0.2);
+    position: relative;
+}
+
+.course-icon .ring::after {
+    content: '';
+    position: absolute;
+    left: 2px;
+    top: 4px;
+    width: 2px;
+    height: 6px;
+    background: rgba(255,255,255,0.3);
+    border-radius: 2px;
+}
+
+
+/* --- ANIMACIÓN ICONO FORMULARIOS (Escritura) --- */
+
+.forms-icon {
+    /* 1. ESTRUCTURA (Igual a las anteriores) */
+    width: 170px !important;
+    height: 170px !important;
+    min-width: 170px;
+    min-height: 170px;
+    aspect-ratio: 1 / 1;
+
+    /* 2. VARIABLES LOCALES */
+    --calc-body: #f0f0f0;
+    --screen-inner: #fdfdfd;
+    --btn-face: #a0a0a0; 
+    --btn-edge: #606060;
+    --paper-lines: #e0e0e0;
+    --pencil-color: #444;
+    --depth-shadow: 0 10px 20px rgba(0,0,0,0.15);
+    --base-edge: 0 6px 0 #bbb;
+    --inner-shadow: inset 0 2px 5px rgba(0,0,0,0.15);
+
+    /* 3. ESTILOS BASE */
+    background: var(--calc-body);
+    border-radius: 30px;
+    padding: 12px;
+    box-shadow: var(--base-edge), var(--depth-shadow);
+    border: 1.5px solid #fff;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    box-sizing: border-box;
+
+    /* 4. ANIMACIÓN FLOTANTE (Usamos la existente) */
+    animation: zenFloating 5s ease-in-out infinite;
+    animation-delay: 1s; /* Retraso mayor para que no floten todos a la vez */
+}
+
+/* --- INTERNOS DEL ICONO FORMULARIOS --- */
+
+/* Pantalla */
+.forms-icon .screen-container {
+    background: #d0d0d0;
+    padding: 2px 0;
+    border-radius: 15px;
+    box-shadow: inset 0 2px 4px rgba(0,0,0,0.15);
+}
+
+.forms-icon .screen {
+    background: var(--screen-inner);
+    height: 75px;
+    border-radius: 13px;
+    overflow: hidden;
+    position: relative;
+    /* Fondo de líneas sutiles */
+    background-image: linear-gradient(transparent 95%, var(--paper-lines) 95%);
+    background-size: 100% 15px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* El dibujo SVG */
+.forms-icon svg.handwriting {
+    width: 90%;
+    height: 90%;
+}
+
+.forms-icon .pencil-stroke {
+    fill: none;
+    stroke: var(--pencil-color);
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    /* Configuración del trazo animado */
+  stroke-dasharray: 400; 
+    stroke-dashoffset: 400; 
+    
+    animation: writeAction 6s ease-in-out infinite;
+}
+
+@keyframes writeAction {
+    0% { stroke-dashoffset: 400; } 
+    40% { stroke-dashoffset: 0; }   
+    70% { opacity: 1; }             
+    80% { opacity: 0; stroke-dashoffset: 0;} 
+    100% { opacity: 0; stroke-dashoffset: 400;} 
+}
+
+/* Panel Inferior (Pestañas) */
+.forms-icon .tabs-panel {
+    background: #dcdcdc;
+    border-radius: 18px;
+    padding: 10px 8px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-evenly;
+    box-shadow: var(--inner-shadow);
+    flex-grow: 1;
+}
+
+.forms-icon .tab {
+    height: 10px;
+    background: var(--btn-face);
+    border-radius: 5px;
+    width: 100%;
+    box-shadow: 0 2px 0 var(--btn-edge);
+    position: relative;
+    overflow: hidden;
+}
+
+/* Brillo en las pestañas */
+.forms-icon .tab::after {
+    content: '';
+    position: absolute;
+    top: 0; left: 0;
+    width: 30%;
+    height: 100%;
+    background: rgba(255,255,255,0.3);
+    animation: tabShine 3s infinite linear;
+}
+.forms-icon .tab:nth-child(2)::after { animation-delay: 1s; }
+.forms-icon .tab:nth-child(3)::after { animation-delay: 2s; }
+
+@keyframes tabShine {
+    0% { transform: translateX(-100%); }
+    100% { transform: translateX(300%); }
+}
+
+
+/* --- ANIMACIÓN ICONO HERRAMIENTAS (Software Técnico) --- */
+
+.tools-icon {
+    /* 1. ESTRUCTURA GLOBAL */
+    width: 170px !important;
+    height: 170px !important;
+    min-width: 170px;
+    min-height: 170px;
+    aspect-ratio: 1 / 1;
+
+    /* 2. VARIABLES LOCALES */
+    --calc-body: #f0f0f0;
+    --screen-inner: #ffffff;
+    --btn-face: #a0a0a0; 
+    --btn-edge: #606060;
+    --grid-line: #e0e0e0; /* Color suave para la cuadrícula */
+    --draw-color: #555;
+    --depth-shadow: 0 10px 20px rgba(0,0,0,0.15);
+    --base-edge: 0 6px 0 #bbb;
+    --inner-shadow: inset 0 2px 5px rgba(0,0,0,0.15);
+
+    /* 3. ESTILOS BASE */
+    background: var(--calc-body);
+    border-radius: 30px;
+    padding: 12px;
+    box-shadow: var(--base-edge), var(--depth-shadow);
+    border: 1.5px solid #fff;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    box-sizing: border-box;
+
+    /* 4. ANIMACIÓN FLOTANTE */
+    animation: zenFloating 5s ease-in-out infinite;
+    animation-delay: 1.5s; /* Retraso para desincronizar del resto */
+}
+
+/* --- INTERNOS DEL ICONO HERRAMIENTAS --- */
+
+/* Pantalla */
+.tools-icon .screen-container {
+    background: #d0d0d0;
+    padding: 2px 0;
+    border-radius: 15px;
+    box-shadow: inset 0 2px 4px rgba(0,0,0,0.15);
+}
+
+.tools-icon .screen {
+    background: var(--screen-inner);
+    height: 75px;
+    border-radius: 13px;
+    overflow: hidden;
+    position: relative;
+    /* Cuadrícula técnica de fondo (Puntos) */
+    background-image: radial-gradient(var(--grid-line) 1px, transparent 1px);
+    background-size: 10px 10px; 
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Dibujo SVG animado */
+.tools-icon svg.blueprint {
+    width: 80%;
+    height: 80%;
+}
+
+.tools-icon .tool-draw {
+    fill: none;
+    stroke: var(--draw-color);
+    stroke-width: 1.5;
+    stroke-linecap: round;
+    stroke-dasharray: 400;
+    stroke-dashoffset: 400;
+    animation: technicalDrawing 8s ease-in-out infinite;
+}
+
+@keyframes technicalDrawing {
+    0% { stroke-dashoffset: 400; opacity: 0; }
+    10% { opacity: 1; }
+    40% { stroke-dashoffset: 0; }
+    70% { opacity: 1; stroke-dashoffset: 0; }
+    90% { opacity: 0; }
+    100% { opacity: 0; stroke-dashoffset: 400; }
+}
+
+/* Panel de Botones (Grid) */
+.tools-icon .tools-grid {
+    background: #dcdcdc;
+    border-radius: 18px;
+    padding: 8px;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    grid-template-rows: repeat(2, 1fr);
+    gap: 6px;
+    box-shadow: var(--inner-shadow);
+    flex-grow: 1;
+}
+
+.tools-icon .micro-tool {
+    background: var(--btn-face);
+    border-radius: 4px;
+    box-shadow: 0 2px 0 var(--btn-edge);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 7px;
+    color: #333;
+    font-weight: bold;
+    /* Animación de "presionar botón" */
+    animation: pulseTool 4s infinite ease-in-out;
+}
+
+@keyframes pulseTool {
+    0%, 100% { transform: scale(1); opacity: 0.8; }
+    50% { transform: scale(0.95); opacity: 1; box-shadow: 0 1px 0 var(--btn-edge); }
+}
+
+/* Delays para efecto de "computadora pensando" */
+.tools-icon .micro-tool:nth-child(2) { animation-delay: 0.5s; }
+.tools-icon .micro-tool:nth-child(3) { animation-delay: 1.2s; }
+.tools-icon .micro-tool:nth-child(5) { animation-delay: 0.8s; }
+.tools-icon .micro-tool:nth-child(7) { animation-delay: 1.5s; }
+
+
+
     </style>
 </head>
 <body>
@@ -947,26 +1536,150 @@ body[data-theme="dark"] .card:hover {
                     <h3>Graficadoras</h3>
                     <p>Visualiza funciones en 2D y 3D con alta precisión.</p>
                 </div>
-                <div class="card">
-                    <i data-lucide="wrench" size="40"></i>
-                    <h3>Herramientas</h3>
-                    <p>Convertidores, solucionadores y utilidades matemáticas.</p>
+               
+               
+               <div class="card">
+    <div class="anim-scale-wrapper">
+        <div class="tools-icon">
+            
+            <div class="screen-container">
+                <div class="screen">
+                    <svg class="blueprint" viewBox="0 0 100 100">
+                  <path class="tool-draw" d="
+    M 50,30 L 50,99 M 10,70 L 90,70 
+    M 50,70 m -30,0 a 30,30 0 1,0 60,0 a 30,30 0 1,0 -60,0
+    M 50,70 L 75,45 L 70,45 M 75,45 L 75,50
+" />
+                    </svg>
                 </div>
-                <div class="card">
-                    <i data-lucide="file-spreadsheet" size="40"></i>
-                    <h3>Formularios</h3>
-                    <p>Biblioteca completa de fórmulas listas para usar.</p>
+            </div>
+            
+            <div class="tools-grid">
+                <div class="micro-tool">SYM</div>
+                <div class="micro-tool">FAC</div>
+                <div class="micro-tool">PAR</div>
+                <div class="micro-tool">Δ</div>
+                <div class="micro-tool">VEC</div>
+                <div class="micro-tool">CIR</div>
+                <div class="micro-tool">EDIT</div>
+                <div class="micro-tool" style="opacity:0.3">...</div>
+            </div>
+
+        </div>
+    </div>
+
+    <h3>Herramientas</h3>
+    <p>Calculadoras gráficas y utilidades para resolver problemas.</p>
+</div>
+
+
+               
+               <div class="card">
+    <div class="anim-scale-wrapper">
+        <div class="forms-icon">
+            
+            <div class="screen-container">
+                <div class="screen">
+                   <svg class="handwriting" viewBox="0 0 100 60">
+    <path class="pencil-stroke" 
+         d="
+         M 10 55 L 10 25 L 40 55 Z 
+         M 75 20 C 68 20 68 30 68 40 S 68 55 62 55 
+         M 78 16 L 82 16 
+         M 60 58 L 64 58
+        "
+    />
+</svg>
                 </div>
-                <div class="card">
-                    <i data-lucide="graduation-cap" size="40"></i>
-                    <h3>Cursos</h3>
-                    <p>Rutas de aprendizaje desde aritmética hasta cálculo avanzado.</p>
+            </div>
+            
+            <div class="tabs-panel">
+                <div class="tab"></div>
+                <div class="tab"></div>
+                <div class="tab"></div>
+            </div>
+
+        </div>
+    </div>
+
+    <h3>Formularios</h3>
+    <p>Guías rápidas y fórmulas esenciales para tus ejercicios.</p>
+</div>
+
+
+               <div class="card">
+    <div class="anim-scale-wrapper">
+        <div class="course-icon">
+            
+            <div class="screen-container">
+                <div class="screen">
+                    <div class="page-slider">
+                        <div class="page">
+                            <div class="math-draw" style="font-size: 10px; font-weight: bold; font-family: serif;">f'(x) = 2x</div>
+                            <div class="exercise-line"></div>
+                            <div class="exercise-line" style="width: 50%;"></div>
+                        </div>
+                        <div class="page">
+                            <div class="math-draw" style="font-size: 10px; font-weight: bold; color: var(--btn-edge);">∫ e^x dx</div>
+                            <div class="exercise-line"></div>
+                            <div class="exercise-line"></div>
+                        </div>
+                        <div class="page">
+                            <div style="width: 20px; height: 20px; border: 1.5px solid var(--btn-face); margin-bottom: 5px;"></div>
+                            <div class="exercise-line"></div>
+                            <div class="exercise-line"></div>
+                        </div>
+                    </div>
                 </div>
-                <div class="card">
-                    <i data-lucide="play-circle" size="40"></i>
-                    <h3>Videos</h3>
-                    <p>Contenido exclusivo de nuestro canal de YouTube.</p>
+            </div>
+            
+            <div class="binding-panel">
+                <div class="ring"></div>
+                <div class="ring"></div>
+                <div class="ring"></div>
+                <div class="ring"></div>
+                <div class="ring"></div>
+            </div>
+
+        </div>
+    </div>
+    
+    <h3>Cursos</h3>
+    <p>Rutas de aprendizaje completas organizadas por niveles y temas.</p>
+</div>
+
+             
+             <div class="card video-card-hover"> <div class="anim-scale-wrapper">
+        <div class="device-icon">
+            <div class="screen-container">
+                <div class="screen">
+                    <div class="play-button"></div>
+                    <div class="progress-bar">
+                        <div class="progress-fill"></div>
+                    </div>
                 </div>
+            </div>
+            
+            <div class="course-modules">
+                <div class="module-item">
+                    <div class="dot"></div>
+                    <div class="bar"></div>
+                </div>
+                <div class="module-item">
+                    <div class="dot"></div>
+                    <div class="bar"></div>
+                </div>
+                <div class="module-item">
+                    <div class="dot"></div>
+                    <div class="bar"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <h3>Videos</h3>
+    <p>Tutoriales interactivos y explicaciones visuales paso a paso.</p>
+</div>
+
             </section>
 
           <section class="reveal-on-scroll">
