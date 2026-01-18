@@ -1777,7 +1777,54 @@ body[data-theme="dark"] .card:hover {
 .calculator .btn:nth-child(4) { animation-delay: 1.4s; }
 .calculator .btn:nth-child(5) { animation-delay: 0.5s; }
 
+/* --- CORRECCIÓN DEL HOVER PARA CALCULADORA --- */
 
+/* 1. Aseguramos que el envoltorio tenga la transición suave global de tu sitio */
+.anim-scale-wrapper {
+    transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    display: block; /* Asegura que tome las dimensiones */
+    width: fit-content;
+    margin: 0 auto;
+}
+
+/* 2. Cuando pasas el mouse por la tarjeta (.card), movemos el envoltorio */
+/* Esto imita exactamente el efecto de tus otras tarjetas de imágenes/íconos */
+.card:hover .anim-scale-wrapper {
+    transform: translateY(-8px) scale(1.02); 
+}
+
+/* 3. Opcional: Si sientes que el color cambia muy lento, ajusta esto en .calculator */
+.calculator {
+    /* Mantenemos el pointer-events si quieres que ignore el mouse directo, 
+       pero para que funcione el hover en la tarjeta, quita 'pointer-events: none' 
+       si lo pusiste antes, o déjalo si el hover lo detecta la .card padre. */
+    
+    /* Aceleramos un poco la transición de colores */
+    transition: background-color 0.3s ease, border-color 0.3s ease;
+}
+
+/* --- CORRECCIÓN FINAL: HACER QUE LA CALCULADORA SALTE COMO UN ICONO --- */
+
+/* 1. Preparamos el envoltorio para moverse suavemente */
+.anim-scale-wrapper {
+    transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); /* Mismo rebote que tus iconos */
+    transform-origin: center center;
+    /* Aseguramos que el mouse no se confunda con el contenido */
+    pointer-events: none; 
+}
+
+/* 2. LA REGLA MÁGICA: Conectar el Hover de la tarjeta al envoltorio */
+/* Esto imita la regla ".card:hover i" que ya tienes para los otros iconos */
+.card:hover .anim-scale-wrapper {
+    transform: scale(1.15) rotate(3deg); /* Escala y rotación idéntica a tus iconos */
+}
+
+/* 3. Asegurar que la calculadora dentro siga flotando */
+.calculator {
+    /* La animación de flotar (zenFloating) sigue activa dentro del envoltorio que salta */
+    
+    -events: none; /* Ignora el mouse para que la tarjeta detecte el hover */
+}
 
 
     </style>
@@ -1841,9 +1888,9 @@ body[data-theme="dark"] .card:hover {
 
             <section class="section-grid reveal-on-scroll">
              
-           
-          
-         <div class="card reveal-on-scroll">
+      
+<div class="card reveal-on-scroll">
+    
     <div class="anim-scale-wrapper">
         
         <div class="calculator">
@@ -1869,12 +1916,10 @@ body[data-theme="dark"] .card:hover {
                 <div class="btn">÷</div>
             </div>
         </div>
-        </div>
+        </div> 
     <h3>Calculadoras</h3>
     <p>Resuelve operaciones complejas paso a paso con nuestras calculadoras especializadas.</p>
 </div>
-
-
 
                
                <div class="card">
