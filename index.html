@@ -1466,6 +1466,320 @@ body[data-theme="dark"] .card:hover {
 
 
 
+/* --- ANIMACIÓN ICONO GRAFICADORAS (Calculadora) --- */
+
+.graph-icon {
+    /* 1. ESTRUCTURA GLOBAL */
+    width: 170px !important;
+    height: 170px !important;
+    min-width: 170px;
+    min-height: 170px;
+    aspect-ratio: 1 / 1;
+
+    /* 2. VARIABLES LOCALES */
+    --calc-body: #f0f0f0;
+    --screen-inner: #ffffff;
+    --btn-face: #a0a0a0; 
+    --btn-edge: #606060;
+    --grid-line: #e0e0e0;
+    --graph-line-color: #555;
+    --depth-shadow: 0 10px 20px rgba(0,0,0,0.15);
+    --base-edge: 0 6px 0 #bbb;
+    --inner-shadow: inset 0 2px 5px rgba(0,0,0,0.15);
+
+    /* 3. ESTILOS BASE */
+    background: var(--calc-body);
+    border-radius: 30px;
+    padding: 12px;
+    box-shadow: var(--base-edge), var(--depth-shadow);
+    border: 1.5px solid #fff;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    box-sizing: border-box;
+
+    /* 4. ANIMACIÓN FLOTANTE */
+    animation: zenFloating 5s ease-in-out infinite;
+    animation-delay: 0.8s; /* Ritmo diferente a los otros */
+}
+
+/* --- PANTALLA GRÁFICA --- */
+
+.graph-icon .screen-container {
+    background: #d0d0d0;
+    padding: 2px 0;
+    border-radius: 15px;
+    box-shadow: inset 0 2px 6px rgba(0,0,0,0.15);
+    flex-shrink: 0;
+}
+
+.graph-icon .screen {
+    background: var(--screen-inner);
+    height: 70px; 
+    border-radius: 13px;
+    display: flex;
+    align-items: center;
+    position: relative;
+    overflow: hidden; /* Importante para recortar la onda */
+}
+
+/* Cuadrícula de fondo */
+.graph-icon .grid-bg {
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    /* Patrón de cuadritos de libreta */
+    background-image: 
+        linear-gradient(var(--grid-line) 1px, transparent 1px),
+        linear-gradient(90deg, var(--grid-line) 1px, transparent 1px);
+    background-size: 10px 10px;
+}
+
+/* Contenedor de la onda */
+.graph-icon .wave-container {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+}
+
+/* --- NUEVA CONFIGURACIÓN GRÁFICA (Morphing) --- */
+/* --- NUEVA CONFIGURACIÓN GRÁFICA (Morphing) --- */
+
+.graph-icon svg {
+    width: 100%;       /* Ocupa todo el ancho disponible */
+    height: 100%;      /* Ocupa toda la altura */
+    padding: 0 10px;   /* Un poco de margen lateral */
+    box-sizing: border-box;
+}
+
+.graph-icon .morphing-line {
+    fill: none;
+    stroke: var(--graph-line-color);
+    stroke-width: 3;       /* Línea más gordita */
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    
+    /* Aquí ocurre la magia de la transformación */
+    animation: shapeShift 6s ease-in-out infinite;
+}
+
+/* DEFINICIÓN DE LAS FORMAS MATEMÁTICAS
+   M = Mover lápiz (Inicio)
+   Q = Curva cuadrática (Control, Final)
+   T = Continuación suave de la curva (Final)
+*/
+@keyframes shapeShift {
+    /* 1. PARÁBOLA (Bajada a Y=25) */
+    0%, 20% { 
+        d: path("M 25,25 Q 70,130 115,25 T 115,25"); 
+    }
+    
+    /* 2. RAÍZ CUADRADA (Ajustada para coincidir con la altura Y=25) */
+    33%, 53% { 
+        d: path("M 20,65 Q 50,35 70,35 T 130,38"); 
+    }
+    
+    /* 3. SENO (Centrada más abajo, en Y=45) */
+    66%, 86% { 
+        d: path("M 10,45 Q 40,-15 70,45 T 130,45"); 
+    }
+
+    /* VUELTA AL INICIO */
+    100% { 
+        d: path("M 25,25 Q 70,130 115,25 T 115,25"); 
+    }
+}
+
+/* --- BOTONES DE CONTROL --- */
+
+.graph-icon .controls {
+    background: #dcdcdc;
+    border-radius: 18px;
+    padding: 8px;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 6px;
+    box-shadow: var(--inner-shadow);
+    flex-grow: 1;
+}
+
+.graph-icon .btn-mini {
+    background: var(--btn-face);
+    border-radius: 8px;
+    box-shadow: 0 3px 0 var(--btn-edge);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    
+    font-size: 9px;
+    font-weight: bold;
+    color: #333;
+    font-family: monospace;
+    
+    animation: miniPress 4s infinite ease-in-out;
+}
+
+@keyframes miniPress {
+    0%, 100% { transform: translateY(0); box-shadow: 0 3px 0 var(--btn-edge); }
+    50% { transform: translateY(2px); box-shadow: 0 1px 0 var(--btn-edge); }
+}
+
+/* Desfase para que parezca que alguien los presiona en orden */
+.graph-icon .btn-mini:nth-child(2) { animation-delay: 0.5s; }
+.graph-icon .btn-mini:nth-child(3) { animation-delay: 1.2s; }
+
+
+/* --- ESTILOS EXACTOS CALCULADORA --- */
+
+/* Variables locales para la calculadora */
+.calculator {
+    --calc-body: #f0f0f0;
+    --screen-inner: #ffffff;
+    --btn-face: #a0a0a0; 
+    --btn-edge: #606060;
+    --depth-shadow: 0 10px 20px rgba(0,0,0,0.15);
+    --base-edge: 0 6px 0 #bbb;
+    --inner-shadow: inset 0 2px 5px rgba(0,0,0,0.2);
+}
+
+/* CUERPO CALCULADORA */
+.calculator {
+    width: 170px; 
+    height: 170px;
+    background: var(--calc-body);
+    border-radius: 30px;
+    padding: 12px;
+    box-shadow: var(--base-edge), var(--depth-shadow);
+    border: 1.5px solid #fff;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    animation: zenFloating 5s ease-in-out infinite;
+    box-sizing: border-box;
+}
+
+@keyframes zenFloating {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-8px); }
+}
+
+/* PANTALLA */
+.calculator .screen-container {
+    background: #d0d0d0;
+    padding: 2px 0;
+    border-radius: 15px;
+    box-shadow: inset 0 2px 4px rgba(0,0,0,0.15);
+}
+
+.calculator .screen {
+    background: var(--screen-inner);
+    height: 40px;
+    border-radius: 13px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+}
+
+/* ANIMACIÓN DE ECUACIÓN */
+.calculator .equation-container {
+    display: flex;
+    align-items: center;
+    font-family: 'Cambria Math', serif;
+    font-size: 16px;
+    color: #333;
+}
+
+.calculator .symbol {
+    opacity: 0;
+    display: inline-block;
+    animation: popJumpFadeLoop 5s ease-in-out infinite;
+}
+
+/* EL "2" COMO POTENCIA REAL */
+.calculator .sup {
+    font-size: 0.35em;
+    font-weight: bold;
+    transform: translateY(-28px);
+    margin-left: 1px;
+}
+
+.calculator .sqrt-sym { font-size: 1.2em; margin-right: -1px; }
+
+@keyframes popJumpFadeLoop {
+    0% { opacity: 0; transform: translateY(10px) scale(0.5); }
+    5% { opacity: 1; transform: translateY(-4px) scale(1.1); }
+    10% { transform: translateY(0) scale(1); }
+    70% { opacity: 1; transform: translateY(0) scale(1); }
+    85%, 100% { opacity: 0; transform: translateY(-5px); }
+}
+
+/* Retrasos de la ecuación */
+.calculator .symbol:nth-child(1) { animation-delay: 0.0s; }
+.calculator .symbol:nth-child(2) { animation-delay: 0.2s; }
+.calculator .symbol:nth-child(3) { animation-delay: 0.4s; }
+.calculator .symbol:nth-child(4) { animation-delay: 0.5s; }
+.calculator .symbol:nth-child(5) { animation-delay: 0.7s; }
+.calculator .symbol:nth-child(6) { animation-delay: 0.9s; }
+.calculator .symbol:nth-child(7) { animation-delay: 1.1s; }
+
+/* TECLADO */
+.calculator .keypad {
+    background: #dcdcdc;
+    border-radius: 20px;
+    padding: 6px; /* CAMBIO: Un poco menos de borde */
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 5px; /* CAMBIO: Huecos más cerrados */
+    box-shadow: var(--inner-shadow);
+    
+    /* SOLUCIÓN AL DESBORDE: */
+    height: auto; /* Quitamos los 85px fijos */
+    flex-grow: 1; /* Que ocupe el espacio que sobre */
+    margin-top: 0px; /* Separación justa con la pantalla */
+}
+
+/* ANIMACIÓN DE LOS BOTONES */
+@keyframes deepPress {
+    0%, 100% { transform: translateY(0); box-shadow: 0 3px 0 var(--btn-edge); }
+    50% { transform: translateY(3px); box-shadow: 0 0px 0 var(--btn-edge); }
+}
+
+.calculator .btn {
+    background: var(--btn-face);
+    border-radius: 50%;
+    aspect-ratio: 1/1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #333;
+    font-size: 14px;
+    font-weight: bold;
+    box-shadow: 0 3px 0 var(--btn-edge);
+    animation: deepPress 4s infinite ease-in-out;
+    border: 1px solid rgba(255,255,255,0.2);
+    cursor: default;
+}
+
+.calculator .btn-equal {
+    grid-column: 3;
+    grid-row: 1 / span 2;
+    aspect-ratio: auto;
+    border-radius: 55px;
+    height: 100%;
+}
+
+/* Sincronización de botones */
+.calculator .btn:nth-child(1) { animation-delay: 0.1s; }
+.calculator .btn:nth-child(2) { animation-delay: 0.8s; }
+.calculator .btn:nth-child(3) { animation-delay: 2.2s; }
+.calculator .btn:nth-child(4) { animation-delay: 1.4s; }
+.calculator .btn:nth-child(5) { animation-delay: 0.5s; }
+
+
+
+
     </style>
 </head>
 <body>
@@ -1526,17 +1840,74 @@ body[data-theme="dark"] .card:hover {
             </section>
 
             <section class="section-grid reveal-on-scroll">
-                <div class="card">
-                    <i data-lucide="calculator" size="40"></i>
-                    <h3>Calculadoras</h3>
-                    <p>Resolución paso a paso de ecuaciones, derivadas e integrales.</p>
+             
+           
+          
+         <div class="card reveal-on-scroll">
+    <div class="anim-scale-wrapper">
+        
+        <div class="calculator">
+            <div class="screen-container">
+                <div class="screen">
+                    <div class="equation-container">
+                        <span class="symbol sqrt-sym">√</span>
+                        <span class="symbol">(</span>
+                        <span class="symbol" style="font-style: italic;">x</span>
+                        <span class="symbol sup">2</span>
+                        <span class="symbol">)</span>
+                        <span class="symbol">=</span>
+                        <span class="symbol">1</span>
+                    </div>
                 </div>
-                <div class="card">
-                    <i data-lucide="activity" size="40"></i>
-                    <h3>Graficadoras</h3>
-                    <p>Visualiza funciones en 2D y 3D con alta precisión.</p>
-                </div>
+            </div>
+            
+            <div class="keypad">
+                <div class="btn">+</div>
+                <div class="btn">-</div>
+                <div class="btn btn-equal">=</div>
+                <div class="btn">×</div>
+                <div class="btn">÷</div>
+            </div>
+        </div>
+        </div>
+    <h3>Calculadoras</h3>
+    <p>Resuelve operaciones complejas paso a paso con nuestras calculadoras especializadas.</p>
+</div>
+
+
+
                
+               <div class="card">
+    <div class="anim-scale-wrapper">
+        <div class="graph-icon">
+            
+            <div class="screen-container">
+                <div class="screen">
+                    <div class="grid-bg"></div>
+                    <div class="wave-container">
+                     
+           <svg viewBox="0 0 160 65">
+    <path class="morphing-line" d="M 25,10 Q 70,60 115,10" />
+</svg>
+                    
+                    </div>
+                </div>
+            </div>
+            
+            <div class="controls">
+                <div class="btn-mini">Y=</div>
+                <div class="btn-mini">WIN</div>
+                <div class="btn-mini">GRPH</div>
+            </div>
+
+        </div>
+    </div>
+
+    <h3>Graficadoras</h3>
+    <p>Visualización de funciones y análisis de datos en el plano.</p>
+</div>
+
+
                
                <div class="card">
     <div class="anim-scale-wrapper">
