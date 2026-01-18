@@ -317,35 +317,98 @@ a:hover {
 }
 
 
+/* --- GRID SECTIONS (Estilo Premium Renovado) --- */
+.section-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 2rem;
+    margin-top: 4rem;
+    padding: 0 1rem;
+}
 
-        /* --- GRID SECTIONS --- */
-        .section-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 2rem;
-            margin-top: 3rem;
-        }
+.card {
+    background: #f9f9f9; /* Gris interno (Input) */
+    
 
-        .card {
-            border: 1px solid var(--border-color);
-            padding: 2rem;
-            border-radius: 16px;
-            transition: var(--transition);
-            cursor: pointer;
-            position: relative;
-            overflow: hidden;
-        }
+    
+    /* MAGIA DE SOMBRAS (Doble capa) */
+    box-shadow: 
+        inset 0 2px 5px rgba(0,0,0,0.05),  /* 1. Profundidad interna */
+        0 10px 20px rgba(0,0,0,0.08);      /* 2. Sombra externa que acompaña al borde */
 
-        .card:hover {
-            background: var(--text-color);
-            color: var(--bg-color);
-            transform: scale(1.02);
-        }
+    /* Estilos base (Centrado y forma) */
+    padding: 3rem 2rem;
+    border-radius: 40px; /* Borde muy redondeado */
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+}
 
-        .card h3 {
-            font-size: 1.8rem;
-            margin-bottom: 1rem;
-        }
+.card i, .card svg {
+    margin-bottom: 1.5rem;
+    transition: transform 0.4s ease;
+    width: 48px;  /* Tamaño de icono fijo */
+    height: 48px;
+    stroke-width: 1.5px;
+}
+
+.card h3 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.8rem;
+    margin-bottom: 1rem;
+    font-weight: 700;
+}
+
+.card p {
+    font-family: 'Open Sans', sans-serif;
+    font-size: 0.95rem;
+    opacity: 0.8;
+    line-height: 1.6;
+}
+
+/* --- EFECTO HOVER (INVERSIÓN DE COLOR) --- */
+.card:hover {
+    transform: translateY(-8px) scale(1.02);
+    box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+}
+
+/* MODO DÍA: Al pasar el mouse se vuelve NEGRO */
+body[data-theme="light"] .card:hover {
+    background: #1a1a1a;
+    color: #ffffff;
+}
+
+/* MODO NOCHE: Al pasar el mouse se vuelve BLANCO */
+body[data-theme="dark"] .card:hover {
+    background: #ffffff;
+    color: #000000;
+}
+
+.card:hover i, .card:hover svg {
+    transform: scale(1.2) rotate(5deg); /* Pequeña animación divertida al icono */
+}
+
+/* --- AJUSTES ESPECÍFICOS PARA MODO NOCHE (Estado Normal) --- */
+[data-theme="dark"] .card {
+    background: #1e1e1e; /* Gris oscuro para las tarjetas en reposo */
+    box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+}
+
+/* Ajuste opcional para móviles */
+@media (max-width: 768px) {
+    .section-grid {
+        grid-template-columns: 1fr; /* Una sola columna en celular */
+        gap: 1.5rem;
+    }
+    .card {
+        padding: 2.5rem 1.5rem;
+    }
+}
+        
 
        /* --- ESTILOS EXACTOS DEL FORMULARIO --- */
 .wrapper-feedback {
