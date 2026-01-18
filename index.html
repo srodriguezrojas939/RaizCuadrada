@@ -1826,6 +1826,98 @@ body[data-theme="dark"] .card:hover {
     -events: none; /* Ignora el mouse para que la tarjeta detecte el hover */
 }
 
+        /* --- ESTILOS DEL MENÚ LATERAL (CORREGIDO) --- */
+
+/* Contenedor del grupo (para que no afecte el flujo) */
+.nav-group {
+    width: 100%;
+    display: block;
+}
+
+/* El botón principal (Calculadoras, Herramientas...) */
+.nav-item.has-submenu {
+    display: flex;
+    align-items: center;
+    justify-content: space-between; /* Flecha a la esquina derecha */
+    width: 100%;
+    padding: 12px 24px; /* Mismo padding que tus otros enlaces */
+    cursor: pointer;
+    box-sizing: border-box;
+    color: var(--text-color);
+    font-family: inherit; /* Hereda la fuente exacta del sitio */
+    font-size: 1rem;      /* Tamaño estándar */
+    font-weight: 500;     /* Mismo peso que el resto */
+    transition: background-color 0.2s ease;
+}
+
+.nav-item.has-submenu:hover {
+    background-color: var(--accent-grey);
+}
+
+/* Contenedor de texto + icono izquierdo para mantenerlos juntos */
+.nav-text-container {
+    display: flex;
+    align-items: center;
+    gap: 12px; /* Espacio entre icono carpeta y texto */
+}
+
+/* La flecha derecha */
+.arrow-icon {
+    width: 16px;
+    height: 16px;
+    opacity: 0.5;
+    transition: transform 0.3s ease;
+}
+
+/* Rotación de la flecha */
+.nav-group.active .arrow-icon {
+    transform: rotate(180deg);
+    opacity: 1;
+}
+
+/* El Submenú */
+.submenu {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    background: transparent;
+    width: 100%;
+}
+
+/* Los enlaces del submenú (Hijos) */
+.submenu a {
+    display: flex;       /* Para alinear icono y texto */
+    align-items: center;
+    gap: 10px;           /* Espacio entre icono pequeño y texto */
+    
+    padding: 10px 24px 10px 52px; /* 52px a la izquierda para indentar bajo el texto padre */
+    text-decoration: none;
+    color: var(--text-color);
+    font-size: 0.9em;    /* Ligeramente más pequeño */
+    opacity: 0.75;
+    transition: all 0.2s ease;
+    border-left: 2px solid transparent; /* Borde invisible para hover */
+}
+
+.submenu a:hover {
+    color: var(--text-color);
+    opacity: 1;
+    background: rgba(0,0,0,0.03);
+}
+
+/* Iconos pequeños del submenú */
+.sub-icon {
+    width: 14px;  /* Más pequeños que los principales */
+    height: 14px;
+    opacity: 0.8;
+}
+
+/* Ajuste Dark Mode */
+[data-theme="dark"] .submenu a:hover {
+    background: rgba(255,255,255,0.05);
+}
+
+        
 
     </style>
 </head>
@@ -1849,14 +1941,70 @@ body[data-theme="dark"] .card:hover {
 
             <nav>
                 <ul class="nav-links">
-                    <li><a href="#"><i data-lucide="home"></i> Página Principal</a></li>
-                    <li><a href="#"><i data-lucide="book-open"></i> CURSOS</a></li>
-                    <li><a href="#"><i data-lucide="calculator"></i> CALCULADORAS</a></li>
-                    <li><a href="#"><i data-lucide="wrench"></i> HERRAMIENTAS</a></li>
-                    <li><a href="#"><i data-lucide="activity"></i> GRAFICADORAS</a></li>
-                    <li><a href="#"><i data-lucide="file-text"></i> TABLAS DE FORMULAS</a></li>
-                    <li><a href="#"><i data-lucide="youtube"></i> Canal de YouTube</a></li>
-                    <li><a href="#"><i data-lucide="user"></i> Sobre el autor</a></li>
+                    <li><a href="index.html"><i data-lucide="home"></i> Página Principal</a></li>
+
+                    
+                    <div class="nav-group">
+    <div class="nav-item has-submenu" onclick="toggleSubmenu(this)">
+        <div class="nav-text-container">
+            <i data-lucide="calculator"></i>
+            <span>CALCULADORA</span>
+        </div>
+        <i data-lucide="chevron-down" class="arrow-icon"></i>
+    </div>
+    
+    <div class="submenu">
+        <a href="ecuaciones.html"><i data-lucide="equal" class="sub-icon"></i> Ecuaciones</a>
+        <a href="sistemas.html"><i data-lucide="layers" class="sub-icon"></i> Sistemas Ecuaciones</a>
+        <a href="matrices.html"><i data-lucide="grid-3x3" class="sub-icon"></i> Matrices</a>
+        <a href="derivadas.html"><i data-lucide="trending-up" class="sub-icon"></i> Derivadas</a>
+        <a href="integrales.html"><i data-lucide="sigma" class="sub-icon"></i> Integrales</a>
+        <a href="laplace.html"><i data-lucide="waves" class="sub-icon"></i> Transf. Laplace</a>
+    </div>
+</div>
+
+<div class="nav-group">
+    <div class="nav-item has-submenu" onclick="toggleSubmenu(this)">
+        <div class="nav-text-container">
+            <i data-lucide="ruler"></i>
+            <span>HERRAMIENTAS</span>
+        </div>
+        <i data-lucide="chevron-down" class="arrow-icon"></i>
+    </div>
+    
+    <div class="submenu">
+        <a href="simbolos.html"><i data-lucide="omega" class="sub-icon"></i> Símbolos</a>
+        <a href="factorizar.html"><i data-lucide="divide" class="sub-icon"></i> Factorizadora</a>
+        <a href="fraccionesparciales.html"><i data-lucide="percent" class="sub-icon"></i> Fracciones Parciales</a>
+        <a href="#">triangulos.html<i data-lucide="triangle" class="sub-icon"></i> Calc. Triángulos</a>
+        <a href="#">vectores.html<i data-lucide="move-diagonal" class="sub-icon"></i> Vectores</a>
+        <a href="#">circulounitario.html<i data-lucide="circle" class="sub-icon"></i> Círculo Unitario</a>
+        <a href="#">editor.html<i data-lucide="edit-3" class="sub-icon"></i> Editor Expresiones</a>
+    </div>
+</div>
+
+<div class="nav-group">
+    <div class="nav-item has-submenu" onclick="toggleSubmenu(this)">
+        <div class="nav-text-container">
+            <i data-lucide="activity"></i>
+            <span>GRAFICADORAS</span>
+        </div>
+        <i data-lucide="chevron-down" class="arrow-icon"></i>
+    </div>
+    
+    <div class="submenu">
+        <a href="graficadora2d.html"><i data-lucide="line-chart" class="sub-icon"></i> Funciones 2D</a>
+        <a href="graficadora3d.html"><i data-lucide="box" class="sub-icon"></i> Graficadora 3D</a>
+        <a href="conicas.html"><i data-lucide="orbit" class="sub-icon"></i> Cónicas</a>
+        <a href="campos.html"><i data-lucide="wind" class="sub-icon"></i> Campos Vectoriales</a>
+    </div>
+</div>
+
+                    
+                    <li><a href="cursos.html"><i data-lucide="book-open"></i> CURSOS</a></li>
+                    <li><a href="formularios.html"><i data-lucide="file-text"></i> TABLAS DE FORMULAS</a></li>
+                    <li><a href="youtube.html"><i data-lucide="youtube"></i> Canal de YouTube</a></li>
+                    <li><a href="autor.html"><i data-lucide="user"></i> Sobre el autor</a></li>
                 </ul>
             </nav>
         </aside>
@@ -2329,10 +2477,33 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Cambiar cada 2.5 segundos
     setInterval(rotateWords, 2500);
-    
+ 
     // Inicializar iconos de Lucide (por si acaso)
     lucide.createIcons();
 });
+
+            // Función para desplegar el menú lateral
+function toggleSubmenu(element) {
+    const parent = element.parentElement; // El div .nav-group
+    const submenu = parent.querySelector('.submenu');
+    
+    // Si ya está abierto, lo cerramos
+    if (parent.classList.contains('active')) {
+        parent.classList.remove('active');
+        submenu.style.maxHeight = null;
+    } else {
+        // Opcional: Cerrar otros menús abiertos para que solo haya uno a la vez
+        document.querySelectorAll('.nav-group.active').forEach(item => {
+            item.classList.remove('active');
+            item.querySelector('.submenu').style.maxHeight = null;
+        });
+
+        // Abrimos el actual
+        parent.classList.add('active');
+        submenu.style.maxHeight = submenu.scrollHeight + "px";
+    }
+}
+    
 
     </script>
 </body>
