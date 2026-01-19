@@ -1,134 +1,499 @@
-/* --- ARCHIVO: styles.css --- */
+ :root {
+            /* Paleta de colores Estricta */
+            --bg-color: #ffffff;
+            --text-color: #000000;
+            --accent-grey: #f4f4f4;
+            --border-color: #e0e0e0;
+            --sidebar-width: 280px;
+            --transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        }
 
-/* 1. VARIABLES GLOBALES (Fuente, Colores) */
-:root {
-    --bg-color: #ffffff;
-    --text-color: #000000;
-    --accent-grey: #f4f4f4;
-    --border-color: #e0e0e0;
-    --sidebar-width: 280px;
-    --transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-    --font-main: 'Open Sans', sans-serif;
-    --font-display: 'Playfair Display', serif;
+        [data-theme="dark"] {
+            --bg-color: #0a0a0a;
+            --text-color: #ffffff;
+            --accent-grey: #1a1a1a;
+            --border-color: #333333;
+        }
+        
+        a {
+    text-decoration: none; /* Elimina la línea azul/subrayado por defecto */
+    color: inherit;        /* Obliga al link a usar el color del texto que lo rodea */
+    transition: var(--transition); /* Mantiene las animaciones suaves */
 }
 
-/* 2. MODO OSCURO */
-[data-theme="dark"] {
-    --bg-color: #0a0a0a;
-    --text-color: #ffffff;
-    --accent-grey: #1a1a1a;
-    --border-color: #333333;
+a:hover {
+    text-decoration: none; /* Asegura que no aparezca al pasar el mouse */
+    color: inherit;
 }
 
-/* 3. RESETEO BÁSICO */
-body {
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Open Sans', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            transition: var(--transition);
+            overflow-x: hidden;
+        }
+
+        h1, h2, h3 {
+            font-family: 'Playfair Display', serif;
+        }
+
+        /* --- LAYOUT --- */
+        .wrapper {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* --- SIDEBAR / NAV --- */
+        .sidebar {
+            width: var(--sidebar-width);
+            height: 100vh;
+            position: fixed;
+            left: 0;
+            top: 0;
+            background: var(--bg-color);
+            border-right: 1px solid var(--border-color);
+            padding: 2rem;
+            display: flex;
+            flex-direction: column;
+            z-index: 1000;
+            transition: var(--transition);
+        }
+
+        .nav-header {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .icon-btn {
+            background: var(--accent-grey);
+            border: none;
+            padding: 10px;
+            border-radius: 12px;
+            cursor: pointer;
+            color: var(--text-color);
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .icon-btn:hover {
+            transform: translateY(-3px);
+            background: var(--text-color);
+            color: var(--bg-color);
+        }
+
+        .nav-links {
+            list-style: none;
+        }
+
+        .nav-links li {
+            margin-bottom: 0.2rem;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: var(--text-color);
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 12px;
+            border-radius: 8px;
+            font-weight: 600;
+            transition: var(--transition);
+        }
+
+        .nav-links a:hover {
+            background: var(--accent-grey);
+            padding-left: 20px;
+        }
+
+        /* --- MAIN CONTENT --- */
+        .content {
+            flex: 1;
+            margin-left: var(--sidebar-width);
+            padding: 4rem;
+            max-width: 1400px;
+        }
+
+   
+
+
+        /* --- MOBILE ADAPTATION --- */
+        .mobile-header {
+            display: none;
+            position: fixed;
+            top: 0;
+            width: 100%;
+            background: var(--bg-color);
+            padding: 1rem;
+            z-index: 1001;
+            border-bottom: 1px solid var(--border-color);
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        @keyframes reveal {
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @media (max-width: 1024px) {
+            .sidebar {
+                transform: translateY(-100%);
+                width: 100%;
+                height: auto;
+                border-right: none;
+                border-bottom: 1px solid var(--border-color);
+                padding-top: 5rem;
+            }
+
+            .sidebar.active {
+                transform: translateY(0);
+            }
+
+            .content {
+                margin-left: 0;
+                padding: 2rem;
+                padding-top: 6rem;
+            }
+
+            .mobile-header {
+                display: flex;
+            }
+
+            .nav-header {
+                display: none; /* In sidebar on mobile */
+            }
+        }
+
+        /* Animación de entrada para los elementos al hacer scroll */
+        .reveal-on-scroll {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.8s ease-out;
+        }
+
+        .reveal-on-scroll.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
+        
+    
+
+/* --- ESTILOS DEL FOOTER MEJORADO --- */
+.footer-global {
     background-color: var(--bg-color);
-    color: var(--text-color);
-    font-family: var(--font-main);
-    margin: 0;
-    transition: background-color 0.4s ease, color 0.4s ease;
-    display: flex; /* Necesario para el layout Sidebar + Contenido */
+    border-top: 1px solid var(--border-color);
+    padding: 60px 0;
+    margin-top: 100px;
+    width: 100%;
 }
 
-/* 4. SIDEBAR (PANEL LATERAL) - IDÉNTICO EN TODAS LAS PÁGINAS */
-#sidebar {
-    width: var(--sidebar-width);
-    height: 100vh;
-    border-right: 1px solid var(--border-color);
-    position: fixed;
-    top: 0;
-    left: 0;
-    background: var(--bg-color);
-    padding: 2rem;
-    box-sizing: border-box;
-    overflow-y: auto;
-    z-index: 100;
-    transition: transform 0.3s ease;
-}
-
-/* Elementos del Sidebar */
-.brand {
-    font-family: var(--font-display);
-    font-size: 1.5rem;
-    font-weight: 700;
-    margin-bottom: 2.5rem;
-    display: block;
-    text-decoration: none;
-    color: var(--text-color);
-}
-
-.nav-item {
+.footer-wrapper {
     display: flex;
-    align-items: center;
-    gap: 12px;
-    padding: 12px 0;
-    color: var(--text-color);
-    text-decoration: none;
-    opacity: 0.6;
-    transition: opacity 0.3s;
-    cursor: pointer;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+    width: 100%;
+    max-width: 1400px;
+    margin: 0 auto;
 }
 
-.nav-item:hover, .nav-item.active {
+.footer-section {
+    flex: 0 0 100%; /* Una sección por pantalla en móvil */
+    scroll-snap-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 20px;
+}
+
+/* Tipografía */
+.footer-h4 {
+    font-family: 'Playfair Display', serif;
+    font-size: 20px;
+    letter-spacing: 2px;
+    color: var(--text-color);
+    margin-bottom: 20px;
+    opacity: 0.6;
+}
+
+.footer-title {
+    font-family: 'Playfair Display', serif;
+    font-weight: 900;
+    font-size: clamp(28px, 5vw, 42px);
+    color: var(--text-color);
+    transition: var(--transition);
+}
+
+.footer-title:hover {
+    transform: scale(1.05);
+}
+
+.footer-email {
+    font-family: 'Open Sans', sans-serif;
+    color: var(--text-color);
+    text-decoration: none;
+    font-weight: 600;
+    margin-bottom: 25px;
+    border-bottom: 1px solid transparent;
+    transition: var(--transition);
+}
+
+.footer-email:hover {
+    border-bottom-color: var(--text-color);
+}
+
+/* Iconos Sociales Lucide */
+.footer-socials {
+    display: flex;
+    gap: 25px;
+}
+
+.footer-socials a {
+    color: var(--text-color);
+    transition: var(--transition);
+    opacity: 0.7;
+}
+
+.footer-socials a:hover {
+    opacity: 1;
+    transform: translateY(-5px);
+}
+
+.visitor-counter img {
+    filter: grayscale(1); /* Lo hace gris para que no rompa el diseño */
+    opacity: 0.8;
+    transition: 0.3s;
+}
+
+.visitor-counter img:hover {
+    filter: grayscale(0); /* Al pasar el mouse vuelve el color */
     opacity: 1;
 }
 
-/* Submenús (Acordeón) */
-.nav-group { margin-bottom: 5px; }
-.nav-item.has-submenu { justify-content: space-between; }
-.submenu {
-    max-height: 0;
-    overflow: hidden;
-    transition: max-height 0.4s ease;
-    margin-left: 10px;
-    border-left: 1px solid var(--border-color);
-}
-.submenu a {
-    display: block;
-    padding: 8px 15px;
-    text-decoration: none;
-    color: var(--text-color);
-    font-size: 0.9em;
-    opacity: 0.7;
-}
-.submenu a:hover { opacity: 1; }
-.nav-group.active .arrow-icon { transform: rotate(180deg); }
+/* Scrollbar minimalista */
+.footer-wrapper::-webkit-scrollbar { height: 3px; }
+.footer-wrapper::-webkit-scrollbar-thumb { background: var(--border-color); border-radius: 10px; }
 
-/* 5. CONTENIDO PRINCIPAL */
-main {
-    margin-left: var(--sidebar-width); /* Deja espacio al sidebar */
-    width: calc(100% - var(--sidebar-width));
-    padding: 4rem 10%; /* Márgenes internos */
-    box-sizing: border-box;
-    min-height: 100vh;
+/* AJUSTE PARA PC */
+@media (min-width: 850px) {
+    .footer-wrapper {
+        overflow-x: hidden;
+        justify-content: space-around;
+        gap: 40px;
+    }
+    .footer-section {
+        flex: 1;
+    }
 }
 
-/* 6. BOTÓN TEMA MÓVIL (FLOTANTE) */
+/* --- BOTÓN FLOTANTE MÓVIL --- */
 .mobile-theme-toggle {
+    display: none; /* Oculto por defecto en PC */
     position: fixed;
-    bottom: 20px;
-    right: 20px;
+    bottom: 25px;
+    right: 25px;
     width: 50px;
     height: 50px;
     border-radius: 50%;
-    background: var(--bg-color);
-    border: 1px solid var(--border-color);
-    display: flex;
+    z-index: 9999;
+    border: none;
+    cursor: pointer;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.2);
     align-items: center;
     justify-content: center;
+    transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+/* Solo mostrar en pantallas pequeñas (Celulares/Tablets) */
+@media (max-width: 900px) {
+    .mobile-theme-toggle {
+        display: flex;
+        animation: popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) 1s forwards;
+        opacity: 0;
+        transform: scale(0);
+    }
+    @keyframes popIn { to { opacity: 1; transform: scale(1); } }
+}
+
+/* INTERACCIÓN AL TOCAR */
+.mobile-theme-toggle:active { transform: scale(0.9); }
+
+/* --- COLORES Y LÓGICA DE ICONOS --- */
+
+/* MODO DÍA (Por defecto) */
+.mobile-theme-toggle {
+    background: #1a1a1a; /* Botón Negro */
+    color: #ffffff;      /* Icono Blanco */
+}
+.mobile-theme-toggle .icon-moon { display: block; }
+.mobile-theme-toggle .icon-sun { display: none; }
+
+/* MODO NOCHE (Cuando se activa) */
+[data-theme="dark"] .mobile-theme-toggle {
+    background: #ffffff; /* Botón Blanco */
+    color: #1a1a1a;      /* Icono Negro */
+    box-shadow: 0 0 20px rgba(255,255,255,0.3); /* Resplandor blanco */
+}
+[data-theme="dark"] .mobile-theme-toggle .icon-moon { display: none; }
+[data-theme="dark"] .mobile-theme-toggle .icon-sun { display: block; }
+
+
+
+
+        /* --- ESTILOS DEL MENÚ LATERAL (CORREGIDO) --- */
+
+/* Contenedor del grupo (para que no afecte el flujo) */
+.nav-group {
+    width: 100%;
+    display: block;
+}
+
+/* El botón principal (Calculadoras, Herramientas...) */
+.nav-item.has-submenu {
+    display: flex;
+    align-items: center;
+    justify-content: space-between; /* Flecha a la esquina derecha */
+    width: 100%;
+    padding: 18px 12px; /* Mismo padding que tus otros enlaces */
     cursor: pointer;
-    z-index: 1000;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    box-sizing: border-box;
+    color: var(--text-color);
+    font-family: inherit; /* Hereda la fuente exacta del sitio */
+    font-size: 1rem;      /* Tamaño estándar */
+    font-weight: 700;     /* Mismo peso que el resto */
+    transition: background-color 0.2s ease;
 }
 
-/* Iconos de Sol/Luna */
-.icon-sun, .icon-moon { position: absolute; transition: all 0.5s ease; }
-[data-theme="dark"] .icon-sun { opacity: 0; transform: rotate(90deg) scale(0.5); }
-[data-theme="light"] .icon-moon { opacity: 0; transform: rotate(-90deg) scale(0.5); }
-
-/* --- RESPONSIVE (MÓVIL) --- */
-@media (max-width: 768px) {
-    #sidebar { transform: translateX(-100%); } /* Ocultar sidebar */
-    #sidebar.active { transform: translateX(0); } /* Mostrar al activar */
-    main { margin-left: 0; width: 100%; padding: 2rem 5%; }
+.nav-item.has-submenu:hover {
+    background-color: var(--accent-grey);
 }
+
+/* Contenedor de texto + icono izquierdo para mantenerlos juntos */
+.nav-text-container {
+    display: flex;
+    align-items: center;
+    gap: 12px; /* Espacio entre icono carpeta y texto */
+}
+
+/* La flecha derecha */
+.arrow-icon {
+    width: 16px;
+    height: 16px;
+    opacity: 0.5;
+    transition: transform 0.3s ease;
+}
+
+/* Rotación de la flecha */
+.nav-group.active .arrow-icon {
+    transform: rotate(180deg);
+    opacity: 1;
+}
+
+/* El Submenú */
+.submenu {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    background: transparent;
+    width: 100%;
+}
+
+/* Los enlaces del submenú (Hijos) */
+.submenu a {
+    display: flex;       /* Para alinear icono y texto */
+    align-items: center;
+    gap: 10px;           /* Espacio entre icono pequeño y texto */
+    
+    padding: 10px 24px 10px 52px; /* 52px a la izquierda para indentar bajo el texto padre */
+    text-decoration: none;
+    color: var(--text-color);
+    font-size: 0.9em;    /* Ligeramente más pequeño */
+    opacity: 0.75;
+    transition: all 0.2s ease;
+    border-left: 2px solid transparent; /* Borde invisible para hover */
+}
+
+.submenu a:hover {
+    color: var(--text-color);
+    opacity: 1;
+    background: rgba(0,0,0,0.03);
+}
+
+/* Iconos pequeños del submenú */
+.sub-icon {
+    width: 14px;  /* Más pequeños que los principales */
+    height: 14px;
+    opacity: 0.8;
+}
+
+/* Ajuste Dark Mode */
+[data-theme="dark"] .submenu a:hover {
+    background: rgba(255,255,255,0.05);
+}
+
+/* --- SCROLL DEL SIDEBAR --- */
+
+#sidebar {
+    /* 1. Habilitar el scroll vertical */
+    overflow-y: auto;
+    
+    /* 2. Asegurar que ocupe toda la altura */
+    height: 100vh;
+    
+    /* 3. Comportamiento suave */
+    scroll-behavior: smooth;
+    
+    /* Opcional: Para Firefox */
+    scrollbar-width: thin;
+    scrollbar-color: rgba(0,0,0,0.2) transparent;
+}
+
+/* --- ESTILIZAR LA BARRA (Chrome, Edge, Safari) --- */
+
+/* Ancho de la barra */
+#sidebar::-webkit-scrollbar {
+    width: 5px; /* Muy delgada y elegante */
+}
+
+/* El carril (fondo de la barra) - Transparente */
+#sidebar::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+/* El pulgar (lo que se mueve) */
+#sidebar::-webkit-scrollbar-thumb {
+    background-color: rgba(0, 0, 0, 0.1); /* Gris muy suave */
+    border-radius: 10px; /* Redondito */
+}
+
+/* Hover: Se oscurece un poco al tocarlo */
+#sidebar::-webkit-scrollbar-thumb:hover {
+    background-color: rgba(0, 0, 0, 0.3);
+}
+
+/* --- ADAPTACIÓN AL MODO OSCURO --- */
+[data-theme="dark"] #sidebar {
+    scrollbar-color: rgba(255,255,255,0.2) transparent;
+}
+
+[data-theme="dark"] #sidebar::-webkit-scrollbar-thumb {
+    background-color: rgba(255, 255, 255, 0.15);
+}
+
+[data-theme="dark"] #sidebar::-webkit-scrollbar-thumb:hover {
+    background-color: rgba(255, 255, 255, 0.3);
+}
+        
