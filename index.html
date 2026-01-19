@@ -1917,6 +1917,59 @@ body[data-theme="dark"] .card:hover {
     background: rgba(255,255,255,0.05);
 }
 
+        /* --- SCROLL DEL SIDEBAR --- */
+
+#sidebar {
+    /* 1. Habilitar el scroll vertical */
+    overflow-y: auto;
+    
+    /* 2. Asegurar que ocupe toda la altura */
+    height: 100vh;
+    
+    /* 3. Comportamiento suave */
+    scroll-behavior: smooth;
+    
+    /* Opcional: Para Firefox */
+    scrollbar-width: thin;
+    scrollbar-color: rgba(0,0,0,0.2) transparent;
+}
+
+/* --- ESTILIZAR LA BARRA (Chrome, Edge, Safari) --- */
+
+/* Ancho de la barra */
+#sidebar::-webkit-scrollbar {
+    width: 5px; /* Muy delgada y elegante */
+}
+
+/* El carril (fondo de la barra) - Transparente */
+#sidebar::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+/* El pulgar (lo que se mueve) */
+#sidebar::-webkit-scrollbar-thumb {
+    background-color: rgba(0, 0, 0, 0.1); /* Gris muy suave */
+    border-radius: 10px; /* Redondito */
+}
+
+/* Hover: Se oscurece un poco al tocarlo */
+#sidebar::-webkit-scrollbar-thumb:hover {
+    background-color: rgba(0, 0, 0, 0.3);
+}
+
+/* --- ADAPTACIÓN AL MODO OSCURO --- */
+[data-theme="dark"] #sidebar {
+    scrollbar-color: rgba(255,255,255,0.2) transparent;
+}
+
+[data-theme="dark"] #sidebar::-webkit-scrollbar-thumb {
+    background-color: rgba(255, 255, 255, 0.15);
+}
+
+[data-theme="dark"] #sidebar::-webkit-scrollbar-thumb:hover {
+    background-color: rgba(255, 255, 255, 0.3);
+}
+
         
 
     </style>
