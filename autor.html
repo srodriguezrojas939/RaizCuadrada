@@ -1,1 +1,82 @@
 
+<!DOCTYPE html>
+<html lang="es" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>√(Raiz) Cuadrada²</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600&family=Playfair+Display:ital,wght@0,700;1,700&display=swap" rel="stylesheet">
+    
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <link rel="stylesheet" href="styles.css"> 
+</head>
+<body>
+
+    <nav id="sidebar">
+        <a href="index.html" class="brand">
+            √(Raiz)<br>Cuadrada<span style="font-size:0.6em; vertical-align: super;">2</span>
+        </a>
+
+        <a href="index.html" class="nav-item">
+            <i data-lucide="home"></i> Inicio
+        </a>
+        <a href="blog.html" class="nav-item">
+            <i data-lucide="book-open"></i> Blog
+        </a>
+
+        <div class="nav-group">
+            <div class="nav-item has-submenu" onclick="toggleSubmenu(this)">
+                <span style="display:flex; gap:12px; align-items:center;">
+                    <i data-lucide="calculator"></i> Calculadoras
+                </span>
+                <i data-lucide="chevron-down" class="arrow-icon"></i>
+            </div>
+            <div class="submenu">
+                <a href="calculadoras/ecuaciones.html">Ecuaciones</a>
+                <a href="calculadoras/matrices.html">Matrices</a>
+                <a href="calculadoras/derivadas.html">Derivadas</a>
+            </div>
+        </div>
+        
+        <div class="nav-group">
+            <div class="nav-item has-submenu" onclick="toggleSubmenu(this)">
+                <span style="display:flex; gap:12px; align-items:center;">
+                    <i data-lucide="ruler"></i> Herramientas
+                </span>
+                <i data-lucide="chevron-down" class="arrow-icon"></i>
+            </div>
+            <div class="submenu">
+                <a href="herramientas/simbolos.html">Símbolos</a>
+                <a href="herramientas/graficadora.html">Graficadora</a>
+            </div>
+        </div>
+
+        <div style="margin-top: auto; padding-top: 2rem; border-top: 1px solid var(--border-color);">
+            <a href="cuenta.html" class="nav-item"><i data-lucide="user"></i> Mi Cuenta</a>
+            <a href="ajustes.html" class="nav-item"><i data-lucide="settings"></i> Ajustes</a>
+        </div>
+    </nav>
+    <main>
+        
+        <h1>Título de esta página</h1>
+        <p>Contenido...</p>
+
+        <footer style="margin-top: 4rem; padding-top: 2rem; border-top: 1px solid var(--border-color); opacity: 0.6; font-size: 0.9em;">
+            <p>&copy; 2024 Raiz Cuadrada. Todos los derechos reservados.</p>
+        </footer>
+
+    </main>
+
+    <button class="mobile-theme-toggle" onclick="toggleTheme()" aria-label="Cambiar tema">
+        <i data-lucide="sun" class="icon-sun"></i>
+        <i data-lucide="moon" class="icon-moon"></i>
+    </button>
+
+    <script src="script.js"></script>
+
+</body>
+</html>
