@@ -57,14 +57,26 @@
     /* --- CABECERA --- */
     .header-section { text-align: center; margin-bottom: 35px; }
     
+     
     .header-section h1 { 
         font-family: 'Playfair Display', serif; 
-        font-size: clamp(24px, 6vw, 32px);
+        font-size: clamp(24px, 6vw, 32px); /* Responsive como title-big */
         margin: 0; 
         font-weight: 700; 
-        color: #1a1a1a;
+        color: #1a1a1a; 
         line-height: 1.1;
     }
+    
+    .header-section p { 
+        font-family: 'Open Sans', sans-serif; 
+        font-size: 13px; 
+        margin: 10px 0 0; 
+        font-weight: 700; 
+        color: #999; 
+        text-transform: uppercase; 
+        letter-spacing: 1.5px; /* Estilo 'pregunta-pro' */
+    }
+      
 
     /* --- INPUTS, PREVIEW Y RESULTADO (ESTILO UNIFICADO) --- */
     #preview-container, #resultado {
@@ -380,7 +392,7 @@
           
 <div class="calculadora">
     <div class="header-section">
-        <h1>calculadora de integrales</h1>
+        <h1>Calculadora Integrales</h1>
         <p>√(Raiz) Cuadrada²</p>
     </div>
 
