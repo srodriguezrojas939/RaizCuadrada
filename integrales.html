@@ -1,0 +1,591 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>√(Raiz) Cuadrada² </title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600&family=Playfair+Display:ital,wght@0,700;0,900;1,700&display=swap" rel="stylesheet">
+    
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <link rel="stylesheet" href="styles.css">
+
+  
+    <script src="https://cdn.jsdelivr.net/npm/nerdamer@1.1.13/nerdamer.core.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/nerdamer@1.1.13/Algebra.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/nerdamer@1.1.13/Calculus.js"></script>
+    
+    <script>
+        window.MathJax = {
+            tex: { inlineMath: [['$', '$'], ['\\(', '\\)']], displayMath: [['$$', '$$']] },
+            options: { enableMenu: false }
+        };
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js" async></script>
+  
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700;900&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700&display=swap');
+
+    /* --- ANIMACIONES --- */
+    .calculadora {
+        animation: fadeUp 0.8s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+        opacity: 0;
+    }
+
+    @keyframes fadeUp { 
+        from { opacity: 0; transform: translateY(30px); } 
+        to { opacity: 1; transform: translateY(0); } 
+    }
+
+    /* --- CONTENEDOR PRINCIPAL (ESTILO CARD COMENTARIOS) --- */
+    .calculadora {
+        background: #ffffff;
+        padding: 40px 35px;
+        border-radius: 40px;
+        width: 100%;
+        max-width: 600px; /* Ancho idéntico al wrapper de comentarios */
+        box-shadow: 0 20px 40px rgba(0,0,0,0.08); /* Sombra exacta */
+        box-sizing: border-box;
+        font-family: 'Open Sans', sans-serif;
+        margin: 0 auto;
+    }
+
+    /* --- CABECERA --- */
+    .header-section { text-align: center; margin-bottom: 35px; }
+    
+    .header-section h1 { 
+        font-family: 'Playfair Display', serif; 
+        font-size: clamp(24px, 6vw, 32px);
+        margin: 0; 
+        font-weight: 700; 
+        color: #1a1a1a;
+        line-height: 1.1;
+    }
+
+    /* --- INPUTS, PREVIEW Y RESULTADO (ESTILO UNIFICADO) --- */
+    #preview-container, #resultado {
+        background: #f9f9f9; /* Fondo gris suave */
+        padding: 20px; 
+        border-radius: 25px; 
+        min-height: 70px; 
+        display: flex; 
+        align-items: center; 
+        justify-content: center; 
+        border: 2px solid transparent; 
+        overflow-x: auto;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.02) inset; /* Sombra interna */
+        color: #333;
+        font-size: 1.1rem;
+    }
+
+    /* Espaciado solicitado mantenido */
+    #resultado { margin-top: 30px; margin-bottom: 30px; }
+
+    /* --- LABELS --- */
+    label { 
+        display: block; 
+        font-size: 12px; 
+        font-weight: 700; 
+        margin-bottom: 10px;
+        margin-left: 15px; 
+        color: #555; 
+        text-transform: uppercase; 
+        letter-spacing: 0.5px;
+    }
+
+    /* --- CAMPOS DE TEXTO Y SELECTS --- */
+    input[type="text"], input[type="number"], select {
+        width: 100%; 
+        background: #f9f9f9; 
+        border: 2px solid transparent;
+        padding: 16px 22px; 
+        border-radius: 25px; 
+        font-family: inherit;
+        font-size: 15px; 
+        color: #333; 
+        transition: all 0.3s ease;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.02) inset;
+        margin-bottom: 25px;
+        box-sizing: border-box;
+        outline: none;
+    }
+
+    input:focus, select:focus {
+        background: white; 
+        border-color: #1a1a1a;
+        box-shadow: 0 10px 25px rgba(0,0,0,0.08); 
+        transform: translateY(-3px);
+    }
+
+    /* --- GRID PARA LÍMITES --- */
+    .row { 
+        display: grid; 
+        grid-template-columns: 1fr 1fr; 
+        gap: 15px; 
+    }
+
+    /* --- BOTONES (ESTILO PREMIUM) --- */
+    .btn-principal {
+        width: 100%; 
+        background: #1a1a1a; 
+        color: white; 
+        border: none; 
+        border-radius: 999px; /* Píldora */
+        padding: 18px 35px; 
+        font-weight: 700; 
+        font-size: 16px;
+        cursor: pointer; 
+        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        margin-bottom: 15px;
+        font-family: 'Open Sans', sans-serif;
+    }
+
+    .btn-principal:hover { 
+        transform: translateY(-3px) scale(1.02); 
+        background: #000; 
+        box-shadow: 0 8px 15px rgba(0,0,0,0.15);
+    }
+
+    .btn-secundario {
+        width: 100%; 
+        background: transparent; 
+        color: #666; 
+        border: 1px solid #e0e0e0;
+        padding: 14px; 
+        border-radius: 999px; 
+        font-size: 14px; 
+        cursor: pointer;
+        transition: 0.3s; 
+        display: flex; 
+        align-items: center; 
+        justify-content: center; 
+        gap: 10px;
+        font-weight: 600;
+    }
+    .btn-secundario:hover { background: #f4f4f4; border-color: #ccc; color: #333; }
+
+    /* --- PÍLDORAS / CHIPS (ESTILO SELECTOR) --- */
+    .pills-nav { display: flex; justify-content: center; gap: 10px; margin-top: 15px; flex-wrap: wrap; }
+    
+    .pill { 
+        background: #f4f4f4; 
+        border: 2px solid transparent; 
+        padding: 10px 18px; 
+        border-radius: 999px; 
+        font-size: 13px; 
+        cursor: pointer; 
+        transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+        font-weight: 600; 
+        color: #666; 
+        font-family: 'Open Sans', sans-serif;
+    }
+    
+    .pill.active { 
+        background: #1a1a1a; 
+        color: white; 
+        border-color: #1a1a1a;
+        box-shadow: 0 8px 15px rgba(0,0,0,0.15); 
+        transform: scale(1.05);
+    }
+    .pill:hover:not(.active) { background: #e0e0e0; }
+
+    /* --- PANEL DE SÍMBOLOS --- */
+    .symbols-container { 
+        background: #ffffff; 
+        border-radius: 30px; 
+        padding: 20px; 
+        margin-top: 20px; 
+        border: 1px solid #f0f0f0; 
+        display: none; /* Se mantiene oculto por defecto como pediste */
+        box-shadow: 0 10px 30px rgba(0,0,0,0.03);
+    }
+    
+    .symbols-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(70px, 1fr)); gap: 10px; }
+    
+    .sym-btn { 
+        background: #fff; 
+        border: 1px solid #eee; 
+        padding: 12px 5px; 
+        border-radius: 15px; 
+        text-align: center; 
+        cursor: pointer; 
+        transition: 0.2s; 
+        font-size: 14px; 
+        color: #333;
+        display: flex; 
+        flex-direction: column; 
+        align-items: center; 
+        justify-content: center;
+        font-family: 'Open Sans', sans-serif;
+    }
+    .sym-btn:hover { background: #f9f9f9; transform: translateY(-2px); border-color: #ddd; }
+    .sym-btn span { font-size: 16px; font-weight: 700; margin-bottom: 2px; }
+    .sym-btn small { font-size: 9px; text-transform: uppercase; color: #999; font-weight: 700; }
+
+    /* --- MODO OSCURO (COMPATIBILIDAD TOTAL) --- */
+    [data-theme="dark"] .calculadora {
+        background: transparent;
+        box-shadow: none;
+        border: 1px solid rgba(255,255,255,0.1);
+    }
+
+    [data-theme="dark"] .header-section h1 { color: #ffffff; }
+    [data-theme="dark"] label { color: #888; }
+
+    /* Inputs Dark Mode */
+    [data-theme="dark"] input, 
+    [data-theme="dark"] select,
+    [data-theme="dark"] #preview-container,
+    [data-theme="dark"] #resultado {
+        background: #1e1e1e; 
+        color: #ffffff; 
+        box-shadow: none;
+        border: 1px solid #333;
+    }
+    
+    [data-theme="dark"] input:focus, [data-theme="dark"] select:focus {
+        border-color: #666;
+        background: #252525;
+    }
+
+    /* Botones Dark Mode */
+    [data-theme="dark"] .btn-principal {
+        background: #ffffff;
+        color: #000000;
+        box-shadow: 0 4px 15px rgba(255,255,255,0.1);
+    }
+    [data-theme="dark"] .btn-principal:hover { background: #e0e0e0; }
+    
+    [data-theme="dark"] .btn-secundario {
+        border-color: #444;
+        color: #ccc;
+    }
+    [data-theme="dark"] .btn-secundario:hover { background: #333; color: white; }
+
+    /* Chips Dark Mode */
+    [data-theme="dark"] .pill { background: #1e1e1e; color: #ccc; border-color: transparent; }
+    [data-theme="dark"] .pill.active { background: #ffffff; color: #000; }
+
+    /* Symbols Dark Mode */
+    [data-theme="dark"] .symbols-container {
+        background: #1a1a1a;
+        border-color: #333;
+    }
+    [data-theme="dark"] .sym-btn {
+        background: #222;
+        border-color: #333;
+        color: #eee;
+    }
+    [data-theme="dark"] .sym-btn:hover { background: #333; }
+</style>
+  
+    </head>
+<body>
+
+    
+    <header class="mobile-header">
+        <div class="nav-header">
+            <button class="icon-btn"><i data-lucide="search"></i></button>
+            <button class="icon-btn" onclick="toggleTheme()"><i data-lucide="moon"></i></button>
+        </div>
+        <button class="icon-btn" onclick="toggleMenu()"><i data-lucide="menu"></i></button>
+    </header>
+
+    <div class="wrapper">
+        <aside class="sidebar" id="sidebar">
+            <div class="nav-header">
+                <button class="icon-btn" title="Buscar"><i data-lucide="search"></i></button>
+                <button class="icon-btn" title="Modo" onclick="toggleTheme()"><i id="theme-icon" data-lucide="moon"></i></button>
+                <button class="icon-btn" onclick="toggleMenu()" id="close-menu"><i data-lucide="x"></i></button>
+            </div>
+
+            <nav>
+                <ul class="nav-links">
+                    <li><a href="index.html"><i data-lucide="home"></i> Página Principal</a></li>
+
+                    
+                    <div class="nav-group">
+    <div class="nav-item has-submenu" onclick="toggleSubmenu(this)">
+        <div class="nav-text-container">
+            <i data-lucide="calculator"></i>
+            <span>CALCULADORA</span>
+        </div>
+        <i data-lucide="chevron-down" class="arrow-icon"></i>
+    </div>
+    
+    <div class="submenu">
+        <a href="ecuaciones.html"><i data-lucide="equal" class="sub-icon"></i> Ecuaciones</a>
+        <a href="sistemas.html"><i data-lucide="layers" class="sub-icon"></i> Sistemas Ecuaciones</a>
+        <a href="matrices.html"><i data-lucide="grid-3x3" class="sub-icon"></i> Matrices</a>
+        <a href="derivadas.html"><i data-lucide="trending-up" class="sub-icon"></i> Derivadas</a>
+        <a href="integrales.html"><i data-lucide="sigma" class="sub-icon"></i> Integrales</a>
+        <a href="laplace.html"><i data-lucide="waves" class="sub-icon"></i> Transf. Laplace</a>
+    </div>
+</div>
+
+<div class="nav-group">
+    <div class="nav-item has-submenu" onclick="toggleSubmenu(this)">
+        <div class="nav-text-container">
+            <i data-lucide="ruler"></i>
+            <span>HERRAMIENTAS</span>
+        </div>
+        <i data-lucide="chevron-down" class="arrow-icon"></i>
+    </div>
+    
+    <div class="submenu">
+        <a href="simbolos.html"><i data-lucide="omega" class="sub-icon"></i> Símbolos</a>
+        <a href="factorizar.html"><i data-lucide="divide" class="sub-icon"></i> Factorizadora</a>
+        <a href="fraccionesparciales.html"><i data-lucide="percent" class="sub-icon"></i> Fracciones Parciales</a>
+        <a href="triangulos.html"><i data-lucide="triangle" class="sub-icon"></i> Calc. Triángulos</a>
+        <a href="vectores.html"><i data-lucide="move-diagonal" class="sub-icon"></i> Vectores</a>
+        <a href="circulounitario.html"><i data-lucide="circle" class="sub-icon"></i> Círculo Unitario</a>
+        <a href="editor.html"><i data-lucide="edit-3" class="sub-icon"></i> Editor Expresiones</a>
+    </div>
+</div>
+
+<div class="nav-group">
+    <div class="nav-item has-submenu" onclick="toggleSubmenu(this)">
+        <div class="nav-text-container">
+            <i data-lucide="activity"></i>
+            <span>GRAFICADORAS</span>
+        </div>
+        <i data-lucide="chevron-down" class="arrow-icon"></i>
+    </div>
+    
+    <div class="submenu">
+        <a href="graficadora2d.html"><i data-lucide="line-chart" class="sub-icon"></i> Funciones 2D</a>
+        <a href="graficadora3d.html"><i data-lucide="box" class="sub-icon"></i> Graficadora 3D</a>
+        <a href="conicas.html"><i data-lucide="orbit" class="sub-icon"></i> Cónicas</a>
+        <a href="campos.html"><i data-lucide="wind" class="sub-icon"></i> Campos Vectoriales</a>
+    </div>
+</div>
+
+                    
+                    <li><a href="cursos.html"><i data-lucide="book-open"></i> CURSOS</a></li>
+                    <li><a href="formularios.html"><i data-lucide="file-text"></i> FORMULARIOS</a></li>
+                    <li><a href="youtube.html"><i data-lucide="youtube"></i> Canal de YouTube</a></li>
+                    <li><a href="autor.html"><i data-lucide="user"></i> Sobre el autor</a></li>
+                </ul>
+            </nav>
+        </aside>
+
+        <main class="content">
+            
+            
+
+          
+<div class="calculadora">
+    <div class="header-section">
+        <h1>calculadora de integrales</h1>
+        <p>√(Raiz) Cuadrada²</p>
+    </div>
+
+    <div id="preview-container"><div id="latex-preview">$$ \int (\dots) \, dx $$</div></div>
+
+    <label>función a integrar</label>
+    <input id="funcion" placeholder="Ej: x^2 + cos(x)" type="text" oninput="actualizarVistaPrevia()">
+
+    <div class="row">
+        <div><label>tipo</label><select id="tipo" onchange="toggleLimites(); actualizarVistaPrevia();"><option value="indef">Indefinida</option><option value="def">Definida</option></select></div>
+        <div><label>variable</label><select id="variable" onchange="actualizarVistaPrevia()"><option value="x">dx</option><option value="t">dt</option></select></div>
+    </div>
+
+    <div id="limites-container" class="row" style="display: none;">
+        <div><label>inferior (a)</label><input id="limA" placeholder="0" type="text" oninput="actualizarVistaPrevia()"></div>
+        <div><label>superior (b)</label><input id="limB" placeholder="pi" type="text" oninput="actualizarVistaPrevia()"></div>
+    </div>
+
+    <button onclick="calcularIntegral()" class="btn-principal">Calcular Resultado</button>
+    <button onclick="irAPasoAPaso()" class="btn-secundario">Ver paso a paso</button>
+
+    <div id="resultado">Esperando función...</div>
+
+    <div class="pills-nav" id="pillsNav">
+        <button class="pill active" onclick="showCategory('principales', this)">Principales</button>
+        <button class="pill" onclick="showCategory('trig', this)">Trigonométricas</button>
+        <button class="pill" onclick="showCategory('inv', this)">Inversas</button>
+        <button class="pill" onclick="showCategory('log', this)">Logarítmicas</button>
+    </div>
+
+    <div id="symbolsPanel" class="symbols-container" style="display: block;">
+        <div id="grid-content" class="symbols-grid"></div>
+    </div>
+</div>
+
+          
+            
+
+<footer class="footer-global">
+    <div class="footer-wrapper">
+        
+        <div class="footer-section">
+            <h4 class="footer-h4">Contacto</h4>
+            <a href="mailto:s.rodriguezrojas939@gmail.com" class="footer-email">
+                s.rodriguezrojas939@gmail.com
+            </a>
+            <div class="footer-socials">
+                <a href="https://wa.me/573196510401" target="_blank" title="WhatsApp">
+                    <i data-lucide="message-circle"></i>
+                </a>
+                <a href="https://www.youtube.com/@ElRaizCuadrada" target="_blank" title="YouTube">
+                    <i data-lucide="youtube"></i>
+                </a>
+                <a href="mailto:s.rodriguezrojas939@gmail.com" title="Correo">
+                    <i data-lucide="mail"></i>
+                </a>
+                <a href="https://github.com" target="_blank" title="GitHub">
+                    <i data-lucide="github"></i>
+                </a>
+            </div>
+        </div>
+
+        <div class="footer-section">
+            <a href="https://www.youtube.com/@ElRaizCuadrada" target="_blank" class="footer-logo-link">
+                <h1 class="footer-title">√(Raiz) Cuadrada²</h1>
+            </a>
+        </div>
+
+        <div class="footer-section">
+            <h4 class="footer-h4">Visitas al sitio</h4>
+            <div class="visitor-counter">
+                <img src="https://hitwebcounter.com/counter/counter.php?page=21465053&style=0024&nbdigits=5&type=page&initCount=0" alt="Visitas">
+            </div>
+        </div>
+
+    </div>
+</footer>
+           
+        </main>
+        
+     <script src="script.js"></script>
+      <script>
+const categorias = {
+      principales: [
+        { s: '(', t: 'ABRIR (' }, 
+        { s: ')', t: 'CERRAR )' },
+        { s: '+', t: 'SUMA' }, 
+        { s: '-', t: 'RESTA' },
+        { s: '*', t: 'MULT.' }, 
+        { s: '/', t: 'DIV.' },
+        { s: '( )/( )', t: 'FRACCIÓN' }, 
+        { s: '^', t: 'POTENCIA' },
+        { s: 'sqrt()', t: 'RAÍZ (√)' }, 
+        { s: '^(1/ )', t: 'RAÍZ N' },
+        { s: 'x', t: 'VAR X' }, 
+        { s: 'y', t: 'VAR Y' },
+        { s: 'pi', t: 'PI' }, 
+        { s: 'e', t: 'EULER' },
+        { s: 'inf', t: 'INFINITO' }, 
+        { s: '-inf', t: '- INFINITO' },
+        { s: 'abs()', t: 'ABS.' }, 
+        { s: '!', t: 'FACT.' }
+    ],
+    trig: [
+       { s: 'sin()', t: 'SENO' }, 
+        { s: 'cos()', t: 'COSENO' }, 
+        { s: 'tan()', t: 'TAN' }, 
+        { s: 'sec()', t: 'SEC' }, 
+        { s: 'csc()', t: 'CSC' }, 
+        { s: 'cot()', t: 'COT' },
+        { s: 'sinh()', t: 'SENH' }, 
+        { s: 'cosh()', t: 'COSH' }, 
+        { s: 'tanh()', t: 'TANH' },
+        { s: 'coth()', t: 'COTH' }, 
+        { s: 'sech()', t: 'SECH' }, 
+        { s: 'csch()', t: 'CSCH' }
+    ],
+    inv: [
+    { s: 'asin()', t: 'ARCSIN' }, 
+        { s: 'acos()', t: 'ARCCOS' }, 
+        { s: 'atan()', t: 'ARCTAN' },
+          { s: 'asec()', t: 'ARCSEC' }, 
+        { s: 'acsc()', t: 'ARCCSC' },
+        { s: 'asinh()', t: 'ARSINH' }, 
+        { s: 'acosh()', t: 'ARCOSH' }, 
+        { s: 'atanh()', t: 'ARTANH' },
+        { s: 'acoth()', t: 'ARCOTH' },
+        { s: 'asech()', t: 'ARSECH' }, 
+        { s: 'acsch()', t: 'ARCSCH' }
+    ],
+    log: [
+        { s: 'log()', t: 'LN' }, { s: 'ln()', t: 'LN' }, { s: 'exp()', t: 'EXP' }, { s: 'e^', t: 'E base' }, { s: 'NOTA:', t: 'En los resultados, log representa el logaritmo natural (ln).' }
+    ]
+};
+
+function showCategory(cat, btn) {
+    document.querySelectorAll('.pill').forEach(p => p.classList.remove('active'));
+    btn.classList.add('active');
+    const grid = document.getElementById('grid-content');
+    grid.innerHTML = '';
+    categorias[cat].forEach(item => {
+        const div = document.createElement('div');
+        div.className = 'sym-btn';
+        div.innerHTML = `<span>${item.s}</span><small>${item.t}</small>`;
+        div.onclick = () => insertarSimbolo(item.s);
+        grid.appendChild(div);
+    });
+}
+
+function insertarSimbolo(s) {
+    const input = document.getElementById('funcion');
+    const pos = input.selectionStart;
+    const texto = input.value;
+    input.value = texto.slice(0, pos) + s + texto.slice(pos);
+    input.focus();
+    if(s.includes('()')) input.setSelectionRange(pos + s.length - 1, pos + s.length - 1);
+    actualizarVistaPrevia();
+}
+
+// Lógica de cálculo (Nerdamer corregido)
+function normalizar(expr) { return expr.toLowerCase().replace(/π/g, 'pi').replace(/ln/g, 'log'); }
+
+function actualizarVistaPrevia() {
+    const input = document.getElementById('funcion').value.trim();
+    const v = document.getElementById('variable').value;
+    const preview = document.getElementById('latex-preview');
+    if (!input) { preview.innerHTML = `$$ \\int (\\dots) \\, d${v} $$`; MathJax.typesetPromise([preview]); return; }
+    try {
+        const fTex = nerdamer(normalizar(input)).toTeX();
+        preview.innerHTML = `$$ \\int ${fTex} \\, d${v} $$`;
+    } catch (e) { preview.innerHTML = `$$ \\dots $$`; }
+    MathJax.typesetPromise([preview]);
+}
+
+function calcularIntegral() {
+    const input = document.getElementById('funcion').value.trim();
+    const out = document.getElementById('resultado');
+    if (!input) return;
+    try {
+        const f = normalizar(input);
+        const v = document.getElementById('variable').value;
+        const tipo = document.getElementById('tipo').value;
+        if (tipo === 'indef') {
+            let sol = nerdamer.integrate(f, v);
+            out.innerHTML = sol.toString().includes('integrate') ? "Usa 'Ver paso a paso'" : `$$ ${sol.toTeX()} + C $$`;
+        } else {
+            const resDef = nerdamer.defint(f, normalizar(document.getElementById('limA').value), normalizar(document.getElementById('limB').value), v);
+            out.innerHTML = `$$ = ${resDef.toTeX()} $$`;
+        }
+        MathJax.typesetPromise([out]);
+    } catch (e) { out.innerHTML = "<small style='color:red'>Error de sintaxis</small>"; }
+}
+
+function toggleLimites() { document.getElementById('limites-container').style.display = (document.getElementById('tipo').value === 'def') ? 'grid' : 'none'; }
+function irAPasoAPaso() { const f = document.getElementById('funcion').value; if(f) window.open(`https://mathdf.com/int/es/?expr=${encodeURIComponent(f)}`, '_blank'); }
+
+showCategory('principales', document.querySelector('.pill'));
+actualizarVistaPrevia();
+</script>
+      
+</body>
+<button class="mobile-theme-toggle" onclick="toggleTheme()" aria-label="Cambiar tema">
+    <i data-lucide="sun" class="icon-sun"></i>
+    <i data-lucide="moon" class="icon-moon"></i>
+</button>
+
+
+</html>
