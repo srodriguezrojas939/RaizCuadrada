@@ -38,6 +38,8 @@
     </script>
     <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js" async></script>
   
+  <script src="https://unpkg.com/function-plot/dist/function-plot.js"></script>
+  
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700;900&display=swap');
     @import url('https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700&display=swap');
@@ -306,6 +308,40 @@
         color: #eee;
     }
     [data-theme="dark"] .sym-btn:hover { background: #333; }
+    
+    /* --- CONTENEDOR GRÁFICA --- */
+#grafica-wrapper {
+    width: 100%;
+    margin-top: 20px;
+    margin-bottom: 20px;
+    display: none; /* Oculto por defecto */
+    justify-content: center;
+    overflow: hidden;
+    background: #f9f9f9;
+    border-radius: 25px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.02) inset;
+    border: 2px solid transparent;
+}
+
+/* Ajustes para el texto dentro de la gráfica (ejes) */
+.function-plot text {
+    font-family: 'Open Sans', sans-serif !important;
+    font-size: 12px !important;
+    fill: #555 !important;
+}
+
+.function-plot path.domain { stroke: #ccc !important; }
+.function-plot .tick line { stroke: #eee !important; }
+
+/* MODO OSCURO PARA LA GRÁFICA */
+[data-theme="dark"] #grafica-wrapper {
+    background: #1e1e1e;
+    border: 1px solid #333;
+}
+[data-theme="dark"] .function-plot text { fill: #aaa !important; }
+[data-theme="dark"] .function-plot path.domain { stroke: #555 !important; }
+
+
 </style>
   
     </head>
@@ -416,7 +452,7 @@
 
     <div class="row">
         <div><label>tipo</label><select id="tipo" onchange="toggleLimites(); actualizarVistaPrevia();"><option value="indef">Indefinida</option><option value="def">Definida</option></select></div>
-        <div><label>variable</label><select id="variable" onchange="actualizarVistaPrevia()"><option value="x">dx</option><option value="t">dt</option></select></div>
+        <div><label>variable</label><select id="variable" onchange="actualizarVistaPrevia()"><option value="x">dx</option> <option value="y">dy</option> <option value="t">dt<option value="z">dz</option> </select></div>
     </div>
 
     <div id="limites-container" class="row" style="display: none;">
@@ -429,6 +465,10 @@
 
     <div id="resultado">Esperando función...</div>
 
+   <div id="grafica-wrapper">
+    <div id="grafica"></div>
+</div>
+
     <div class="pills-nav" id="pillsNav">
         <button class="pill active" onclick="showCategory('principales', this)">Principales</button>
         <button class="pill" onclick="showCategory('trig', this)">Trigonométricas</button>
@@ -437,6 +477,8 @@
     </div>
 
     <div id="symbolsPanel" class="symbols-container" style="display: block;">
+     
+
         <div id="grid-content" class="symbols-grid"></div>
     </div>
 </div>
@@ -488,6 +530,23 @@
         
      <script src="script.js"></script>
       <script>
+          
+          // Variable global para recordar el último input tocado
+let inputActualId = 'funcion'; // Por defecto será la función principal
+
+// Agregamos "escuchas" para detectar cuando tocas los inputs
+document.addEventListener('DOMContentLoaded', () => {
+    const inputs = ['funcion', 'limA', 'limB'];
+    inputs.forEach(id => {
+        const el = document.getElementById(id);
+        if (el) {
+            el.addEventListener('focus', () => {
+                inputActualId = id;
+            });
+        }
+    });
+});
+
 const categorias = {
       principales: [
         { s: '(', t: 'ABRIR (' }, 
@@ -498,16 +557,27 @@ const categorias = {
         { s: '/', t: 'DIV.' },
         { s: '( )/( )', t: 'FRACCIÓN' }, 
         { s: '^', t: 'POTENCIA' },
-        { s: 'sqrt()', t: 'RAÍZ (√)' }, 
-        { s: '^(1/ )', t: 'RAÍZ N' },
+        { s: '√', t: 'RAÍZ' }, 
         { s: 'x', t: 'VAR X' }, 
         { s: 'y', t: 'VAR Y' },
-        { s: 'pi', t: 'PI' }, 
+        { s: 'π', t: 'PI' }, 
         { s: 'e', t: 'EULER' },
-        { s: 'inf', t: 'INFINITO' }, 
-        { s: '-inf', t: '- INFINITO' },
+        { s: '∞', t: 'INFINITO' }, 
+        { s: '-∞', t: '- INFINITO' },
         { s: 'abs()', t: 'ABS.' }, 
-        { s: '!', t: 'FACT.' }
+        { s: '!', t: 'FACT.' },
+  { s: '¹',  t: 'POTENCIA (1)' },
+  { s: '²',  t: 'POTENCIA (2)' },
+  { s: '³',  t: 'POTENCIA (3)' },
+  { s: '⁴',  t: 'POTENCIA (4)' },
+  { s: '⁵',  t: 'POTENCIA (5)' },
+  { s: '⁶',  t: 'POTENCIA (6)' },
+  { s: '⁷',  t: 'POTENCIA (7)' },
+  { s: '⁸',  t: 'POTENCIA (8)' },
+  { s: '⁹',  t: 'POTENCIA (9)' },
+  { s: '¹⁰', t: 'POTENCIA (10)' },
+  { s: 'ˣ',  t: 'POTENCIA (X)' },
+  { s: 'ʸ',  t: 'POTENCIA (Y)' }
     ],
     trig: [
        { s: 'sin()', t: 'SENO' }, 
@@ -537,7 +607,7 @@ const categorias = {
         { s: 'acsch()', t: 'ARCSCH' }
     ],
     log: [
-        { s: 'log()', t: 'LN' }, { s: 'ln()', t: 'LN' }, { s: 'exp()', t: 'EXP' }, { s: 'e^', t: 'E base' }, { s: 'NOTA:', t: 'En los resultados, log representa el logaritmo natural (ln).' }
+        { s: 'log()', t: 'LN' }, { s: 'ln()', t: 'LN' },  { s: 'e^x', t: 'E base' }
     ]
 };
 
@@ -556,17 +626,109 @@ function showCategory(cat, btn) {
 }
 
 function insertarSimbolo(s) {
-    const input = document.getElementById('funcion');
+    // Usamos el input activo (o 'funcion' como respaldo)
+    const input = document.getElementById(inputActualId) || document.getElementById('funcion');
+    
     const pos = input.selectionStart;
     const texto = input.value;
+    
+    // Insertamos el símbolo en la posición del cursor
     input.value = texto.slice(0, pos) + s + texto.slice(pos);
+    
+    // Devolvemos el foco al input para seguir escribiendo
     input.focus();
-    if(s.includes('()')) input.setSelectionRange(pos + s.length - 1, pos + s.length - 1);
+    
+    // Si el símbolo tiene paréntesis (), ponemos el cursor en el medio
+    if(s.includes('()')) {
+        const nuevaPos = pos + s.indexOf('(') + 1;
+        input.setSelectionRange(nuevaPos, nuevaPos);
+    } else {
+        // Si no, ponemos el cursor después del símbolo insertado
+        input.setSelectionRange(pos + s.length, pos + s.length);
+    }
+    
     actualizarVistaPrevia();
 }
 
 // Lógica de cálculo (Nerdamer corregido)
-function normalizar(expr) { return expr.toLowerCase().replace(/π/g, 'pi').replace(/ln/g, 'log'); }
+function normalizar(expr) { 
+    if (!expr) return '';
+
+    // 1. Quitar espacios y pasar a minúsculas
+    let s = expr.toLowerCase().replace(/\s+/g, '');
+    
+        // CASO F: Superíndices
+    const superindices = { '⁰':'0', '¹':'1', '²':'2', '³':'3', '⁴':'4', '⁵':'5', '⁶':'6', '⁷':'7', '⁸':'8', '⁹':'9' };
+    s = s.replace(/[⁰¹²³⁴⁵⁶⁷⁸⁹]/g, match => `^${superindices[match]}`);
+
+    // 2. Diccionario de Traducción (Orden importante: los más largos primero)
+    // Agregamos 'arctan' que faltaba y arreglamos notación inversa
+    const reemplazos = [
+        { from: /arctan/g, to: 'atan' }, // ESTO arregla tu error de arctan
+        { from: /arctg/g, to: 'atan' },
+        { from: /arcsin/g, to: 'asin' },
+        { from: /arccos/g, to: 'acos' },
+        { from: /arcsec/g, to: 'asec' },
+        { from: /arccsc/g, to: 'acsc' },
+        { from: /arccot/g, to: 'acot' },
+        { from: /sen/g, 'to': 'sin' },
+        { from: /tg/g, 'to': 'tan' },
+        { from: /ln/g, 'to': 'log' }, // Nerdamer usa log para log natural
+        { from: /√/g, 'to': 'sqrt' },
+        { from: /π/g, 'to': 'pi' },
+        { from: /·/g, 'to': '*' }
+    ];
+
+    reemplazos.forEach(r => { s = s.replace(r.from, r.to); });
+
+    // 3. Manejo de notación inversa de calculadora (sin^-1 => asin)
+    s = s.replace(/sin\^-1/g, 'asin').replace(/cos\^-1/g, 'acos').replace(/tan\^-1/g, 'atan');
+
+const funcsTrig = 'sin|cos|tan|csc|sec|cot';
+    // Regex: Función + ^ + Número + (opcional paréntesis) + variable x,y,z
+    const reTrigPow = new RegExp(`(${funcsTrig})\\^(\\d+)\\(?([xyz])\\)?`, 'g');
+    s = s.replace(reTrigPow, '($1($3))^$2');
+    
+    // 4. Inteligencia: Funciones sin paréntesis (cosx => cos(x))
+    // Lista completa de funciones soportadas
+    const funciones = ['asin', 'acos', 'atan', 'asec', 'acsc', 'acot', 'sin', 'cos', 'tan', 'sec', 'csc', 'cot', 'sqrt', 'log', 'abs', 'exp'];
+    
+    // Primero envolvemos variables sueltas: "cosx" -> "cos(x)"
+    // Buscamos la función seguida EXACTAMENTE de x, y, t, z o un número
+    funciones.forEach(fn => {
+        const re = new RegExp(`${fn}([xyz\\d])`, 'g');
+        s = s.replace(re, `${fn}($1)`);
+    });
+
+s = s.replace(/([a-z])([xyz])/g, '$1*$2');
+    // 5. Multiplicación Implícita (Corregida para NO romper funciones)
+    
+    // CASO A: Número seguido de Variable o Paréntesis (2x -> 2*x)
+    s = s.replace(/(\d)([a-z\(])/g, '$1*$2');
+
+    // CASO B: Variable explícita (x,y,t,z) seguida de función (xcos(x) -> x*cos(x))
+    // OJO: Solo permitimos x,y,t,z antes de la función. Esto evita que la 'a' de 'acos' se separe.
+    const funcionPattern = funciones.join('|');
+    // Regex: (x,y,t,z o paréntesis cerrado) seguido de (nombre de función)
+    const reMultFunc = new RegExp(`([xyz\\)])(${funcionPattern})`, 'g');
+    s = s.replace(reMultFunc, '$1*$2');
+
+
+    // CASO C: Variable seguida de variable (xx -> x*x, xy -> x*y)
+    // Previene duplicados como 'xx'
+    s = s.replace(/([xytz])([xytz])/g, '$1*$1');
+
+    // CASO D: Corchetes y llaves
+    s = s.replace(/[\[\{]/g, '(').replace(/[\]\}]/g, ')');
+    
+    // CASO E: Valor absoluto |x| -> abs(x)
+    s = s.replace(/\|([^|]+)\|/g, 'abs($1)');
+    
+
+
+    return s;
+}
+
 
 function actualizarVistaPrevia() {
     const input = document.getElementById('funcion').value.trim();
@@ -574,7 +736,9 @@ function actualizarVistaPrevia() {
     const preview = document.getElementById('latex-preview');
     if (!input) { preview.innerHTML = `$$ \\int (\\dots) \\, d${v} $$`; MathJax.typesetPromise([preview]); return; }
     try {
-        const fTex = nerdamer(normalizar(input)).toTeX();
+      // Obtiene el LaTeX y aplica el maquillaje visual
+        let fTex = nerdamer(normalizar(input)).toTeX();
+        fTex = fTex.replace(/\\(sin|cos|tan|csc|sec|cot|asin|acos|atan)\s*\\left\((.*?)\\right\)\^\{?(\d+)\}?/g, "\\$1^{$3}\\left($2\\right)");
         preview.innerHTML = `$$ \\int ${fTex} \\, d${v} $$`;
     } catch (e) { preview.innerHTML = `$$ \\dots $$`; }
     MathJax.typesetPromise([preview]);
@@ -583,27 +747,158 @@ function actualizarVistaPrevia() {
 function calcularIntegral() {
     const input = document.getElementById('funcion').value.trim();
     const out = document.getElementById('resultado');
+    const graphBox = document.getElementById('grafica-wrapper');
+    
     if (!input) return;
+
     try {
         const f = normalizar(input);
         const v = document.getElementById('variable').value;
         const tipo = document.getElementById('tipo').value;
+
+        // Limpiar gráfica visualmente
+        if(graphBox) graphBox.style.display = 'none'; 
+        const graphDiv = document.getElementById('grafica');
+        if(graphDiv) graphDiv.innerHTML = '';
+
         if (tipo === 'indef') {
-            let sol = nerdamer.integrate(f, v);
-            out.innerHTML = sol.toString().includes('integrate') ? "Usa 'Ver paso a paso'" : `$$ ${sol.toTeX()} + C $$`;
+            // --- 1. INTEGRAL INDEFINIDA ---
+            
+            // Calculamos la integral (ESTA ERA LA LÍNEA QUE FALTABA):
+            const sol = nerdamer('integrate(' + f + ', ' + v + ')');
+
+            // Preparar LaTeX maquillado
+            let texInput = nerdamer(f).toTeX().replace(/\\(sin|cos|tan|csc|sec|cot|asin|acos|atan)\s*\\left\((.*?)\\right\)\^\{?(\d+)\}?/g, "\\$1^{$3}\\left($2\\right)");
+            let texSol = sol.toTeX().replace(/\\(sin|cos|tan|csc|sec|cot|asin|acos|atan)\s*\\left\((.*?)\\right\)\^\{?(\d+)\}?/g, "\\$1^{$3}\\left($2\\right)");
+
+            out.innerHTML = sol.toString().includes('integrate') ? 
+                "Usa 'Ver paso a paso'" : 
+                `$$ \\int \\left( ${texInput} \\right) \\, d${v} = ${texSol} + C $$`;
+            
+            // --- LÓGICA GRÁFICA NUEVA ---
+            // Obtenemos la ecuación del RESULTADO en formato texto (ej: "1/3*x^3")
+            let funcionResultado = sol.text();
+            
+            // Truco: Si la variable era 't', la cambiamos a 'x' para que el graficador la entienda
+            let funcionGraficable = funcionResultado.split(v).join('x');
+            
+            // Graficamos el RESULTADO (sin sombrear)
+            renderizarGrafica(funcionGraficable, -10, 10, false, "Resultado (C=0)"); 
+        
         } else {
-            const resDef = nerdamer.defint(f, normalizar(document.getElementById('limA').value), normalizar(document.getElementById('limB').value), v);
-            out.innerHTML = `$$ = ${resDef.toTeX()} $$`;
+            // --- 2. INTEGRAL DEFINIDA ---
+            const valA_raw = document.getElementById('limA').value;
+            const valB_raw = document.getElementById('limB').value;
+            
+            const resDef = nerdamer.defint(f, normalizar(valA_raw), normalizar(valB_raw), v);
+            
+           // Agregamos normalizar() aquí adentro
+const texA = nerdamer(normalizar(valA_raw)).toTeX();
+const texB = nerdamer(normalizar(valB_raw)).toTeX();
+            const texFunc = nerdamer(f).toTeX();
+            
+            out.innerHTML = `$$ \\int_{${texA}}^{${texB}} \\left( ${texFunc} \\right) \\, d${v} = ${resDef.toTeX()} $$`;
+
+            // --- LÓGICA GRÁFICA ---
+            // Aquí graficamos la ORIGINAL (input) porque queremos ver el área bajo la curva
+            try {
+              // Agregamos normalizar() aquí también
+const numA = parseFloat(nerdamer(normalizar(valA_raw)).evaluate().text());
+const numB = parseFloat(nerdamer(normalizar(valB_raw)).evaluate().text());
+                
+                // Aseguramos variable x para graficar
+               let funcionGraficable = f.split(v).join('x');
+
+                if (!isNaN(numA) && !isNaN(numB)) {
+                    renderizarGrafica(funcionGraficable, numA, numB, true, "Área bajo la curva");
+                }
+            } catch(errGraph) {
+                console.log("No se pudo graficar: ", errGraph);
+            }
         }
         MathJax.typesetPromise([out]);
-    } catch (e) { out.innerHTML = "<small style='color:red'>Error de sintaxis</small>"; }
+
+    } catch (e) { 
+        console.error(e);
+        out.innerHTML = "<small style='color:red'>Error de sintaxis o límites vacíos</small>"; 
+    }
 }
+
+// Función Renderizar actualizada para admitir título opcional en consola o tooltip si quisieras
+function renderizarGrafica(expresion, a, b, sombrear, etiqueta) {
+    const wrapper = document.getElementById('grafica-wrapper');
+    if(wrapper) wrapper.style.display = 'flex'; 
+
+    const width = wrapper ? Math.min(wrapper.offsetWidth - 40, 550) : 500;
+    
+    let xMin, xMax;
+    
+    if (sombrear) {
+        const padding = Math.abs(b - a) * 0.5 || 2; 
+        xMin = Math.min(a, b) - padding;
+        xMax = Math.max(a, b) + padding;
+    } else {
+        xMin = -10;
+        xMax = 10;
+    }
+
+    const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+    const lineColor = isDark ? '#fff' : '#1a1a1a'; // Blanco en dark, Negro en light
+    const gridColor = isDark ? '#444' : '#eee';
+
+    // Configuración base de datos
+    let datosGrafica = [
+        {
+            fn: expresion,
+            color: lineColor,
+            strokeWidth: 2,
+            range: [xMin, xMax], 
+            skipTip: true,
+            graphType: 'polyline'
+        }
+    ];
+
+    // Si es definida, agregamos el relleno
+    if (sombrear) {
+        datosGrafica.push({
+            fn: expresion,
+            range: [a, b], 
+            closed: true,
+            color: '#bfbfbf',
+            style: 'fill-opacity: 0.3; stroke: none;' 
+        });
+    }
+
+    try {
+        functionPlot({
+            target: '#grafica',
+            width: width,
+            height: 300,
+            grid: true,
+            xAxis: { domain: [xMin, xMax] },
+            yAxis: { domain: [-5, 5] }, 
+            data: datosGrafica
+        });
+    } catch (e) {
+        console.log("Error graficando:", e);
+        if(wrapper) wrapper.style.display = 'none';
+    }
+}
+
+// Listener para redimensionar la gráfica si giran la pantalla
+window.addEventListener('resize', () => {
+    if(document.getElementById('grafica-wrapper').style.display !== 'none'){
+        // Re-calcular si ya hay una integral definida mostrada
+        calcularIntegral(); 
+    }
+});
 
 function toggleLimites() { document.getElementById('limites-container').style.display = (document.getElementById('tipo').value === 'def') ? 'grid' : 'none'; }
 function irAPasoAPaso() { const f = document.getElementById('funcion').value; if(f) window.open(`https://mathdf.com/int/es/?expr=${encodeURIComponent(f)}`, '_blank'); }
 
 showCategory('principales', document.querySelector('.pill'));
 actualizarVistaPrevia();
+
 </script>
       
 </body>
