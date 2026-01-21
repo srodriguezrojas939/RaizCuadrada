@@ -646,7 +646,7 @@ const categorias = {
         { s: 'e', t: 'EULER' },
         { s: '∞', t: 'INFINITO' }, 
         { s: '-∞', t: '- INFINITO' },
-        { s: 'abs()', t: 'ABS.' }, 
+        { s: ' |x| ', t: 'ABS.' }, 
         { s: '!', t: 'FACT.' },
   { s: '¹',  t: 'POTENCIA (1)' },
   { s: '²',  t: 'POTENCIA (2)' },
@@ -739,6 +739,9 @@ function normalizar(expr) {
     // 1. Quitar espacios y pasar a minúsculas
     let s = expr.toLowerCase().replace(/\s+/g, '');
     
+    // CASO E (PRIMERO): Valor absoluto |x| -> abs(x)
+s = s.replace(/\|([^|]+)\|/g, 'abs($1)');
+
         // CASO F: Superíndices
     const superindices = { '⁰':'0', '¹':'1', '²':'2', '³':'3', '⁴':'4', '⁵':'5', '⁶':'6', '⁷':'7', '⁸':'8', '⁹':'9' };
     s = s.replace(/[⁰¹²³⁴⁵⁶⁷⁸⁹]/g, match => `^${superindices[match]}`);
@@ -803,10 +806,6 @@ s = s.replace(/([a-z])([xyz])/g, '$1*$2');
     // CASO D: Corchetes y llaves
     s = s.replace(/[\[\{]/g, '(').replace(/[\]\}]/g, ')');
     
-    // CASO E: Valor absoluto |x| -> abs(x)
-    s = s.replace(/\|([^|]+)\|/g, 'abs($1)');
-    
-
 
     return s;
 }
