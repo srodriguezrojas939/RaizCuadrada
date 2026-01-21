@@ -420,6 +420,14 @@
 }
 
 
+.resultado-decimal {
+    font-size: 0.95rem;
+    opacity: 0.75;
+    margin-top: 6px;
+    text-align: center;
+}
+
+
 
 </style>
   
@@ -547,6 +555,15 @@
    <div id="grafica-wrapper">
     <div id="grafica"></div>
 </div>
+
+    <button id="btn-descargar-grafica"
+            class="btn-secundario"
+            onclick="descargarGrafica()"
+            style= "display:none; margin-top:12px; margin-bottom:12px;">
+        <i data-lucide="download"></i>
+        Descargar PNG
+    </button>
+    
 
     <div class="pills-nav" id="pillsNav">
         <button class="pill active" onclick="showCategory('principales', this)">Principales</button>
@@ -826,6 +843,9 @@ function actualizarVistaPrevia() {
 }
 
 function calcularIntegral() {
+    const btnDescargar = document.getElementById('btn-descargar-grafica');
+if (btnDescargar) btnDescargar.style.display = 'none';
+
     const input = document.getElementById('funcion').value.trim();
     const out = document.getElementById('resultado');
     const graphBox = document.getElementById('grafica-wrapper');
@@ -845,7 +865,6 @@ function calcularIntegral() {
         if (tipo === 'indef') {
             // --- 1. INTEGRAL INDEFINIDA ---
             
-            // Calculamos la integral (ESTA ERA LA LÍNEA QUE FALTABA):
             const sol = nerdamer('integrate(' + f + ', ' + v + ')');
 
             // Preparar LaTeX maquillado
@@ -866,19 +885,34 @@ function calcularIntegral() {
             // Graficamos el RESULTADO (sin sombrear)
             renderizarGrafica(funcionGraficable, -10, 10, false, "Resultado (C=0)"); 
         
+        document.getElementById('btn-descargar-grafica').style.display = 'inline-flex';
+
+
         } else {
             // --- 2. INTEGRAL DEFINIDA ---
             const valA_raw = document.getElementById('limA').value;
             const valB_raw = document.getElementById('limB').value;
             
+            
             const resDef = nerdamer.defint(f, normalizar(valA_raw), normalizar(valB_raw), v);
             
+            // Valor decimal del resultado definido
+const resDecimal = resDef.evaluate().text('decimals', 6);
+
+
            // Agregamos normalizar() aquí adentro
 const texA = nerdamer(normalizar(valA_raw)).toTeX();
 const texB = nerdamer(normalizar(valB_raw)).toTeX();
             const texFunc = nerdamer(f).toTeX();
             
-            out.innerHTML = `$$ \\int_{${texA}}^{${texB}} \\left( ${texFunc} \\right) \\, d${v} = ${resDef.toTeX()} $$`;
+           out.innerHTML = `
+$$
+\\int_{${texA}}^{${texB}} \\left( ${texFunc} \\right) \\, d${v}
+= ${resDef.toTeX()}
+$$
+<div class="resultado-decimal">≈ ${resDecimal}</div>
+`;
+
 
             // --- LÓGICA GRÁFICA ---
             // Aquí graficamos la ORIGINAL (input) porque queremos ver el área bajo la curva
@@ -893,6 +927,8 @@ const numB = parseFloat(nerdamer(normalizar(valB_raw)).evaluate().text());
                 if (!isNaN(numA) && !isNaN(numB)) {
                     renderizarGrafica(funcionGraficable, numA, numB, true, "Área bajo la curva");
                 }
+                document.getElementById('btn-descargar-grafica').style.display = 'inline-flex';
+
             } catch(errGraph) {
                 console.log("No se pudo graficar: ", errGraph);
             }
@@ -965,6 +1001,7 @@ function renderizarGrafica(expresion, a, b, sombrear, etiqueta) {
         if(wrapper) wrapper.style.display = 'none';
     }
 }
+
 
 // Listener para redimensionar la gráfica si giran la pantalla
 window.addEventListener('resize', () => {
@@ -1158,6 +1195,16 @@ function mostrarToast(mensaje = 'Copiado') {
 }
 
           
+
+function descargarGrafica() {
+    const canvas = document.querySelector('#grafica canvas');
+    if (!canvas) return;
+
+    const link = document.createElement('a');
+    link.download = 'grafica.png';
+    link.href = canvas.toDataURL('image/png');
+    link.click();
+}
 
 </script>
 
