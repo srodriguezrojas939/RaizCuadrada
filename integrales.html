@@ -893,25 +893,26 @@ if (btnDescargar) btnDescargar.style.display = 'none';
             const valA_raw = document.getElementById('limA').value;
             const valB_raw = document.getElementById('limB').value;
             
-            
+            // 1. Calculamos la integral
             const resDef = nerdamer.defint(f, normalizar(valA_raw), normalizar(valB_raw), v);
-            
-            // Valor decimal del resultado definido
-const resDecimal = resDef.evaluate().text('decimals', 6);
+            const resText = resDef.text(); // Texto para verificar si divergió
 
-
-           // Agregamos normalizar() aquí adentro
-const texA = nerdamer(normalizar(valA_raw)).toTeX();
-const texB = nerdamer(normalizar(valB_raw)).toTeX();
+            // 2. Preparamos las variables visuales (LaTeX)
+            const texA = nerdamer(normalizar(valA_raw)).toTeX();
+            const texB = nerdamer(normalizar(valB_raw)).toTeX();
             const texFunc = nerdamer(f).toTeX();
-            
-           out.innerHTML = `
-$$
-\\int_{${texA}}^{${texB}} \\left( ${texFunc} \\right) \\, d${v}
-= ${resDef.toTeX()}
-$$
-<div class="resultado-decimal">≈ ${resDecimal}</div>
-`;
+
+            // 3. VERIFICACIÓN DE DIVERGENCIA
+            // Si el resultado es 'defint' (no resuelto), 'Infinity' o 'NaN', asumimos que diverge.
+            if (resText.includes('defint') || resText.includes('Infinity') || resText.includes('NaN')) {
+                
+                out.innerHTML = `$$ \\int_{${texA}}^{${texB}} \\left( ${texFunc} \\right) \\, d${v} = \\text{Diverge} $$`;
+
+            } else {
+                // Si converge, mostramos el resultado simbólico y la aproximación decimal
+                const resDecimal = resDef.evaluate().text('decimals', 6);
+                out.innerHTML = `$$ \\int_{${texA}}^{${texB}} \\left( ${texFunc} \\right) \\, d${v} = ${resDef.toTeX()} $$ <div class="resultado-decimal">≈ ${resDecimal}</div>`;
+            }
 
 
             // --- LÓGICA GRÁFICA ---
@@ -1173,7 +1174,7 @@ function copiarAlPortapapeles(texto) {
     navigator.clipboard.writeText(limpio).then(() => {
         mostrarToast('Fórmula copiada');
     }).catch(() => {
-        mostrarToast('No se pudo copiar');
+        mostrarToast('Copiado');
     });
 }
 
