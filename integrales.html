@@ -1195,16 +1195,21 @@ function mostrarToast(mensaje = 'Copiado') {
 }
 
           
-
 function descargarGrafica() {
-    const canvas = document.querySelector('#grafica canvas');
-    if (!canvas) return;
+    const grafica = document.getElementById('grafica');
+    if (!grafica) return;
 
-    const link = document.createElement('a');
-    link.download = 'grafica.png';
-    link.href = canvas.toDataURL('image/png');
-    link.click();
+    html2canvas(grafica, {
+        backgroundColor: null, // respeta light / dark
+        scale: 2               // PNG nítido
+    }).then(canvas => {
+        const link = document.createElement('a');
+        link.download = 'grafica.png';
+        link.href = canvas.toDataURL('image/png');
+        link.click();
+    });
 }
+
 
 </script>
 
