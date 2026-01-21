@@ -388,6 +388,37 @@
     background-color: #eaeaea;
 }
 
+      /* --- TOAST --- */
+.toast {
+    position: fixed;
+    bottom: 30px;
+    left: 50%;
+    transform: translateX(-50%) translateY(20px);
+    background: #1a1a1a;
+    color: white;
+    padding: 14px 22px;
+    border-radius: 999px;
+    font-size: 14px;
+    font-weight: 600;
+    opacity: 0;
+    pointer-events: none;
+    transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 10px 25px rgba(0,0,0,0.25);
+    z-index: 9999;
+}
+
+/* Visible */
+.toast.show {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+}
+
+/* Dark mode */
+[data-theme="dark"] .toast {
+    background: #ffffff;
+    color: #000000;
+}
+
 
 
 </style>
@@ -1101,20 +1132,38 @@ showCategory('principales', document.querySelector('.pill'));
 actualizarVistaPrevia();
 
 function copiarAlPortapapeles(texto) {
-    // Quitamos los $$ para copiar solo la fórmula
     const limpio = texto.replace(/^\$\$\s*/, '').replace(/\s*\$\$$/, '');
 
     navigator.clipboard.writeText(limpio).then(() => {
-        console.log('Copiado:', limpio);
-    }).catch(err => {
-        console.error('Error al copiar', err);
+        mostrarToast('Fórmula copiada');
+    }).catch(() => {
+        mostrarToast('No se pudo copiar');
     });
 }
 
 
 
+          let toastTimeout;
+
+function mostrarToast(mensaje = 'Copiado') {
+    const toast = document.getElementById('toast-copiado');
+    if (!toast) return;
+
+    toast.textContent = mensaje;
+    toast.classList.add('show');
+
+    clearTimeout(toastTimeout);
+    toastTimeout = setTimeout(() => {
+        toast.classList.remove('show');
+    }, 1600);
+}
+
+          
+
 </script>
-      
+
+        <div id="toast-copiado" class="toast">Copiado</div>
+
 </body>
 <button class="mobile-theme-toggle" onclick="toggleTheme()" aria-label="Cambiar tema">
     <i data-lucide="sun" class="icon-sun"></i>
