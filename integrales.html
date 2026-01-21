@@ -43,6 +43,7 @@
   <script src="https://unpkg.com/function-plot/dist/function-plot.js"></script>
   
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <script src="https://cdn.plot.ly/plotly-2.27.0.min.js"></script>
   
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700;900&display=swap');
@@ -428,6 +429,133 @@
 }
 
 
+/* --- PÍLDORA DE MODOS (SEGMENTED CONTROL) --- */
+    .mode-switcher {
+        display: flex;
+        background:  #f9f9f9; /* Fondo gris suave contenedor */
+        padding: 5px;
+        border-radius: 999px;
+        margin-bottom: 25px; /* Separación con el visor Latex */
+        position: relative;
+        justify-content: space-between;
+        box-shadow: inset 0 1px 3px rgba(0,0,0,0.06);
+    }
+
+    .mode-btn {
+        flex: 1;
+        border: none;
+        background: transparent;
+        padding: 10px 0;
+        border-radius: 999px;
+        cursor: pointer;
+        font-family: 'Open Sans', sans-serif;
+        font-weight: 700;
+        font-size: 14px;
+        color: #888;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 6px;
+    }
+
+    /* Estilo del símbolo matemático dentro del botón */
+    .mode-btn span {
+        font-size: 1.2em;
+        font-weight: 400;
+        font-family: 'Playfair Display', serif; /* Toque elegante para el símbolo */
+    }
+
+    .mode-btn:hover:not(.active) {
+        color: #555;
+    }
+
+    /* ESTADO ACTIVO (La píldora blanca flotante) */
+    .mode-btn.active {
+        background: #ffffff;
+        color: #1a1a1a;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.12);
+        transform: scale(1.02);
+    }
+    
+    /* --- AJUSTES MODO OSCURO --- */
+    [data-theme="dark"] .mode-switcher { 
+        background: #151515; 
+        box-shadow: inset 0 1px 3px rgba(255,255,255,0.05);
+    }
+    [data-theme="dark"] .mode-btn { color: #666; }
+    [data-theme="dark"] .mode-btn:hover:not(.active) { color: #999; }
+    
+    [data-theme="dark"] .mode-btn.active { 
+        background: #333; 
+        color: #fff; 
+        box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+    }
+    
+
+/* --- ESTILOS PARA INTEGRALES MÚLTIPLES --- */
+
+/* Contenedor flexible para columnas (2 para doble, 3 para triple) */
+.integral-grid {
+    display: grid;
+    gap: 12px;
+    margin-top: 15px;
+    /* Esto hace la magia: crea columnas automáticas que no bajan de 100px */
+    grid-template-columns: repeat(auto-fit, minmax(110px, 1fr)); 
+}
+
+/* Tarjeta visual para cada variable (dx, dy, dz) */
+.integral-col {
+    background: #fff;
+    border: 1px solid #e5e5e5;
+    border-radius: 20px;
+    padding: 15px;
+    text-align: center;
+    transition: 0.2s;
+    margin-bottom: 18px;
+}
+
+.integral-col:hover {
+    border-color: #ccc;
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.03);
+}
+
+.integral-col label {
+    margin-left: 0;
+    margin-bottom: 8px;
+    font-size: 11px;
+    color: #888;
+}
+
+/* Inputs compactos para límites y selects */
+.compact-input, .integral-col select {
+    padding: 8px 10px !important; /* Más pequeños que el input principal */
+    font-size: 14px !important;
+    text-align: center;
+    margin-bottom: 8px !important;
+     margin-top: 8px ;
+    width: 100%;
+    height: auto;
+     border-radius: 20px;
+      border: 1px solid #e5e5e5;
+}
+
+/* Contenedor para los límites a/b en horizontal */
+.limits-row {
+    display: flex;
+    gap: 6px;
+    align-items: center;
+}
+
+/* Modo oscuro */
+[data-theme="dark"] .integral-col {
+    background: #252525;
+    border-color: #333;
+}
+[data-theme="dark"] .integral-col:hover {
+    border-color: #555;
+}
 
 </style>
   
@@ -531,9 +659,25 @@
         <h1>Calculadora Integrales</h1>
         <p>√(Raiz) Cuadrada²</p>
     </div>
+    
+    <div class="mode-switcher">
+        <button class="mode-btn active" onclick="cambiarModo('single')" id="btn-single">
+            <span>∫</span> Simple
+        </button>
+        <button class="mode-btn" onclick="cambiarModo('double')" id="btn-double">
+            <span>∬</span> Doble
+        </button>
+        <button class="mode-btn" onclick="cambiarModo('triple')" id="btn-triple">
+            <span>∭</span> Triple
+        </button>
+    </div>
+    
+     <div id="preview-container"><div id="latex-preview">$$ \int (\dots) \, dx $$</div></div>
 
-    <div id="preview-container"><div id="latex-preview">$$ \int (\dots) \, dx $$</div></div>
 
+    <div id="inputs-single">
+
+   
     <label>función a integrar</label>
     <input id="funcion" placeholder="Ej: x^2 + cos(x)" type="text" oninput="actualizarVistaPrevia()">
 
@@ -547,6 +691,80 @@
         <div><label>superior (b)</label><input id="limB" placeholder="pi" type="text" oninput="actualizarVistaPrevia()"></div>
     </div>
 
+
+</div>
+
+<div id="inputs-double" class="input-section" style="display: none;">
+        <label>Función f(x,y)</label>
+        <input id="funcion-double" placeholder="Ej: x^2 + y^2" type="text" oninput="actualizarVistaPrevia()">
+        
+        <div class="integral-grid">
+            <div class="integral-col">
+                <label>1. Interior</label>
+                <select id="var2-inner" class="compact-input" onchange="actualizarVistaPrevia()">
+                    <option value="x">dx</option><option value="y">dy</option>
+                </select>
+                <div class="limits-row">
+                    <input id="lim2-inner-a" class="compact-input" placeholder="a" oninput="actualizarVistaPrevia()">
+                    <input id="lim2-inner-b" class="compact-input" placeholder="b" oninput="actualizarVistaPrevia()">
+                </div>
+            </div>
+
+            <div class="integral-col">
+                <label>2. Exterior</label>
+                <select id="var2-outer" class="compact-input" onchange="actualizarVistaPrevia()">
+                    <option value="y">dy</option><option value="x">dx</option>
+                </select>
+                <div class="limits-row">
+                    <input id="lim2-outer-a" class="compact-input" placeholder="c" oninput="actualizarVistaPrevia()">
+                    <input id="lim2-outer-b" class="compact-input" placeholder="d" oninput="actualizarVistaPrevia()">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="inputs-triple" class="input-section" style="display: none;">
+        <label>Función f(x,y,z)</label>
+        <input id="funcion-triple" placeholder="Ej: x*y*z" type="text" oninput="actualizarVistaPrevia()">
+
+        <div class="integral-grid">
+            <div class="integral-col">
+                <label>1. Interior</label>
+                <select id="var3-1" class="compact-input" onchange="actualizarVistaPrevia()">
+                    <option value="x">dx</option><option value="y">dy</option><option value="z">dz</option>
+                </select>
+                <div class="limits-row">
+                    <input id="lim3-1a" class="compact-input" placeholder="a" oninput="actualizarVistaPrevia()">
+                    <input id="lim3-1b" class="compact-input" placeholder="b" oninput="actualizarVistaPrevia()">
+                </div>
+            </div>
+            
+            <div class="integral-col">
+                <label>2. Medio</label>
+                <select id="var3-2" class="compact-input" onchange="actualizarVistaPrevia()">
+                    <option value="y">dy</option><option value="x">dx</option><option value="z">dz</option>
+                </select>
+                <div class="limits-row">
+                    <input id="lim3-2a" class="compact-input" placeholder="c" oninput="actualizarVistaPrevia()">
+                    <input id="lim3-2b" class="compact-input" placeholder="d" oninput="actualizarVistaPrevia()">
+                </div>
+            </div>
+
+            <div class="integral-col">
+                <label>3. Exterior</label>
+                <select id="var3-3" class="compact-input" onchange="actualizarVistaPrevia()">
+                    <option value="z">dz</option><option value="x">dx</option><option value="y">dy</option>
+                </select>
+                <div class="limits-row">
+                    <input id="lim3-3a" class="compact-input" placeholder="e" oninput="actualizarVistaPrevia()">
+                    <input id="lim3-3b" class="compact-input" placeholder="f" oninput="actualizarVistaPrevia()">
+                </div>
+            </div>
+        </div>
+    </div>
+    
+      
+    
     <button onclick="calcularIntegral()" class="btn-principal">Calcular Resultado</button>
     <button onclick="irAPasoAPaso()" class="btn-secundario">Ver paso a paso</button>
 
@@ -555,6 +773,8 @@
    <div id="grafica-wrapper">
     <div id="grafica"></div>
 </div>
+
+
 
     <button id="btn-descargar-grafica"
             class="btn-secundario"
@@ -632,6 +852,28 @@
           
           // Variable global para recordar el último input tocado
 let inputActualId = 'funcion'; // Por defecto será la función principal
+
+let modoActual = 'single'; // Puede ser 'single', 'double', 'triple'
+
+// Función NUEVA para manejar los tabs
+function cambiarModo(modo) {
+    modoActual = modo;
+    
+    // Actualizar estilos de la píldora
+    ['single', 'double', 'triple'].forEach(m => {
+        document.getElementById('btn-' + m).classList.toggle('active', m === modo);
+        // Mostrar/Ocultar inputs
+        const el = document.getElementById('inputs-' + m);
+        if(el) el.style.display = (m === modo) ? 'block' : 'none';
+    });
+
+    // Limpiar visual
+    document.getElementById('resultado').innerHTML = '';
+    const graphDiv = document.getElementById('grafica');
+    if(graphDiv) graphDiv.innerHTML = ''; 
+    
+    actualizarVistaPrevia();
+}
 
 // Agregamos "escuchas" para detectar cuando tocas los inputs
 document.addEventListener('DOMContentLoaded', () => {
@@ -724,29 +966,52 @@ function showCategory(cat, btn) {
     });
 }
 
+// Asegúrate de que esta variable exista globalmente en tu script
+// let inputActualId = 'funcion'; 
+
 function insertarSimbolo(s) {
-    // Usamos el input activo (o 'funcion' como respaldo)
-    const input = document.getElementById(inputActualId) || document.getElementById('funcion');
+    // 1. Obtener el input correcto con seguridad
+    let input = document.getElementById(inputActualId);
     
-    const pos = input.selectionStart;
-    const texto = input.value;
-    
-    // Insertamos el símbolo en la posición del cursor
-    input.value = texto.slice(0, pos) + s + texto.slice(pos);
-    
-    // Devolvemos el foco al input para seguir escribiendo
-    input.focus();
-    
-    // Si el símbolo tiene paréntesis (), ponemos el cursor en el medio
-    if(s.includes('()')) {
-        const nuevaPos = pos + s.indexOf('(') + 1;
-        input.setSelectionRange(nuevaPos, nuevaPos);
-    } else {
-        // Si no, ponemos el cursor después del símbolo insertado
-        input.setSelectionRange(pos + s.length, pos + s.length);
+    // Si por alguna razón inputActualId está vacío o el elemento no existe, 
+    // hacemos fallback al input principal 'funcion'.
+    if (!input) {
+        input = document.getElementById('funcion');
+        // Si aun así no existe (caso extremo), salimos para evitar error.
+        if (!input) return; 
     }
-    
-    actualizarVistaPrevia();
+
+    // 2. Capturar posiciones del cursor o selección de texto
+    const start = input.selectionStart;
+    const end = input.selectionEnd;
+    const texto = input.value;
+
+    // 3. Insertar el símbolo
+    // Nota: Usamos 'end' en el segundo slice para permitir reemplazar texto seleccionado
+    input.value = texto.slice(0, start) + s + texto.slice(end);
+
+    // 4. Devolver el foco inmediatamente (importante para que setSelectionRange funcione bien)
+    input.focus();
+
+    // 5. Calcular dónde queda el cursor
+    let nuevaPos;
+
+    if (s.includes('()')) {
+        // Lógica inteligente: Si es algo tipo "sin()", poner cursor DENTRO del paréntesis
+        // Buscamos el primer '(' y sumamos 1 para quedar justo después
+        nuevaPos = start + s.indexOf('(') + 1;
+    } else {
+        // Caso normal: Poner el cursor al final de lo que insertamos
+        nuevaPos = start + s.length;
+    }
+
+    // 6. Mover el cursor a la posición calculada
+    input.setSelectionRange(nuevaPos, nuevaPos);
+
+    // 7. Actualizar la vista (verificamos que la función exista para evitar errores)
+    if (typeof actualizarVistaPrevia === 'function') {
+        actualizarVistaPrevia();
+    }
 }
 
 // Lógica de cálculo (Nerdamer corregido)
@@ -829,17 +1094,90 @@ s = s.replace(/([a-z])([xyz])/g, '$1*$2');
 
 
 function actualizarVistaPrevia() {
-    const input = document.getElementById('funcion').value.trim();
-    const v = document.getElementById('variable').value;
     const preview = document.getElementById('latex-preview');
-    if (!input) { preview.innerHTML = `$$ \\int (\\dots) \\, d${v} $$`; MathJax.typesetPromise([preview]); return; }
-    try {
-      // Obtiene el LaTeX y aplica el maquillaje visual
-        let fTex = nerdamer(normalizar(input)).toTeX();
-        fTex = fTex.replace(/\\(sin|cos|tan|csc|sec|cot|asin|acos|atan)\s*\\left\((.*?)\\right\)\^\{?(\d+)\}?/g, "\\$1^{$3}\\left($2\\right)");
-        preview.innerHTML = `$$ \\int ${fTex} \\, d${v} $$`;
-    } catch (e) { preview.innerHTML = `$$ \\dots $$`; }
-    MathJax.typesetPromise([preview]);
+
+    // --- 1. TU LÓGICA "DELICADA" ENCAPSULADA ---
+    // Esta función interna asegura que el maquillaje visual se aplique igual en todos los modos
+    const procesarFuncion = (idInput) => {
+        const input = document.getElementById(idInput).value.trim();
+        if (!input) return "\\dots"; // Si está vacío, devuelve puntos suspensivos
+        
+        try {
+            // Aquí usamos tu función normalizar() y nerdamer
+            let tex = nerdamer(normalizar(input)).toTeX();
+            
+            // TU REGEX DE MAQUILLAJE (Intacto)
+            tex = tex.replace(/\\(sin|cos|tan|csc|sec|cot|asin|acos|atan)\s*\\left\((.*?)\\right\)\^\{?(\d+)\}?/g, "\\$1^{$3}\\left($2\\right)");
+            
+            return tex;
+        } catch (e) {
+            return input || "\\dots"; // Si falla (sintaxis), devuelve lo que haya escrito
+        }
+    };
+
+    // Helper para obtener valores de límites o poner una letra por defecto (a, b, c...)
+    const getLim = (id, def) => {
+        const el = document.getElementById(id);
+        return (el && el.value.trim()) ? el.value.trim() : def;
+    };
+
+    let latexFinal = "";
+
+    // --- 2. MODO SIMPLE (Tu lógica original mejorada) ---
+    if (modoActual === 'single') {
+        const v = document.getElementById('variable').value;
+        const fTex = procesarFuncion('funcion');
+        
+        // Verificamos si existe el selector de tipo (Definida/Indefinida)
+        const tipoEl = document.getElementById('tipo');
+        
+        if (tipoEl && tipoEl.value === 'def') {
+            // Caso Definida
+            const a = getLim('limA', 'a');
+            const b = getLim('limB', 'b');
+            latexFinal = `$$ \\int_{${a}}^{${b}} \\left( ${fTex} \\right) \\, d${v} $$`;
+        } else {
+            // Caso Indefinida (Tu visualización por defecto)
+            latexFinal = `$$ \\int ${fTex} \\, d${v} $$`;
+        }
+    }
+
+    // --- 3. MODO DOBLE (Nuevo) ---
+    else if (modoActual === 'double') {
+        const fTex = procesarFuncion('funcion-double');
+        
+        const vIn = document.getElementById('var2-inner').value;
+        const vOut = document.getElementById('var2-outer').value;
+        
+        const lIn_a = getLim('lim2-inner-a', 'a');
+        const lIn_b = getLim('lim2-inner-b', 'b');
+        const lOut_a = getLim('lim2-outer-a', 'c');
+        const lOut_b = getLim('lim2-outer-b', 'd');
+
+        // Agregamos corchetes \left[ ... \right] para que se vea ordenado
+        latexFinal = `$$ \\int_{${lOut_a}}^{${lOut_b}} \\left[ \\int_{${lIn_a}}^{${lIn_b}} \\left( ${fTex} \\right) \\, d${vIn} \\right] \\, d${vOut} $$`;
+    }
+
+    // --- 4. MODO TRIPLE (Nuevo) ---
+    else if (modoActual === 'triple') {
+        const fTex = procesarFuncion('funcion-triple');
+
+        const v1 = document.getElementById('var3-1').value; // Interior
+        const v2 = document.getElementById('var3-2').value; // Medio
+        const v3 = document.getElementById('var3-3').value; // Exterior
+
+        const l1a = getLim('lim3-1a', 'a'); const l1b = getLim('lim3-1b', 'b');
+        const l2a = getLim('lim3-2a', 'c'); const l2b = getLim('lim3-2b', 'd');
+        const l3a = getLim('lim3-3a', 'e'); const l3b = getLim('lim3-3b', 'f');
+
+        latexFinal = `$$ \\int_{${l3a}}^{${l3b}} \\int_{${l2a}}^{${l2b}} \\int_{${l1a}}^{${l1b}} \\left( ${fTex} \\right) \\, d${v1} \\, d${v2} \\, d${v3} $$`;
+    }
+
+    // --- 5. RENDERIZADO FINAL ---
+    preview.innerHTML = latexFinal;
+    if (window.MathJax) {
+        MathJax.typesetPromise([preview]).catch(err => console.log(err));
+    }
 }
 
 function calcularIntegral() {
@@ -848,6 +1186,15 @@ if (btnDescargar) btnDescargar.style.display = 'none';
 
     const input = document.getElementById('funcion').value.trim();
     const out = document.getElementById('resultado');
+    if (modoActual === 'double') {
+        resolverDoble();
+        return; 
+    }
+    if (modoActual === 'triple') {
+        resolverTriple();
+        return;
+    }
+    
     const graphBox = document.getElementById('grafica-wrapper');
     
     if (!input) return;
@@ -1211,6 +1558,107 @@ function descargarGrafica() {
     });
 }
 
+// Resuelve Integral Doble + Gráfica 3D
+function resolverDoble() {
+    const out = document.getElementById('resultado');
+    try {
+       const f = normalizar(document.getElementById('funcion-double').value);
+        const vIn = document.getElementById('var2-inner').value;
+        const vOut = document.getElementById('var2-outer').value;
+        const la = document.getElementById('lim2-inner-a').value;
+        const lb = document.getElementById('lim2-inner-b').value;
+        const lc = document.getElementById('lim2-outer-a').value;
+        const ld = document.getElementById('lim2-outer-b').value;
+
+        // 1. Integral Interior
+        const inner = nerdamer(`defint(${f}, ${la}, ${lb}, ${vIn})`);
+        // 2. Integral Exterior
+        const result = nerdamer(`defint(${inner.text()}, ${lc}, ${ld}, ${vOut})`);
+        
+        const decimal = result.evaluate().text('decimals', 6);
+
+        out.innerHTML = `$$ Resultado: ${result.toTeX()} $$ <div class="resultado-decimal">≈ ${decimal}</div>`;
+        MathJax.typesetPromise([out]);
+
+        // Graficar 3D (Requiere Plotly)
+        graficar3D(f, lc, ld); 
+
+    } catch (e) {
+        out.innerHTML = "<small style='color:red'>Error. Verifica límites y variables.</small>";
+    }
+}
+
+// Resuelve Integral Triple (Solo cálculo)
+function resolverTriple() {
+    const out = document.getElementById('resultado');
+    try {
+         const f = normalizar(document.getElementById('funcion-triple').value);
+        // Vars
+        const v1 = document.getElementById('var3-1').value;
+        const v2 = document.getElementById('var3-2').value;
+        const v3 = document.getElementById('var3-3').value;
+        // Límites
+        const l1a = document.getElementById('lim3-1a').value; const l1b = document.getElementById('lim3-1b').value;
+        const l2a = document.getElementById('lim3-2a').value; const l2b = document.getElementById('lim3-2b').value;
+        const l3a = document.getElementById('lim3-3a').value; const l3b = document.getElementById('lim3-3b').value;
+
+        // Cálculo anidado
+        const step1 = nerdamer(`defint(${f}, ${l1a}, ${l1b}, ${v1})`);
+        const step2 = nerdamer(`defint(${step1.text()}, ${l2a}, ${l2b}, ${v2})`);
+        const final = nerdamer(`defint(${step2.text()}, ${l3a}, ${l3b}, ${v3})`);
+
+        out.innerHTML = `$$ Resultado: ${final.toTeX()} $$`;
+        MathJax.typesetPromise([out]);
+        
+        document.getElementById('grafica-wrapper').style.display = 'none'; // No hay gráfica 4D
+
+    } catch (e) {
+        out.innerHTML = "<small style='color:red'>Error. Verifica orden de integración.</small>";
+    }
+}
+
+// Función Gráfica 3D (Nueva)
+function graficar3D(expr, minX_raw, maxX_raw) {
+    try {
+        // Necesitamos evaluar los límites exteriores a números
+        const xMin = parseFloat(nerdamer(minX_raw).evaluate().text());
+        const xMax = parseFloat(nerdamer(maxX_raw).evaluate().text());
+        
+        if(isNaN(xMin) || isNaN(xMax)) return;
+
+        // Generar datos para Plotly
+        let zData = [];
+        const size = 30; 
+        const step = (xMax - xMin) / size;
+        
+        const compiled = nerdamer(expr).buildFunction(['x', 'y']); // Asumimos x,y para graficar
+
+        for (let y = xMin; y <= xMax; y += step) {
+            let row = [];
+            for (let x = xMin; x <= xMax; x += step) {
+                row.push(compiled(x, y));
+            }
+            zData.push(row);
+        }
+
+        const data = [{ z: zData, type: 'surface', colorscale: 'Viridis' }];
+        const layout = { 
+            autosize: true, 
+            margin: {l:0, r:0, b:0, t:0},
+            paper_bgcolor: 'rgba(0,0,0,0)' // Transparente
+        };
+        
+        document.getElementById('grafica-wrapper').style.display = 'flex';
+        Plotly.newPlot('grafica', data, layout);
+        
+    } catch(e) { console.log("Error 3D", e); }
+}
+
+document.addEventListener('focusin', (e) => {
+    if (e.target.tagName === 'INPUT' && e.target.type === 'text') {
+        inputActualId = e.target.id;
+    }
+});
 
 </script>
 
