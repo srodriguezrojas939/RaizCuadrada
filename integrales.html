@@ -16,6 +16,8 @@
         })();
     </script>
     
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -39,6 +41,8 @@
     <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js" async></script>
   
   <script src="https://unpkg.com/function-plot/dist/function-plot.js"></script>
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
   
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700;900&display=swap');
@@ -341,6 +345,50 @@
 [data-theme="dark"] .function-plot text { fill: #aaa !important; }
 [data-theme="dark"] .function-plot path.domain { stroke: #555 !important; }
 
+/* Clase para cambiar el Grid a Lista Vertical */
+.symbols-container .vertical-layout {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 0 !important;
+}
+
+/* Estilo de cada fila de fórmula */
+.formula-row {
+    padding: 15px 10px;
+    border-bottom: 1px solid #f0f0f0;
+    font-family: 'Times New Roman', serif; /* Serif para fórmulas se ve más académico */
+    font-size: 1.1rem;
+    color: #333;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    transition: background 0.2s;
+}
+
+/* Efecto hover suave */
+.formula-row:hover {
+    background-color: #fcfcfc;
+    padding-left: 15px; /* Pequeño desplazamiento a la derecha */
+}
+
+/* Modo Oscuro para la tabla */
+[data-theme="dark"] .formula-row {
+    border-color: #333;
+    color: #eee;
+}
+[data-theme="dark"] .formula-row:hover {
+    background-color: #252525;
+}
+
+.formula-row {
+    cursor: pointer;
+}
+
+.formula-row:active {
+    background-color: #eaeaea;
+}
+
+
 
 </style>
   
@@ -474,11 +522,14 @@
         <button class="pill" onclick="showCategory('trig', this)">Trigonométricas</button>
         <button class="pill" onclick="showCategory('inv', this)">Inversas</button>
         <button class="pill" onclick="showCategory('log', this)">Logarítmicas</button>
+        <button class="pill" onclick="showCategory('tabla', this)">Tabla Integrales</button>
+        <div id="btn-pdf-container" style="display: none; justify-content: center; margin-top: 15px;">
+    </div>
+    
     </div>
 
     <div id="symbolsPanel" class="symbols-container" style="display: block;">
      
-
         <div id="grid-content" class="symbols-grid"></div>
     </div>
 </div>
@@ -893,11 +944,174 @@ window.addEventListener('resize', () => {
     }
 });
 
+
+/* --- DATOS DE LA TABLA DE INTEGRALES --- */
+const integralesComunes = [
+    
+    
+"Comunes",
+"$$ \\int 0 \\, dx = C $$",
+
+"$$ \\int dx = x + C $$",
+
+"$$ \\int k \\, dx = kx + C $$",
+
+"$$ \\int x^n \\, dx = \\frac{x^{n+1}}{n+1} + C \\quad (n \\neq -1) $$",
+
+"$$ \\int \\frac{1}{x} \\, dx = \\ln|x| + C $$",
+
+"$$ \\int e^x \\, dx = e^x + C $$",
+
+"$$ \\int a^x \\, dx = \\frac{a^x}{\\ln(a)} + C \\quad (a>0,\\ a\\neq1) $$",
+
+"$$ \\int \\ln(x) \\, dx = x\\ln(x) - x + C $$",
+
+
+"Trigonometricas",
+"$$ \\int \\sin(x) \\, dx = -\\cos(x) + C $$",
+"$$ \\int \\cos(x) \\, dx = \\sin(x) + C $$",
+
+"$$ \\int \\tan(x) \\, dx = -\\ln|\\cos(x)| + C $$",
+"$$ \\int \\cot(x) \\, dx = \\ln|\\sin(x)| + C $$",
+
+"$$ \\int \\sec(x) \\, dx = \\ln|\\sec(x)+\\tan(x)| + C $$",
+"$$ \\int \\csc(x) \\, dx = \\ln|\\csc(x)-\\cot(x)| + C $$",
+
+"$$ \\int \\sec^2(x) \\, dx = \\tan(x) + C $$",
+"$$ \\int \\csc^2(x) \\, dx = -\\cot(x) + C $$",
+
+"$$ \\int \\sec(x)\\tan(x) \\, dx = \\sec(x) + C $$",
+"$$ \\int \\csc(x)\\cot(x) \\, dx = -\\csc(x) + C $$",
+
+"Trigonometricas inversas",
+"$$ \\int \\frac{1}{1+x^2} \\, dx = \\arctan(x) + C $$",
+
+"$$ \\int \\frac{1}{\\sqrt{1-x^2}} \\, dx = \\arcsin(x) + C $$",
+
+"$$ \\int \\frac{1}{\\sqrt{a^2-x^2}} \\, dx = \\sin^{-1}\\left(\\frac{x}{a}\\right) + C $$",
+
+"$$ \\int \\frac{1}{x\\sqrt{x^2-a^2}} \\, dx = \\frac{1}{a}\\sec^{-1}\\left(\\frac{x}{a}\\right) + C $$",
+
+"$$ \\int \\frac{1}{a^2+x^2} \\, dx = \\frac{1}{a}\\tan^{-1}\\left(\\frac{x}{a}\\right) + C $$",
+
+"$$ \\int \\frac{1}{a^2-x^2} \\, dx = \\frac{1}{2a}\\ln\\left|\\frac{x+a}{x-a}\\right| + C $$",
+
+"$$ \\int \\frac{1}{\\sqrt{x^2+a^2}} \\, dx = \\ln\\left|x+\\sqrt{x^2+a^2}\\right| + C $$",
+
+"$$ \\int \\frac{1}{\\sqrt{x^2-a^2}} \\, dx = \\ln\\left|x+\\sqrt{x^2-a^2}\\right| + C $$",
+
+"Funciones Hiperbólicas",
+
+"$$ \\int \\sinh(x) \\, dx = \\cosh(x) + C $$",
+"$$ \\int \\cosh(x) \\, dx = \\sinh(x) + C $$",
+
+"$$ \\int \\tanh(x) \\, dx = \\ln|\\cosh(x)| + C $$",
+"$$ \\int \\ coth(x) \\, dx = \\ln|\\sinh(x)| + C $$",
+
+"$$ \\int \\ sech(x) \\, dx = \\arctan(\\sinh(x)) + C $$",
+"$$ \\int \\ csch(x) \\, dx = \\ln\\left| \\tanh\\left(\\frac{x}{2}\\right) \\right| + C $$",
+
+"$$ \\int \\ sech^2(x) \\, dx = \\tanh(x) + C $$",
+"$$ \\int \\ csch^2(x) \\, dx = -\\coth(x) + C $$",
+
+"$$ \\int \\ sech(x)\\tanh(x) \\, dx = -\\ sech(x) + C $$",
+"$$ \\int \\ csch(x)\\coth(x) \\, dx = -\\ csch(x) + C $$",
+
+"Métodos de Integración",
+
+"$$ \\text{Integral de una derivada: }  \\int f'(x)\\,dx = f(x) + C $$",
+
+"$$ \\text{Sustitución: } \\int f(g(x))g'(x)\\,dx = \\int f(u)\\,du $$",
+
+"$$ \\text{Integración por partes: } \\int u\\,dv = uv - \\int v\\,du $$",
+
+"$$ \\text{Sumas: } \\int (u \\pm v) \\, dx = \\int u \\, dx \\pm \\int v \\, dx $$",
+
+"$$ \\text{Fracciones parciales: } \\int \\frac{P(x)}{Q(x)}\\,dx $$",
+
+"Fracciones Parciales",
+
+"$$ \\frac{p(x)}{Q(x)} = \\frac{A_1}{a_1x+b_1}+ \\frac{A_2}{a_2x+b_2}+ \\cdots+ \\frac{A_n}{a_nx+b_n} $$",
+
+"$$ \\frac{p(x)}{Q(x)} =\\frac{A_1}{a_1x+b_1}+ \\frac{A_2}{(a_2x+b_2)^2}+ \\cdots+ \\frac{A_n}{(a_nx+b_n)^n} $$",
+
+"$$ \\frac{Ax+B}{ax^2+bx+c} $$",
+
+"$$ \\frac{Ax+B}{ax^2+bx+c}+ \\frac{A_2x+B_2}{(ax^2+bx+c)^2}+ \\cdots+ \\frac{A_nx+B_n}{(ax^2+bx+c)^n} $$",
+
+
+];
+
+/* --- FUNCIÓN SHOWCATEGORY MEJORADA --- */
+function showCategory(cat, btn) {
+    // 1. Gestión de clases activas en botones
+    document.querySelectorAll('.pill').forEach(p => p.classList.remove('active'));
+    btn.classList.add('active');
+
+    const grid = document.getElementById('grid-content');
+    grid.innerHTML = ''; // Limpiar contenido anterior
+
+    // 2. Lógica: ¿Es la tabla o son botones?
+    if (cat === 'tabla') {
+        // --- MODO LISTA VERTICAL ---
+        grid.className = ''; // Borramos 'symbols-grid'
+        grid.classList.add('vertical-layout'); // Añadimos clase de lista
+
+        integralesComunes.forEach(formula => {
+            const div = document.createElement('div');
+            div.className = 'formula-row';
+            div.innerHTML = formula;
+            
+               div.addEventListener('click', () => {
+        copiarAlPortapapeles(formula);
+    });
+    
+            grid.appendChild(div);
+        });
+
+        // Importante: Decirle a MathJax que renderice las nuevas fórmulas
+        if (window.MathJax) {
+            MathJax.typesetPromise([grid]);
+        }
+
+    } else {
+        // --- MODO BOTONES (GRID) ---
+        grid.className = 'symbols-grid'; // Restauramos la cuadrícula
+        
+        // Usamos tu objeto 'categorias' existente
+        if (categorias[cat]) {
+            categorias[cat].forEach(item => {
+                const div = document.createElement('div');
+                div.className = 'sym-btn';
+                div.innerHTML = `<span>${item.s}</span><small>${item.t}</small>`;
+                div.onclick = () => insertarSimbolo(item.s);
+                grid.appendChild(div);
+            });
+        }
+    }
+}
+
+
 function toggleLimites() { document.getElementById('limites-container').style.display = (document.getElementById('tipo').value === 'def') ? 'grid' : 'none'; }
 function irAPasoAPaso() { const f = document.getElementById('funcion').value; if(f) window.open(`https://mathdf.com/int/es/?expr=${encodeURIComponent(f)}`, '_blank'); }
 
+
+
 showCategory('principales', document.querySelector('.pill'));
 actualizarVistaPrevia();
+
+function copiarAlPortapapeles(texto) {
+    // Quitamos los $$ para copiar solo la fórmula
+    const limpio = texto.replace(/^\$\$\s*/, '').replace(/\s*\$\$$/, '');
+
+    navigator.clipboard.writeText(limpio).then(() => {
+        console.log('Copiado:', limpio);
+    }).catch(err => {
+        console.error('Error al copiar', err);
+    });
+}
+
+
 
 </script>
       
