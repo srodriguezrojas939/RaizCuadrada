@@ -1,0 +1,1171 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>√(Raiz) Cuadrada² </title>
+
+      <script src="https://cdn.plot.ly/plotly-2.27.0.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+<script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+
+    <script>
+        (function() {
+            // 1. Intentamos leer la memoria
+            const localTheme = localStorage.getItem('theme');
+            // 2. Si hay algo guardado lo usamos, si no, usamos 'light'
+            const themeToSet = localTheme || 'light';
+            // 3. Lo aplicamos INMEDIATAMENTE al HTML
+            document.documentElement.setAttribute('data-theme', themeToSet);
+        })();
+    </script>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600&family=Playfair+Display:ital,wght@0,700;0,900;1,700&display=swap" rel="stylesheet">
+    
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <link rel="stylesheet" href="styles.css">
+
+<style>
+    @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700;900&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700&display=swap');
+
+    /* --- ANIMACIÓN DE ENTRADA --- */
+    .container {
+        animation: fadeUp 0.8s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+        opacity: 0;
+    }
+
+    @keyframes fadeUp { 
+        from { opacity: 0; transform: translateY(30px); } 
+        to { opacity: 1; transform: translateY(0); } 
+    }
+
+    body { 
+        background: transparent; /* Dejar que el tema global controle el fondo */
+        font-family: 'Open Sans', sans-serif; 
+        margin: 0; 
+        display: flex; 
+        justify-content: center; 
+        padding: 15px; 
+        color: #333; 
+    }
+
+    /* --- CONTENEDOR PRINCIPAL (ESTILO TARJETA COMENTARIOS) --- */
+    .container { 
+        max-width: 1100px; 
+        width: 100%; 
+        padding: 40px 35px; 
+        background: #ffffff; /* Fondo blanco limpio */
+        border-radius: 40px; 
+        box-shadow: 0 20px 40px rgba(0,0,0,0.08); /* Sombra exacta */
+        box-sizing: border-box;
+    }
+
+    /* --- TIPOGRAFÍA --- */
+    h1, h2, h3, .matrix-name { 
+        font-family: 'Playfair Display', serif; 
+        font-weight: 700;
+        color: #1a1a1a; 
+    }
+
+    .matrix-name { font-size: 26px; }
+
+    .header { text-align: center; margin-bottom: 35px; }
+    
+    .header h1 { 
+        font-size: clamp(28px, 5vw, 36px); 
+        margin: 0; 
+        line-height: 1.1; 
+    }
+    
+    .header p { 
+        font-size: 14px; 
+        font-weight: 700; 
+        font-family: 'Open Sans', sans-serif; /* Cambio a Open Sans para subtítulo estilo 'label' */
+        margin: 10px 0; 
+        color: #999;
+        text-transform: uppercase;
+        letter-spacing: 1.5px;
+    }
+
+    /* --- GESTIÓN DE MATRICES --- */
+    .matrix-manager { 
+        display: flex; 
+        flex-wrap: wrap; 
+        justify-content: center; 
+        align-items: flex-start; 
+        gap: 25px; 
+        margin-bottom: 35px; 
+        width: 100%; 
+    }
+
+    /* --- TARJETA DE MATRIZ INDIVIDUAL --- */
+    .matrix-card { 
+        background: #ffffff; 
+        padding: 25px; 
+        border-radius: 30px; 
+        border: 1px solid #eee; /* Borde sutil */
+        display: flex;
+        flex-direction: column;
+        align-items: center; 
+        text-align: center;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.03); /* Sombra muy suave */
+        position: relative;
+        transition: transform 0.3s ease;
+    }
+
+    .matrix-card:hover { transform: translateY(-5px); }
+
+    .matrix-header { 
+        width: 100%;
+        display: flex; 
+        justify-content: center; 
+        align-items: center; 
+        margin-bottom: 15px;
+        position: relative;
+    }
+
+    /* --- BOTÓN ELIMINAR --- */
+    .btn-delete { 
+        position: absolute;
+        right: 0; 
+        top: 0;
+        background: #f4f4f4; 
+        color: #999; 
+        width: 32px; 
+        height: 32px; 
+        border-radius: 50%; 
+        cursor: pointer; 
+        display: flex; 
+        align-items: center; 
+        justify-content: center; 
+        font-size: 18px; 
+        border: none;
+        transition: all 0.2s ease;
+    }
+
+    .btn-delete:hover {
+        background: #fee2e2; 
+        color: #ef4444; 
+        transform: rotate(90deg);
+    }
+
+    /* --- CONTROLES DE DIMENSIÓN (INPUTS PEQUEÑOS) --- */
+    .matrix-controls { 
+        display: flex; 
+        align-items: center; 
+        justify-content: center; 
+        gap: 10px; 
+        margin-bottom: 20px; 
+        color: #999; 
+        font-weight: 600; 
+    }
+
+    .matrix-controls input { 
+        width: 40px; 
+        padding: 8px 0; 
+        border-radius: 12px; 
+        border: 2px solid transparent; 
+        text-align: center; 
+        font-size: 14px; 
+        font-weight: 700;
+        color: #333;
+        background: #f9f9f9; /* Estilo Comentarios */
+        box-shadow: 0 2px 5px rgba(0,0,0,0.02) inset;
+        transition: all 0.3s ease;
+    }
+
+    .matrix-controls input:focus {
+        border-color: #1a1a1a; 
+        background: #fff;
+        outline: none;
+        transform: translateY(-2px);
+    }
+
+    /* --- REJILLA DE MATRIZ --- */
+    .matrix-grid { 
+        display: grid; 
+        gap: 8px; 
+        justify-content: center;
+        width: fit-content; 
+        margin: 0 auto;
+        padding: 10px;
+        background: #fafafa;
+        border-radius: 20px;
+    }
+
+    /* INPUTS DE CELDAS (ESTILO COMENTARIOS ADAPTADO) --- */
+    .matrix-grid input { 
+        width: 50px; 
+        height: 40px; 
+        text-align: center; 
+        border-radius: 12px; 
+        border: 2px solid transparent; 
+        background: #ffffff; 
+        font-weight: 600; 
+        font-size: 14px;
+        color: #333;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.05); /* Sombra externa suave */
+        transition: all 0.2s;
+    }
+
+    .matrix-grid input:focus {
+        background: #1a1a1a;
+        color: white;
+        border-color: #1a1a1a;
+        outline: none;
+        transform: scale(1.1);
+        box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+    }
+
+    /* --- SECCIÓN DE OPERACIONES --- */
+    .ops-section { 
+        background: #f9f9f9; /* Gris suave de fondo */
+        padding: 30px; 
+        border-radius: 35px; 
+        border: 2px solid transparent; 
+        margin-bottom: 30px; 
+        box-shadow: 0 2px 5px rgba(0,0,0,0.02) inset;
+    }
+
+    .pill-input { 
+        width: 100%; 
+        padding: 18px 25px; 
+        border-radius: 999px; 
+        border: 2px solid transparent; 
+        background: #ffffff;
+        font-size: 16px; 
+        font-weight: 600; 
+        box-sizing: border-box; 
+        outline: none; 
+        color: #333;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+        transition: all 0.3s;
+        font-family: 'Open Sans', sans-serif;
+    }
+
+    .pill-input:focus {
+        border-color: #1a1a1a;
+        transform: translateY(-2px);
+    }
+
+    /* --- BOTÓN PRINCIPAL (PREMIUM) --- */
+    .btn-main { 
+        width: 100%; 
+        padding: 18px; 
+        background: #1a1a1a; 
+        color: white; 
+        border: none; 
+        border-radius: 999px; 
+        font-weight: 700; 
+        font-size: 16px;
+        cursor: pointer; 
+        margin-top: 20px; 
+        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        font-family: 'Open Sans', sans-serif;
+        box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+    }
+
+    .btn-main:hover {
+        background: #000;
+        transform: translateY(-3px) scale(1.02);
+        box-shadow: 0 15px 30px rgba(0,0,0,0.2);
+    }
+
+    /* --- RESULTADOS (DASHBOARD) --- */
+    .dashboard { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 30px; }
+
+    .res-card { 
+        background: #ffffff; 
+        padding: 25px; 
+        border-radius: 30px; 
+        border: 1px solid #eee; 
+        box-shadow: 0 10px 30px rgba(0,0,0,0.03);
+    }
+
+    .res-card.highlight { border: 2px solid #1a1a1a; }
+    
+    .res-card h2 { 
+        margin-top: 0; 
+        font-size: 18px; 
+        border-bottom: 1px solid #eee; 
+        padding-bottom: 15px; 
+        margin-bottom: 15px;
+        color: #555;
+    }
+    
+    .res-content { 
+        font-size: 15px; 
+        font-weight: 600; 
+        line-height: 1.6; 
+        overflow-x: auto; 
+        font-family: 'Open Sans', sans-serif;
+    }
+
+    /* --- GRÁFICAS --- */
+    .graph-wrapper { 
+        background: #ffffff; 
+        border-radius: 40px; 
+        border: 1px solid #eee; 
+        overflow: hidden; 
+        margin-bottom: 20px; 
+        box-shadow: 0 10px 30px rgba(0,0,0,0.03);
+    }
+    
+    .graph-tools { 
+        padding: 20px; 
+        display: flex; 
+        flex-wrap: wrap; 
+        gap: 10px; 
+        align-items: center; 
+        border-bottom: 1px solid #f0f0f0; 
+        background: #fafafa; 
+    }
+    
+    #plot { height: 500px; width: 100%; }
+
+    /* --- BARRA DE ACCIONES (PILL BUTTONS) --- */
+    .guide-container { display: none; background: white; padding: 30px; border-radius: 30px; border: 1px solid #ddd; margin-top: 15px; text-align: left; }
+    .action-bar { display: flex; justify-content: center; gap: 10px; flex-wrap: wrap; margin-top: 30px; }
+
+    .pill-btn-white { 
+        background: #ffffff; 
+        border: 2px solid #e0e0e0; 
+        border-radius: 999px; 
+        padding: 12px 25px; 
+        display: inline-flex;
+        align-items: center; 
+        justify-content: center; 
+        gap: 10px; 
+        cursor: pointer; 
+        font-weight: 700; 
+        color: #555;
+        transition: all 0.3s ease;
+        font-size: 14px;
+    }
+
+    .pill-btn-white:hover {
+        border-color: #ccc;
+        background: #f4f4f4;
+        color: #1a1a1a;
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+    }
+
+    /* --- MODO OSCURO (ADAPTADO AL ESTILO COMENTARIOS) --- */
+    [data-theme="dark"] .container {
+        background: transparent; /* Fondo transparente en modo oscuro */
+        border: 1px solid rgba(255,255,255,0.1);
+        box-shadow: none;
+    }
+
+    [data-theme="dark"] h1, [data-theme="dark"] h2, [data-theme="dark"] h3, [data-theme="dark"] .matrix-name {
+        color: #ffffff;
+    }
+
+    [data-theme="dark"] .header p { color: #888; }
+
+    /* Tarjetas Matrix en Dark */
+    [data-theme="dark"] .matrix-card {
+        background: #1e1e1e;
+        border-color: #333;
+    }
+    
+    [data-theme="dark"] .matrix-grid { background: #252525; }
+    
+    [data-theme="dark"] .matrix-controls input {
+        background: #2a2a2a;
+        color: #fff;
+    }
+    
+    [data-theme="dark"] .matrix-grid input {
+        background: #333;
+        color: #fff;
+        box-shadow: none;
+    }
+    [data-theme="dark"] .matrix-grid input:focus {
+        background: #ffffff;
+        color: #000;
+    }
+
+    /* Operaciones en Dark */
+    [data-theme="dark"] .ops-section { background: #1a1a1a; }
+    [data-theme="dark"] .pill-input {
+        background: #2a2a2a;
+        color: #fff;
+        border-color: transparent;
+    }
+
+    /* Botones en Dark */
+    [data-theme="dark"] .btn-main {
+        background: #ffffff;
+        color: #000000;
+        box-shadow: 0 5px 20px rgba(255,255,255,0.1);
+    }
+    [data-theme="dark"] .btn-main:hover { background: #e0e0e0; }
+
+    [data-theme="dark"] .pill-btn-white {
+        background: #1e1e1e;
+        border-color: #444;
+        color: #ccc;
+    }
+    [data-theme="dark"] .pill-btn-white:hover {
+        background: #333;
+        color: white;
+    }
+
+    /* Resultados en Dark */
+    [data-theme="dark"] .res-card {
+        background: #1e1e1e;
+        border-color: #333;
+  
+    </head>
+<body>
+
+    
+    <header class="mobile-header">
+        <div class="nav-header">
+            <button class="icon-btn"><i data-lucide="search"></i></button>
+            <button class="icon-btn" onclick="toggleTheme()"><i data-lucide="moon"></i></button>
+        </div>
+        <button class="icon-btn" onclick="toggleMenu()"><i data-lucide="menu"></i></button>
+    </header>
+
+    <div class="wrapper">
+        <aside class="sidebar" id="sidebar">
+            <div class="nav-header">
+                <button class="icon-btn" title="Buscar"><i data-lucide="search"></i></button>
+                <button class="icon-btn" title="Modo" onclick="toggleTheme()"><i id="theme-icon" data-lucide="moon"></i></button>
+                <button class="icon-btn" onclick="toggleMenu()" id="close-menu"><i data-lucide="x"></i></button>
+            </div>
+
+            <nav>
+                <ul class="nav-links">
+                    <li><a href="index.html"><i data-lucide="home"></i> Página Principal</a></li>
+
+                    
+                    <div class="nav-group">
+    <div class="nav-item has-submenu" onclick="toggleSubmenu(this)">
+        <div class="nav-text-container">
+            <i data-lucide="calculator"></i>
+            <span>CALCULADORA</span>
+        </div>
+        <i data-lucide="chevron-down" class="arrow-icon"></i>
+    </div>
+    
+    <div class="submenu">
+        <a href="ecuaciones.html"><i data-lucide="equal" class="sub-icon"></i> Ecuaciones</a>
+        <a href="sistemas.html"><i data-lucide="layers" class="sub-icon"></i> Sistemas Ecuaciones</a>
+        <a href="matrices.html"><i data-lucide="grid-3x3" class="sub-icon"></i> Matrices</a>
+        <a href="derivadas.html"><i data-lucide="trending-up" class="sub-icon"></i> Derivadas</a>
+        <a href="integrales.html"><i data-lucide="sigma" class="sub-icon"></i> Integrales</a>
+        <a href="laplace.html"><i data-lucide="waves" class="sub-icon"></i> Transf. Laplace</a>
+    </div>
+</div>
+
+<div class="nav-group">
+    <div class="nav-item has-submenu" onclick="toggleSubmenu(this)">
+        <div class="nav-text-container">
+            <i data-lucide="ruler"></i>
+            <span>HERRAMIENTAS</span>
+        </div>
+        <i data-lucide="chevron-down" class="arrow-icon"></i>
+    </div>
+    
+    <div class="submenu">
+        <a href="simbolos.html"><i data-lucide="omega" class="sub-icon"></i> Símbolos</a>
+        <a href="factorizar.html"><i data-lucide="divide" class="sub-icon"></i> Factorizadora</a>
+        <a href="fraccionesparciales.html"><i data-lucide="percent" class="sub-icon"></i> Fracciones Parciales</a>
+        <a href="triangulos.html"><i data-lucide="triangle" class="sub-icon"></i> Calc. Triángulos</a>
+        <a href="vectores.html"><i data-lucide="move-diagonal" class="sub-icon"></i> Vectores</a>
+        <a href="circulounitario.html"><i data-lucide="circle" class="sub-icon"></i> Círculo Unitario</a>
+        <a href="editor.html"><i data-lucide="edit-3" class="sub-icon"></i> Editor Expresiones</a>
+    </div>
+</div>
+
+<div class="nav-group">
+    <div class="nav-item has-submenu" onclick="toggleSubmenu(this)">
+        <div class="nav-text-container">
+            <i data-lucide="activity"></i>
+            <span>GRAFICADORAS</span>
+        </div>
+        <i data-lucide="chevron-down" class="arrow-icon"></i>
+    </div>
+    
+    <div class="submenu">
+        <a href="graficadora2d.html"><i data-lucide="line-chart" class="sub-icon"></i> Funciones 2D</a>
+        <a href="graficadora3d.html"><i data-lucide="box" class="sub-icon"></i> Graficadora 3D</a>
+        <a href="conicas.html"><i data-lucide="orbit" class="sub-icon"></i> Cónicas</a>
+        <a href="campos.html"><i data-lucide="wind" class="sub-icon"></i> Campos Vectoriales</a>
+    </div>
+</div>
+
+                    
+                    <li><a href="cursos.html"><i data-lucide="book-open"></i> CURSOS</a></li>
+                    <li><a href="formularios.html"><i data-lucide="file-text"></i> FORMULARIOS</a></li>
+                    <li><a href="youtube.html"><i data-lucide="youtube"></i> Canal de YouTube</a></li>
+                    <li><a href="autor.html"><i data-lucide="user"></i> Sobre el autor</a></li>
+                </ul>
+            </nav>
+        </aside>
+
+        <main class="content">
+            
+            
+           
+<div class="container">
+    <div class="header">
+        <h1>Cálculo Matriciales</h1>
+        <p>√(Raiz) Cuadrada²</p>
+    </div>
+
+    <div class="matrix-manager" id="manager"></div>
+    
+    <div style="text-align: center; margin-bottom: 25px;">
+        <button class="pill-btn-white" onclick="addNewMatrix()">+ Añadir Matriz</button>
+    </div>
+
+    <div class="ops-section">
+    <div id="math-preview" style="min-height: 60px; background: #fff; border-radius: 20px; margin-bottom: 15px; display: flex; align-items: center; justify-content: center; padding: 15px; border: 1px solid #eee; overflow-x: auto;">
+        <span style="color: #ccc;">Visualizador de operación...</span>
+    </div>
+    
+    <input type="text" id="op-input" class="pill-input" placeholder="Ej: A + B, Inv(A), Trans(B)..." onkeyup="updatePreview()">
+    <button class="btn-main" onclick="executeOp()">Ejecutar Acción</button>
+</div>
+
+    <div class="dashboard">
+   <div class="res-card">
+    <div style="display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid #eee; padding-bottom: 15px; margin-bottom: 15px;">
+        <h2 style="margin: 0; border: none; padding: 0; font-size: 20px;">Datos Básicos:</h2>
+        <div style="display: flex; align-items: center; gap: 8px;">
+            <span style="font-weight: 600; font-size: 13px;">Analizar:</span>
+            <select id="basic-select" class="pill-input" style="width: auto; padding: 5px 12px; font-size: 13px;" onchange="syncSelectors(this.value)"></select>
+        </div>
+    </div>
+    <div id="basic-content" class="res-content">Cargando datos...</div>
+</div>
+        <div class="res-card highlight">
+    <h2>Resultado de Operación</h2>
+    <div id="op-result-math" style="min-height: 80px; display: flex; align-items: center; justify-content: center; margin-bottom: 15px; background: #fdfdfd; border-radius: 20px; border: 1px dashed #ddd; overflow-x: auto; padding: 10px;">
+        <span style="color: #ccc;">Esperando resultado...</span>
+    </div>
+    
+    <div id="op-result-fractions" style="font-family:monospace; background:#f9f9f9; padding:15px; border-radius:15px; font-size:13px; border: 1px solid #eee; display:none; white-space: pre-wrap;">
+    </div>
+    
+    <div id="op-content" class="res-content" style="display: none;"></div>
+</div>
+    </div>
+
+    <div class="graph-wrapper">
+        <div class="graph-tools">
+            <span style="font-weight: 600;">Analizar:</span>
+            <select id="graph-select" class="pill-input" style="width: auto; padding: 8px 15px;" onchange=""syncSelectors(this.value)""></select>
+            <select id="graph-type" class="pill-input" style="width: auto; padding: 8px 15px;" onchange="updateUI()">
+                <option value="2d">Vista 2D (Área)</option>
+                <option value="3d" selected>Vista 3D (Volumen)</option>
+            </select>
+        </div>
+        <div id="plot"></div>
+    </div>
+
+    <div class="action-bar">
+        <button class="pill-btn-white" onclick="downloadPNG()">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="black" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>
+            Descargar PNG
+        </button>
+        <button class="pill-btn-white" onclick="toggleGuide()">Guía de uso</button>
+    </div>
+<div id="guide-section" class="guide-container" style="line-height: 1.6; color: #333; background: white; border: 1px solid #ccc; padding: 40px; border-radius: 40px; text-align: left;">
+    
+    <h2 style="font-family: 'Playfair Display', serif; font-weight: bold; font-size: 36px; margin-bottom: 25px; border-bottom: 1px solid #eee; padding-bottom: 15px;">Guia de usos.</h2>
+    
+    <p>Esta herramienta ha sido diseñada para procesar operaciones de álgebra lineal con alta precisión, permitiendo el uso de fracciones y representaciones geométricas en tiempo real.</p>
+
+    <h3 style="font-family: 'Open Sans', sans-serif; font-weight: bold; font-size: 24px; margin-top: 35px;">1. Configuración de Matrices</h3>
+    <p>Para comenzar, defina sus matrices en el panel superior:</p>
+    <ul>
+        <li><strong>Variables:</strong> Utilice el botón "+ Añadir Matriz" para crear nuevas matrices (A, B, C...).</li>
+        <li><strong>Tamaño:</strong> Defina las dimensiones (Filas x Columnas) según sea necesario.</li>
+        <li><strong>Entrada de datos:</strong> Puede ingresar números enteros, decimales o <strong>fracciones</strong> (ejemplo: 1/3, -5/2). El sistema conservará la precisión exacta en los cálculos internos.</li>
+    </ul>
+
+    <h3 style="font-family: 'Open Sans', sans-serif; font-weight: bold; font-size: 24px; margin-top: 35px;">2. Comandos y Operaciones</h3>
+    <p>Escriba los comandos en el buscador. Las tablas de resultados muestran la máxima precisión disponible.</p>
+    
+    <div style="border: 1px solid #ccc; border-radius: 15px; overflow: hidden; margin: 20px 0;">
+        <table style="width: 100%; border-collapse: collapse;">
+            <thead>
+                <tr style="background: #f8f8f8; border-bottom: 1px solid #ccc;">
+                    <th style="padding: 12px; text-align: left; border-right: 1px solid #ccc; font-family: 'Open Sans', sans-serif;">Función</th>
+                    <th style="padding: 12px; text-align: left; font-family: 'Open Sans', sans-serif;">Sintaxis</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr style="border-bottom: 1px solid #ccc;">
+                    <td style="padding: 12px; border-right: 1px solid #ccc;">Suma / Resta</td>
+                    <td style="padding: 12px;"><strong>A + B</strong> / <strong>A - B</strong></td>
+                </tr>
+                <tr style="border-bottom: 1px solid #ccc;">
+                    <td style="padding: 12px; border-right: 1px solid #ccc;">Multiplicación</td>
+                    <td style="padding: 12px;"><strong>A * B</strong></td>
+                </tr>
+                <tr style="border-bottom: 1px solid #ccc;">
+                    <td style="padding: 12px; border-right: 1px solid #ccc;">Determinante</td>
+                    <td style="padding: 12px;"><strong>Det(A)</strong></td>
+                </tr>
+                <tr style="border-bottom: 1px solid #ccc;">
+                    <td style="padding: 12px; border-right: 1px solid #ccc;">Inversa / Transpuesta</td>
+                    <td style="padding: 12px;"><strong>Inv(A)</strong> / <strong>Trans(A)</strong></td>
+                </tr>
+                <tr>
+                    <td style="padding: 12px; border-right: 1px solid #ccc;">Escalar</td>
+                    <td style="padding: 12px;"><strong>A * 0.5</strong></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <h3 style="font-family: 'Open Sans', sans-serif; font-weight: bold; font-size: 24px; margin-top: 35px;">3. Resolución de Sistemas de Ecuaciones</h3>
+    <p>Para resolver un sistema de la forma <strong>AX = B</strong>, siga estos pasos:</p>
+    <ol>
+        <li>Cree una matriz <strong>A</strong> con los coeficientes de sus incógnitas (ejemplo: 3x3).</li>
+        <li>Cree una matriz <strong>B</strong> que sea una sola columna (ejemplo: 3x1) con los términos independientes.</li>
+        <li>Ejecute el comando: <strong>Resolver(A, B)</strong>.</li>
+        <li>El resultado mostrará los valores de las incógnitas en orden descendente.</li>
+    </ol>
+
+    <h3 style="font-family: 'Open Sans', sans-serif; font-weight: bold; font-size: 24px; margin-top: 35px;">4. Otras combinaciones permitidas</h3>
+    <p>El procesador permite realizar operaciones mixtas y complejas en una sola línea:</p>
+    <ul>
+        <li><strong>Aritmética de determinantes:</strong> Puede sumar resultados numéricos directamente: <strong>Det(A) + Det(B)</strong>.</li>
+        <li><strong>Operaciones en cadena:</strong> El sistema acepta múltiples matrices, como <strong>A + B - C</strong>.</li>
+    </ul>
+
+    <div style="border: 1px solid #ccc; padding: 20px; border-radius: 20px; margin-top: 30px; background: #fafafa;">
+        <strong style="font-family: 'Open Sans', sans-serif;">Nota sobre la precisión:</strong>
+        <p style="margin-top: 10px;">El panel de <strong>Datos Básicos</strong> es un resumen visual rápido y utiliza redondeo a 1 decimal. Para resultados de ingeniería o académicos, utilice siempre el panel de <strong>Resultado de Operación</strong>, el cual opera con precisión extendida.</p>
+    </div>
+
+    <h3 style="font-family: 'Open Sans', sans-serif; font-weight: bold; font-size: 24px; margin-top: 35px;">5. Análisis Geométrico</h3>
+    <p>Las gráficas 2D y 3D son representaciones directas de los <strong>determinantes</strong>:</p>
+    <ul>
+        <li><strong>Vista 2D (Área):</strong> El área del paralelogramo dibujado corresponde al valor absoluto del determinante de una matriz 2x2.</li>
+        <li><strong>Vista 3D (Volumen):</strong> El volumen del paralelepípedo corresponde al valor absoluto del determinante de una matriz 3x3.</li>
+    </ul>
+    <p>Si la figura geométrica colapsa (se vuelve una línea o un punto), significa que el determinante es 0 y la matriz es singular (no tiene inversa).</p>
+
+</div>
+        
+</div>
+  
+            
+
+<footer class="footer-global">
+    <div class="footer-wrapper">
+        
+        <div class="footer-section">
+            <h4 class="footer-h4">Contacto</h4>
+            <a href="mailto:s.rodriguezrojas939@gmail.com" class="footer-email">
+                s.rodriguezrojas939@gmail.com
+            </a>
+            <div class="footer-socials">
+                <a href="https://wa.me/573196510401" target="_blank" title="WhatsApp">
+                    <i data-lucide="message-circle"></i>
+                </a>
+                <a href="https://www.youtube.com/@ElRaizCuadrada" target="_blank" title="YouTube">
+                    <i data-lucide="youtube"></i>
+                </a>
+                <a href="mailto:s.rodriguezrojas939@gmail.com" title="Correo">
+                    <i data-lucide="mail"></i>
+                </a>
+                <a href="https://github.com" target="_blank" title="GitHub">
+                    <i data-lucide="github"></i>
+                </a>
+            </div>
+        </div>
+
+        <div class="footer-section">
+            <a href="https://www.youtube.com/@ElRaizCuadrada" target="_blank" class="footer-logo-link">
+                <h1 class="footer-title">√(Raiz) Cuadrada²</h1>
+            </a>
+        </div>
+
+        <div class="footer-section">
+            <h4 class="footer-h4">Visitas al sitio</h4>
+            <div class="visitor-counter">
+                <img src="https://hitwebcounter.com/counter/counter.php?page=21465053&style=0024&nbdigits=5&type=page&initCount=0" alt="Visitas">
+            </div>
+        </div>
+
+    </div>
+</footer>
+           
+        </main>
+        
+     <script src="script.js"></script>
+
+  <script>
+    
+    function decToFrac(val) {
+    if (val === null || val === undefined || isNaN(val)) return "0";
+    if (Math.abs(val) < 1e-10) return "0";
+    if (Number.isInteger(val)) return val.toString();
+    
+    let x = val;
+    let tolerance = 1.0E-6;
+    let h1 = 1, h2 = 0, k1 = 0, k2 = 1;
+    let b = x;
+    do {
+        let a = Math.floor(b);
+        let aux = h1; h1 = a * h1 + h2; h2 = aux;
+        aux = k1; k1 = a * k1 + k2; k2 = aux;
+        b = 1 / (b - a);
+    } while (Math.abs(x - h1 / k1) > Math.abs(x) * tolerance);
+
+    return k1 === 1 ? `${h1}` : `${h1}/${k1}`;
+}
+    let matrixNames = [];
+    const alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+    let lastResult = null;
+
+    // --- UTILIDADES DE PARSEO ---
+    function parseFraction(str) {
+        if (!str) return 0;
+        str = str.toString().trim();
+        if (str.includes('/')) {
+            const p = str.split('/');
+            return parseFloat(p[0]) / parseFloat(p[1]);
+        }
+        return parseFloat(str);
+    }
+
+    function getNextLetter() {
+        for (let char of alphabet) { if (!matrixNames.includes(char)) return char; }
+        return "?";
+    }
+
+    // --- GESTIÓN DE MATRICES ---
+    function addNewMatrix(name = null) {
+        const letter = name || getNextLetter();
+        if (matrixNames.includes(letter)) return;
+        matrixNames.push(letter);
+        matrixNames.sort();
+        const card = document.createElement('div');
+        card.className = 'matrix-card';
+        card.id = `card-${letter}`;
+        const delBtn = (letter === 'A' || letter === 'B') ? '' : `<button class="btn-delete" onclick="removeMatrix('${letter}')">×</button>`;
+        card.innerHTML = `
+            <div class="matrix-header"><span class="matrix-name">${letter}</span>${delBtn}</div>
+            <div class="matrix-controls">
+                <input type="number" value="3" min="1" max="5" id="r-${letter}" onchange="renderGrid('${letter}')"> x 
+                <input type="number" value="3" min="1" max="5" id="c-${letter}" onchange="renderGrid('${letter}')">
+            </div>
+            <div id="grid-${letter}" class="matrix-grid"></div>
+        `;
+        document.getElementById('manager').appendChild(card);
+        renderGrid(letter);
+        updateSelectOptions();
+    }
+
+    function removeMatrix(letter) {
+        matrixNames = matrixNames.filter(l => l !== letter);
+        document.getElementById(`card-${letter}`).remove();
+        updateSelectOptions();
+        updateUI();
+    }
+
+    function renderGrid(letter) {
+        const r = parseInt(document.getElementById(`r-${letter}`).value);
+        const c = parseInt(document.getElementById(`c-${letter}`).value);
+        const grid = document.getElementById(`grid-${letter}`);
+        grid.style.gridTemplateColumns = `repeat(${c}, 1fr)`;
+        let html = '';
+        for (let i = 0; i < r; i++) {
+            for (let j = 0; j < c; j++) {
+                let val = (i === j) ? 1 : 0;
+                html += `<input type="text" value="${val}" class="val-${letter}" 
+                         data-m="${letter}" data-r="${i}" data-c="${j}" 
+                         onchange="updateUI()">`;
+            }
+        }
+        grid.innerHTML = html;
+        updateUI();
+    }
+
+    function getMatrix(letter) {
+        if (!matrixNames.includes(letter)) return null;
+        const r = parseInt(document.getElementById(`r-${letter}`).value);
+        const c = parseInt(document.getElementById(`c-${letter}`).value);
+        const inputs = document.querySelectorAll(`.val-${letter}`);
+        let data = [];
+        for (let i = 0; i < r; i++) {
+            let row = [];
+            for (let j = 0; j < c; j++) row.push(parseFraction(inputs[i * c + j].value) || 0);
+            data.push(row);
+        }
+        return data;
+    }
+
+    // --- MOTOR MATEMÁTICO (MathLib) ---
+    const MathLib = {
+        det: (m) => {
+            if (!m || !m[0] || m.length !== m[0].length) return null;
+            if (m.length === 1) return m[0][0];
+            if (m.length === 2) return m[0][0]*m[1][1] - m[0][1]*m[1][0];
+            return m[0].reduce((d, c, i) => d + (i % 2 ? -1 : 1) * c * MathLib.det(m.slice(1).map(r => r.filter((_, j) => j !== i))), 0);
+        },
+        trans: (m) => m[0].map((_, i) => m.map(row => row[i])),
+        add: (a, b) => a.map((r, i) => r.map((v, j) => v + b[i][j])),
+        sub: (a, b) => a.map((r, i) => r.map((v, j) => v - b[i][j])),
+        mul: (a, b) => {
+            if (typeof b === 'number') return a.map(r => r.map(v => v * b));
+            if (typeof a === 'number') return b.map(r => r.map(v => v * a));
+            return a.map(r => b[0].map((_, i) => r.reduce((s, _, j) => s + r[j] * b[j][i], 0)));
+        },
+        inv: (m) => {
+            let d = MathLib.det(m); if (!d || Math.abs(d) < 1e-10) return null;
+            let adj = m.map((_, i) => m.map((_, j) => {
+                let minor = m.filter((_, r) => r !== i).map(r => r.filter((_, c) => c !== j));
+                return ((i+j)%2===0?1:-1) * MathLib.det(minor);
+            }));
+            return MathLib.trans(adj).map(r => r.map(v => v/d));
+        },
+        rank: (m) => {
+            let mat = m.map(r => [...r]);
+            let r = mat.length, c = mat[0].length, rank = 0;
+            for (let i = 0; i < Math.min(r, c); i++) {
+                let pivot = i;
+                while (pivot < r && Math.abs(mat[pivot][i]) < 1e-9) pivot++;
+                if (pivot < r) {
+                    [mat[i], mat[pivot]] = [mat[pivot], mat[i]];
+                    for (let j = i + 1; j < r; j++) {
+                        let f = mat[j][i] / mat[i][i];
+                        for (let k = i; k < c; k++) mat[j][k] -= f * mat[i][k];
+                    }
+                    rank++;
+                }
+            }
+            return rank;
+        },
+        solve: (a, b) => {
+            let ai = MathLib.inv(a);
+            return (ai && b) ? MathLib.mul(ai, b) : "Sin solución única";
+        }
+    };
+
+    // --- TRADUCTOR DE EXPRESIONES (SOLUCIÓN AL ERROR) ---
+    function translateExpr(input) {
+    // 1. Traducir funciones básicas (esto ya soporta anidación natural)
+    // Ej: Trans(Inv(A)) -> MathLib.trans(MathLib.inv(A))
+    let res = input
+        .replace(/Inv\(/gi, 'MathLib.inv(')
+        .replace(/Trans\(/gi, 'MathLib.trans(')
+        .replace(/Det\(/gi, 'MathLib.det(')
+        .replace(/Resolver\(/gi, 'MathLib.solve(');
+
+    const ops = [
+        { symbol: '*', func: 'MathLib.mul' },
+        { symbol: '+', func: 'MathLib.add' },
+        { symbol: '-', func: 'MathLib.sub' }
+    ];
+
+    // 2. Resolver operadores binarios (+, -, *) respetando paréntesis
+    // Ejecutamos el bucle varias veces para ir desde el paréntesis más interno al más externo
+    for (let i = 0; i < 5; i++) { 
+        ops.forEach(op => {
+            // Esta Regex ahora detecta: Matrices, Números, Funciones ya traducidas o bloques entre paréntesis
+            const operand = `([A-Z]|\\d+\\.?\\d*|MathLib\\.[a-z]+\\(.+?\\)|\\([^()]+\\))`;
+            const pattern = new RegExp(`${operand}\\s*\\${op.symbol}\\s*${operand}`, 'g');
+            
+            res = res.replace(pattern, (match, p1, p2) => {
+                // Limpiamos paréntesis innecesarios para la llamada a la función
+                const a = p1.startsWith('(') && p1.endsWith(')') ? p1.slice(1, -1) : p1;
+                const b = p2.startsWith('(') && p2.endsWith(')') ? p2.slice(1, -1) : p2;
+                return `${op.func}(${a},${b})`;
+            });
+        });
+    }
+    return res;
+}
+// --- EJECUCIÓN ---
+function executeOp() {
+    const input = document.getElementById('op-input').value.trim();
+    const outMath = document.getElementById('op-result-math');
+    // --- ADICIÓN: Referencia al cuadro de fracciones ---
+    const fracDiv = document.getElementById('op-result-fractions');
+    // ---------------------------------------------------
+    
+    if (!input) return;
+
+    try {
+        const expr = translateExpr(input);
+        const scope = {};
+        matrixNames.forEach(name => { scope[name] = getMatrix(name); });
+        
+        const evalInScope = new Function('MathLib', 'matrices', `
+            const { ${matrixNames.join(',')} } = matrices;
+            return ${expr};
+        `);
+
+        const result = evalInScope(MathLib, scope);
+        let latexResult = "";
+
+        // --- ADICIÓN: Resetear cuadro de fracciones ---
+        if (fracDiv) { fracDiv.innerHTML = ""; fracDiv.style.display = "none"; }
+        // ----------------------------------------------
+
+        if (Array.isArray(result)) {
+            lastResult = result;
+            latexResult = "\\text{Resultado} = \\begin{pmatrix}";
+            result.forEach(row => {
+                latexResult += row.map(v => typeof v === 'number' ? v.toFixed(2).replace('.00', '') : v).join(' & ') + ' \\\\ ';
+            });
+            latexResult += "\\end{pmatrix}";
+            
+            // --- ADICIÓN: Mostrar fracciones estilo "Inversa" ---
+            if (fracDiv) {
+                const fracRows = result.map(r => `[${r.map(v => decToFrac(v)).join(' | ')}]`);
+                fracDiv.innerHTML = `<b style="display:block; margin-bottom:5px; color:#666;">Resultado en Fracciones:</b>` + fracRows.join('<br>');
+                fracDiv.style.display = "block";
+            }
+            // ----------------------------------------------------
+
+            if (typeof syncSelectors === 'function') syncSelectors("RES");
+
+        } else if (typeof result === 'number') {
+            lastResult = null; 
+            latexResult = `\\text{Resultado numérico} = ${result.toFixed(4).replace(/\.?0+$/, "")}`;
+            
+            // --- ADICIÓN: Mostrar valor exacto ---
+            if (fracDiv) {
+                fracDiv.innerHTML = `<b style="display:block; margin-bottom:5px; color:#666;">Valor exacto:</b> ${decToFrac(result)}`;
+                fracDiv.style.display = "block";
+            }
+            // --------------------------------------
+
+            if (typeof syncSelectors === 'function') syncSelectors("RES");
+
+        } else {
+            lastResult = null;
+            latexResult = `\\text{${result}}`;
+        }
+
+        katex.render(latexResult, outMath, { throwOnError: false, displayMode: true });
+    } catch (e) {
+        if (fracDiv) fracDiv.style.display = "none";
+        outMath.innerHTML = `<span style="color:red; font-size:14px;">Error: Verifica dimensiones (ej: A*B requiere filas=cols) o sintaxis.</span>`;
+    }
+    
+    updateUI();
+}
+    // --- GRÁFICAS (RECUPERADAS) ---
+    function drawGraph(m, type) {
+        const traces = [];
+        const layout = { 
+            margin:{l:0,r:0,t:0,b:0}, paper_bgcolor:'white', showlegend:false,
+            scene: { xaxis:{title:'X'}, yaxis:{title:'Y'}, zaxis:{title:'Z'} },
+            annotations: [{ text: "√(Raiz) Cuadrada²", xref: "paper", yref: "paper", x: 0.95, y: 0.05, showarrow: false, font: { family: "Playfair Display", size: 16, color: "#ddd", weight: "bold" } }]
+        };
+
+        if (type === '2d') {
+            const v1 = [m[0][0]||0, m[1]?m[1][0]:0], v2 = [m[0][1]||0, m[1]?m[1][1]:0];
+            traces.push({ x: [0, v1[0], v1[0]+v2[0], v2[0], 0], y: [0, v1[1], v1[1]+v2[1], v2[1], 0], fill: 'toself', type: 'scatter', line: {color: 'black', width: 3} });
+        } else {
+            const v1 = [m[0][0]||0, m[1]?m[1][0]||0:0, m[2]?m[2][0]||0:0];
+            const v2 = [m[0][1]||0, m[1]?m[1][1]||0:0, m[2]?m[2][1]||0:0];
+            const v3 = [m[0][2]||0, m[1]?m[1][2]||0:0, m[2]?m[2][2]||0:0];
+            const p = [[0,0,0], v1, v2, v3, [v1[0]+v2[0], v1[1]+v2[1], v1[2]+v2[2]], [v1[0]+v3[0], v1[1]+v3[1], v1[2]+v3[2]], [v2[0]+v3[0], v2[1]+v3[1], v2[2]+v3[2]], [v1[0]+v2[0]+v3[0], v1[1]+v2[1]+v3[1], v1[2]+v2[2]+v3[2]]];
+            traces.push({ type: 'mesh3d', x: p.map(a=>a[0]), y: p.map(a=>a[1]), z: p.map(a=>a[2]), i: [0, 0, 0, 1, 1, 2, 0, 0, 3, 3, 5, 5], j: [1, 2, 3, 4, 5, 4, 1, 2, 5, 6, 7, 7], k: [4, 4, 5, 7, 7, 6, 5, 6, 7, 7, 8, 8], opacity: 0.2, color: '#000' });
+            const edges = [[0,1],[0,2],[0,3],[1,4],[1,5],[2,4],[2,6],[3,5],[3,6],[4,7],[5,7],[6,7]];
+            edges.forEach(e => { traces.push({ type: 'scatter3d', mode: 'lines', x:[p[e[0]][0], p[e[1]][0]], y:[p[e[0]][1], p[e[1]][1]], z:[p[e[0]][2], p[e[1]][2]], line:{color:'black', width:4} }); });
+        }
+        Plotly.newPlot('plot', traces, layout, {responsive: true, displayModeBar: false});
+    }
+
+    // --- INTERFAZ Y VISUALIZACIÓN ---
+   function updateUI() {
+    const target = document.getElementById('basic-select').value || "A";
+    const type = document.getElementById('graph-type').value;
+    let data = (target === "RES") ? lastResult : getMatrix(target);
+    
+    if (data && Array.isArray(data)) {
+        const d = MathLib.det(data);
+        const invData = MathLib.inv(data); // Calculamos la inversa una vez para eficiencia
+
+        document.getElementById('basic-content').innerHTML = `
+            <div style="margin-bottom:8px;"><b>Determinante:</b> ${d !== null ? decToFrac(d) : 'N/A'}</div>
+            <div style="margin-bottom:8px;"><b>Rango:</b> ${MathLib.rank(data)}</div>
+            <div style="margin-top:10px;"><b>Inversa:</b></div>
+            <div style="font-family:monospace; background:#f9f9f9; padding:10px; border-radius:15px; margin-top:5px; font-size:12px; border: 1px solid #eee;">
+                ${invData ? invData.map(r => `[${r.map(v => decToFrac(v)).join('|')}]`).join('<br>') : 'No existe'}
+            </div>
+        `;
+        drawGraph(data, type);
+    }
+}
+
+    function updateSelectOptions() {
+        const sBasic = document.getElementById('basic-select');
+        const sGraph = document.getElementById('graph-select');
+        let currentVal = sBasic.value || "A";
+        const options = matrixNames.map(n => `<option value="${n}">Matriz ${n}</option>`).join('') + `<option value="RES">Resultado</option>`;
+        
+        sBasic.innerHTML = options;
+        sGraph.innerHTML = options;
+        
+        // Sincronizamos el valor inicial en ambos
+        const newVal = matrixNames.includes(currentVal) || currentVal === "RES" ? currentVal : "A";
+        sBasic.value = newVal;
+        sGraph.value = newVal; 
+        
+        const targetVal = (matrixNames.includes(currentVal) || currentVal === "RES") ? currentVal : "A";
+        sBasic.value = targetVal;
+        sGraph.value = targetVal;
+    }
+
+    function syncSelectors(val) {
+        document.getElementById('basic-select').value = val;
+        document.getElementById('graph-select').value = val;
+        updateUI();
+    }
+
+    function matrixToLatex(name, type = 'p') {
+        const data = getMatrix(name);
+        if (!data) return name;
+        const env = type === 'det' ? 'vmatrix' : 'pmatrix';
+        let latex = `\\begin{${env}}`;
+        data.forEach(row => { latex += row.map(v => v.toFixed(1).replace('.0', '')).join(' & ') + ' \\\\ '; });
+        latex += `\\end{${env}}`;
+        return latex;
+    }
+
+  function updatePreview() {
+    const input = document.getElementById('op-input').value.trim();
+    const preview = document.getElementById('math-preview');
+    if (!input) { preview.innerHTML = '<span style="color: #ccc;">...</span>'; return; }
+
+    try {
+        let latex = input;
+        
+        // Aplicamos reemplazos de funciones de forma global
+        latex = latex.replace(/Det\((.+?)\)/gi, (m, content) => `\\left| ${content} \\right|`);
+        latex = latex.replace(/Inv\((.+?)\)/gi, (m, content) => `\\left( ${content} \\right)^{-1}`);
+        latex = latex.replace(/Trans\((.+?)\)/gi, (m, content) => `\\left( ${content} \\right)^{T}`);
+        latex = latex.replace(/Resolver\((.+?),\s*(.+?)\)/gi, (m, a, b) => `${a}^{-1} \\cdot ${b}`);
+
+        // Reemplazar las letras de matrices por sus tablas LaTeX al final
+        matrixNames.forEach(name => {
+            const reg = new RegExp(`\\b${name}\\b`, 'g');
+            latex = latex.replace(reg, matrixToLatex(name));
+        });
+
+        latex = latex.replace(/\*/g, ' \\cdot ');
+        
+        katex.render(latex, preview, { throwOnError: false, displayMode: true });
+    } catch (e) {
+        // Error silencioso mientras el usuario termina de escribir
+    }
+}
+    function toggleGuide() {
+        const g = document.getElementById('guide-section');
+        g.style.display = g.style.display === 'block' ? 'none' : 'block';
+    }
+
+ async function downloadPNG() {
+    const originalPlot = document.getElementById('plot');
+    
+    // 1. Creamos un contenedor temporal invisible
+    const tempDiv = document.createElement('div');
+    tempDiv.style.position = 'absolute';
+    tempDiv.style.left = '-9999px'; // Lo sacamos de la vista
+    document.body.appendChild(tempDiv);
+
+    // 2. Clonamos la configuración de la gráfica actual
+    const data = JSON.parse(JSON.stringify(originalPlot.data));
+    const layout = JSON.parse(JSON.stringify(originalPlot.layout));
+
+    // 3. Aplicamos la marca de agua GRUESA solo a la copia
+    layout.annotations[0].font.size = 70; // Tamaño grande para el PNG
+    layout.annotations[0].font.weight = 900; // Grosor máximo
+    layout.annotations[0].font.color = 'rgba(0,0,0,0.07)'; // Muy sutil
+    
+    // 4. Renderizamos la gráfica en el contenedor invisible
+    await Plotly.newPlot(tempDiv, data, layout);
+
+    // 5. Descargamos la imagen desde el contenedor oculto
+    await Plotly.downloadImage(tempDiv, {
+        format: 'png',
+        width: 1200,
+        height: 900,
+        filename: 'analisis_matricial_pro'
+    });
+
+    // 6. Limpiamos la memoria eliminando el temporal
+    Plotly.purge(tempDiv);
+    tempDiv.remove();
+}
+
+    // --- NAVEGACIÓN POR TECLADO ---
+    document.addEventListener('keydown', function(e) {
+        const active = document.activeElement;
+        if (active.tagName !== 'INPUT' || !active.hasAttribute('data-m')) {
+            if (e.key === 'Enter') executeOp();
+            return;
+        }
+        const m = active.getAttribute('data-m');
+        let r = parseInt(active.getAttribute('data-r'));
+        let c = parseInt(active.getAttribute('data-c'));
+        const maxR = parseInt(document.getElementById(`r-${m}`).value);
+        const maxC = parseInt(document.getElementById(`c-${m}`).value);
+        let nextR = r, nextC = c, nextM = m;
+
+        switch(e.key) {
+            case 'ArrowRight': if (c < maxC - 1) nextC++; else { const nextIdx = matrixNames.indexOf(m) + 1; if (nextIdx < matrixNames.length) { nextM = matrixNames[nextIdx]; nextR = r; nextC = 0; } } break;
+            case 'ArrowLeft': if (c > 0) nextC--; else { const prevIdx = matrixNames.indexOf(m) - 1; if (prevIdx >= 0) { nextM = matrixNames[prevIdx]; nextR = r; nextC = parseInt(document.getElementById(`c-${nextM}`).value) - 1; } } break;
+            case 'ArrowDown': if (r < maxR - 1) nextR++; break;
+            case 'ArrowUp': if (r > 0) nextR--; break;
+            case 'Enter': executeOp(); return;
+            default: return;
+        }
+        const target = document.querySelector(`input[data-m="${nextM}"][data-r="${nextR}"][data-c="${nextC}"]`);
+        if (target) { e.preventDefault(); target.focus(); target.select(); }
+    });
+    
+    function syncSelectors(val) {
+        const sBasic = document.getElementById('basic-select');
+        const sGraph = document.getElementById('graph-select');
+        
+        if (sBasic) sBasic.value = val;
+        if (sGraph) sGraph.value = val;
+        
+        updateUI(); // Esto actualizará tanto los textos como la gráfica
+    }
+
+    window.onload = () => { 
+        addNewMatrix("A"); 
+        addNewMatrix("B"); 
+        
+        // Esto asegura que el selector de abajo también mande órdenes al de arriba
+        const gSelect = document.getElementById('graph-select');
+        if (gSelect) {
+            gSelect.onchange = (e) => syncSelectors(e.target.value);
+        }
+        
+        syncSelectors("A");
+    };
+</script>
+
+      
+</body>
+<button class="mobile-theme-toggle" onclick="toggleTheme()" aria-label="Cambiar tema">
+    <i data-lucide="sun" class="icon-sun"></i>
+    <i data-lucide="moon" class="icon-moon"></i>
+</button>
+
+
+</html>
