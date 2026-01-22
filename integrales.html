@@ -873,6 +873,12 @@ function cambiarModo(modo) {
     if(graphDiv) graphDiv.innerHTML = ''; 
     
     actualizarVistaPrevia();
+    
+     const btnPaso = document.querySelector('.btn-secundario');
+    if (btnPaso) {
+        btnPaso.style.display = (modo === 'single') ? 'flex' : 'none';
+    }
+    
 }
 
 // Agregamos "escuchas" para detectar cuando tocas los inputs
