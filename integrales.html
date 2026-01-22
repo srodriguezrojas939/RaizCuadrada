@@ -1269,7 +1269,7 @@ if (btnDescargar) btnDescargar.style.display = 'none';
             // Si el resultado es 'defint' (no resuelto), 'Infinity' o 'NaN', asumimos que diverge.
             if (resText.includes('defint') || resText.includes('Infinity') || resText.includes('NaN')) {
                 
-                out.innerHTML = `$$ \\int_{${texA}}^{${texB}} \\left( ${texFunc} \\right) \\, d${v} = \\text{Diverge} $$`;
+                out.innerHTML = `$$ \\int_{${texA}}^{${texB}} \\left( ${texFunc} \\right) \\, d${v} = \\text{Diverge (o NO definida, ver paso a paso)} $$`;
 
             } else {
                 // Si converge, mostramos el resultado simbólico y la aproximación decimal
