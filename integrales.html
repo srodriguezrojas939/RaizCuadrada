@@ -1083,7 +1083,7 @@ s = s.replace(/([a-z])([xyz])/g, '$1*$2');
 
     // CASO C: Variable seguida de variable (xx -> x*x, xy -> x*y)
     // Previene duplicados como 'xx'
-    s = s.replace(/([xytz])([xytz])/g, '$1*$1');
+    s = s.replace(/([xytz])([xytz])/g, '$1*$2');
 
     // CASO D: Corchetes y llaves
     s = s.replace(/[\[\{]/g, '(').replace(/[\]\}]/g, ')');
@@ -1116,10 +1116,19 @@ function actualizarVistaPrevia() {
     };
 
     // Helper para obtener valores de límites o poner una letra por defecto (a, b, c...)
-    const getLim = (id, def) => {
-        const el = document.getElementById(id);
-        return (el && el.value.trim()) ? el.value.trim() : def;
-    };
+  const getLim = (id, def) => {
+    const el = document.getElementById(id);
+    if (!el || !el.value.trim()) return def;
+
+    try {
+        // normalizamos antes de usar
+        return nerdamer(normalizar(el.value.trim())).toTeX();
+    } catch {
+        // fallback visual si hay error
+        return el.value.trim();
+    }
+};
+
 
     let latexFinal = "";
 
@@ -1562,13 +1571,18 @@ function descargarGrafica() {
 function resolverDoble() {
     const out = document.getElementById('resultado');
     try {
-       const f = normalizar(document.getElementById('funcion-double').value);
-        const vIn = document.getElementById('var2-inner').value;
-        const vOut = document.getElementById('var2-outer').value;
-        const la = document.getElementById('lim2-inner-a').value;
-        const lb = document.getElementById('lim2-inner-b').value;
-        const lc = document.getElementById('lim2-outer-a').value;
-        const ld = document.getElementById('lim2-outer-b').value;
+const f = normalizar(document.getElementById('funcion-double').value);
+
+// Variables de integración
+const vIn  = document.getElementById('var2-inner').value;
+const vOut = document.getElementById('var2-outer').value;
+
+//  Límites: SIEMPRE normalizados 
+const la = normalizar(document.getElementById('lim2-inner-a').value);
+const lb = normalizar(document.getElementById('lim2-inner-b').value);
+const lc = normalizar(document.getElementById('lim2-outer-a').value);
+const ld = normalizar(document.getElementById('lim2-outer-b').value);
+
 
         // 1. Integral Interior
         const inner = nerdamer(`defint(${f}, ${la}, ${lb}, ${vIn})`);
@@ -1593,14 +1607,20 @@ function resolverTriple() {
     const out = document.getElementById('resultado');
     try {
          const f = normalizar(document.getElementById('funcion-triple').value);
-        // Vars
-        const v1 = document.getElementById('var3-1').value;
-        const v2 = document.getElementById('var3-2').value;
-        const v3 = document.getElementById('var3-3').value;
-        // Límites
-        const l1a = document.getElementById('lim3-1a').value; const l1b = document.getElementById('lim3-1b').value;
-        const l2a = document.getElementById('lim3-2a').value; const l2b = document.getElementById('lim3-2b').value;
-        const l3a = document.getElementById('lim3-3a').value; const l3b = document.getElementById('lim3-3b').value;
+        // Variables de integración
+const v1 = document.getElementById('var3-1').value;
+const v2 = document.getElementById('var3-2').value;
+const v3 = document.getElementById('var3-3').value;
+
+//  Límites: SIEMPRE normalizados
+const l1a = normalizar(document.getElementById('lim3-1a').value);
+const l1b = normalizar(document.getElementById('lim3-1b').value);
+
+const l2a = normalizar(document.getElementById('lim3-2a').value);
+const l2b = normalizar(document.getElementById('lim3-2b').value);
+
+const l3a = normalizar(document.getElementById('lim3-3a').value);
+const l3b = normalizar(document.getElementById('lim3-3b').value);
 
         // Cálculo anidado
         const step1 = nerdamer(`defint(${f}, ${l1a}, ${l1b}, ${v1})`);
