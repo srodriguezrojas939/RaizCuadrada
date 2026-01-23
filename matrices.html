@@ -1310,6 +1310,9 @@ function executeOp() {
 // --- GRÁFICAS (ESTILO CYBERPUNK / IMAGEN DE REFERENCIA) ---
 // --- GRÁFICAS (ESTILO MONOCROMÁTICO / BLANCO Y NEGRO) ---
 function drawGraph(m, type) {
+    window.lastMatrix = m;   // Guardamos la matriz actual
+    window.lastType = type;  // Guardamos si es 2d o 3d
+    
     const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
     
     // --- COLORES ---
@@ -1706,36 +1709,31 @@ function renderResult(resultMatrix) {
     });
 }
 
-window.onload = () => { 
-    addNewMatrix("A"); 
-    addNewMatrix("B"); 
-    
-    // Sincronizar selectores
-    const gSelect = document.getElementById('graph-select');
-    if (gSelect) {
-        gSelect.onchange = (e) => syncSelectors(e.target.value);
-    }
-    syncSelectors("A");
 
-    // --- NUEVO: ACTIVAR EL VISOR AL ESCRIBIR ---
-    const inputField = document.getElementById('op-input');
-    if (inputField) {
-        // Cada vez que levantes una tecla, actualiza el visor
-        inputField.addEventListener('input', updatePreview);
-    }
-};
-
-
-// Pega esto al final de tu archivo JS para que el cambio sea automático
-const observer = new MutationObserver((mutations) => {
+// --- VIGILANTE DE TEMA (FINAL Y MEJORADO) ---
+const themeObserver = new MutationObserver((mutations) => {
     mutations.forEach((mutation) => {
+        // Solo nos importa si cambia el atributo 'data-theme'
         if (mutation.type === "attributes" && mutation.attributeName === "data-theme") {
-            // Fuerza a redibujar la última gráfica si existe
-            if(window.lastMatrix) drawGraph(window.lastMatrix, window.lastType || '3d');
+            
+            // Verificamos si ya hay una gráfica dibujada en memoria
+            if (window.lastMatrix && window.lastType) {
+                // ¡AQUI ESTA LA MAGIA!
+                // Volvemos a llamar a drawGraph con los últimos datos guardados
+                drawGraph(window.lastMatrix, window.lastType);
+            }
         }
     });
 });
-observer.observe(document.documentElement, { attributes: true });
+
+// Iniciar vigilancia en la etiqueta <html>
+themeObserver.observe(document.documentElement, { 
+    attributes: true, 
+    attributeFilter: ['data-theme'] // Solo vigilamos cambios de tema para optimizar
+});
+
+
+
 
 </script>
 
