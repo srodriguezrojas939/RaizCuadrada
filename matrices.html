@@ -512,6 +512,12 @@
     border: 1px solid #333;
 }
 
+}html, body {
+    width: 100%;
+    margin: 0;
+    overflow-x: hidden;
+}
+
 </style>
 
     </head>
@@ -947,7 +953,33 @@
         solve: (a, b) => {
             let ai = MathLib.inv(a);
             return (ai && b) ? MathLib.mul(ai, b) : "Sin solución única";
-        }
+        },
+        
+       pow(a, n) {
+    if (typeof a === 'number' && typeof n === 'number') {
+        return Math.pow(a, n);
+    }
+
+    if (typeof n !== 'number') {
+        throw "Exponente debe evaluarse a número";
+    }
+
+    if (!Number.isInteger(n)) {
+        throw "Potencias fraccionarias de matrices no implementadas";
+    }
+
+    if (n === 0) return identityMatrix(a.length);
+
+    let r = a;
+    for (let i = 1; i < n; i++) r = MathLib.mul(r, a);
+    return r;
+},
+
+    sqrt(a) {
+        if (typeof a === 'number') return Math.sqrt(a);
+        throw "Raíz de matrices no implementada";
+    }
+        
     };
 
     // --- TRADUCTOR DE EXPRESIONES (SOLUCIÓN AL ERROR) ---
@@ -1006,44 +1038,100 @@ function translateExpr(str) {
     if (!str) return "";
     let expr = str;
 
-    // --- COMPLEMENTO DE NORMALIZACIÓN (NUEVO) ---
-    // Esto limpia la entrada sucia ANTES de que tu código original la toque.
-    
-    // 1. Detectar patrón pegado (ej: "transa" -> "Trans(A)", "invb" -> "Inv(B)")
-    expr = expr.replace(/\b(det|inv|trans|rango|rank)([a-z])\b/gi, (match, cmd, letter) => {
-        // Capitalizamos: trans -> Trans y a -> A
-        const cmdCap = cmd.charAt(0).toUpperCase() + cmd.slice(1).toLowerCase();
-        return `${cmdCap}(${letter.toUpperCase()})`;
-    });
+    // =====================================================
+    // 1) NORMALIZACIÓN DE SUPERÍNDICES (Unicode → ^)
+    // =====================================================
+    const superMap = {
+        '⁰':'0','¹':'1','²':'2','³':'3','⁴':'4',
+        '⁵':'5','⁶':'6','⁷':'7','⁸':'8','⁹':'9'
+    };
 
-    // 2. Detectar patrón separado (ej: "trans A", "inv b" -> "Trans(A)")
-    expr = expr.replace(/\b(det|inv|trans|rango|rank)\s+([a-z])\b/gi, (match, cmd, letter) => {
-        const cmdCap = cmd.charAt(0).toUpperCase() + cmd.slice(1).toLowerCase();
-        return `${cmdCap}(${letter.toUpperCase()})`;
-    });
-    // --- FIN DEL COMPLEMENTO ---
+    expr = expr.replace(/[⁰¹²³⁴⁵⁶⁷⁸⁹]+/g, m =>
+        '^' + [...m].map(c => superMap[c]).join('')
+    );
 
+    // =====================================================
+    // 2) NORMALIZACIÓN DE RAÍZ
+    // =====================================================
+    expr = expr.replace(
+        /√\s*([A-Za-z0-9_.()]+)/g,
+        'MathLib.sqrt($1)'
+    );
 
-    // --- TU CÓDIGO ORIGINAL (INTACTO) ---
-    // Ahora recibirá "Trans(A)" limpio, así que tus reemplazos funcionarán perfecto.
+    // =====================================================
+    // 3) NORMALIZACIÓN DE COMANDOS (invA, trans A, etc.)
+    // =====================================================
+    expr = expr.replace(
+        /\b(det|inv|trans|rango|rank)([a-z])\b/gi,
+        (_, cmd, letter) =>
+            `${cmd.charAt(0).toUpperCase()+cmd.slice(1).toLowerCase()}(${letter.toUpperCase()})`
+    );
 
-    // 1. Convertir funciones visuales a funciones de la librería MathLib
-    // Reemplaza "Inv(" por "MathLib.inv("
+    expr = expr.replace(
+        /\b(det|inv|trans|rango|rank)\s+([a-z])\b/gi,
+        (_, cmd, letter) =>
+            `${cmd.charAt(0).toUpperCase()+cmd.slice(1).toLowerCase()}(${letter.toUpperCase()})`
+    );
+
+    // =====================================================
+    // 4) MAPEO A MathLib
+    // =====================================================
     expr = expr.replace(/\bInv\(/gi, 'MathLib.inv(');
     expr = expr.replace(/\bDet\(/gi, 'MathLib.det(');
     expr = expr.replace(/\bTrans\(/gi, 'MathLib.trans(');
     expr = expr.replace(/\bRango\(/gi, 'MathLib.rank(');
-    
-    // Resolver(A, B) -> MathLib.solve(A, B)
     expr = expr.replace(/\bResolver\(/gi, 'MathLib.solve(');
 
-    // NOTA: Para multiplicación simple A*B, JavaScript nativo no soporta multiplicación
-    // de arrays con '*'. Lo ideal es usar MathLib.mul(A, B).
-    // Si quieres permitir '*' tendrías que hacer un parser más complejo, 
-    // pero por ahora esto arregla las funciones principales.
-    
+    // =====================================================
+    // 5) MULTIPLICACIÓN IMPLÍCITA (PROTEGIENDO MathLib)
+    // =====================================================
+
+    // número seguido de variable o paréntesis (pero NO MathLib)
+    expr = expr.replace(
+        /(\d)\s*(?!MathLib)([A-Za-z(])/g,
+        '$1*$2'
+    );
+
+    // A2 → A*2
+    expr = expr.replace(/(\b[A-Z]\b)(\d)/g, '$1*$2');
+
+    // AB → A*B
+    expr = expr.replace(/(\b[A-Z]\b)(\b[A-Z]\b)/g, '$1*$2');
+
+    // 2(A+B) → 2*(A+B)
+    expr = expr.replace(/(\d)\s*\(/g, '$1*(');
+
+    // A(B+C) → A*(B+C)
+    expr = expr.replace(/(\b[A-Z]\b)\s*\(/g, '$1*(');
+
+    // )A → )*A
+    expr = expr.replace(/\)\s*(\b[A-Z]\b)/g, ')*$1');
+
+    // =====================================================
+    // 6) POTENCIAS ^
+    // (DESPUÉS de multiplicación implícita)
+    // =====================================================
+   while (expr.includes('^')) {
+    expr = expr.replace(
+        /([A-Za-z0-9_.()]+)\s*\^\s*(\([^()]+\)|[A-Za-z0-9_.\/]+)/,
+        'MathLib.pow($1, $2)'
+    );
+}
+
+
+    // =====================================================
+    // 7) CONVERSIÓN FINAL * → MathLib.mul
+    // =====================================================
+    while (expr.includes('*')) {
+        expr = expr.replace(
+            /([A-Za-z0-9_.()]+)\s*\*\s*([A-Za-z0-9_.()]+)/,
+            'MathLib.mul($1, $2)'
+        );
+    }
+
     return expr;
 }
+
 
 
 /* --- 2. TU FUNCIÓN EXECUTEOP MEJORADA --- */
@@ -1470,6 +1558,8 @@ window.onload = () => {
         inputField.addEventListener('input', updatePreview);
     }
 };
+
+
 
 
 </script>
