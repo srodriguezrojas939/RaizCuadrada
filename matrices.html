@@ -229,35 +229,47 @@
 
     /* --- SECCIÓN OPERACIONES (Input Principal) --- */
     .ops-section { 
-        background: var(--bg-card); 
         padding: 30px; 
         border-radius: 35px; 
         border: 1px solid var(--border-color); 
         margin-bottom: 30px; 
-        box-shadow: 0 2px 5px rgba(0,0,0,0.02) inset;
+    border: 1px solid #e0e0e0; /* Un gris muy clarito casi invisible */
+    background: var(--white);
+    box-shadow: 0 10px 30px rgba(0,0,0,0.05); /* Sombra suave que lo hace resaltar */
+
     }
 
-    .pill-input { 
-        width: 100%; 
-        padding: 18px 25px; 
-        border-radius: 25px; 
-        border: 1px solid transparent; 
-        background: var(--white);
-        color: var(--text-main);
-        font-size: 16px; 
-        font-weight: 600; 
-        box-sizing: border-box; 
-        outline: none; 
-        box-shadow: 0 2px 5px rgba(0,0,0,0.05);
-        font-family: inherit;
-        transition: all 0.3s ease;
-    }
+  .pill-input { 
+    width: 100%; 
+    padding: 18px 25px; 
+    border-radius: 25px; 
+    border: 2px solid transparent; 
+    background: #f9f9f9; /* El mismo gris que tus visores */
+    color: var(--text-main);
+    font-size: 16px; 
+    font-weight: 600; 
+    box-sizing: border-box; 
+    outline: none; 
+    /* El truco del efecto "hundido": */
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05) inset; 
+    font-family: inherit;
+    transition: all 0.3s ease;
+}
+    
 
     .pill-input:focus {
         border-color: var(--accent);
         box-shadow: 0 10px 25px rgba(0,0,0,0.08);
         transform: translateY(-2px);
     }
+    
+    [data-theme="dark"] .pill-input {
+    background: #252525;
+    color: white;
+    box-shadow: none;
+    border: 1px solid #333;
+}
+
 
     /* --- BOTÓN PRINCIPAL (Premium Black) --- */
     .btn-main { 
@@ -292,7 +304,17 @@
         box-shadow: 0 2px 5px rgba(0,0,0,0.02) inset;
     }
 
-    .res-card.highlight { border-color: var(--accent); background: var(--white); }
+    .res-card.highlight { 
+    border: 1px solid #e0e0e0; /* Un gris muy clarito casi invisible */
+    background: var(--white);
+    box-shadow: 0 10px 30px rgba(0,0,0,0.05); /* Sombra suave que lo hace resaltar */
+}
+
+/* Y para el modo oscuro, que no sea un borde blanco chillón */
+[data-theme="dark"] .res-card.highlight {
+    border-color: #333; 
+    box-shadow: none;
+}
     
     .res-card h2 { 
         margin-top: 0; 
@@ -625,7 +647,7 @@
     </div>
 
     <div class="ops-section">
-    <div id="math-preview" style="min-height: 60px; background: #fff; border-radius: 20px; margin-bottom: 15px; display: flex; align-items: center; justify-content: center; padding: 15px; border: 1px solid #eee; overflow-x: auto;">
+    <div id="math-preview" style="min-height: 60px; background: #fff; border-radius: 20px; margin-bottom: 15px; display: flex; align-items: center; justify-content: center; padding: 15px; overflow-x: auto;">
         <span style="color: #ccc;">Visualizador de operación...</span>
     </div>
     
@@ -634,28 +656,33 @@
 </div>
 
     <div class="dashboard">
-   <div class="res-card">
-    <div style="display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid #eee; padding-bottom: 15px; margin-bottom: 15px;">
+        <div class="res-card highlight">
+             <div style="display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid #eee; padding-bottom: 15px; margin-bottom: 15px;">
         <h2 style="margin: 0; border: none; padding: 0; font-size: 20px;">Datos Básicos:</h2>
         <div style="display: flex; align-items: center; gap: 8px;">
             <span style="font-weight: 600; font-size: 13px;">Analizar:</span>
             <select id="basic-select" class="pill-input" style="width: auto; padding: 5px 12px; font-size: 13px;" onchange="syncSelectors(this.value)"></select>
         </div>
     </div>
+    
+   
     <div id="basic-content" class="res-content">Cargando datos...</div>
 </div>
+
+
         <div class="res-card highlight">
     <h2>Resultado de Operación</h2>
-    <div id="op-result-math" style="min-height: 80px; display: flex; align-items: center; justify-content: center; margin-bottom: 15px; background: #fdfdfd; border-radius: 20px; border: 1px dashed #ddd; overflow-x: auto; padding: 10px;">
+    <div id="op-result-math" style="min-height: 80px; display: flex; align-items: center; justify-content: center; margin-bottom: 15px; background: #fdfdfd; border-radius: 20px;  overflow-x: auto; padding: 10px;">
         <span style="color: #ccc;">Esperando resultado...</span>
     </div>
     
-    <div id="op-result-fractions" style="font-family:monospace; background:#f9f9f9; padding:15px; border-radius:15px; font-size:13px; border: 1px solid #eee; display:none; white-space: pre-wrap;">
+    <div id="op-result-fractions" style="font-family:monospace; background:#f9f9f9; padding:15px; border-radius:20px; font-size:13px;  display:none; white-space: pre-wrap;">
     </div>
     
     <div id="op-content" class="res-content" style="display: none;"></div>
 </div>
-    </div>
+  
+</div>
 
     <div class="graph-wrapper">
         <div class="graph-tools">
