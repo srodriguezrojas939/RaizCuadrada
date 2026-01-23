@@ -524,6 +524,71 @@
     box-shadow: none;
 }
 
+/* --- ESTILOS BASE DE LA GUÍA (MODO CLARO) --- */
+.guide-container {
+    display: none; /* Se oculta por defecto hasta que das clic */
+    background: #ffffff;
+    padding: 40px;
+    border-radius: 40px;
+    border: 1px solid #e0e0e0;
+    margin-top: 15px;
+    text-align: left;
+    color: #333;
+    line-height: 1.6;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.05);
+    transition: background 0.3s ease, color 0.3s ease;
+}
+
+/* Títulos dentro de la guía */
+.guide-container h2, 
+.guide-container h3 {
+    color: var(--accent); /* Se ajusta solo si usas variables, si no, lo forzamos abajo */
+}
+
+/* Tablas dentro de la guía */
+.guide-container table th {
+    background: #f8f8f8;
+    color: #333;
+}
+.guide-container table td, 
+.guide-container table th {
+    border-color: #eee;
+}
+
+/* --- MODO DARK (LA MAGIA) --- */
+[data-theme="dark"] .guide-container {
+    background: #1e1e1e; /* Gris oscuro elegante */
+    border-color: #333;   /* Borde sutil */
+    color: #e0e0e0;       /* Texto blanco suave (no quema la vista) */
+    box-shadow: none;
+}
+
+/* Títulos en Dark */
+[data-theme="dark"] .guide-container h2,
+[data-theme="dark"] .guide-container h3 {
+    color: #ffffff;
+    border-bottom-color: #444 !important; /* La línea divisoria del título */
+}
+
+/* Tablas en Dark */
+[data-theme="dark"] .guide-container table th {
+    background: #2a2a2a; /* Encabezado de tabla un poco más claro */
+    color: #fff;
+    border-color: #444;
+}
+[data-theme="dark"] .guide-container table td,
+[data-theme="dark"] .guide-container table tr {
+    border-color: #444; /* Líneas de la tabla oscuras */
+}
+
+/* Cajitas de Nota (Ej: "Nota sobre la precisión") */
+[data-theme="dark"] .guide-container div[style*="background"] {
+    background: #252525 !important; /* Fondo de la nota */
+    border-color: #444 !important;
+    color: #ccc;
+}
+
+
 </style>
 
     </head>
@@ -643,21 +708,27 @@
 
     <div class="dashboard">
         <div class="res-card highlight">
-             <div style="display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid #eee; padding-bottom: 15px; margin-bottom: 15px;">
-        <h2 style="margin: 0; border: none; padding: 0; font-size: 20px;">Datos Básicos:</h2>
-        <div style="display: flex; align-items: center; gap: 8px;">
-            <span style="font-weight: 600; font-size: 13px;">Analizar:</span>
+       <div style="display: flex; flex-direction: column; align-items: center; gap: 12px; border-bottom: 1px solid #eee; padding-bottom: 15px; margin-bottom: 15px;">
+        
+        <h2 style="margin: 0; border: none; padding: 0; font-size: 20px; text-align: center;">
+            Datos Básicos:
+        </h2>
+
+        <div style="display: flex; align-items: center; gap: 8px; justify-content: center;">
+            <span style="font-weight: 700; font-size: 13px; color: #888; text-transform: uppercase; letter-spacing: 0.5px;">
+                Analizar:
             <select id="basic-select" class="pill-input" style="width: auto; padding: 5px 12px; font-size: 13px;" onchange="syncSelectors(this.value)"></select>
+
+
         </div>
     </div>
-    
    
     <div id="basic-content" class="res-content">Cargando datos...</div>
 </div>
 
 
         <div class="res-card highlight">
-    <h2>Resultado de Operación</h2>
+<h2 style="text-align: center;">Resultado de Operación</h2>
     <div id="op-result-math" style="min-height: 80px; display: flex; align-items: center; justify-content: center; margin-bottom: 15px; background: #fdfdfd; border-radius: 20px;  overflow-x: auto; padding: 10px;">
         <span style="color: #ccc;">Esperando resultado...</span>
     </div>
@@ -690,7 +761,7 @@
 
         <button class="pill-btn-white" onclick="toggleGuide()">Guía de uso</button>
     </div>
-<div id="guide-section" class="guide-container" style="line-height: 1.6; color: #333; background: white; border: 1px solid #ccc; padding: 40px; border-radius: 40px; text-align: left;">
+<div id="guide-section" class="guide-container">
     
     <h2 style="font-family: 'Playfair Display', serif; font-weight: bold; font-size: 36px; margin-bottom: 25px; border-bottom: 1px solid #eee; padding-bottom: 15px;">Guia de usos.</h2>
     
@@ -1265,26 +1336,29 @@ function executeOp() {
         // 2. Construcción del HTML con la nueva estética
         // Usamos IDs únicos para luego inyectar el LaTeX con KaTeX
         container.innerHTML = `
-            <div class="res-card">
-                <h2>Propiedades de ${target}</h2>
-                
-                <div style="margin-bottom: 15px; font-size: 1.1rem;">
-                    <span style="color:#999; font-weight:700; font-size:12px; text-transform:uppercase; letter-spacing:1px; margin-right:10px;">Determinante:</span>
-                    <span id="prop-det" style="font-weight:600;">Calculando...</span>
-                </div>
+         <div class="res-card">
+    <h2 style="text-align: center;">Propiedades de ${target}</h2> 
 
-                <div style="margin-bottom: 15px; font-size: 1.1rem;">
-                    <span style="color:#999; font-weight:700; font-size:12px; text-transform:uppercase; letter-spacing:1px; margin-right:10px;">Rango:</span>
-                    <span style="font-weight:600;">${rank}</span>
-                </div>
-  <div style="margin-bottom: 5px; font-size: 1.1rem;">
-                    <span style="color:#999; font-weight:700; font-size:12px; text-transform:uppercase; letter-spacing:1px; margin-right:10px;">Inversa:</span>
-                    <span style="font-weight:600;"
-                </div>
-                <div id="prop-inv" class="res-content">
-                    <span style="color:#aaa; font-style:italic; font-size:0.9rem;">Calculando...</span>
-                </div>
-            </div>
+    <div style="display: flex; justify-content: center; gap: 40px; margin-bottom: 15px;">
+        <div style="text-align: center;">
+            <span style="color:#999; font-weight:700; font-size:12px; text-transform:uppercase; letter-spacing:1px; display: block;">Determinante</span>
+            <span id="prop-det" style="font-weight:600; font-size: 1.1rem;">Calculando...</span>
+        </div>
+
+        <div style="text-align: center;">
+            <span style="color:#999; font-weight:700; font-size:12px; text-transform:uppercase; letter-spacing:1px; display: block;">Rango</span>
+            <span style="font-weight:600; font-size: 1.1rem;">${rank}</span>
+        </div>
+    </div>
+
+    <div style="text-align: center; margin-bottom: 5px;">
+        <span style="color:#999; font-weight:700; font-size:12px; text-transform:uppercase; letter-spacing:1px;">Inversa</span>
+    </div>
+    
+    <div id="prop-inv" class="res-content" style="display: flex; justify-content: center; align-items: center; min-height: 50px;">
+        <span style="color:#aaa; font-style:italic; font-size:0.9rem;">Calculando...</span>
+    </div>
+</div>
         `;
 
         // 3. Renderizado de LaTeX (Determinante)
