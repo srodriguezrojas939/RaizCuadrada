@@ -1726,7 +1726,16 @@ window.onload = () => {
 };
 
 
-
+// Pega esto al final de tu archivo JS para que el cambio sea automático
+const observer = new MutationObserver((mutations) => {
+    mutations.forEach((mutation) => {
+        if (mutation.type === "attributes" && mutation.attributeName === "data-theme") {
+            // Fuerza a redibujar la última gráfica si existe
+            if(window.lastMatrix) drawGraph(window.lastMatrix, window.lastType || '3d');
+        }
+    });
+});
+observer.observe(document.documentElement, { attributes: true });
 
 </script>
 
