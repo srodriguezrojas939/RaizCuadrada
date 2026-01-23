@@ -9,6 +9,7 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
 <script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
 
+
     <script>
         (function() {
             // 1. Intentamos leer la memoria
@@ -19,6 +20,8 @@
             document.documentElement.setAttribute('data-theme', themeToSet);
         })();
     </script>
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/11.8.0/math.js"></script>
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -351,9 +354,9 @@
         align-items: center; 
         background: #fafafa; 
     }
-
     
-    [data-theme="dark"] .graph-tools {
+    /* --- CORRECCIÓN BARRA DE HERRAMIENTAS GRÁFICA (DARK) --- */
+[data-theme="dark"] .graph-tools {
     background: #1e1e1e; /* Mismo gris oscuro que tus tarjetas */
     border-bottom: 1px solid #333; /* Una línea sutil para separar del gráfico */
     color: #ffffff;
@@ -760,7 +763,7 @@
 
     <div class="graph-wrapper">
         <div class="graph-tools">
-            <span style="font-weight: 600;">ANALIZAR:</span>
+            <span style="font-weight: 600;">Analizar:</span>
             <select id="graph-select" class="pill-input" style="width: auto; padding: 8px 15px;" onchange=""syncSelectors(this.value)""></select>
             <select id="graph-type" class="pill-input" style="width: auto; padding: 8px 15px;" onchange="updateUI()">
                 <option value="2d">Vista 2D (Área)</option>
@@ -977,37 +980,114 @@
         updateUI();
     }
 
-    function renderGrid(letter) {
-        const r = parseInt(document.getElementById(`r-${letter}`).value);
-        const c = parseInt(document.getElementById(`c-${letter}`).value);
-        const grid = document.getElementById(`grid-${letter}`);
-        grid.style.gridTemplateColumns = `repeat(${c}, 1fr)`;
-        let html = '';
-        for (let i = 0; i < r; i++) {
-            for (let j = 0; j < c; j++) {
-                let val = (i === j) ? 1 : 0;
-                html += `<input type="text" value="${val}" class="val-${letter}" 
-                         data-m="${letter}" data-r="${i}" data-c="${j}" 
-                         onchange="updateUI()">`;
-            }
-        }
-        grid.innerHTML = html;
-        updateUI();
-    }
+function renderGrid(letter) {
+    const r = parseInt(document.getElementById(`r-${letter}`).value);
+    const c = parseInt(document.getElementById(`c-${letter}`).value);
+    const grid = document.getElementById(`grid-${letter}`);
+    
+    // Ajuste CSS
+    grid.style.gridTemplateColumns = `repeat(${c}, auto)`;
+    grid.innerHTML = '';
 
-    function getMatrix(letter) {
-        if (!matrixNames.includes(letter)) return null;
-        const r = parseInt(document.getElementById(`r-${letter}`).value);
-        const c = parseInt(document.getElementById(`c-${letter}`).value);
-        const inputs = document.querySelectorAll(`.val-${letter}`);
-        let data = [];
-        for (let i = 0; i < r; i++) {
-            let row = [];
-            for (let j = 0; j < c; j++) row.push(parseFraction(inputs[i * c + j].value) || 0);
-            data.push(row);
-        }
-        return data;
+    for (let i = 0; i < r * c; i++) {
+        const input = document.createElement('input');
+        
+        // 1. CONFIGURACIÓN DE ENTRADA
+        input.type = "text";
+        input.inputMode = "text";
+        input.placeholder = "0";
+        input.className = `val-${letter}`;
+        input.style.textAlign = "center";
+        
+        // 2. DATOS PARA NAVEGACIÓN (FLECHAS DEL TECLADO)
+        const currentRow = Math.floor(i / c);
+        const currentCol = i % c;
+        input.setAttribute('data-m', letter);
+        input.setAttribute('data-r', currentRow);
+        input.setAttribute('data-c', currentCol);
+        
+        // 3. EVENTO DE ACTUALIZACIÓN EN TIEMPO REAL (TOTAL)
+input.addEventListener('input', () => {
+            // --- ¡ESTA LÍNEA ES LA CLAVE QUE FALTA! ---
+            // Fuerza la actualización del atributo HTML para que el visualizador lo detecte
+            input.setAttribute('value', input.value); 
+            // ------------------------------------------
+
+            // A) Actualizar panel de Propiedades
+            if (typeof updateUI === 'function') {
+                updateUI();
+            }
+
+            // B) Actualizar Operaciones Matemáticas
+            const opInput = document.getElementById('op-input');
+            if (typeof executeOp === 'function' && opInput && opInput.value.trim() !== "") {
+                executeOp();
+            }
+        });
+        grid.appendChild(input);
     }
+}
+
+// Función para traducir símbolos bonitos a lenguaje matemático
+function normalizeInput(str) {
+    if (!str) return "";
+    
+    let clean = str;
+
+    // 1. PASO "INTELIGENTE": Detectar √ seguido de un número (ej: √25 o √25.5)
+    // Busca '√', opcionalmente espacios, y luego dígitos/decimales.
+    // Lo reemplaza por 'sqrt(NUMERO)'
+    clean = clean.replace(/√\s*(\d+(\.\d+)?)/g, 'sqrt($1)');
+
+    // 2. Traducir raíz genérica (por si el usuario SI puso paréntesis, ej: √(4+5))
+    clean = clean.replace(/√/g, 'sqrt');
+
+    // 3. Traducir superíndices a potencias (^2, ^3, etc.)
+    clean = clean
+        .replace(/⁰/g, '^0').replace(/¹/g, '^1').replace(/²/g, '^2')
+        .replace(/³/g, '^3').replace(/⁴/g, '^4').replace(/⁵/g, '^5')
+        .replace(/⁶/g, '^6').replace(/⁷/g, '^7').replace(/⁸/g, '^8')
+        .replace(/⁹/g, '^9');
+
+    // 4. Traducir constantes
+    clean = clean.replace(/π/g, 'pi');
+
+    return clean;
+}
+
+function getMatrix(letter) {
+    if (!matrixNames.includes(letter)) return null;
+    const r = parseInt(document.getElementById(`r-${letter}`).value);
+    const c = parseInt(document.getElementById(`c-${letter}`).value);
+    const inputs = document.querySelectorAll(`.val-${letter}`);
+    let data = [];
+    
+    for (let i = 0; i < r; i++) {
+        let row = [];
+        for (let j = 0; j < c; j++) {
+            // 1. Obtenemos el texto y lo limpiamos (quitamos espacios)
+            let rawVal = inputs[i * c + j].value.trim();
+            let val = 0;
+
+            if (rawVal !== "") {
+                try {
+                    // 2. [NUEVO] Traducimos los símbolos especiales antes de calcular
+                    // Ejemplo: "2⁴" se convierte en "2^4"
+                    let cleanVal = normalizeInput(rawVal);
+                    
+                    // 3. Math.js evalúa la expresión traducida
+                    val = math.evaluate(cleanVal); 
+                } catch (error) {
+                    console.error("Error calculando celda:", rawVal);
+                    val = 0; 
+                }
+            }
+            row.push(val);
+        }
+        data.push(row);
+    }
+    return data;
+}
 
     // --- MOTOR MATEMÁTICO (MathLib) ---
     const MathLib = {
