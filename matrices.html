@@ -1307,80 +1307,97 @@ function executeOp() {
 // --- GRÁFICAS (RECUPERADAS) ---
 // --- GRÁFICAS (MODIFICADO PARA MODO OSCURO) ---
 // --- GRÁFICAS (CON ESTILO VISOR / PROFUNDIDAD) ---
+// --- GRÁFICAS (ESTILO CYBERPUNK / IMAGEN DE REFERENCIA) ---
+// --- GRÁFICAS (ESTILO MONOCROMÁTICO / BLANCO Y NEGRO) ---
 function drawGraph(m, type) {
-    // 1. Detectar tema
     const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
     
-    // 2. COLORES AJUSTADOS AL ESTILO "VISOR"
-    // Dark: Fondo #1e1e1e | Light: Fondo #fdfdfd (Gris muy suave, no blanco)
-    const bgColor = isDark ? '#1e1e1e' : '#fdfdfd'; 
-    const txtColor = isDark ? '#e0e0e0' : '#444444';
-    const gridColor = isDark ? '#444444' : '#e0e0e0';
+    // --- COLORES ---
     
-    // Color específico para las "paredes" del cubo 3D (para dar profundidad)
-    // En light usamos un gris un pelín más oscuro (#f0f0f0) que el fondo para que se note la caja
-    const wallColor = isDark ? '#1e1e1e' : '#f4f4f4'; 
+    // MODO OSCURO (Fondo negro, líneas blancas)
+    const darkBg = '#121212';        // Fondo casi negro
+    const darkGrid = '#404040';      // Rejilla gris oscuro
+    const darkText = '#ffffff';      // Texto blanco
+    const darkLines = '#ffffff';     // <--- AQUÍ ESTÁ EL CAMBIO: LÍNEAS BLANCAS (Antes era turquesa)
     
-    const lineColor = isDark ? '#00d9ff' : 'black';
-    const edgeColor = isDark ? '#ffffff' : 'black'; 
+    // MODO CLARO (Fondo papel, líneas negras)
+    const lightBg = '#fdfdfd';
+    const lightGrid = '#e0e0e0';
+    const lightText = '#333333';
+    const lightLines = '#000000';    // Líneas negras
+    
+    // Asignación automática
+    const bgColor = isDark ? darkBg : lightBg;
+    const txtColor = isDark ? darkText : lightText;
+    const gridColor = isDark ? darkGrid : lightGrid;
+    const mainColor = isDark ? darkLines : lightLines; // El color de tu gráfica
 
     const traces = [];
     
     const layout = { 
-        margin: {l:1, r:1, t:1, b:1}, // Un poco más de margen arriba para el título
-        paper_bgcolor: bgColor, // Fondo exterior (el del visor)
-        plot_bgcolor: bgColor,  // Fondo interior
+        margin: {l:1, r:1, t:1, b:1}, 
+        paper_bgcolor: bgColor, 
+        plot_bgcolor: bgColor,
         showlegend: false,
         // Ejes 2D
         xaxis: { color: txtColor, gridcolor: gridColor, zerolinecolor: gridColor },
         yaxis: { color: txtColor, gridcolor: gridColor, zerolinecolor: gridColor },
-        
-        // Ejes 3D (Aquí está el truco de la profundidad)
+        // Ejes 3D (Estilo técnico)
         scene: { 
-            xaxis: { 
-                title:'X', color: txtColor, gridcolor: gridColor, zerolinecolor: gridColor,
-                showbackground: true, backgroundcolor: wallColor // Pared X
-            }, 
-            yaxis: { 
-                title:'Y', color: txtColor, gridcolor: gridColor, zerolinecolor: gridColor,
-                showbackground: true, backgroundcolor: wallColor // Pared Y
-            }, 
-            zaxis: { 
-                title:'Z', color: txtColor, gridcolor: gridColor, zerolinecolor: gridColor,
-                showbackground: true, backgroundcolor: wallColor // Pared Z (Suelo)
-            },
-            bgcolor: bgColor, // El "aire" del cubo
-            
-            // Ángulo de cámara inicial para que se vea más "3D"
-            camera: { eye: {x: 1.5, y: 1.5, z: 1.2} }
+            xaxis: { title: 'X', color: txtColor, gridcolor: gridColor, zerolinecolor: gridColor, showbackground: false, backgroundcolor: bgColor }, 
+            yaxis: { title: 'Y', color: txtColor, gridcolor: gridColor, zerolinecolor: gridColor, showbackground: false, backgroundcolor: bgColor }, 
+            zaxis: { title: 'Z', color: txtColor, gridcolor: gridColor, zerolinecolor: gridColor, showbackground: false, backgroundcolor: bgColor },
+            bgcolor: bgColor,
+            camera: { eye: {x: 1.6, y: 1.6, z: 1.2} }
         },
         annotations: [{ 
             text: "√(Raiz) Cuadrada²", 
             xref: "paper", yref: "paper", x: 0.95, y: 0.05, 
             showarrow: false, 
-            font: { family: "Playfair Display", size: 16, color: isDark ? "#333" : "#e0e0e0", weight: "bold" } 
+            font: { family: "Playfair Display", size: 14, color: isDark ? "#666" : "#ddd", weight: "bold" } 
         }]
     };
 
-    // (El resto de la lógica de trazado sigue igual...)
     if (type === '2d') {
         const v1 = [m[0][0]||0, m[1]?m[1][0]:0], v2 = [m[0][1]||0, m[1]?m[1][1]:0];
-        traces.push({ x: [0, v1[0], v1[0]+v2[0], v2[0], 0], y: [0, v1[1], v1[1]+v2[1], v2[1], 0], fill: 'toself', type: 'scatter', line: {color: lineColor, width: 3} });
+        traces.push({ 
+            x: [0, v1[0], v1[0]+v2[0], v2[0], 0], 
+            y: [0, v1[1], v1[1]+v2[1], v2[1], 0], 
+            fill: 'toself', type: 'scatter', 
+            line: {color: mainColor, width: 3}, // Usa blanco o negro
+            fillcolor: isDark ? 'rgba(255, 255, 255, 0.15)' : 'rgba(0,0,0,0.1)' 
+        });
     } else {
         const v1 = [m[0][0]||0, m[1]?m[1][0]||0:0, m[2]?m[2][0]||0:0];
         const v2 = [m[0][1]||0, m[1]?m[1][1]||0:0, m[2]?m[2][1]||0:0];
         const v3 = [m[0][2]||0, m[1]?m[1][2]||0:0, m[2]?m[2][2]||0:0];
         const p = [[0,0,0], v1, v2, v3, [v1[0]+v2[0], v1[1]+v2[1], v1[2]+v2[2]], [v1[0]+v3[0], v1[1]+v3[1], v1[2]+v3[2]], [v2[0]+v3[0], v2[1]+v3[1], v2[2]+v3[2]], [v1[0]+v2[0]+v3[0], v1[1]+v2[1]+v3[1], v1[2]+v2[2]+v3[2]]];
         
-        traces.push({ type: 'mesh3d', x: p.map(a=>a[0]), y: p.map(a=>a[1]), z: p.map(a=>a[2]), i: [0, 0, 0, 1, 1, 2, 0, 0, 3, 3, 5, 5], j: [1, 2, 3, 4, 5, 4, 1, 2, 5, 6, 7, 7], k: [4, 4, 5, 7, 7, 6, 5, 6, 7, 7, 8, 8], opacity: 0.2, color: '#888' });
+        // Caras del cubo (Semi-transparente blanco/gris)
+        traces.push({ 
+            type: 'mesh3d', 
+            x: p.map(a=>a[0]), y: p.map(a=>a[1]), z: p.map(a=>a[2]), 
+            i: [0, 0, 0, 1, 1, 2, 0, 0, 3, 3, 5, 5], 
+            j: [1, 2, 3, 4, 5, 4, 1, 2, 5, 6, 7, 7], 
+            k: [4, 4, 5, 7, 7, 6, 5, 6, 7, 7, 8, 8], 
+            opacity: 0.15, 
+            color: mainColor 
+        });
+
+        // Aristas del cubo (Líneas sólidas)
         const edges = [[0,1],[0,2],[0,3],[1,4],[1,5],[2,4],[2,6],[3,5],[3,6],[4,7],[5,7],[6,7]];
-        edges.forEach(e => { traces.push({ type: 'scatter3d', mode: 'lines', x:[p[e[0]][0], p[e[1]][0]], y:[p[e[0]][1], p[e[1]][1]], z:[p[e[0]][2], p[e[1]][2]], line:{color: edgeColor, width:4} }); });
+        edges.forEach(e => { 
+            traces.push({ 
+                type: 'scatter3d', mode: 'lines', 
+                x:[p[e[0]][0], p[e[1]][0]], y:[p[e[0]][1], p[e[1]][1]], z:[p[e[0]][2], p[e[1]][2]], 
+                line:{color: mainColor, width: 4} // Línea Blanca en dark, negra en light
+            }); 
+        });
     }
     
     Plotly.react('plot', traces, layout, {responsive: true, displayModeBar: false});
 }
-
-    // --- INTERFAZ Y VISUALIZACIÓN ---
+// --- INTERFAZ Y VISUALIZACIÓN ---
  function updateUI() {
     const target = document.getElementById('basic-select').value || "A";
     const type = document.getElementById('graph-type').value;
