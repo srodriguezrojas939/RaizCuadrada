@@ -1017,7 +1017,10 @@ input.addEventListener('input', () => {
             if (typeof updateUI === 'function') {
                 updateUI();
             }
-
+ if (typeof updatePreview === 'function') {
+        updatePreview();
+    }
+    
             // B) Actualizar Operaciones Matemáticas
             const opInput = document.getElementById('op-input');
             if (typeof executeOp === 'function' && opInput && opInput.value.trim() !== "") {
