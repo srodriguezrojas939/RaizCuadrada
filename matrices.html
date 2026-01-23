@@ -59,10 +59,10 @@
         font-family: 'Open Sans', sans-serif; 
         margin: 0; 
         padding: 40px 20px; 
-        display: flex; 
-      flex-direction: column;
+        display: block;
     align-items: center; /* Centra horizontalmente sin romper el scroll */
     color: var(--text-main); 
+        width: 100%;
     min-height: 100vh;
         color: var(--text-main); 
         transition: background 0.3s ease;
@@ -311,10 +311,11 @@
         color: var(--text-main);
     }
 
-    /* --- GRÁFICAS --- */
-    .graph-wrapper { 
+   .graph-wrapper { 
+        background: var(--bg-card); 
         border-radius: 35px; 
         border: 2px solid transparent; 
+        overflow: hidden; 
         margin-bottom: 30px; 
         box-shadow: 0 2px 5px rgba(0,0,0,0.02) inset;
     }
