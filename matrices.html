@@ -351,7 +351,13 @@
         align-items: center; 
         background: #fafafa; 
     }
+
     
+    [data-theme="dark"] .graph-tools {
+    background: #1e1e1e; /* Mismo gris oscuro que tus tarjetas */
+    border-bottom: 1px solid #333; /* Una línea sutil para separar del gráfico */
+    color: #ffffff;
+}
     
 
     #plot { height: 500px; width: 100%; }
@@ -754,7 +760,7 @@
 
     <div class="graph-wrapper">
         <div class="graph-tools">
-            <span style="font-weight: 600;">Analizar:</span>
+            <span style="font-weight: 600;">ANALIZAR:</span>
             <select id="graph-select" class="pill-input" style="width: auto; padding: 8px 15px;" onchange=""syncSelectors(this.value)""></select>
             <select id="graph-type" class="pill-input" style="width: auto; padding: 8px 15px;" onchange="updateUI()">
                 <option value="2d">Vista 2D (Área)</option>
