@@ -349,7 +349,6 @@
         flex-wrap: wrap; 
         gap: 10px; 
         align-items: center; 
-        border-bottom: 1px solid #f0f0f0; 
         background: #fafafa; 
     }
     
@@ -588,6 +587,18 @@
     color: #ccc;
 }
 
+/* Esto hace que el contenedor de la gráfica se vea igual a los inputs de resultados */
+#plot {
+    border-radius: 30px;       /* Bordes redondeados */
+    overflow: hidden;          /* Para que la gráfica no se salga de las esquinas */
+    border: 1px solid #e0e0e0; /* Borde sutil gris claro */
+    transition: border-color 0.3s ease;
+}
+
+/* Ajuste del borde en modo oscuro */
+[data-theme="dark"] #plot {
+    border-color: #333;
+}
 
 </style>
 
@@ -1294,28 +1305,80 @@ function executeOp() {
     updateUI();
 }
 // --- GRÁFICAS (RECUPERADAS) ---
-    function drawGraph(m, type) {
-        const traces = [];
-        const layout = { 
-            margin:{l:0,r:0,t:0,b:0}, paper_bgcolor:'white', showlegend:false,
-            scene: { xaxis:{title:'X'}, yaxis:{title:'Y'}, zaxis:{title:'Z'} },
-            annotations: [{ text: "√(Raiz) Cuadrada²", xref: "paper", yref: "paper", x: 0.95, y: 0.05, showarrow: false, font: { family: "Playfair Display", size: 16, color: "#ddd", weight: "bold" } }]
-        };
+// --- GRÁFICAS (MODIFICADO PARA MODO OSCURO) ---
+// --- GRÁFICAS (CON ESTILO VISOR / PROFUNDIDAD) ---
+function drawGraph(m, type) {
+    // 1. Detectar tema
+    const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+    
+    // 2. COLORES AJUSTADOS AL ESTILO "VISOR"
+    // Dark: Fondo #1e1e1e | Light: Fondo #fdfdfd (Gris muy suave, no blanco)
+    const bgColor = isDark ? '#1e1e1e' : '#fdfdfd'; 
+    const txtColor = isDark ? '#e0e0e0' : '#444444';
+    const gridColor = isDark ? '#444444' : '#e0e0e0';
+    
+    // Color específico para las "paredes" del cubo 3D (para dar profundidad)
+    // En light usamos un gris un pelín más oscuro (#f0f0f0) que el fondo para que se note la caja
+    const wallColor = isDark ? '#1e1e1e' : '#f4f4f4'; 
+    
+    const lineColor = isDark ? '#00d9ff' : 'black';
+    const edgeColor = isDark ? '#ffffff' : 'black'; 
 
-        if (type === '2d') {
-            const v1 = [m[0][0]||0, m[1]?m[1][0]:0], v2 = [m[0][1]||0, m[1]?m[1][1]:0];
-            traces.push({ x: [0, v1[0], v1[0]+v2[0], v2[0], 0], y: [0, v1[1], v1[1]+v2[1], v2[1], 0], fill: 'toself', type: 'scatter', line: {color: 'black', width: 3} });
-        } else {
-            const v1 = [m[0][0]||0, m[1]?m[1][0]||0:0, m[2]?m[2][0]||0:0];
-            const v2 = [m[0][1]||0, m[1]?m[1][1]||0:0, m[2]?m[2][1]||0:0];
-            const v3 = [m[0][2]||0, m[1]?m[1][2]||0:0, m[2]?m[2][2]||0:0];
-            const p = [[0,0,0], v1, v2, v3, [v1[0]+v2[0], v1[1]+v2[1], v1[2]+v2[2]], [v1[0]+v3[0], v1[1]+v3[1], v1[2]+v3[2]], [v2[0]+v3[0], v2[1]+v3[1], v2[2]+v3[2]], [v1[0]+v2[0]+v3[0], v1[1]+v2[1]+v3[1], v1[2]+v2[2]+v3[2]]];
-            traces.push({ type: 'mesh3d', x: p.map(a=>a[0]), y: p.map(a=>a[1]), z: p.map(a=>a[2]), i: [0, 0, 0, 1, 1, 2, 0, 0, 3, 3, 5, 5], j: [1, 2, 3, 4, 5, 4, 1, 2, 5, 6, 7, 7], k: [4, 4, 5, 7, 7, 6, 5, 6, 7, 7, 8, 8], opacity: 0.2, color: '#000' });
-            const edges = [[0,1],[0,2],[0,3],[1,4],[1,5],[2,4],[2,6],[3,5],[3,6],[4,7],[5,7],[6,7]];
-            edges.forEach(e => { traces.push({ type: 'scatter3d', mode: 'lines', x:[p[e[0]][0], p[e[1]][0]], y:[p[e[0]][1], p[e[1]][1]], z:[p[e[0]][2], p[e[1]][2]], line:{color:'black', width:4} }); });
-        }
-        Plotly.newPlot('plot', traces, layout, {responsive: true, displayModeBar: false});
+    const traces = [];
+    
+    const layout = { 
+        margin: {l:1, r:1, t:1, b:1}, // Un poco más de margen arriba para el título
+        paper_bgcolor: bgColor, // Fondo exterior (el del visor)
+        plot_bgcolor: bgColor,  // Fondo interior
+        showlegend: false,
+        // Ejes 2D
+        xaxis: { color: txtColor, gridcolor: gridColor, zerolinecolor: gridColor },
+        yaxis: { color: txtColor, gridcolor: gridColor, zerolinecolor: gridColor },
+        
+        // Ejes 3D (Aquí está el truco de la profundidad)
+        scene: { 
+            xaxis: { 
+                title:'X', color: txtColor, gridcolor: gridColor, zerolinecolor: gridColor,
+                showbackground: true, backgroundcolor: wallColor // Pared X
+            }, 
+            yaxis: { 
+                title:'Y', color: txtColor, gridcolor: gridColor, zerolinecolor: gridColor,
+                showbackground: true, backgroundcolor: wallColor // Pared Y
+            }, 
+            zaxis: { 
+                title:'Z', color: txtColor, gridcolor: gridColor, zerolinecolor: gridColor,
+                showbackground: true, backgroundcolor: wallColor // Pared Z (Suelo)
+            },
+            bgcolor: bgColor, // El "aire" del cubo
+            
+            // Ángulo de cámara inicial para que se vea más "3D"
+            camera: { eye: {x: 1.5, y: 1.5, z: 1.2} }
+        },
+        annotations: [{ 
+            text: "√(Raiz) Cuadrada²", 
+            xref: "paper", yref: "paper", x: 0.95, y: 0.05, 
+            showarrow: false, 
+            font: { family: "Playfair Display", size: 16, color: isDark ? "#333" : "#e0e0e0", weight: "bold" } 
+        }]
+    };
+
+    // (El resto de la lógica de trazado sigue igual...)
+    if (type === '2d') {
+        const v1 = [m[0][0]||0, m[1]?m[1][0]:0], v2 = [m[0][1]||0, m[1]?m[1][1]:0];
+        traces.push({ x: [0, v1[0], v1[0]+v2[0], v2[0], 0], y: [0, v1[1], v1[1]+v2[1], v2[1], 0], fill: 'toself', type: 'scatter', line: {color: lineColor, width: 3} });
+    } else {
+        const v1 = [m[0][0]||0, m[1]?m[1][0]||0:0, m[2]?m[2][0]||0:0];
+        const v2 = [m[0][1]||0, m[1]?m[1][1]||0:0, m[2]?m[2][1]||0:0];
+        const v3 = [m[0][2]||0, m[1]?m[1][2]||0:0, m[2]?m[2][2]||0:0];
+        const p = [[0,0,0], v1, v2, v3, [v1[0]+v2[0], v1[1]+v2[1], v1[2]+v2[2]], [v1[0]+v3[0], v1[1]+v3[1], v1[2]+v3[2]], [v2[0]+v3[0], v2[1]+v3[1], v2[2]+v3[2]], [v1[0]+v2[0]+v3[0], v1[1]+v2[1]+v3[1], v1[2]+v2[2]+v3[2]]];
+        
+        traces.push({ type: 'mesh3d', x: p.map(a=>a[0]), y: p.map(a=>a[1]), z: p.map(a=>a[2]), i: [0, 0, 0, 1, 1, 2, 0, 0, 3, 3, 5, 5], j: [1, 2, 3, 4, 5, 4, 1, 2, 5, 6, 7, 7], k: [4, 4, 5, 7, 7, 6, 5, 6, 7, 7, 8, 8], opacity: 0.2, color: '#888' });
+        const edges = [[0,1],[0,2],[0,3],[1,4],[1,5],[2,4],[2,6],[3,5],[3,6],[4,7],[5,7],[6,7]];
+        edges.forEach(e => { traces.push({ type: 'scatter3d', mode: 'lines', x:[p[e[0]][0], p[e[1]][0]], y:[p[e[0]][1], p[e[1]][1]], z:[p[e[0]][2], p[e[1]][2]], line:{color: edgeColor, width:4} }); });
     }
+    
+    Plotly.react('plot', traces, layout, {responsive: true, displayModeBar: false});
+}
 
     // --- INTERFAZ Y VISUALIZACIÓN ---
  function updateUI() {
