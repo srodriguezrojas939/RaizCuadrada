@@ -346,6 +346,87 @@
         color: #eee;
     }
     [data-theme="dark"] .sym-btn:hover { background: #333; }
+    
+    
+/* --- PÍLDORA DE MODOS (SEGMENTED CONTROL) --- */
+    .mode-switcher {
+        display: flex;
+        background:  #f9f9f9; /* Fondo gris suave contenedor */
+        padding: 5px;
+        border-radius: 999px;
+        margin-bottom: 25px; /* Separación con el visor Latex */
+        position: relative;
+        justify-content: space-between;
+        box-shadow: inset 0 1px 3px rgba(0,0,0,0.06);
+    }
+
+    .mode-btn {
+        flex: 1;
+        border: none;
+        background: transparent;
+        padding: 10px 0;
+        border-radius: 999px;
+        cursor: pointer;
+        font-family: 'Open Sans', sans-serif;
+        font-weight: 700;
+        font-size: 14px;
+        color: #888;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 6px;
+    }
+
+    /* Estilo del símbolo matemático dentro del botón */
+    .mode-btn span {
+        font-size: 1.2em;
+        font-weight: 400;
+        font-family: 'Playfair Display', serif; /* Toque elegante para el símbolo */
+    }
+
+    .mode-btn:hover:not(.active) {
+        color: #555;
+    }
+
+    /* ESTADO ACTIVO (La píldora blanca flotante) */
+    .mode-btn.active {
+        background: #ffffff;
+        color: #1a1a1a;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.12);
+        transform: scale(1.02);
+    }
+    
+    /* --- AJUSTES MODO OSCURO --- */
+    [data-theme="dark"] .mode-switcher { 
+        background: #151515; 
+        box-shadow: inset 0 1px 3px rgba(255,255,255,0.05);
+    }
+    [data-theme="dark"] .mode-btn { color: #666; }
+    [data-theme="dark"] .mode-btn:hover:not(.active) { color: #999; }
+    
+    [data-theme="dark"] .mode-btn.active { 
+        background: #333; 
+        color: #fff; 
+        box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+    }
+    
+    /* --- NUEVA CLASE PARA PONER INPUTS LADO A LADO --- */
+.dos-columnas {
+    display: grid;
+    grid-template-columns: 1fr 1fr; /* 50% y 50% */
+    gap: 20px; /* Espacio en el medio */
+    margin-bottom: 5px; /* Separación con el botón de resolver */
+}
+
+/* Ajuste para móviles: que se pongan uno debajo del otro si la pantalla es muy chica */
+@media (max-width: 480px) {
+    .dos-columnas {
+        grid-template-columns: 1fr;
+    }
+}
+
+    
 </style>
   
     </head>
@@ -449,6 +530,15 @@
             <p>√(Raiz) Cuadrada²</p>
         </div>
 
+<div class="mode-switcher">
+        <button class="mode-btn active" onclick="cambiarModo('ecuaciones')" id="btn-ecu">
+            <span>ℝ</span> Ecuaciones
+        </button>
+        <button class="mode-btn" onclick="cambiarModo('inecuaciones')" id="btn-inec">
+            <span> ≥ </span> Inecuaciones
+        </button>
+    </div>
+    
         <div id="preview-container">
             <div id="latex-preview">$$ \text{Escribe tu ecuación...} $$</div>
         </div>
@@ -456,30 +546,25 @@
         <label>Ecuación</label>
         <input type="text" id="ecuacion" placeholder="Ej: x^2 = sqrt(16)" oninput="actualizarPreview()">
 
-        <label>Variable a despejar</label>
+     <div class="dos-columnas">
+    <div class="input-group">
+        <label>Variable</label>
         <select id="variable" onchange="actualizarPreview()">
             <option value="x">x</option>
             <option value="y">y</option>
             <option value="z">z</option>
         </select>
-
-       <div class="controls-container">
-    <div class="control-item">
-        <span class="switch-label">Decimales</span>
-        <label class="switch">
-            <input type="checkbox" id="modoDecimal" onchange="resolverEcuacion()">
-            <span class="slider"></span>
-        </label>
     </div>
 
-    <div class="control-item">
-        <span class="switch-label">Imaginarios</span>
-        <label class="switch">
-            <input type="checkbox" id="modoImaginario" onchange="resolverEcuacion()">
-            <span class="slider"></span>
-        </label>
+    <div class="input-group">
+        <label>Modo</label>
+        <select id="modoSalida" onchange="resolverEcuacion()">
+            <option value="fraccion" selected>Fracciones</option>
+            <option value="decimal">Decimales</option>
+        </select>
     </div>
 </div>
+
 
         <button class="btn-principal" onclick="resolverEcuacion()">Resolver ecuación</button>
         
@@ -742,65 +827,64 @@ function actualizarPreview() {
     }
     
 function resolverEcuacion() {
-    const rawInput = document.getElementById('ecuacion').value; // Valor crudo
+    const rawInput = document.getElementById('ecuacion').value; 
     const v = document.getElementById('variable').value;
     
-    // --- NUEVO: Leemos los dos interruptores ---
-    const esDecimal = document.getElementById('modoDecimal').checked;
-    const permitirImaginarios = document.getElementById('modoImaginario').checked; 
+    // 1. ACTUALIZADO: Leemos el modo desde el nuevo SELECT (no checkbox)
+    // Si usaste el cambio de diseño anterior, el ID es 'modoSalida'
+    // Si no cambiaste el HTML, avísame para volver a poner .checked
+    const modoSelect = document.getElementById('modoSalida'); 
+    const esDecimal = modoSelect ? (modoSelect.value === 'decimal') : false;
+
+    // ELIMINADO: const permitirImaginarios = ... (Ya no existe)
     
     const out = document.getElementById('resultado');
 
     if (!rawInput.trim()) return;
 
     try {
-        // 1. NORMALIZACIÓN (INTACTA)
+        // 2. NORMALIZACIÓN (INTACTA)
         let normalized = normalizar(rawInput);
 
         nerdamer.set('SOLVE_SOLUTIONS_AS_EXPRESSIONS', 'true');
         
-        // Pasamos la ecuación ya limpia a Nerdamer
         let sol = nerdamer.solve(normalized, v);
         let listaOriginal = sol.symbol.elements;
 
-        // 2. FILTRADO INTELIGENTE (MODIFICADO CON CUIDADO)
+        // 3. FILTRADO ESTRICTO (SOLO REALES)
         let solucionesFinales = [];
         listaOriginal.forEach(s => {
             let textoSol = s.toString();
-            // La condición ahora dice: "Pasa si permitimos imaginarios O si NO tiene la letra i"
-            if (permitirImaginarios || !textoSol.includes('i')) {
+            // CONDICIÓN ÚNICA: Si no tiene 'i', entra. Si tiene 'i', se descarta.
+            if (!textoSol.includes('i')) {
                 solucionesFinales.push(s);
             }
         });
 
-        // 3. MANEJO DE RESULTADOS VACÍOS
+        // 4. MANEJO DE RESULTADOS VACÍOS
         if (solucionesFinales.length === 0) {
-            // Si la lista original tenía datos, pero la final no, es que eran imaginarios ocultos
-            if (listaOriginal.length > 0 && !permitirImaginarios) {
-                out.innerHTML = "<span style='color:#777; font-size:14px;'>Solución imaginaria oculta. Activa 'Imaginarios'.</span>";
-            } else {
-                out.innerHTML = "<span style='color:#777; font-size:16px;'>No pertenece a los reales o sin solución.</span>";
-            }
+            // Mensaje genérico, ya no distinguimos si había imaginarios ocultos
+            out.innerHTML = "<span style='color:#777; font-size:16px;'>No hay solución real.</span>";
             return;
         }
 
-        // 4. MAPEO Y DECIMALES (PROTEGIDO)
+        // 5. MAPEO Y DECIMALES (SIMPLIFICADO)
         let resultados = solucionesFinales.map((s, i) => {
             let res;
             if (esDecimal) {
                 try {
-                    // Si es imaginario, NO forzamos decimal (se ve feo o falla el parse), mostramos TeX
-                    if (s.toString().includes('i')) {
-                        res = nerdamer(s).toTeX();
-                    } else {
-                        // Si es real, aplicamos tu lógica original de decimales
-                        let val = parseFloat(nerdamer(s).evaluate().text());
-                        res = !isNaN(val) ? val.toFixed(4) : nerdamer(s).toTeX();
-                    }
-                } catch(e) { res = nerdamer(s).toTeX(); }
+                    // Ya no verificamos si incluye 'i' porque ya los filtramos antes
+                    let val = parseFloat(nerdamer(s).evaluate().text());
+                    
+                    // Si es un número válido, fijamos decimales, si no (ej: infinito), mostramos TeX
+                    res = !isNaN(val) ? val.toFixed(4) : nerdamer(s).toTeX();
+                } catch(e) { 
+                    res = nerdamer(s).toTeX(); 
+                }
             } else {
                 res = nerdamer(s).toTeX();
             }
+            
             // Formato de salida (x_1 = ..., x_2 = ...)
             return solucionesFinales.length > 1 ? `${v}_{${i+1}} = ${res}` : `${v} = ${res}`;
         });
@@ -814,13 +898,28 @@ function resolverEcuacion() {
     }
 }
 
+function irAPasoAPaso() {
+    const eq = document.getElementById('ecuacion').value.trim();
+    const v = document.getElementById('variable').value;
 
-    function irAPasoAPaso() {
-        const eq = document.getElementById('ecuacion').value.trim();
-        const v = document.getElementById('variable').value;
-        if (!eq) return;
-        window.open(`https://mathdf.com/equ/es/?expr=${encodeURIComponent(eq)}&v=${v}`, '_blank');
-    }
+    if (!eq) return;
+
+    // ERROR CORREGIDO: Aquí sobraba ", '_blank'" fuera de las comillas
+    const url = `https://mathdf.com/equ/es/?expr=${encodeURIComponent(eq)}&v=${v}`;
+
+    const width = 900;
+    const height = 700;
+
+    const left = window.screenX + (window.outerWidth - width) / 2;
+    const top  = window.screenY + (window.outerHeight - height) / 2;
+
+    window.open(
+        url,
+        'mathdfPasoAPaso', // El nombre de la ventana va aquí como segundo argumento
+        `width=${width},height=${height},left=${left},top=${top},resizable=yes,scrollbars=yes,toolbar=no,menubar=no,location=no,status=no`
+    );
+}
+
 
     // Inicializar
     showCategory('principales', document.querySelector('.pill'));
