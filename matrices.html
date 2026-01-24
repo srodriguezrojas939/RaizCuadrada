@@ -1290,6 +1290,9 @@ function translateExpr(str) {
     // )A → )*A
     expr = expr.replace(/\)\s*(\b[A-Z]\b)/g, ')*$1');
 
+   expr = expr.replace(/(\w+|\))\s*\+\s*(\w+|\()/g, 'MathLib.add($1,$2)');
+    expr = expr.replace(/(\w+|\))\s*-\s*(\w+|\()/g, 'MathLib.sub($1,$2)');
+    
     // =====================================================
     // 6) POTENCIAS ^
     // (DESPUÉS de multiplicación implícita)
