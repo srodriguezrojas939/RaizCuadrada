@@ -142,21 +142,43 @@
     }
 
     /* --- TOGGLE SWITCH CONTAINER --- */
-    .opcion-decimal-container {
-        background: #f9f9f9; /* Coherencia con inputs */
-        padding: 15px 25px; 
-        border-radius: 25px;
-        display: flex; 
-        align-items: center; 
-        justify-content: space-between;
-        margin-bottom: 30px;
-        box-shadow: 0 2px 5px rgba(0,0,0,0.02) inset;
+    /* --- NUEVOS CONTROLES EN GRID (2 COLUMNAS) --- */
+.controls-container {
+    display: grid;
+    grid-template-columns: 1fr 1fr; /* Dos columnas iguales */
+    gap: 15px; /* Espacio entre ellas */
+    margin-bottom: 30px;
+}
+
+.control-item {
+    background: #f9f9f9;
+    padding: 15px 20px;
+    border-radius: 55px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.02) inset;
+    border: 2px solid transparent; /* Para alinearlo visualmente con inputs */
+}
+
+/* Ajuste Responsive: En pantallas muy pequeñas, poner uno debajo del otro */
+@media (max-width: 400px) {
+    .controls-container {
+        grid-template-columns: 1fr;
     }
+}
+
+/* --- MODO OSCURO PARA LOS NUEVOS CONTROLES --- */
+[data-theme="dark"] .control-item {
+    background: #1e1e1e;
+    border: 1px solid #333;
+    color: #fff;
+}
 
     .switch-label { font-size: 14px; color: #555; font-weight: 600; }
 
     /* Switch CSS (Se mantiene funcional pero limpio) */
-    .switch { position: relative; display: inline-block; width: 46px; height: 24px; }
+    .switch { position: relative; display: inline-block; width: 46px; height: 24px;  margin-top: 10px;}
     .switch input { opacity: 0; width: 0; height: 0; }
     .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background: #ccc; transition: .4s; border-radius: 34px; }
     .slider:before { position: absolute; content: ""; height: 18px; width: 18px; left: 3px; bottom: 3px; background: white; transition: .4s; border-radius: 50%; }
@@ -441,13 +463,23 @@
             <option value="z">z</option>
         </select>
 
-        <div class="opcion-decimal-container">
-            <span class="switch-label">Aproximar a decimales</span>
-            <label class="switch">
-                <input type="checkbox" id="modoDecimal" onchange="resolverEcuacion()">
-                <span class="slider"></span>
-            </label>
-        </div>
+       <div class="controls-container">
+    <div class="control-item">
+        <span class="switch-label">Decimales</span>
+        <label class="switch">
+            <input type="checkbox" id="modoDecimal" onchange="resolverEcuacion()">
+            <span class="slider"></span>
+        </label>
+    </div>
+
+    <div class="control-item">
+        <span class="switch-label">Imaginarios</span>
+        <label class="switch">
+            <input type="checkbox" id="modoImaginario" onchange="resolverEcuacion()">
+            <span class="slider"></span>
+        </label>
+    </div>
+</div>
 
         <button class="btn-principal" onclick="resolverEcuacion()">Resolver ecuación</button>
         
@@ -521,7 +553,7 @@
 <script>
     // Configuración de categorías de símbolos
     const categorias = {
-             principales: [
+            principales: [
         { s: '(', t: 'ABRIR (' }, 
         { s: ')', t: 'CERRAR )' },
         { s: '+', t: 'SUMA' }, 
@@ -530,16 +562,27 @@
         { s: '/', t: 'DIV.' },
         { s: '( )/( )', t: 'FRACCIÓN' }, 
         { s: '^', t: 'POTENCIA' },
-        { s: 'sqrt()', t: 'RAÍZ (√)' }, 
-        { s: '^(1/ )', t: 'RAÍZ N' },
+        { s: '√', t: 'RAÍZ' }, 
         { s: 'x', t: 'VAR X' }, 
         { s: 'y', t: 'VAR Y' },
-        { s: 'pi', t: 'PI' }, 
+        { s: 'π', t: 'PI' }, 
         { s: 'e', t: 'EULER' },
-        { s: 'inf', t: 'INFINITO' }, 
-        { s: '-inf', t: '- INFINITO' },
-        { s: 'abs()', t: 'ABS.' }, 
-        { s: '!', t: 'FACT.' }
+        { s: '∞', t: 'INFINITO' }, 
+        { s: '-∞', t: '- INFINITO' },
+        { s: ' |x| ', t: 'ABS.' }, 
+        { s: '!', t: 'FACT.' },
+  { s: '¹',  t: 'POTENCIA (1)' },
+  { s: '²',  t: 'POTENCIA (2)' },
+  { s: '³',  t: 'POTENCIA (3)' },
+  { s: '⁴',  t: 'POTENCIA (4)' },
+  { s: '⁵',  t: 'POTENCIA (5)' },
+  { s: '⁶',  t: 'POTENCIA (6)' },
+  { s: '⁷',  t: 'POTENCIA (7)' },
+  { s: '⁸',  t: 'POTENCIA (8)' },
+  { s: '⁹',  t: 'POTENCIA (9)' },
+  { s: '¹⁰', t: 'POTENCIA (10)' },
+  { s: 'ˣ',  t: 'POTENCIA (X)' },
+  { s: 'ʸ',  t: 'POTENCIA (Y)' }
     ],
     trig: [
        { s: 'sin()', t: 'SENO' }, 
@@ -569,10 +612,77 @@
         { s: 'acsch()', t: 'ARCSCH' }
     ],
     log: [
-        { s: 'log()', t: 'LN' }, { s: 'ln()', t: 'LN' }, { s: 'exp()', t: 'EXP' }, { s: 'e^', t: 'E base' }, { s: 'NOTA:', t: 'En los resultados, log representa el logaritmo natural (ln).' }
+        { s: 'log()', t: 'LN' }, { s: 'ln()', t: 'LN' }, { s: 'exp()', t: 'EXP' }, { s: 'e^', t: 'E base' }
     ]
     };
 
+// --- PEGAR ESTO ANTES DE function showCategory ---
+
+    function normalizar(expr) { 
+        if (!expr) return '';
+
+        // 1. Quitar espacios y pasar a minúsculas
+        let s = expr.toLowerCase().replace(/\s+/g, '');
+        
+        // CASO E: Valor absoluto |x| -> abs(x)
+        s = s.replace(/\|([^|]+)\|/g, 'abs($1)');
+
+        // CASO F: Superíndices
+        const superindices = { '⁰':'0', '¹':'1', '²':'2', '³':'3', '⁴':'4', '⁵':'5', '⁶':'6', '⁷':'7', '⁸':'8', '⁹':'9' };
+        s = s.replace(/[⁰¹²³⁴⁵⁶⁷⁸⁹]/g, match => `^${superindices[match]}`);
+
+        // 2. Diccionario de Traducción
+        const reemplazos = [
+            { from: /arctan/g, to: 'atan' },
+            { from: /arctg/g, to: 'atan' },
+            { from: /arcsin/g, to: 'asin' },
+            { from: /arccos/g, to: 'acos' },
+            { from: /arcsec/g, to: 'asec' },
+            { from: /arccsc/g, to: 'acsc' },
+            { from: /arccot/g, to: 'acot' },
+            { from: /sen/g, 'to': 'sin' },
+            { from: /tg/g, 'to': 'tan' },
+            { from: /ln/g, 'to': 'log' }, 
+            { from: /√/g, 'to': 'sqrt' },
+            { from: /π/g, 'to': 'pi' },
+            { from: /·/g, 'to': '*' }
+        ];
+
+        reemplazos.forEach(r => { s = s.replace(r.from, r.to); });
+
+        // 3. Notación inversa
+        s = s.replace(/sin\^-1/g, 'asin').replace(/cos\^-1/g, 'acos').replace(/tan\^-1/g, 'atan');
+
+        const funcsTrig = 'sin|cos|tan|csc|sec|cot';
+        const reTrigPow = new RegExp(`(${funcsTrig})\\^(\\d+)\\(?([xyz])\\)?`, 'g');
+        s = s.replace(reTrigPow, '($1($3))^$2');
+        
+        // 4. Inteligencia: Funciones sin paréntesis
+        const funciones = ['asin', 'acos', 'atan', 'asec', 'acsc', 'acot', 'sin', 'cos', 'tan', 'sec', 'csc', 'cot', 'sqrt', 'log', 'abs', 'exp'];
+        
+        funciones.forEach(fn => {
+            const re = new RegExp(`${fn}([xyz\\d])`, 'g');
+            s = s.replace(re, `${fn}($1)`);
+        });
+
+        // 5. Multiplicación Implícita
+        // CASO A: Número seguido de Variable o Paréntesis (2x -> 2*x)
+        s = s.replace(/(\d)([a-z\(])/g, '$1*$2');
+
+        // CASO B: Variable explícita seguida de función
+        const funcionPattern = funciones.join('|');
+        const reMultFunc = new RegExp(`([xyz\\)])(${funcionPattern})`, 'g');
+        s = s.replace(reMultFunc, '$1*$2');
+
+        // CASO C: Variable seguida de variable (xx -> x*x)
+        s = s.replace(/([xytz])([xytz])/g, '$1*$2');
+
+        // CASO D: Corchetes
+        s = s.replace(/[\[\{]/g, '(').replace(/[\]\}]/g, ')');
+        
+        return s;
+    }
+    
     function showCategory(cat, btn) {
         document.querySelectorAll('.pill').forEach(p => p.classList.remove('active'));
         btn.classList.add('active');
@@ -597,76 +707,113 @@
         actualizarPreview();
     }
 
-    function actualizarPreview() {
-        const input = document.getElementById('ecuacion').value.trim();
+function actualizarPreview() {
+        // 1. Obtenemos lo que escribe el usuario
+        const rawInput = document.getElementById('ecuacion').value;
         const v = document.getElementById('variable').value;
         const preview = document.getElementById('latex-preview');
 
-        if (!input) {
+        if (!rawInput.trim()) {
             preview.innerHTML = "$$ \\text{Escribe tu ecuación...} $$";
             MathJax.typesetPromise([preview]);
             return;
         }
 
         try {
-            let partes = input.split('=');
+            // 2. APLICAMOS EL NORMALIZADO AQUÍ
+            let inputNormalizado = normalizar(rawInput);
+
+            let partes = inputNormalizado.split('=');
             let latex;
+            
+            // Usamos nerdamer para convertir a LaTeX la versión limpia
             if (partes.length === 2) {
                 latex = nerdamer(partes[0] || "0").toTeX() + " = " + nerdamer(partes[1] || "0").toTeX();
             } else {
-                latex = nerdamer(input).toTeX();
+                latex = nerdamer(inputNormalizado).toTeX();
             }
+            
             preview.innerHTML = `$$ ${latex} \\implies ${v} = ? $$`;
         } catch (e) {
+            // Si falla, mostramos el texto tal cual para no asustar
             preview.innerHTML = `$$ \\text{...} $$`;
         }
         MathJax.typesetPromise([preview]);
     }
+    
+function resolverEcuacion() {
+    const rawInput = document.getElementById('ecuacion').value; // Valor crudo
+    const v = document.getElementById('variable').value;
+    
+    // --- NUEVO: Leemos los dos interruptores ---
+    const esDecimal = document.getElementById('modoDecimal').checked;
+    const permitirImaginarios = document.getElementById('modoImaginario').checked; 
+    
+    const out = document.getElementById('resultado');
 
-    function resolverEcuacion() {
-        const input = document.getElementById('ecuacion').value.trim();
-        const v = document.getElementById('variable').value;
-        const esDecimal = document.getElementById('modoDecimal').checked;
-        const out = document.getElementById('resultado');
+    if (!rawInput.trim()) return;
 
-        if (!input) return;
+    try {
+        // 1. NORMALIZACIÓN (INTACTA)
+        let normalized = normalizar(rawInput);
 
-        try {
-            let normalized = input.replace(/ln/g, 'log').replace(/π/g, 'pi');
-            nerdamer.set('SOLVE_SOLUTIONS_AS_EXPRESSIONS', 'true');
-            let sol = nerdamer.solve(normalized, v);
-            let listaOriginal = sol.symbol.elements;
+        nerdamer.set('SOLVE_SOLUTIONS_AS_EXPRESSIONS', 'true');
+        
+        // Pasamos la ecuación ya limpia a Nerdamer
+        let sol = nerdamer.solve(normalized, v);
+        let listaOriginal = sol.symbol.elements;
 
-            let reales = [];
-            listaOriginal.forEach(s => {
-                if (!s.toString().includes('i')) reales.push(s);
-            });
-
-            if (reales.length === 0) {
-                out.innerHTML = "<span style='color:#777; font-size:16px;'>No pertenece a los reales.</span>";
-                return;
+        // 2. FILTRADO INTELIGENTE (MODIFICADO CON CUIDADO)
+        let solucionesFinales = [];
+        listaOriginal.forEach(s => {
+            let textoSol = s.toString();
+            // La condición ahora dice: "Pasa si permitimos imaginarios O si NO tiene la letra i"
+            if (permitirImaginarios || !textoSol.includes('i')) {
+                solucionesFinales.push(s);
             }
+        });
 
-            let resultados = reales.map((s, i) => {
-                let res;
-                if (esDecimal) {
-                    try {
+        // 3. MANEJO DE RESULTADOS VACÍOS
+        if (solucionesFinales.length === 0) {
+            // Si la lista original tenía datos, pero la final no, es que eran imaginarios ocultos
+            if (listaOriginal.length > 0 && !permitirImaginarios) {
+                out.innerHTML = "<span style='color:#777; font-size:14px;'>Solución imaginaria oculta. Activa 'Imaginarios'.</span>";
+            } else {
+                out.innerHTML = "<span style='color:#777; font-size:16px;'>No pertenece a los reales o sin solución.</span>";
+            }
+            return;
+        }
+
+        // 4. MAPEO Y DECIMALES (PROTEGIDO)
+        let resultados = solucionesFinales.map((s, i) => {
+            let res;
+            if (esDecimal) {
+                try {
+                    // Si es imaginario, NO forzamos decimal (se ve feo o falla el parse), mostramos TeX
+                    if (s.toString().includes('i')) {
+                        res = nerdamer(s).toTeX();
+                    } else {
+                        // Si es real, aplicamos tu lógica original de decimales
                         let val = parseFloat(nerdamer(s).evaluate().text());
                         res = !isNaN(val) ? val.toFixed(4) : nerdamer(s).toTeX();
-                    } catch(e) { res = nerdamer(s).toTeX(); }
-                } else {
-                    res = nerdamer(s).toTeX();
-                }
-                return reales.length > 1 ? `${v}_{${i+1}} = ${res}` : `${v} = ${res}`;
-            });
+                    }
+                } catch(e) { res = nerdamer(s).toTeX(); }
+            } else {
+                res = nerdamer(s).toTeX();
+            }
+            // Formato de salida (x_1 = ..., x_2 = ...)
+            return solucionesFinales.length > 1 ? `${v}_{${i+1}} = ${res}` : `${v} = ${res}`;
+        });
 
-            out.innerHTML = `$$ ${resultados.join(' ; \\quad ')} $$`;
-            MathJax.typesetPromise([out]);
+        out.innerHTML = `$$ ${resultados.join(' ; \\quad ')} $$`;
+        MathJax.typesetPromise([out]);
 
-        } catch (e) {
-            out.innerHTML = "<span style='color:red; font-size:14px;'>Error de sintaxis. Revisa los paréntesis.</span>";
-        }
+    } catch (e) {
+        console.error(e); 
+        out.innerHTML = "<span style='color:red; font-size:14px;'>Error de sintaxis. Revisa paréntesis o el signo igual.</span>";
     }
+}
+
 
     function irAPasoAPaso() {
         const eq = document.getElementById('ecuacion').value.trim();
