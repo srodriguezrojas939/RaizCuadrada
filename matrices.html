@@ -1321,15 +1321,15 @@ function translateExpr(str) {
 function executeOp() {
     const input = document.getElementById('op-input').value.trim();
     const outMath = document.getElementById('op-result-math');
-    const fracDiv = document.getElementById('op-result-fractions'); // Visor de fracciones
-    
+    const fracDiv = document.getElementById('op-result-fractions');
+
     if (!input) return;
 
     try {
         const expr = translateExpr(input);
         const scope = {};
         matrixNames.forEach(name => { scope[name] = getMatrix(name); });
-        
+
         const evalInScope = new Function('MathLib', 'matrices', `
             const { ${matrixNames.join(',')} } = matrices;
             return ${expr};
@@ -1339,60 +1339,84 @@ function executeOp() {
 
         // --- RESETEAR VISORES ---
         outMath.innerHTML = "";
-        if (fracDiv) { 
-            fracDiv.innerHTML = ""; 
-            fracDiv.style.display = "none"; 
+        if (fracDiv) {
+            fracDiv.innerHTML = "";
+            fracDiv.style.display = "none";
         }
 
-        // === CASO 1: EL RESULTADO ES UNA MATRIZ ===
-        if (Array.isArray(result)) {
+        // =================================================
+        // CASO 1: RESULTADO ES MATRIZ
+        // =================================================
+        if (isMatrix(result)) {
             lastResult = result;
-            
-            // 1. Renderizar Decimales (Visor Principal)
+
+            // Visor principal (decimales)
             const latexDecimal = matrixToLatex(result, false);
-            katex.render(latexDecimal, outMath, { throwOnError: false, displayMode: true });
-            
-            // 2. Renderizar Fracciones (Segundo Visor)
+            katex.render(latexDecimal, outMath, {
+                throwOnError: false,
+                displayMode: true
+            });
+
+            // Visor de fracciones
             if (fracDiv) {
-                const latexFrac = matrixToLatex(result, true); // true para activar decToFrac
-                fracDiv.style.display = "flex"; // Mostrar visor
-                // Renderizamos LaTeX puro, se verá igual de elegante que el de arriba
-                katex.render(latexFrac, fracDiv, { throwOnError: false, displayMode: true });
+                const latexFrac = matrixToLatex(result, true);
+                fracDiv.style.display = "flex";
+                katex.render(latexFrac, fracDiv, {
+                    throwOnError: false,
+                    displayMode: true
+                });
             }
 
-            if (typeof syncSelectors === 'function') syncSelectors("RES");
+            if (typeof syncSelectors === 'function') {
+                syncSelectors("RES");
+            }
 
-        // === CASO 2: EL RESULTADO ES UN NÚMERO (Ej: Determinante) ===
+        // =================================================
+        // CASO 2: RESULTADO ES NÚMERO
+        // =================================================
         } else if (typeof result === 'number') {
-            lastResult = null; 
-            
-            // 1. Renderizar Decimal (Visor Principal)
+            lastResult = null;
+
             const valNum = parseFloat(result.toFixed(4));
-            katex.render(`\\text{Resultado} = ${valNum}`, outMath, { throwOnError: false });
-            
-            // 2. Renderizar Fracción exacta (Segundo Visor)
+            katex.render(`\\text{Resultado} = ${valNum}`, outMath, {
+                throwOnError: false
+            });
+
             if (fracDiv) {
                 fracDiv.style.display = "flex";
-                // Usamos decToFrac para convertir el número
-                katex.render(`\\text{Exacto} = ${decToFrac(result)}`, fracDiv, { throwOnError: false });
+                katex.render(
+                    `\\text{Exacto} = ${decToFrac(result)}`,
+                    fracDiv,
+                    { throwOnError: false }
+                );
             }
 
-            if (typeof syncSelectors === 'function') syncSelectors("RES");
+            if (typeof syncSelectors === 'function') {
+                syncSelectors("RES");
+            }
 
-        // === CASO 3: OTRO TIPO DE RESULTADO ===
+        // =================================================
+        // CASO 3: OTRO TIPO DE RESULTADO
+        // =================================================
         } else {
             lastResult = null;
-            katex.render(`\\text{${result}}`, outMath, { throwOnError: false });
+            katex.render(`\\text{${result}}`, outMath, {
+                throwOnError: false
+            });
         }
 
     } catch (e) {
         if (fracDiv) fracDiv.style.display = "none";
-        outMath.innerHTML = `<span style="color:#ef4444; font-weight:600; font-size:14px;">Error: Revisa sintaxis o dimensiones.</span>`;
+        outMath.innerHTML =
+            `<span style="color:#ef4444; font-weight:600; font-size:14px;">
+                Error: Revisa sintaxis o dimensiones.
+             </span>`;
         console.error(e);
     }
-    
+
     updateUI();
 }
+
 // --- GRÁFICAS (RECUPERADAS) ---
 // --- GRÁFICAS (MODIFICADO PARA MODO OSCURO) ---
 // --- GRÁFICAS (CON ESTILO VISOR / PROFUNDIDAD) ---
@@ -1822,6 +1846,11 @@ themeObserver.observe(document.documentElement, {
 });
 
 
+function isMatrix(m) {
+    return Array.isArray(m) &&
+           m.length > 0 &&
+           Array.isArray(m[0]);
+}
 
 
 </script>
