@@ -530,14 +530,15 @@
             <p>√(Raiz) Cuadrada²</p>
         </div>
 
-<div class="mode-switcher">
-        <button class="mode-btn active" onclick="cambiarModo('ecuaciones')" id="btn-ecu">
-            <span>ℝ</span> Ecuaciones
-        </button>
-        <button class="mode-btn" onclick="cambiarModo('inecuaciones')" id="btn-inec">
-            <span> ≥ </span> Inecuaciones
-        </button>
-    </div>
+        <div class="mode-switcher">
+    <button class="mode-btn active" id="btn-single" onclick="cambiarModo('ecuaciones')">
+        Ecuaciones
+    </button>
+
+    <button class="mode-btn" id="btn-double" onclick="cambiarModo('inecuaciones')">
+        Inecuaciones
+    </button>
+  </div>
     
         <div id="preview-container">
             <div id="latex-preview">$$ \text{Escribe tu ecuación...} $$</div>
@@ -566,7 +567,7 @@
 </div>
 
 
-        <button class="btn-principal" onclick="resolverEcuacion()">Resolver ecuación</button>
+       <button class="btn-principal" onclick="calcular()">Resolver</button>
         
         <button class="btn-secundario" onclick="irAPasoAPaso()">
             Ver paso a paso
@@ -578,7 +579,7 @@
             <button class="pill active" onclick="showCategory('principales', this)">Principales</button>
             <button class="pill" onclick="showCategory('trig', this)">Trigonométricas</button>
             <button class="pill" onclick="showCategory('inv', this)">Inversas</button>
-            <button class="pill" onclick="showCategory('log', this)">Logarítmicas</button>
+            <button class="pill" onclick="showCategory('ecu', this)">Inecuaciones</button>
         </div>
 
         <div id="symbolsPanel" class="symbols-container">
@@ -696,12 +697,38 @@
         { s: 'asech()', t: 'ARSECH' }, 
         { s: 'acsch()', t: 'ARCSCH' }
     ],
-    log: [
-        { s: 'log()', t: 'LN' }, { s: 'ln()', t: 'LN' }, { s: 'exp()', t: 'EXP' }, { s: 'e^', t: 'E base' }
+    ecu: [
+         { s: '<', t: 'MENOR' },
+{ s: '>', t: 'MAYOR' },
+{ s: '≤', t: 'MENOR IGUAL' },
+{ s: '≥', t: 'MAYOR IGUAL' },
+{ s: '=', t: 'IGUAL' }
     ]
     };
 
-// --- PEGAR ESTO ANTES DE function showCategory ---
+// Variable global para saber en qué modo estamos
+let modoActual = 'ecuaciones'; 
+
+function cambiarModo(modo) {
+    modoActual = modo;
+    
+    // 1. Actualizar visualmente los botones (Píldora)
+    document.getElementById('btn-single').className = modo === 'ecuaciones' ? 'mode-btn active' : 'mode-btn';
+    document.getElementById('btn-double').className = modo === 'inecuaciones' ? 'mode-btn active' : 'mode-btn';
+
+    // 2. Cambiar el Placeholder para guiar al usuario
+    const input = document.getElementById('ecuacion');
+    if (modo === 'ecuaciones') {
+        input.placeholder = "Ej: x^2 = 16";
+    } else {
+        input.placeholder = "Ej: 2x + 5 ≥ 10";
+    }
+    
+    // 3. Limpiar resultado y preview para evitar confusiones
+    document.getElementById('resultado').innerHTML = "Esperando...";
+    actualizarPreview();
+}
+
 
     function normalizar(expr) { 
         if (!expr) return '';
@@ -765,6 +792,9 @@
         // CASO D: Corchetes
         s = s.replace(/[\[\{]/g, '(').replace(/[\]\}]/g, ')');
         
+        // NORMALIZAR INECUACIONES (Unicode → ASCII)
+s = s.replace(/≤/g, '<=').replace(/≥/g, '>=');
+
         return s;
     }
     
@@ -793,39 +823,63 @@
     }
 
 function actualizarPreview() {
-        // 1. Obtenemos lo que escribe el usuario
-        const rawInput = document.getElementById('ecuacion').value;
-        const v = document.getElementById('variable').value;
-        const preview = document.getElementById('latex-preview');
+    // LIMPIEZA DE MEMORIA (Vital para evitar que x valga 0)
+    nerdamer.flush();
 
-        if (!rawInput.trim()) {
-            preview.innerHTML = "$$ \\text{Escribe tu ecuación...} $$";
-            MathJax.typesetPromise([preview]);
-            return;
-        }
+    const rawInput = document.getElementById('ecuacion').value;
+    const v = document.getElementById('variable').value;
+    const preview = document.getElementById('latex-preview');
 
-        try {
-            // 2. APLICAMOS EL NORMALIZADO AQUÍ
-            let inputNormalizado = normalizar(rawInput);
-
-            let partes = inputNormalizado.split('=');
-            let latex;
-            
-            // Usamos nerdamer para convertir a LaTeX la versión limpia
-            if (partes.length === 2) {
-                latex = nerdamer(partes[0] || "0").toTeX() + " = " + nerdamer(partes[1] || "0").toTeX();
-            } else {
-                latex = nerdamer(inputNormalizado).toTeX();
-            }
-            
-            preview.innerHTML = `$$ ${latex} \\implies ${v} = ? $$`;
-        } catch (e) {
-            // Si falla, mostramos el texto tal cual para no asustar
-            preview.innerHTML = `$$ \\text{...} $$`;
-        }
+    if (!rawInput.trim()) {
+        preview.innerHTML = "$$ \\text{Escribe tu ecuación...} $$";
         MathJax.typesetPromise([preview]);
+        return;
     }
-    
+
+    try {
+        let inputNormalizado = normalizar(rawInput);
+
+        // Detectamos el separador
+        let separador = null;
+        if (inputNormalizado.includes('<=')) separador = '<=';
+        else if (inputNormalizado.includes('>=')) separador = '>=';
+        else if (inputNormalizado.includes('=')) separador = '=';
+        else if (inputNormalizado.includes('<')) separador = '<';
+        else if (inputNormalizado.includes('>')) separador = '>';
+
+        let latex;
+
+        if (separador) {
+            let partes = inputNormalizado.split(separador);
+            
+            // Definimos el símbolo visual para LaTeX
+            let opLatex = separador;
+            if (separador === '<=') opLatex = '\\le';
+            if (separador === '>=') opLatex = '\\ge';
+            
+            // Convertimos cada lado por separado para evitar que Nerdamer "calcule" la desigualdad y dé 0
+            let ladoIzquierdo = nerdamer(partes[0] || "0").toTeX();
+            let ladoDerecho = nerdamer(partes[1] || "0").toTeX();
+
+            latex = `${ladoIzquierdo} ${opLatex} ${ladoDerecho}`;
+
+            if (separador === '=') {
+                preview.innerHTML = `$$ ${latex} \\implies ${v} = ? $$`;
+            } else {
+                preview.innerHTML = `$$ ${latex} $$`;
+            }
+        } else {
+            // Expresión suelta
+            latex = nerdamer(inputNormalizado).toTeX();
+            preview.innerHTML = `$$ ${latex} $$`;
+        }
+
+    } catch (e) {
+        preview.innerHTML = `$$ \\text{...} $$`;
+    }
+    MathJax.typesetPromise([preview]);
+}
+
 function resolverEcuacion() {
     const rawInput = document.getElementById('ecuacion').value; 
     const v = document.getElementById('variable').value;
@@ -919,6 +973,172 @@ function irAPasoAPaso() {
         `width=${width},height=${height},left=${left},top=${top},resizable=yes,scrollbars=yes,toolbar=no,menubar=no,location=no,status=no`
     );
 }
+
+// Esta es la función que llama el botón ahora
+function calcular() {
+    if (modoActual === 'ecuaciones') {
+        resolverEcuacion(); // Llama a tu función experta de antes
+    } else {
+        resolverInecuacion(); // Llama a la nueva función de inecuaciones
+    }
+}
+
+// --- LÓGICA EXCLUSIVA PARA INECUACIONES ---
+function resolverInecuacion() {
+    nerdamer.flush(); // Limpiar memoria siempre
+
+    const rawInput = document.getElementById('ecuacion').value;
+    const v = document.getElementById('variable').value;
+    const out = document.getElementById('resultado');
+
+    if (!rawInput.trim()) return;
+
+    try {
+        let expr = normalizar(rawInput);
+        
+        // 1. Detectar operador y limpiar input
+        let operador = '';
+        if (expr.includes('<=')) operador = '<=';
+        else if (expr.includes('>=')) operador = '>=';
+        else if (expr.includes('<')) operador = '<';
+        else if (expr.includes('>')) operador = '>';
+        else {
+            out.innerHTML = "<span style='color:red'>No es una inecuación.</span>";
+            return;
+        }
+
+        let [izq, der] = expr.split(operador);
+        let fx = `(${izq})-(${der})`; // Todo a un lado: f(x) > 0
+
+        // 2. Hallar Puntos Críticos (Numerador y Denominador)
+        let rootsDen = [];
+        try {
+            // Intentamos sacar raíces del denominador (asíntotas)
+            let den = nerdamer(fx).denominator().toString();
+            if (den !== '1') {
+                let solDen = nerdamer.solve(den, v);
+                rootsDen = solDen.symbol.elements
+                    .map(r => parseFloat(nerdamer(r).evaluate().text()))
+                    .filter(r => !isNaN(r));
+            }
+        } catch (e) {}
+
+        let solNum = nerdamer.solve(fx, v);
+        let rootsNum = solNum.symbol.elements
+            .map(r => parseFloat(nerdamer(r).evaluate().text()))
+            .filter(r => !isNaN(r));
+
+        // Función auxiliar: ¿Es asíntota?
+        const esPuntoProhibido = x => rootsDen.some(d => Math.abs(d - x) < 1e-9);
+
+        // Lista única de puntos ordenados (-Inf ... puntos ... +Inf)
+        let puntos = [-Infinity, ...rootsNum, ...rootsDen, Infinity]
+            .filter((val, i, arr) => arr.indexOf(val) === i) // Eliminar duplicados
+            .sort((a, b) => a - b);
+
+        // 3. Evaluar Zonas (Tu lógica original)
+        let zonasValidas = [];
+        for (let i = 0; i < puntos.length - 1; i++) {
+            let a = puntos[i];
+            let b = puntos[i+1];
+            
+            // Elegir punto de prueba (test)
+            let test;
+            if (a === -Infinity) test = b - 1;
+            else if (b === Infinity) test = a + 1;
+            else test = (a + b) / 2;
+
+            try {
+                let val = nerdamer(fx, { [v]: test }).evaluate().valueOf();
+                let cumple = 
+                    operador === '>'  ? val > 1e-9 :
+                    operador === '>=' ? val >= -1e-9 :
+                    operador === '<'  ? val < -1e-9 :
+                    operador === '<=' ? val <= 1e-9 : false;
+
+                if (cumple) zonasValidas.push([a, b]);
+            } catch (err) { /* Ignorar zonas con error matemático */ }
+        }
+
+        if (zonasValidas.length === 0) {
+            out.innerHTML = "<span style='color:#777'>No hay solución real.</span>";
+            return;
+        }
+
+        // --- 4. NUEVO: FUSIÓN DE INTERVALOS (Arregla el error de cortes) ---
+        let solucionFusionada = [];
+        let actual = zonasValidas[0];
+
+        for (let i = 1; i < zonasValidas.length; i++) {
+            let siguiente = zonasValidas[i];
+            
+            // El punto de unión es el final del 'actual' (que es el inicio del 'siguiente')
+            let puntoUnion = actual[1]; 
+
+            // Verificamos si podemos pegar los intervalos:
+            // 1. No debe ser prohibido (división por cero)
+            // 2. Debe cumplir la inecuación en el punto exacto (para >= o <=)
+            //    O simplemente si son adyacentes y el punto no rompe la continuidad.
+            let sePuedeFusionar = false;
+
+            if (!esPuntoProhibido(puntoUnion)) {
+                // Evaluamos el punto exacto
+                let valUnion = nerdamer(fx, { [v]: puntoUnion }).evaluate().valueOf();
+                let cumpleUnion = 
+                    operador === '>'  ? valUnion > 0 : // Estricto: casi nunca fusiona salvo error numérico
+                    operador === '>=' ? valUnion >= -1e-9 :
+                    operador === '<'  ? valUnion < 0 :
+                    operador === '<=' ? valUnion <= 1e-9 : false;
+                
+                if (cumpleUnion) sePuedeFusionar = true;
+            }
+
+            if (sePuedeFusionar) {
+                // Extendemos el actual hasta el fin del siguiente
+                actual[1] = siguiente[1]; 
+            } else {
+                // No se puede fusionar, guardamos el actual y pasamos al siguiente
+                solucionFusionada.push(actual);
+                actual = siguiente;
+            }
+        }
+        solucionFusionada.push(actual); // Guardar el último
+        // ------------------------------------------------------------------
+
+        // 5. Renderizar LaTeX
+        let latex = solucionFusionada.map(([a, b]) => {
+            // Formateo de infinitos
+            let txtA = a === -Infinity ? '-\\infty' : parseFloat(a.toFixed(4));
+            let txtB = b === Infinity ? '\\infty' : parseFloat(b.toFixed(4));
+
+            // Determinar corchetes o paréntesis
+            let openL = '(';
+            let openR = ')';
+
+            // Lógica para cerrar intervalos [ ]
+            // Solo cerramos si: NO es infinito, NO es prohibido, y el operador es inclusivo (>=, <=)
+            if (a !== -Infinity && !esPuntoProhibido(a) && (operador.includes('='))) {
+                // Doble check numérico
+                let val = nerdamer(fx, { [v]: a }).evaluate().valueOf();
+                if (Math.abs(val) < 1e-5) openL = '[';
+            }
+            if (b !== Infinity && !esPuntoProhibido(b) && (operador.includes('='))) {
+                let val = nerdamer(fx, { [v]: b }).evaluate().valueOf();
+                if (Math.abs(val) < 1e-5) openR = ']';
+            }
+
+            return `${openL}${txtA}, ${txtB}${openR}`;
+        }).join(' \\cup ');
+
+        out.innerHTML = `$$ ${latex} $$`;
+        MathJax.typesetPromise([out]);
+
+    } catch (e) {
+        console.error(e);
+        out.innerHTML = "<span style='color:red; font-size:14px;'>Error al procesar.</span>";
+    }
+}
+
 
 
     // Inicializar
