@@ -780,20 +780,71 @@
                 { s: "≈", name: "Aprox", latex: "\\approx", def: "Indica que dos valores son casi iguales." },
                 { s: "|x|", name: "Valor Absoluto", latex: "|x|", def: "Valor numérico sin tener en cuenta su signo." },
                 { s: "%", name: "Porcentaje", latex: "\\%", def: "Representa una fracción de 100 partes." },
-                { s: "!", name: "Factorial", latex: "!", def: "Producto de todos los enteros positivos menores o iguales a n." }
-            ]
+                { s: "!", name: "Factorial", latex: "!", def: "Producto de todos los enteros positivos menores o iguales a n." },
+                { s: "∑", name: "Sumatoria", latex: "\\sum", def: "Suma de todos los términos de una sucesión." },
+{ s: "∏", name: "Productoria", latex: "\\prod", def: "Multiplicación de una secuencia de términos." },
+           
+           { s: "ⁿ√", name: "Raíz N-ésima", latex: "\\sqrt[n]{x}", def: "Raíz de índice n de un número." },
+{ s: "log", name: "Logaritmo", latex: "\\log", def: "Exponente al que hay que elevar una base para obtener un número." },
+{ s: "ln", name: "Log Natural", latex: "\\ln", def: "Logaritmo con base e." },
+]
         },
+        
         {
             category: "Cálculo",
             items: [
-                { s: "∫", name: "Integral", latex: "\\int", def: "Representa el área bajo una curva." }
+               
+    { s: "lim", name: "Límite", latex: "\\lim_{x \\to a}", def: "Valor al que se acerca una función cuando la variable se acerca a un punto." },
+    { s: "→", name: "Tiende a", latex: "\\to", def: "Indica hacia qué valor se aproxima una variable (ej. x → 0)." },
+    { s: "′", name: "Prima (Derivada)", latex: "'", def: "Notación de Lagrange para la derivada (f')." },
+    { s: "∂", name: "Derivada Parcial", latex: "\\partial", def: "Derivada respecto a una variable manteniendo las otras constantes." },
+    { s: "∫", name: "Integral", latex: "\\int", def: "Representa el área bajo la curva o la antiderivada." },
+    { s: "∬", name: "Integral Doble", latex: "\\iint", def: "Integración sobre una región bidimensional (área)." },
+    { s: "∭", name: "Integral Triple", latex: "\\iiint", def: "Integración sobre una región tridimensional (volumen)." },
+    { s: "∮", name: "Integral Cerrada", latex: "\\oint", def: "Integral sobre una curva o superficie cerrada." },
+    { s: "∯", name: "Int. Superficie Cerrada", latex: "\\oiint", def: "Integral doble sobre una superficie cerrada (ej. Ley de Gauss)." },
+{ s: "∰", name: "Int. Volumen Cerrado", latex: "\\oiiint", def: "Integral triple sobre un volumen cerrado tridimensional." },
+{ s: "∫ₐᵇ", name: "Integral Definida", latex: "\\int_{a}^{b}", def: "Calcula el área bajo la curva entre dos puntos a y b." },
+{ s: "|ₐᵇ", name: "Evaluar límites", latex: "\\Big|_{a}^{b}", def: "Barra de evaluación para aplicar los límites de integración." },
+{ s: "ℒ", name: "Transf. Laplace", latex: "\\mathcal{L}\\{f(t)\\}", def: "Transforma funciones del tiempo (t) a frecuencia compleja (s)." },
+{ s: "ℒ⁻¹", name: "Laplace Inversa", latex: "\\mathcal{L}^{-1}\\{F(s)\\}", def: "Recupera la función original desde el dominio s." },
+    { s: "∇", name: "Nabla / Gradiente", latex: "\\nabla", def: "Operador vectorial para gradiente, divergencia y rotacional." },
+    { s: "ε", name: "Epsilon", latex: "\\epsilon", def: "Representa una cantidad pequeña arbitraria (usado en límites)." },
+    { s: "δ", name: "Delta (minúscula)", latex: "\\delta", def: "Usada junto a épsilon en definiciones formales de límites." },
+    { s: "lim x→∞", name: "Límite al Infinito", latex: "\\lim_{x \\to \\infty}", def: "Valor al que tiende f(x) cuando x crece indefinidamente." },
+
             ]
         },
         {
             category: "Conjuntos",
             items: [
-                { s: "∪", name: "Unión", latex: "\\cup", def: "Elementos que están en A, en B o en ambos." }
-            ]
+    { s: "∈", name: "Pertenece", latex: "\\in", def: "Indica que un elemento es parte de un conjunto." },
+    { s: "∉", name: "No pertenece", latex: "\\notin", def: "Indica que un elemento no está en el conjunto." },
+    { s: "∩", name: "Intersección", latex: "\\cap", def: "Elementos comunes compartidos por dos o más conjuntos." },
+    { s: "∪", name: "Unión", latex: "\\cup", def: "Agrupación de todos los elementos de los conjuntos." },
+    { s: "∅", name: "Conjunto Vacío", latex: "\\emptyset", def: "Conjunto que carece de elementos ({})." },
+    { s: "⊂", name: "Subconjunto", latex: "\\subset", def: "El conjunto A está contenido estrictamente dentro de B." },
+    { s: "⊆", name: "Subconjunto o igual", latex: "\\subseteq", def: "El conjunto A está contenido o es idéntico a B." },
+    { s: "⊄", name: "No es subconjunto", latex: "\\not\\subset", def: "El conjunto A no está contenido en B." },
+    { s: "∖", name: "Diferencia", latex: "\\setminus", def: "Elementos que están en A pero NO en B." },
+    { s: "∆", name: "Diferencia Simétrica", latex: "\\Delta", def: "Elementos que están en A o B, pero no en ambos." },
+    { s: "ℕ", name: "Naturales", latex: "\\mathbb{N}", def: "Números de conteo positivos {1, 2, 3...}." },
+    { s: "ℤ", name: "Enteros", latex: "\\mathbb{Z}", def: "Incluye naturales, cero y negativos {..., -1, 0, 1, ...}." },
+    { s: "ℚ", name: "Racionales", latex: "\\mathbb{Q}", def: "Números que pueden expresarse como fracción a/b." },
+    { s: "ℝ", name: "Reales", latex: "\\mathbb{R}", def: "Unión de racionales e irracionales (todos los continuos)." },
+    { s: "ℂ", name: "Complejos", latex: "\\mathbb{C}", def: "Números con parte real e imaginaria (a + bi)." },
+
+    { s: "∧", name: "Y (Conjunción)", latex: "\\land", def: "Es verdadero solo si ambas proposiciones son verdaderas." },
+    { s: "∨", name: "O (Disyunción)", latex: "\\lor", def: "Es verdadero si al menos una proposición es verdadera." },
+    { s: "¬", name: "Negación", latex: "\\neg", def: "Invierte el valor de verdad de una proposición." },
+    { s: "×", name: "Prod. Cartesiano", latex: "\\times", def: "Conjunto de pares ordenados (a,b) de A y B." },
+    { s: "∁", name: "Complemento", latex: "\\complement", def: "Elementos del universo que NO están en el conjunto A." },
+    { s: "℘", name: "Conjunto Potencia", latex: "\\mathcal{P}(A)", def: "Conjunto formado por todos los subconjuntos de A." },
+    { s: "∴", name: "Por lo tanto", latex: "\\therefore", def: "Conclusión lógica derivada de premisas anteriores." },
+    { s: "∵", name: "Porque / Debido a", latex: "\\because", def: "Justificación o razón de una afirmación." },
+    { s: "∎", name: "Q.E.D.", latex: "\\blacksquare", def: "Fin de la demostración (Quod Erat Demonstrandum)." },
+    { s: "ℵ₀", name: "Aleph-Cero", latex: "\\aleph_0", def: "Cardinalidad (tamaño) de los números naturales (infinito numerable)." }
+]
         },
         {
             category: "Letras Griegas",
