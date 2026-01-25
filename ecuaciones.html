@@ -17,6 +17,17 @@
     </script>
     
     
+    <script>
+window.MathJax = {
+  svg: {
+    scale: 1,
+    minScale: 0.5,
+    matchFontHeight: true
+  }
+};
+</script>
+
+
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600&family=Playfair+Display:ital,wght@0,700;0,900;1,700&display=swap" rel="stylesheet">
@@ -557,14 +568,25 @@
         </select>
     </div>
 
-    <div class="input-group">
+    <!-- ECUACIONES -->
+    <div class="input-group" id="modo-ecuaciones">
         <label>Modo</label>
         <select id="modoSalida" onchange="resolverEcuacion()">
             <option value="fraccion" selected>Fracciones</option>
             <option value="decimal">Decimales</option>
         </select>
     </div>
+
+    <!-- INECUACIONES -->
+    <div class="input-group" id="modo-inecuaciones" style="display:none">
+        <label>Formato</label>
+        <select id="formatoInecuacion" onchange="calcular()">
+            <option value="intervalos" selected>Intervalos</option>
+            <option value="cadena">a &lt; x &lt; b</option>
+        </select>
+    </div>
 </div>
+
 
 
        <button class="btn-principal" onclick="calcular()">Resolver</button>
@@ -724,6 +746,18 @@ function cambiarModo(modo) {
         input.placeholder = "Ej: 2x + 5 ≥ 10";
     }
     
+    // Alternar selectores según el modo
+const modoEcu = document.getElementById('modo-ecuaciones');
+const modoIneq = document.getElementById('modo-inecuaciones');
+
+if (modo === 'ecuaciones') {
+    modoEcu.style.display = 'block';
+    modoIneq.style.display = 'none';
+} else {
+    modoEcu.style.display = 'none';
+    modoIneq.style.display = 'block';
+}
+
     // 3. Limpiar resultado y preview para evitar confusiones
     document.getElementById('resultado').innerHTML = "Esperando...";
     actualizarPreview();
@@ -990,6 +1024,7 @@ function resolverInecuacion() {
     const rawInput = document.getElementById('ecuacion').value;
     const v = document.getElementById('variable').value;
     const out = document.getElementById('resultado');
+const formato = document.getElementById('formatoInecuacion')?.value || 'intervalos';
 
     if (!rawInput.trim()) return;
 
@@ -1146,7 +1181,23 @@ function resolverInecuacion() {
             if (b !== Infinity && !esPuntoProhibido(b) && operador.includes('=')) {
                 if (Math.abs(parseFloat(nerdamer(fx, { [v]: b }).evaluate().text())) < 1e-5) openR = ']';
             }
-            partesLatex.push(`${openL}${txtA}, ${txtB}${openR}`);
+       if (formato === 'cadena') {
+    let simbIzq = openL === '[' ? '\\le' : '<';
+    let simbDer = openR === ']' ? '\\le' : '<';
+
+    if (a === -Infinity && b !== Infinity) {
+        partesLatex.push(`${v} ${simbDer} ${txtB}`);
+    } 
+    else if (b === Infinity && a !== -Infinity) {
+        partesLatex.push(`${txtA} ${simbIzq} ${v}`);
+    } 
+    else {
+        partesLatex.push(`${txtA} ${simbIzq} ${v} ${simbDer} ${txtB}`);
+    }
+} else {
+    partesLatex.push(`${openL}${txtA}, ${txtB}${openR}`);
+}
+
         });
 
         out.innerHTML = `$$ ${partesLatex.join(' \\cup ')} $$`;
