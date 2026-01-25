@@ -955,6 +955,19 @@ let latex = '';
     MathJax.typesetPromise([preview]);
 }
 
+function fraccionBonita(valor, tolerancia = 1e-4, maxDen = 20) {
+    for (let den = 1; den <= maxDen; den++) {
+        let num = Math.round(valor * den);
+        if (Math.abs(valor - num / den) < tolerancia) {
+          return `\\frac{${num}}{${den}}`;
+        }
+    }
+    return null;
+}
+
+
+
+
 function resolverEcuacion() {
     const rawInput = document.getElementById('ecuacion').value; 
     const v = document.getElementById('variable').value;
@@ -1011,8 +1024,20 @@ function resolverEcuacion() {
                     res = nerdamer(s).toTeX(); 
                 }
             } else {
-                res = nerdamer(s).toTeX();
-            }
+    try {
+        let val = parseFloat(nerdamer(s).evaluate().text());
+        let frac = fraccionBonita(val);
+
+        if (frac) {
+            res = frac;
+        } else {
+            res = nerdamer(s).toTeX();
+        }
+    } catch {
+        res = nerdamer(s).toTeX();
+    }
+}
+
             
             // Formato de salida (x_1 = ..., x_2 = ...)
             return solucionesFinales.length > 1 ? `${v}_{${i+1}} = ${res}` : `${v} = ${res}`;
