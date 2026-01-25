@@ -437,7 +437,42 @@ window.MathJax = {
     }
 }
 
+.toast {
+    position: fixed;
+    bottom: 30px;
+    left: 50%;
+    transform: translateX(-50%) translateY(20px);
+    background: #1a1a1a;
+    color: white;
+    padding: 14px 22px;
+    border-radius: 999px;
+    font-size: 14px;
+    font-weight: 600;
+    opacity: 0;
+    pointer-events: none;
+    transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 10px 25px rgba(0,0,0,0.25);
+    z-index: 9999;
+}
+
+/* Visible */
+.toast.show {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+}
+
+/* Dark mode */
+[data-theme="dark"] .toast {
+    background: #ffffff;
+    color: #000000;
+}
+
     
+    #preview-container, #resultado {
+    cursor: pointer;
+}
+
+
 </style>
   
     </head>
@@ -855,6 +890,11 @@ s = s.replace(/≤/g, '<=').replace(/≥/g, '>=');
         if(s.includes('()')) input.setSelectionRange(pos + s.length - 1, pos + s.length - 1);
         actualizarPreview();
     }
+    
+    let ultimoLatexPreview = '';
+let ultimoLatexResultado = '';
+
+
 
 function actualizarPreview() {
     // LIMPIEZA DE MEMORIA (Vital para evitar que x valga 0)
@@ -870,6 +910,8 @@ function actualizarPreview() {
         return;
     }
 
+let latex = '';
+
     try {
         let inputNormalizado = normalizar(rawInput);
 
@@ -880,8 +922,6 @@ function actualizarPreview() {
         else if (inputNormalizado.includes('=')) separador = '=';
         else if (inputNormalizado.includes('<')) separador = '<';
         else if (inputNormalizado.includes('>')) separador = '>';
-
-        let latex;
 
         if (separador) {
             let partes = inputNormalizado.split(separador);
@@ -911,6 +951,7 @@ function actualizarPreview() {
     } catch (e) {
         preview.innerHTML = `$$ \\text{...} $$`;
     }
+    ultimoLatexPreview = latex;
     MathJax.typesetPromise([preview]);
 }
 
@@ -978,6 +1019,8 @@ function resolverEcuacion() {
         });
 
         out.innerHTML = `$$ ${resultados.join(' ; \\quad ')} $$`;
+     ultimoLatexResultado = resultados.join(' ; ');
+
         MathJax.typesetPromise([out]);
 
     } catch (e) {
@@ -1201,6 +1244,9 @@ const formato = document.getElementById('formatoInecuacion')?.value || 'interval
         });
 
         out.innerHTML = `$$ ${partesLatex.join(' \\cup ')} $$`;
+        ultimoLatexResultado = partesLatex 
+    ? partesLatex.join(' ∪ ')
+    : resultados.join(' ; ');
         MathJax.typesetPromise([out]);
 
     } catch (e) {
@@ -1208,6 +1254,55 @@ const formato = document.getElementById('formatoInecuacion')?.value || 'interval
         out.innerHTML = "<span style='color:red; font-size:14px;'>Error al procesar.</span>";
     }
 }
+
+
+function latexALineal(latex) {
+    if (!latex) return '';
+
+    return latex
+        .replace(/\\le/g, '≤')
+        .replace(/\\ge/g, '≥')
+        .replace(/\\cup/g, ' ∪ ')
+        .replace(/\\infty/g, '∞')
+        .replace(/\\/g, '')
+        .replace(/\{|\}/g, '')
+        .replace(/\s+/g, ' ')
+        .trim();
+}
+
+function copiarConToast(texto) {
+    if (!texto) return;
+
+    navigator.clipboard.writeText(texto).then(() => {
+        mostrarToast('Copiado al portapapeles');
+    });
+}
+function mostrarToast(msg) {
+    let toast = document.querySelector('.toast');
+
+    if (!toast) {
+        toast = document.createElement('div');
+        toast.className = 'toast';
+        document.body.appendChild(toast);
+    }
+
+    toast.textContent = msg;
+    toast.classList.add('show');
+
+    setTimeout(() => {
+        toast.classList.remove('show');
+    }, 2200);
+}
+
+document.getElementById('preview-container').addEventListener('click', () => {
+    if (!ultimoLatexPreview) return;
+    copiarConToast(latexALineal(ultimoLatexPreview));
+});
+
+
+document.getElementById('resultado').addEventListener('click', () => {
+    copiarConToast(latexALineal(ultimoLatexResultado));
+});
 
 
 
