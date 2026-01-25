@@ -471,6 +471,21 @@
     border-top: 2px dashed var(--border);
 }
 
+.drag-handle {
+    cursor: grab;
+    opacity: 0.5;
+    margin-right: 10px;
+    display: flex;
+    align-items: center;
+}
+
+.drag-handle:hover {
+    opacity: 1;
+}
+.section-header:hover .drag-handle {
+    opacity: 1;
+}
+
 
 </style>
   
@@ -787,9 +802,11 @@
 header.className = "section-header";
 
 header.innerHTML = `
+    <i data-lucide="grip-vertical" class="drag-handle"></i>
     <span class="section-title-text">${section.category}</span>
     <i data-lucide="chevron-down" class="section-toggle"></i>
 `;
+
 
 sectionWrapper.appendChild(header);
 sectionWrapper.setAttribute("draggable", "true");
