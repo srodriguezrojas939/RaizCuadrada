@@ -1,0 +1,571 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>√(Raiz) Cuadrada² </title>
+
+    <script>
+        (function() {
+            // 1. Intentamos leer la memoria
+            const localTheme = localStorage.getItem('theme');
+            // 2. Si hay algo guardado lo usamos, si no, usamos 'light'
+            const themeToSet = localTheme || 'light';
+            // 3. Lo aplicamos INMEDIATAMENTE al HTML
+            document.documentElement.setAttribute('data-theme', themeToSet);
+        })();
+    </script>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600&family=Playfair+Display:ital,wght@0,700;0,900;1,700&display=swap" rel="stylesheet">
+    
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <link rel="stylesheet" href="styles.css">
+
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Open+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+
+    <style>
+    /* --- PALETA DE COLORES (Monocromática Estricta) --- */
+    :root {
+        /* MODO CLARO */
+        --bg-body: #ffffff;          /* Fondo blanco puro */
+        --text-main: #1a1a1a;        /* Negro suave */
+        --text-sec: #666666;         /* Gris textos */
+        
+        /* ESTILO "ZEN PRO" (El gris con sombrita interna) */
+        --card-bg: #f4f4f4;          
+        --card-shadow: inset 0 2px 5px rgba(0,0,0,0.06); 
+        
+        /* HOVER */
+        --card-hover-bg: #1a1a1a;    /* Se pone negro */
+        --card-hover-text: #ffffff;  /* Texto se pone blanco */
+        
+        /* OTROS */
+        --border: #e0e0e0;
+        --tooltip-bg: #1a1a1a;
+        --tooltip-text: #ffffff;
+    }
+
+    /* MODO OSCURO */
+    [data-theme="dark"] {
+        --bg-body: #121212;
+        --text-main: #e0e0e0;
+        --text-sec: #a0a0a0;
+        
+        --card-bg: #1e1e1e;          /* Gris oscuro de base */
+        --card-shadow: inset 0 2px 5px rgba(0,0,0,0.3); /* Sombra interna más fuerte */
+        
+        /* HOVER DARK MODE (Invertido) */
+        --card-hover-bg: #ffffff;    /* Se pone blanco */
+        --card-hover-text: #000000;  /* Texto se pone negro */
+        
+        --border: #333333;
+        --tooltip-bg: #ffffff;
+        --tooltip-text: #000000;
+    }
+
+    body {
+        font-family: 'Open Sans', sans-serif;
+        background-color: var(--bg-body);
+        color: var(--text-main);
+        margin: 0;
+        padding: 40px 20px;
+        transition: background 0.3s ease, color 0.3s ease;
+    }
+
+    .container {
+        max-width: 1000px;
+        margin: 0 auto;
+    }
+
+    /* Títulos Elegantes */
+    .section-title {
+        font-family: 'Playfair Display', serif;
+        font-size: 32px;
+        font-weight: 700;
+        margin-top: 50px;
+        margin-bottom: 25px;
+        color: var(--text-main);
+        border-bottom: 2px solid var(--border);
+        padding-bottom: 10px;
+        display: inline-block;
+    }
+
+    .grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+        gap: 18px;
+    }
+
+    /* --- TARJETA ESTILO INPUT (ZEN) --- */
+    .card {
+        background: var(--card-bg);
+        box-shadow: var(--card-shadow); /* La profundidad interna */
+        border-radius: 20px;            /* Bordes redondeados */
+        padding: 25px 10px;
+        text-align: center;
+        cursor: pointer;
+        position: relative;
+        transition: all 0.2s cubic-bezier(0.25, 0.8, 0.25, 1);
+        border: 2px solid transparent; /* Para evitar saltos al cambiar borde */
+        user-select: none;
+    }
+
+    /* EFECTO HOVER (El cambio de color radical) */
+    .card:hover {
+        background: var(--card-hover-bg);
+        color: var(--card-hover-text);
+        transform: translateY(-4px); /* Pequeño salto */
+        box-shadow: 0 10px 25px rgba(0,0,0,0.15); /* Sombra externa al flotar */
+    }
+
+    /* El símbolo hereda el color del padre (negro -> blanco) */
+    .symbol {
+        font-family: 'Times New Roman', serif;
+        font-size: 38px;
+        margin-bottom: 8px;
+        transition: color 0.2s;
+    }
+
+    /* El nombre pequeño */
+    .name {
+        font-size: 12px;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        color: var(--text-sec); /* Gris por defecto */
+        transition: color 0.2s;
+    }
+
+    /* Al hacer hover, el nombre también cambia de color para leerse */
+    .card:hover .name {
+        color: var(--card-hover-text);
+        opacity: 0.8;
+    }
+
+    /* FEEDBACK "COPIADO" (Gris, no verde) */
+    .feedback {
+        position: absolute;
+        top: 8px;
+        right: 10px;
+        font-size: 10px;
+        font-weight: 700;
+        color: var(--text-sec); /* Gris */
+        opacity: 0;
+        transition: opacity 0.2s;
+        pointer-events: none;
+    }
+    
+    /* Cuando se activa la clase .copied */
+    .card.copied .feedback {
+        opacity: 1;
+        color: var(--card-hover-text); /* Se adapta al color del fondo hover */
+    }
+
+    /* --- TOOLTIP (INFORMACIÓN) --- */
+    .tooltip {
+        visibility: hidden;
+        opacity: 0;
+        width: 200px;
+        background-color: var(--tooltip-bg);
+        color: var(--tooltip-text);
+        text-align: left;
+        border-radius: 12px;
+        padding: 15px;
+        position: absolute;
+        z-index: 100;
+        bottom: 115%; /* Bien separado arriba */
+        left: 50%;
+        transform: translateX(-50%) translateY(10px);
+        transition: all 0.2s ease;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        pointer-events: none;
+        font-size: 12px;
+        border: 1px solid var(--border);
+    }
+
+    .card:hover .tooltip {
+        visibility: visible;
+        opacity: 1;
+        transform: translateX(-50%) translateY(0);
+    }
+    
+    /* Flechita del tooltip */
+    .tooltip::after {
+        content: "";
+        position: absolute;
+        top: 100%;
+        left: 50%;
+        margin-left: -5px;
+        border-width: 5px;
+        border-style: solid;
+        border-color: var(--tooltip-bg) transparent transparent transparent;
+    }
+
+    .def-title {
+        font-family: 'Playfair Display', serif;
+        font-weight: 700;
+        font-size: 14px;
+        margin-bottom: 4px;
+        border-bottom: 1px solid rgba(128,128,128,0.5);
+        padding-bottom: 4px;
+    }
+    
+    .latex-badge {
+        display: block;
+        margin-top: 8px;
+        font-family: monospace;
+        opacity: 0.7;
+        font-size: 10px;
+    }
+    
+    
+    /* --- ADAPTACIÓN A MOVILES (RESPONSIVE) --- */
+    @media (max-width: 768px) {
+        
+        /* 1. Aprovechar más espacio en los bordes */
+        body {
+            padding: 20px 15px; /* Menos relleno alrededor */
+        }
+
+        /* 2. Títulos más pequeños y con menos margen */
+        .section-title {
+            font-size: 24px;
+            margin-top: 30px;
+            margin-bottom: 20px;
+        }
+
+        /* 3. Ajuste de la cuadrícula (Grid) */
+        .grid {
+            /* Permitimos columnas más angostas (110px) para que quepan 2 o 3 por fila */
+            grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); 
+            gap: 12px; /* Menos espacio entre tarjetas */
+        }
+
+        /* 4. Tarjetas más compactas */
+        .card {
+            padding: 15px 5px; /* Menos "aire" dentro de la tarjeta */
+            border-radius: 16px;
+        }
+
+        .symbol {
+            font-size: 32px; /* Símbolo un poco más chico */
+        }
+        
+        .name {
+            font-size: 11px; /* Texto un poco más chico */
+        }
+
+        /* 5. Ajuste del botón de tema (Sol/Luna) */
+        .theme-btn {
+            width: 38px;
+            height: 38px;
+            top: 15px;
+            right: 15px;
+        }
+        
+        /* 6. Tooltip (Cuadro de info) en móviles */
+        /* En celular no hay "hover", así que al tocar saldrá el tooltip un momento */
+        .tooltip {
+            width: 160px; /* Más angosto para que no se salga de la pantalla */
+            bottom: 105%; /* Un poco más pegado a la tarjeta */
+            padding: 10px;
+            font-size: 11px;
+        }
+    }
+    
+</style>
+  
+    </head>
+<body>
+
+    
+    <header class="mobile-header">
+        <div class="nav-header">
+            <button class="icon-btn"><i data-lucide="search"></i></button>
+            <button class="icon-btn" onclick="toggleTheme()"><i data-lucide="moon"></i></button>
+        </div>
+        <button class="icon-btn" onclick="toggleMenu()"><i data-lucide="menu"></i></button>
+    </header>
+
+    <div class="wrapper">
+        <aside class="sidebar" id="sidebar">
+            <div class="nav-header">
+                <button class="icon-btn" title="Buscar"><i data-lucide="search"></i></button>
+                <button class="icon-btn" title="Modo" onclick="toggleTheme()"><i id="theme-icon" data-lucide="moon"></i></button>
+                <button class="icon-btn" onclick="toggleMenu()" id="close-menu"><i data-lucide="x"></i></button>
+            </div>
+
+            <nav>
+                <ul class="nav-links">
+                    <li><a href="index.html"><i data-lucide="home"></i> Página Principal</a></li>
+
+                    
+                    <div class="nav-group">
+    <div class="nav-item has-submenu" onclick="toggleSubmenu(this)">
+        <div class="nav-text-container">
+            <i data-lucide="calculator"></i>
+            <span>CALCULADORA</span>
+        </div>
+        <i data-lucide="chevron-down" class="arrow-icon"></i>
+    </div>
+    
+    <div class="submenu">
+        <a href="ecuaciones.html"><i data-lucide="equal" class="sub-icon"></i> Ecuaciones</a>
+        <a href="sistemas.html"><i data-lucide="layers" class="sub-icon"></i> Sistemas Ecuaciones</a>
+        <a href="matrices.html"><i data-lucide="grid-3x3" class="sub-icon"></i> Matrices</a>
+        <a href="derivadas.html"><i data-lucide="trending-up" class="sub-icon"></i> Derivadas</a>
+        <a href="integrales.html"><i data-lucide="sigma" class="sub-icon"></i> Integrales</a>
+        <a href="laplace.html"><i data-lucide="waves" class="sub-icon"></i> Transf. Laplace</a>
+    </div>
+</div>
+
+<div class="nav-group">
+    <div class="nav-item has-submenu" onclick="toggleSubmenu(this)">
+        <div class="nav-text-container">
+            <i data-lucide="ruler"></i>
+            <span>HERRAMIENTAS</span>
+        </div>
+        <i data-lucide="chevron-down" class="arrow-icon"></i>
+    </div>
+    
+    <div class="submenu">
+        <a href="simbolos.html"><i data-lucide="omega" class="sub-icon"></i> Símbolos</a>
+        <a href="factorizar.html"><i data-lucide="divide" class="sub-icon"></i> Factorizadora</a>
+        <a href="fraccionesparciales.html"><i data-lucide="percent" class="sub-icon"></i> Fracciones Parciales</a>
+        <a href="triangulos.html"><i data-lucide="triangle" class="sub-icon"></i> Calc. Triángulos</a>
+        <a href="vectores.html"><i data-lucide="move-diagonal" class="sub-icon"></i> Vectores</a>
+        <a href="circulounitario.html"><i data-lucide="circle" class="sub-icon"></i> Círculo Unitario</a>
+        <a href="editor.html"><i data-lucide="edit-3" class="sub-icon"></i> Editor Expresiones</a>
+    </div>
+</div>
+
+<div class="nav-group">
+    <div class="nav-item has-submenu" onclick="toggleSubmenu(this)">
+        <div class="nav-text-container">
+            <i data-lucide="activity"></i>
+            <span>GRAFICADORAS</span>
+        </div>
+        <i data-lucide="chevron-down" class="arrow-icon"></i>
+    </div>
+    
+    <div class="submenu">
+        <a href="graficadora2d.html"><i data-lucide="line-chart" class="sub-icon"></i> Funciones 2D</a>
+        <a href="graficadora3d.html"><i data-lucide="box" class="sub-icon"></i> Graficadora 3D</a>
+        <a href="conicas.html"><i data-lucide="orbit" class="sub-icon"></i> Cónicas</a>
+        <a href="campos.html"><i data-lucide="wind" class="sub-icon"></i> Campos Vectoriales</a>
+    </div>
+</div>
+
+                    
+                    <li><a href="cursos.html"><i data-lucide="book-open"></i> CURSOS</a></li>
+                    <li><a href="formularios.html"><i data-lucide="file-text"></i> FORMULARIOS</a></li>
+                    <li><a href="youtube.html"><i data-lucide="youtube"></i> Canal de YouTube</a></li>
+                    <li><a href="autor.html"><i data-lucide="user"></i> Sobre el autor</a></li>
+                </ul>
+            </nav>
+        </aside>
+
+        <main class="content">
+            
+            <div class="container" id="main-container">
+        </div>
+            
+
+<footer class="footer-global">
+    <div class="footer-wrapper">
+        
+        <div class="footer-section">
+            <h4 class="footer-h4">Contacto</h4>
+            <a href="mailto:s.rodriguezrojas939@gmail.com" class="footer-email">
+                s.rodriguezrojas939@gmail.com
+            </a>
+            <div class="footer-socials">
+                <a href="https://wa.me/573196510401" target="_blank" title="WhatsApp">
+                    <i data-lucide="message-circle"></i>
+                </a>
+                <a href="https://www.youtube.com/@ElRaizCuadrada" target="_blank" title="YouTube">
+                    <i data-lucide="youtube"></i>
+                </a>
+                <a href="mailto:s.rodriguezrojas939@gmail.com" title="Correo">
+                    <i data-lucide="mail"></i>
+                </a>
+                <a href="https://github.com" target="_blank" title="GitHub">
+                    <i data-lucide="github"></i>
+                </a>
+            </div>
+        </div>
+
+        <div class="footer-section">
+            <a href="https://www.youtube.com/@ElRaizCuadrada" target="_blank" class="footer-logo-link">
+                <h1 class="footer-title">√(Raiz) Cuadrada²</h1>
+            </a>
+        </div>
+
+        <div class="footer-section">
+            <h4 class="footer-h4">Visitas al sitio</h4>
+            <div class="visitor-counter">
+                <img src="https://hitwebcounter.com/counter/counter.php?page=21465053&style=0024&nbdigits=5&type=page&initCount=0" alt="Visitas">
+            </div>
+        </div>
+
+    </div>
+</footer>
+           
+        </main>
+        
+     <script src="script.js"></script>
+
+      <script>
+    // --- BASE DE DATOS DE SÍMBOLOS ---
+    // Agrega aquí tus secciones y símbolos siguiendo el ejemplo.
+    const mathData = [
+        {
+            category: "Álgebra",
+            items: [
+                { s: "∑", name: "Sumatoria", latex: "\\sum", def: "Suma de una secuencia de números." },
+                // Agrega más aquí...
+            ]
+        },
+        {
+            category: "Cálculo",
+            items: [
+                { s: "∫", name: "Integral", latex: "\\int", def: "Representa el área bajo una curva." },
+                // Agrega más aquí...
+            ]
+        },
+        {
+            category: "Conjuntos",
+            items: [
+                { s: "∪", name: "Unión", latex: "\\cup", def: "Elementos que están en A, en B o en ambos." },
+                // Agrega más aquí...
+            ]
+        },
+        {
+            category: "Letras Griegas",
+            items: [
+                { s: "π", name: "Pi", latex: "\\pi", def: "Relación entre la longitud de una circunferencia y su diámetro." },
+                // Agrega más aquí...
+            ]
+        },
+        {
+            category: "Geometría",
+            items: [
+                { s: "∠", name: "Ángulo", latex: "\\angle", def: "Espacio comprendido entre dos líneas que parten de un mismo punto." },
+                // Agrega más aquí...
+            ]
+        },
+        {
+            category: "Vectores",
+            items: [
+                { s: "×", name: "Producto Cruz", latex: "\\times", def: "Operación binaria entre dos vectores en el espacio tridimensional." },
+                // Agrega más aquí...
+            ]
+        },
+        {
+            category: "Superíndices",
+            items: [
+                { s: "²", name: "Cuadrado", latex: "^2", def: "Potencia elevada a la dos." },
+                // Agrega más aquí...
+            ]
+        }
+    ];
+
+    const container = document.getElementById("main-container");
+    
+    
+// --- FUNCIÓN DE COPIADO ACTUALIZADA ---
+function copyToClipboard(text, element, msg = "Copiado ✓") {
+    const textArea = document.createElement("textarea");
+    textArea.value = text;
+    textArea.style.position = "fixed";
+    textArea.style.left = "-9999px";
+    document.body.appendChild(textArea);
+    textArea.select();
+    
+    try {
+        document.execCommand('copy');
+        
+        // Buscamos el div de feedback dentro de la tarjeta
+        const feedback = element.querySelector('.feedback');
+        
+        // Aquí cambiamos el texto temporalmente
+        const textoOriginal = feedback.innerText;
+        feedback.innerText = msg; 
+        
+        element.classList.add('copied');
+        
+        setTimeout(() => {
+            element.classList.remove('copied');
+            // Opcional: regresar al texto original después si quieres
+            // feedback.innerText = textoOriginal; 
+        }, 1500);
+
+    } catch (err) {
+        console.error('Error al copiar', err);
+    }
+    document.body.removeChild(textArea);
+}
+
+// Nota: En la generación de tarjetas (el loop forEach), asegúrate de que el div feedback se cree así:
+// <div class="feedback">Copiado ✓</div>
+
+
+    // --- GENERADOR DE HTML ---
+    mathData.forEach(section => {
+        // 1. Crear Título de Sección
+        const title = document.createElement("div");
+        title.className = "section-title";
+        title.innerText = section.category;
+        container.appendChild(title);
+
+        // 2. Crear Grid
+        const grid = document.createElement("div");
+        grid.className = "grid";
+
+        // 3. Crear Tarjetas
+        section.items.forEach(item => {
+            const card = document.createElement("div");
+            card.className = "card";
+            
+            card.innerHTML = `
+                <div class="feedback">✓ Copiado</div>
+                <div class="symbol">${item.s}</div>
+                <div class="name">${item.name}</div>
+                
+                <div class="tooltip">
+                    <div class="def-title">${item.name}</div>
+                    <div class="def-text">${item.def}</div>
+                    <div class="latex-badge">LaTex: ${item.latex}</div>
+                </div>
+            `;
+
+            // Evento Click: Copia Símbolo
+            card.addEventListener('click', () => {
+                copyToClipboard(item.s, card, "✓ Símbolo");
+            });
+
+            // Evento Doble Click: Copia LaTeX
+            card.addEventListener('dblclick', (e) => {
+                e.stopPropagation(); // Evita que dispare el click simple dos veces
+                copyToClipboard(item.latex, card, "✓ LaTeX");
+            });
+
+            grid.appendChild(card);
+        });
+
+        container.appendChild(grid);
+    });
+
+</script>
+      
+</body>
+<button class="mobile-theme-toggle" onclick="toggleTheme()" aria-label="Cambiar tema">
+    <i data-lucide="sun" class="icon-sun"></i>
+    <i data-lucide="moon" class="icon-moon"></i>
+</button>
+
+
+</html>
