@@ -275,7 +275,160 @@
             font-size: 11px;
         }
     }
+      .header-section { text-align: center; margin-bottom: 35px; }
     
+     
+    .header-section h1 { 
+        font-family: 'Playfair Display', serif; 
+        font-size: clamp(24px, 6vw, 32px); /* Responsive como title-big */
+        margin: 0; 
+        font-weight: 700; 
+        color: #1a1a1a; 
+        line-height: 1.1;
+    }
+    
+    .header-section p { 
+        font-family: 'Open Sans', sans-serif; 
+        font-size: 13px; 
+        margin: 10px 0 0; 
+        font-weight: 700; 
+        color: #999; 
+        text-transform: uppercase; 
+        letter-spacing: 1.5px; /* Estilo 'pregunta-pro' */
+    }
+    
+    /* --- BARRA DE BÚSQUEDA --- */
+.search-wrapper {
+    max-width: 600px;
+    margin: 0 auto 40px auto; /* Centrado y separado del contenido */
+    padding: 0 20px;
+}
+
+.search-box {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.search-icon {
+    position: absolute;
+    left: 20px;
+    color: var(--text-sec);
+    pointer-events: none; /* Para que el click pase al input */
+}
+
+#searchInput {
+    width: 100%;
+    background: var(--card-bg); /* Mismo gris que las tarjetas */
+    border: none;
+    border-radius: 999px; /* Forma de píldora */
+    padding: 16px 20px 16px 50px; /* Padding izquierdo para el icono */
+    font-family: 'Open Sans', sans-serif;
+    font-size: 16px;
+    color: var(--text-main);
+    box-shadow: var(--card-shadow); /* Sombra interna sutil */
+    transition: all 0.3s ease;
+    outline: none;
+}
+
+#searchInput::placeholder {
+    color: var(--text-sec);
+    opacity: 0.7;
+}
+
+/* Efecto al escribir (Focus) */
+#searchInput:focus {
+    background: var(--bg-body); /* Se vuelve del color del fondo */
+    box-shadow: 0 5px 20px rgba(0,0,0,0.1); /* Sombra externa flotante */
+    transform: scale(1.02);
+    border: 1px solid var(--border);
+}
+
+/* Modo oscuro ajuste */
+[data-theme="dark"] #searchInput:focus {
+    box-shadow: 0 5px 20px rgba(0,0,0,0.5);
+}
+
+/* Clase para ocultar elementos al filtrar */
+.hidden {
+    display: none !important;
+}
+
+    /* --- PÍLDORA DE NAVEGACIÓN (SEGMENTED CONTROL) --- */
+.scroll-wrapper {
+    max-width: 800px;
+    margin: 0 auto;
+    /* ELIMINADO: overflow-x: auto; -> Ya no queremos scroll */
+    /* ELIMINADO: white-space: nowrap; */
+}
+
+.mode-switcher {
+    display: flex;
+    flex-wrap: wrap;       /* AGREGADO: Permite que bajen de línea */
+    justify-content: center; /* AGREGADO: Centra los botones */
+    gap: 5px;              /* AGREGADO: Espacio entre botones */
+    
+    background: var(--card-bg); 
+    padding: 12px;          /* Un poco más de padding contenedor */
+    border-radius: 35px;   /* CAMBIO: Menos redondeado para que se vea bien en bloques */
+    margin-bottom: 25px;
+    position: relative;
+    box-shadow: inset 0 1px 3px rgba(0,0,0,0.06);
+}
+
+.mode-btn {
+    flex: 1 1 auto;        /* AGREGADO: Crecen para llenar huecos, pero respetan su tamaño */
+    min-width: 80px;       /* Mínimo ancho para que no se aplasten mucho */
+    padding: 8px 16px;
+    border: none;
+    background: transparent;
+    border-radius: 999px;   /* CAMBIO: Radio más pequeño para encajar en filas */
+    cursor: pointer;
+    font-family: 'Open Sans', sans-serif;
+    font-weight: 700;
+    font-size: 13px;
+    color: var(--text-sec);
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;    /* Asegura texto centrado */
+}
+
+/* Hover suave */
+.mode-btn:hover:not(.active) {
+    color: var(--text-main);
+    background: rgba(0,0,0,0.05);
+}
+
+/* ESTADO ACTIVO (La píldora seleccionada) */
+.mode-btn.active {
+    background: #ffffff;   /* CAMBIO: Blanco puro forzado */
+    color: #1a1a1a;        /* CAMBIO: Negro forzado (para contraste con el blanco) */
+    box-shadow: 0 2px 8px rgba(0,0,0,0.15); /* Sombra un poco más marcada */
+    transform: scale(1.02);
+    font-weight: 800;      /* Un poco más negrita */
+}
+
+/* --- AJUSTES MODO OSCURO --- */
+[data-theme="dark"] .mode-switcher { 
+    background: #000000; 
+    box-shadow: inset 0 1px 3px rgba(255,255,255,0.05);
+}
+
+/* En modo oscuro, el botón activo NO debe ser blanco, sino gris claro */
+[data-theme="dark"] .mode-btn.active { 
+    background: #333333; 
+    color: #ffffff; 
+    box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+}
+
+.section-wrapper {
+    transition: opacity 0.3s ease;
+}
+
+
+
 </style>
   
     </head>
@@ -370,9 +523,28 @@
 
         <main class="content">
             
+             <div class="header-section">
+        <h1>Simbolos</h1>
+        <p>√(Raiz) Cuadrada²</p>
+    </div>
+    
+    <div class="search-wrapper">
+    <div class="search-box">
+        <svg class="search-icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+        
+        <input type="text" id="searchInput" placeholder="Buscar símbolo (ej. suma, pi, integral)..." autocomplete="off">
+    </div>
+</div>
+
+<div class="scroll-wrapper">
+    <div class="mode-switcher" id="category-nav">
+        </div>
+</div>
             <div class="container" id="main-container">
         </div>
             
+        
+
 
 <footer class="footer-global">
     <div class="footer-wrapper">
@@ -419,13 +591,13 @@
      <script src="script.js"></script>
 
       <script>
+    
     // --- BASE DE DATOS DE SÍMBOLOS ---
-    // Agrega aquí tus secciones y símbolos siguiendo el ejemplo.
     const mathData = [
         {
             category: "Álgebra",
             items: [
-                { s: "+", name: "Suma", latex: "+", def: "Adición de dos o más cantidades." },
+                            { s: "+", name: "Suma", latex: "+", def: "Adición de dos o más cantidades." },
                 { s: "−", name: "Resta", latex: "-", def: "Sustracción o diferencia entre cantidades." },
                 { s: "×", name: "Multiplicación", latex: "\\times", def: "Producto de dos o más factores." },
                 { s: "÷", name: "División", latex: "\\div", def: "Cociente o razón entre dos números." },
@@ -444,110 +616,146 @@
                 { s: "!", name: "Factorial", latex: "!", def: "Producto de todos los enteros positivos menores o iguales a n." }
             ]
         },
-        
         {
             category: "Cálculo",
             items: [
-                { s: "∫", name: "Integral", latex: "\\int", def: "Representa el área bajo una curva." },
-                // Agrega más aquí...
+                { s: "∫", name: "Integral", latex: "\\int", def: "Representa el área bajo una curva." }
             ]
         },
         {
             category: "Conjuntos",
             items: [
-                { s: "∪", name: "Unión", latex: "\\cup", def: "Elementos que están en A, en B o en ambos." },
-                // Agrega más aquí...
+                { s: "∪", name: "Unión", latex: "\\cup", def: "Elementos que están en A, en B o en ambos." }
             ]
         },
         {
             category: "Letras Griegas",
             items: [
-                { s: "π", name: "Pi", latex: "\\pi", def: "Relación entre la longitud de una circunferencia y su diámetro." },
-                // Agrega más aquí...
+                { s: "π", name: "Pi", latex: "\\pi", def: "Relación entre la longitud de una circunferencia y su diámetro." }
             ]
         },
         {
             category: "Geometría",
             items: [
-                { s: "∠", name: "Ángulo", latex: "\\angle", def: "Espacio comprendido entre dos líneas que parten de un mismo punto." },
-                // Agrega más aquí...
+                { s: "∠", name: "Ángulo", latex: "\\angle", def: "Espacio comprendido entre dos líneas que parten de un mismo punto." }
             ]
         },
         {
             category: "Vectores",
             items: [
-                { s: "×", name: "Producto Cruz", latex: "\\times", def: "Operación binaria entre dos vectores en el espacio tridimensional." },
-                // Agrega más aquí...
+                { s: "×", name: "Producto Cruz", latex: "\\times", def: "Operación binaria entre dos vectores en el espacio tridimensional." }
             ]
         },
         {
             category: "Superíndices",
             items: [
-                { s: "²", name: "Cuadrado", latex: "^2", def: "Potencia elevada a la dos." },
-                // Agrega más aquí...
+                { s: "²", name: "Cuadrado", latex: "^2", def: "Potencia elevada a la dos." }
+            ]
+        },
+        
+         {
+            category: "Subíndices",
+            items: [
+                { s: "²", name: "Cuadrado", latex: "^2", def: "Potencia elevada a la dos." }
+            ]
+        },
+        
+         {
+            category: "Flechas",
+            items: [
+                { s: "²", name: "Cuadrado", latex: "^2", def: "Potencia elevada a la dos." }
+            ]
+        },
+        
+         {
+            category: "Parentesis",
+            items: [
+                { s: "²", name: "Cuadrado", latex: "^2", def: "Potencia elevada a la dos." }
+            ]
+        },
+        
+        {
+            category: "Otros",
+            items: [
+                { s: "²", name: "Cuadrado", latex: "^2", def: "Potencia elevada a la dos." }
             ]
         }
     ];
 
+    // --- REFERENCIAS GLOBALES ---
     const container = document.getElementById("main-container");
-    
-    
-// --- FUNCIÓN DE COPIADO ACTUALIZADA ---
-function copyToClipboard(text, element, msg = "Copiado ✓") {
-    const textArea = document.createElement("textarea");
-    textArea.value = text;
-    textArea.style.position = "fixed";
-    textArea.style.left = "-9999px";
-    document.body.appendChild(textArea);
-    textArea.select();
-    
-    try {
-        document.execCommand('copy');
-        
-        // Buscamos el div de feedback dentro de la tarjeta
-        const feedback = element.querySelector('.feedback');
-        
-        // Aquí cambiamos el texto temporalmente
-        const textoOriginal = feedback.innerText;
-        feedback.innerText = msg; 
-        
-        element.classList.add('copied');
-        
-        setTimeout(() => {
-            element.classList.remove('copied');
-            // Opcional: regresar al texto original después si quieres
-            // feedback.innerText = textoOriginal; 
-        }, 1500);
+    const navContainer = document.getElementById("category-nav");
+    const searchInput = document.getElementById('searchInput');
 
-    } catch (err) {
-        console.error('Error al copiar', err);
+    // --- FUNCIÓN DE COPIADO ---
+    function copyToClipboard(text, element, msg = "Copiado ✓") {
+        const textArea = document.createElement("textarea");
+        textArea.value = text;
+        textArea.style.position = "fixed";
+        textArea.style.left = "-9999px";
+        document.body.appendChild(textArea);
+        textArea.select();
+        try {
+            document.execCommand('copy');
+            
+            // Feedback Visual
+            const feedback = element.querySelector('.feedback');
+            if (feedback) {
+                feedback.innerText = msg;
+                element.classList.add('copied');
+                setTimeout(() => {
+                    element.classList.remove('copied');
+                }, 1500);
+            }
+        } catch (err) {
+            console.error('Error al copiar', err);
+        }
+        document.body.removeChild(textArea);
     }
-    document.body.removeChild(textArea);
-}
 
-// Nota: En la generación de tarjetas (el loop forEach), asegúrate de que el div feedback se cree así:
-// <div class="feedback">Copiado ✓</div>
+    // --- 1. GENERAR BOTONES DE NAVEGACIÓN (Píldora) ---
+    if (navContainer) {
+        // Botón "Todas"
+        const allBtn = document.createElement("button");
+        allBtn.className = "mode-btn active";
+        allBtn.innerText = "Todas";
+        allBtn.onclick = () => filterSections("Todas", allBtn);
+        navContainer.appendChild(allBtn);
 
+        // Botones de Categorías
+        mathData.forEach(section => {
+            const btn = document.createElement("button");
+            btn.className = "mode-btn";
+            btn.innerText = section.category;
+            btn.onclick = () => filterSections(section.category, btn);
+            navContainer.appendChild(btn);
+        });
+    }
 
-    // --- GENERADOR DE HTML ---
+    // --- 2. GENERAR EL CONTENIDO (Tarjetas) ---
     mathData.forEach(section => {
-        // 1. Crear Título de Sección
+        // Wrapper para filtrar la sección completa
+        const sectionWrapper = document.createElement("div");
+        sectionWrapper.className = "section-wrapper";
+        sectionWrapper.setAttribute("data-category", section.category);
+
+        // Título
         const title = document.createElement("div");
         title.className = "section-title";
         title.innerText = section.category;
-        container.appendChild(title);
+        sectionWrapper.appendChild(title);
 
-        // 2. Crear Grid
+        // Grid
         const grid = document.createElement("div");
         grid.className = "grid";
 
-        // 3. Crear Tarjetas
+        // Tarjetas
         section.items.forEach(item => {
             const card = document.createElement("div");
             card.className = "card";
             
             card.innerHTML = `
-                <div class="feedback">✓ Copiado</div>
+                <div class="feedback">Copiado ✓</div>
                 <div class="symbol">${item.s}</div>
                 <div class="name">${item.name}</div>
                 
@@ -558,22 +766,75 @@ function copyToClipboard(text, element, msg = "Copiado ✓") {
                 </div>
             `;
 
-            // Evento Click: Copia Símbolo
-            card.addEventListener('click', () => {
-                copyToClipboard(item.s, card, "✓ Símbolo");
-            });
-
-            // Evento Doble Click: Copia LaTeX
+            // Click: Copiar Símbolo
+            card.addEventListener('click', () => copyToClipboard(item.s, card, "Copiado ✓"));
+            
+            // Doble Click: Copiar LaTeX
             card.addEventListener('dblclick', (e) => {
-                e.stopPropagation(); // Evita que dispare el click simple dos veces
-                copyToClipboard(item.latex, card, "✓ LaTeX");
+                e.stopPropagation();
+                copyToClipboard(item.latex, card, "LaTeX Copiado ✓");
             });
 
             grid.appendChild(card);
         });
 
-        container.appendChild(grid);
+        sectionWrapper.appendChild(grid);
+        container.appendChild(sectionWrapper);
     });
+
+    // --- 3. FUNCIÓN DE FILTRADO POR CATEGORÍA ---
+    function filterSections(category, clickedBtn) {
+        // Actualizar botones
+        const allButtons = document.querySelectorAll('.mode-btn');
+        allButtons.forEach(btn => btn.classList.remove('active'));
+        if(clickedBtn) clickedBtn.classList.add('active');
+
+        // Filtrar secciones
+        const sections = document.querySelectorAll('.section-wrapper');
+        sections.forEach(sec => {
+            if (category === "Todas" || sec.getAttribute("data-category") === category) {
+                sec.style.display = "block";
+                sec.style.opacity = "0";
+                setTimeout(() => sec.style.opacity = "1", 50);
+            } else {
+                sec.style.display = "none";
+            }
+        });
+    }
+
+    // --- 4. LÓGICA DE BÚSQUEDA (Search Bar) ---
+    if (searchInput) {
+        searchInput.addEventListener('input', (e) => {
+            const term = e.target.value.toLowerCase().trim();
+            const sections = document.querySelectorAll('.section-wrapper');
+            
+            sections.forEach(wrapper => {
+                const cards = wrapper.querySelectorAll('.card');
+                let visibleCount = 0;
+
+                cards.forEach(card => {
+                    const name = card.querySelector('.name').innerText.toLowerCase();
+                    const symbol = card.querySelector('.symbol').innerText.toLowerCase();
+                    
+                    if (name.includes(term) || symbol.includes(term)) {
+                        card.classList.remove('hidden');
+                        visibleCount++;
+                    } else {
+                        card.classList.add('hidden');
+                    }
+                });
+
+                // Si no hay cartas visibles en la sección, ocultamos la sección entera
+                if (visibleCount === 0) {
+                    wrapper.classList.add('hidden');
+                } else {
+                    wrapper.classList.remove('hidden');
+                }
+            });
+        });
+    }
+    
+
 
 </script>
       
