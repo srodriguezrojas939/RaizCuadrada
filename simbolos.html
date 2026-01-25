@@ -1134,6 +1134,7 @@ addFavoriteBtn.addEventListener("click", () => {
 
 // --- 4. Función para renderizar favoritos ---
 function renderFavorites() {
+    // Borra todo excepto el "+"
     favGrid.querySelectorAll(".favorite-card").forEach(el => el.remove());
 
     favorites.forEach((item, index) => {
@@ -1143,6 +1144,7 @@ function renderFavorites() {
         card.innerHTML = `
             <div class="symbol">${item.s}</div>
             <div class="name">${item.name}</div>
+
             <div class="tooltip">
                 <div class="def-title">${item.name}</div>
                 <div class="def-text">${item.def}</div>
@@ -1150,7 +1152,25 @@ function renderFavorites() {
             </div>
         `;
 
-        // Click derecho → quitar
+        // --- CLICK SIMPLE: copiar símbolo ---
+        card.addEventListener("click", (e) => {
+            if (selectingFavorites) {
+                // Si estamos en modo selección, quitar favorito
+                favorites.splice(index, 1);
+                localStorage.setItem("favorites", JSON.stringify(favorites));
+                renderFavorites();
+            } else {
+                copyToClipboard(item.s, card, "Copiado ✓");
+            }
+        });
+
+        // --- DOBLE CLICK: copiar LaTeX ---
+        card.addEventListener("dblclick", (e) => {
+            e.stopPropagation();
+            copyToClipboard(item.latex, card, "LaTeX Copiado ✓");
+        });
+
+        // --- CLICK DERECHO: quitar favorito (alternativo) ---
         card.addEventListener("contextmenu", e => {
             e.preventDefault();
             favorites.splice(index, 1);
@@ -1158,7 +1178,7 @@ function renderFavorites() {
             renderFavorites();
         });
 
-        favGrid.insertBefore(card, addFavoriteBtn);
+        favGrid.insertBefore(card, document.getElementById("add-favorite"));
     });
 }
 
