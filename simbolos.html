@@ -458,6 +458,20 @@
     transform: rotate(-90deg);
 }
 
+.section-wrapper {
+    transition: transform 0.2s ease, opacity 0.2s ease;
+}
+
+.section-wrapper.dragging {
+    opacity: 0.4;
+}
+
+.section-wrapper.drag-over {
+    transform: scale(1.02);
+    border-top: 2px dashed var(--border);
+}
+
+
 </style>
   
     </head>
@@ -778,6 +792,8 @@ header.innerHTML = `
 `;
 
 sectionWrapper.appendChild(header);
+sectionWrapper.setAttribute("draggable", "true");
+
 
 
         // Grid
@@ -872,6 +888,62 @@ header.addEventListener("click", () => {
         });
     }
     
+
+let draggedSection = null;
+
+document.querySelectorAll('.section-wrapper').forEach(section => {
+
+    section.addEventListener('dragstart', e => {
+        draggedSection = section;
+        section.classList.add('dragging');
+        e.dataTransfer.effectAllowed = "move";
+    });
+
+    section.addEventListener('dragend', () => {
+        section.classList.remove('dragging');
+        draggedSection = null;
+    });
+
+    section.addEventListener('dragover', e => {
+        e.preventDefault();
+        section.classList.add('drag-over');
+    });
+
+    section.addEventListener('dragleave', () => {
+        section.classList.remove('drag-over');
+    });
+
+    section.addEventListener('drop', e => {
+        e.preventDefault();
+        section.classList.remove('drag-over');
+
+        if (draggedSection && draggedSection !== section) {
+            const container = document.getElementById("main-container");
+            const draggedIndex = [...container.children].indexOf(draggedSection);
+            const targetIndex = [...container.children].indexOf(section);
+
+            if (draggedIndex < targetIndex) {
+                container.insertBefore(draggedSection, section.nextSibling);
+            } else {
+                container.insertBefore(draggedSection, section);
+            }
+        }
+    });
+});
+
+function saveOrder() {
+    const order = [...document.querySelectorAll('.section-wrapper')]
+        .map(sec => sec.dataset.category);
+    localStorage.setItem("categoryOrder", JSON.stringify(order));
+}
+
+const savedOrder = JSON.parse(localStorage.getItem("categoryOrder"));
+if (savedOrder) {
+    savedOrder.forEach(cat => {
+        const sec = document.querySelector(`[data-category="${cat}"]`);
+        if (sec) container.appendChild(sec);
+    });
+}
 
 
 </script>
