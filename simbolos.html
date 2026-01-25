@@ -428,6 +428,35 @@
 }
 
 
+.section-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    cursor: pointer;
+    margin-top: 50px;
+    margin-bottom: 15px;
+    border-bottom: 2px solid var(--border);
+    padding-bottom: 10px;
+}
+
+.section-title-text {
+    font-family: 'Playfair Display', serif;
+    font-size: 32px;
+    font-weight: 700;
+}
+
+.section-toggle {
+    transition: transform 0.3s ease;
+}
+
+/* Estado colapsado */
+.section-wrapper.collapsed .grid {
+    display: none;
+}
+
+.section-wrapper.collapsed .section-toggle {
+    transform: rotate(-90deg);
+}
 
 </style>
   
@@ -740,10 +769,16 @@
         sectionWrapper.setAttribute("data-category", section.category);
 
         // Título
-        const title = document.createElement("div");
-        title.className = "section-title";
-        title.innerText = section.category;
-        sectionWrapper.appendChild(title);
+     const header = document.createElement("div");
+header.className = "section-header";
+
+header.innerHTML = `
+    <span class="section-title-text">${section.category}</span>
+    <i data-lucide="chevron-down" class="section-toggle"></i>
+`;
+
+sectionWrapper.appendChild(header);
+
 
         // Grid
         const grid = document.createElement("div");
@@ -774,6 +809,9 @@
                 e.stopPropagation();
                 copyToClipboard(item.latex, card, "LaTeX Copiado ✓");
             });
+header.addEventListener("click", () => {
+    sectionWrapper.classList.toggle("collapsed");
+});
 
             grid.appendChild(card);
         });
