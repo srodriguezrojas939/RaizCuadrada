@@ -1105,30 +1105,14 @@ if (savedOrder) {
 
 const favGrid = document.getElementById("favorites-grid");
 
-function renderFavorites() {
-    // Borra todo excepto el "+"
-    favGrid.querySelectorAll(".favorite-card").forEach(el => el.remove());
+// --- 1. Inicializar favoritos ---
+let favorites = JSON.parse(localStorage.getItem("favorites")) || [];
+let selectingFavorites = false;
 
-    favorites.forEach((item, index) => {
-        const card = document.createElement("div");
-        card.className = "card favorite-card";
+// --- 2. Referencia al botón ---
+const addFavoriteBtn = document.getElementById("add-favorite");
 
-        card.innerHTML = `
-            <div class="symbol">${item.s}</div>
-            <div class="name">${item.name}</div>
-
-            <div class="tooltip">
-                <div class="def-title">${item.name}</div>
-                <div class="def-text">${item.def}</div>
-                <div class="latex-badge">LaTeX: ${item.latex}</div>
-            </div>
-        `;
-
-        // Click derecho → quitar
-  const addFavoriteBtn = document.getElementById("add-favorite");
-const favName = addFavoriteBtn.querySelector(".name");
-const toast = document.getElementById("favorite-toast");
-
+// --- 3. Evento de toggle modo favoritos ---
 addFavoriteBtn.addEventListener("click", () => {
     selectingFavorites = !selectingFavorites;
     document.body.classList.toggle("selecting-favorites", selectingFavorites);
@@ -1138,37 +1122,48 @@ addFavoriteBtn.addEventListener("click", () => {
             <i data-lucide="bookmark" class="fav-icon"></i>
             <div class="name">Guardar cambios</div>
         `;
-        toast.textContent = "Selecciona los símbolos que quieras guardar";
     } else {
         addFavoriteBtn.innerHTML = `
             <i data-lucide="heart-plus" class="fav-icon"></i>
             <div class="name">Añadir favoritos</div>
         `;
-        toast.textContent = "Modo favoritos desactivado";
     }
 
-    lucide.createIcons();
-
-    toast.classList.add("show");
-    setTimeout(() => toast.classList.remove("show"), 2000);
+    lucide.createIcons(); // Reactiva los iconos lucide
 });
 
+// --- 4. Función para renderizar favoritos ---
+function renderFavorites() {
+    favGrid.querySelectorAll(".favorite-card").forEach(el => el.remove());
 
+    favorites.forEach((item, index) => {
+        const card = document.createElement("div");
+        card.className = "card favorite-card";
 
-        favGrid.insertBefore(card, document.getElementById("add-favorite"));
+        card.innerHTML = `
+            <div class="symbol">${item.s}</div>
+            <div class="name">${item.name}</div>
+            <div class="tooltip">
+                <div class="def-title">${item.name}</div>
+                <div class="def-text">${item.def}</div>
+                <div class="latex-badge">LaTeX: ${item.latex}</div>
+            </div>
+        `;
+
+        // Click derecho → quitar
+        card.addEventListener("contextmenu", e => {
+            e.preventDefault();
+            favorites.splice(index, 1);
+            localStorage.setItem("favorites", JSON.stringify(favorites));
+            renderFavorites();
+        });
+
+        favGrid.insertBefore(card, addFavoriteBtn);
     });
 }
 
-
-
-
-let favorites = JSON.parse(localStorage.getItem("favorites")) || [];
-
-let selectingFavorites = false;
-
-
+// --- 5. Renderizar al cargar la página ---
 renderFavorites();
-
 
 
 </script>
