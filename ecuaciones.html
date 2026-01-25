@@ -1023,11 +1023,19 @@ function resolverInecuacion() {
             }
         } catch (e) {}
 
-        let solNum = nerdamer.solve(fx, v);
-        let rootsNum = solNum.symbol.elements
-            .map(r => parseFloat(nerdamer(r).evaluate().text()))
-            .filter(r => !isNaN(r));
-
+       let rootsNum = [];
+        try {
+            // Expandimos la expresión para que Nerdamer no ignore factores
+            let fxExpanded = nerdamer(fx).expand().toString();
+            let solN = nerdamer.solve(fxExpanded, v);
+            rootsNum = (solN.symbol.elements || [solN])
+                .map(r => parseFloat(nerdamer(r).evaluate().text()))
+                .filter(r => !isNaN(r));
+        } catch(e) { 
+            let solN = nerdamer.solve(fx, v);
+            rootsNum = (solN.symbol.elements || [solN]).map(r => parseFloat(nerdamer(r).evaluate().text())).filter(r => !isNaN(r));
+        }
+        
         // Función auxiliar: ¿Es asíntota?
         const esPuntoProhibido = x => rootsDen.some(d => Math.abs(d - x) < 1e-9);
 
@@ -1102,35 +1110,46 @@ function resolverInecuacion() {
                 actual = siguiente;
             }
         }
-        solucionFusionada.push(actual); // Guardar el último
-        // ------------------------------------------------------------------
+        solucionFusionada.push(actual);
+        
+// --- DETECCIÓN DE PUNTOS AISLADOS ---
+        let puntosAislados = [];
+        if (operador.includes('=')) {
+            rootsNum.forEach(root => {
+                // Verificar si el punto ya está cubierto por algún intervalo
+                let cubierto = solucionFusionada.some(([a, b]) => root >= a - 1e-7 && root <= b + 1e-7);
+                if (!cubierto) {
+                    let valR = parseFloat(nerdamer(fx, { [v]: root }).evaluate().text());
+                    if (Math.abs(valR) < 1e-7) puntosAislados.push(parseFloat(root.toFixed(4)));
+                }
+            });
+        }
+        
 
-        // 5. Renderizar LaTeX
-        let latex = solucionFusionada.map(([a, b]) => {
-            // Formateo de infinitos
+       // 5. Renderizar LaTeX (Combinando puntos e intervalos)
+        let partesLatex = [];
+
+        // Agregar puntos sueltos primero
+        if (puntosAislados.length > 0) {
+            puntosAislados.sort((a, b) => a - b).forEach(p => partesLatex.push(`\\{${p}\\}`));
+        }
+
+        // Agregar intervalos
+        solucionFusionada.forEach(([a, b]) => {
             let txtA = a === -Infinity ? '-\\infty' : parseFloat(a.toFixed(4));
             let txtB = b === Infinity ? '\\infty' : parseFloat(b.toFixed(4));
+            let openL = '(', openR = ')';
 
-            // Determinar corchetes o paréntesis
-            let openL = '(';
-            let openR = ')';
-
-            // Lógica para cerrar intervalos [ ]
-            // Solo cerramos si: NO es infinito, NO es prohibido, y el operador es inclusivo (>=, <=)
-            if (a !== -Infinity && !esPuntoProhibido(a) && (operador.includes('='))) {
-                // Doble check numérico
-                let val = nerdamer(fx, { [v]: a }).evaluate().valueOf();
-                if (Math.abs(val) < 1e-5) openL = '[';
+            if (a !== -Infinity && !esPuntoProhibido(a) && operador.includes('=')) {
+                if (Math.abs(parseFloat(nerdamer(fx, { [v]: a }).evaluate().text())) < 1e-5) openL = '[';
             }
-            if (b !== Infinity && !esPuntoProhibido(b) && (operador.includes('='))) {
-                let val = nerdamer(fx, { [v]: b }).evaluate().valueOf();
-                if (Math.abs(val) < 1e-5) openR = ']';
+            if (b !== Infinity && !esPuntoProhibido(b) && operador.includes('=')) {
+                if (Math.abs(parseFloat(nerdamer(fx, { [v]: b }).evaluate().text())) < 1e-5) openR = ']';
             }
+            partesLatex.push(`${openL}${txtA}, ${txtB}${openR}`);
+        });
 
-            return `${openL}${txtA}, ${txtB}${openR}`;
-        }).join(' \\cup ');
-
-        out.innerHTML = `$$ ${latex} $$`;
+        out.innerHTML = `$$ ${partesLatex.join(' \\cup ')} $$`;
         MathJax.typesetPromise([out]);
 
     } catch (e) {
