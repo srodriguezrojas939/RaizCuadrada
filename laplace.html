@@ -360,6 +360,7 @@
     display: flex !important;
     flex-direction: column !important;
     gap: 0 !important;
+    
 }
 
 /* Estilo de cada fila de fórmula */
@@ -373,6 +374,11 @@
     align-items: center;
     justify-content: flex-start;
     transition: background 0.2s;
+    overflow-x: auto;      /* Activa el scroll horizontal si no cabe */
+    white-space: nowrap;   /* Obliga a la fórmula a quedarse en una sola línea */
+    max-width: 100%;       /* Asegura que la fila no sea más ancha que su contenedor */
+    overflow-y: hidden;    /* Oculta scroll vertical innecesario */
+    box-sizing: border-box; /* Asegura que el padding no rompa el 100% width */
 }
 
 /* Efecto hover suave */
@@ -576,6 +582,7 @@
     </div>
 </div>
             
+</div>
 
 <footer class="footer-global">
     <div class="footer-wrapper">
@@ -856,9 +863,9 @@ const TransformadasComunes = [
 "Propiedades y Teoremas",
 "$$ \\mathcal{L}\\{f(t)\\} = \\int_{0}^{\\infty} e^{-st} f(t) \\, dt \\quad (Definición) $$",
 
-"$$ \\mathcal{L}\\{e^{at}f(t)\\} = F(s-a) \\quad (1^er \\ T. \\ Traslación \\ / \\ Eje \\ s) $$",
+"$$ \\mathcal{L}\\{e^{at}f(t)\\} = F(s-a) \\quad (\\ T. \\ Traslación \\ / \\ Eje \\ s) $$",
 
-"$$ \\mathcal{L}\\{f(t-a)u(t-a)\\} = e^{-as}F(s) \\quad (2^do \\ T. \\ Traslación \\ / \\ Eje \\ t) $$",
+"$$ \\mathcal{L}\\{f(t-a)u(t-a)\\} = e^{-as}F(s) \\quad (\\ T. \\ Traslación \\ / \\ Eje \\ t) $$",
 
 "$$ \\mathcal{L}\\{f(at)\\} = \\frac{1}{a} F\\left(\\frac{s}{a}\\right) \\quad (Escalamiento) $$",
 
@@ -868,9 +875,6 @@ const TransformadasComunes = [
 
 "$$ \\mathcal{L}\\left\\{\\int_{0}^{t} f(\\tau) \\, d\\tau\\right\\} = \\frac{F(s)}{s} \\quad (Transformada \\ de \\ una \\ Integral) $$",
 
-"$$ \\mathcal{L}\\{(f * g)(t)\\} = F(s)G(s) \\quad (Teorema \\ de \\ Convolución) $$",
-
-"$$ \\mathcal{L}\\{f(t)\\} = \\frac{1}{1 - e^{-sT}} \\int_{0}^{T} e^{-st} f(t) \\, dt \\quad (Función \\ Periódica \\ de \\ periodo \\ T) $$",
 
 "Fracciones Parciales",
 
