@@ -54,52 +54,57 @@
         transition: background 0.3s ease;
     }
 
-    /* --- ANIMACIONES --- */
+      /* --- ANIMACIONES --- */
     .fade-in { 
         opacity: 0; 
         transform: translateY(20px); 
         animation: fadeUp 0.8s cubic-bezier(0.2, 0.8, 0.2, 1) forwards; 
         width: 100%; 
-        max-width: 600px; 
+        max-width: 600px; /* Ancho idéntico al wrapper de comentarios */
+        margin: 0 auto;
     }
+    
     @keyframes fadeUp { 
+        from { opacity: 0; transform: translateY(30px); } 
         to { opacity: 1; transform: translateY(0); } 
     }
 
     /* --- CONTENEDOR PRINCIPAL --- */
-    .calculadora {
-        background: #ffffff; 
+     .calculadora {
+        background: #ffffff; /* Fondo limpio tipo tarjeta */
         padding: 40px 35px; 
         border-radius: 40px;
-        box-shadow: 0 20px 40px rgba(0,0,0,0.08); 
+        box-shadow: 0 20px 40px rgba(0,0,0,0.08); /* Sombra exacta de comentarios */
         box-sizing: border-box;
-        border: 1px solid transparent;
-        transition: all 0.3s ease;
+        font-family: 'Open Sans', sans-serif;
     }
 
+
     /* --- HEADER --- */
-    .header-section { text-align: center; margin-bottom: 35px; }
+   .header-section { text-align: center; margin-bottom: 35px; }
+    
     .header-section h1 { 
         font-family: 'Playfair Display', serif; 
-        font-size: clamp(28px, 6vw, 36px); 
+        font-size: clamp(24px, 6vw, 32px); /* Responsive como title-big */
         margin: 0; 
         font-weight: 700; 
-        color: #1a1a1a;
+        color: #1a1a1a; 
         line-height: 1.1;
     }
+    
     .header-section p { 
         font-family: 'Open Sans', sans-serif; 
         font-size: 13px; 
-        font-weight: 700; 
         margin: 10px 0 0; 
+        font-weight: 700; 
         color: #999; 
         text-transform: uppercase; 
-        letter-spacing: 1.5px;
+        letter-spacing: 1.5px; /* Estilo 'pregunta-pro' */
     }
 
     /* --- PREVIEW Y RESULTADOS --- */
-    #preview-container, #resultado {
-        background: #f9f9f9; 
+   #preview-container, #resultado {
+        background: #f9f9f9; /* Mismo gris que los inputs */
         margin-bottom: 25px; 
         padding: 20px;
         border-radius: 25px; 
@@ -107,26 +112,25 @@
         display: flex;
         align-items: center; 
         justify-content: center; 
-        border: 2px solid transparent;
-        overflow-x: auto; 
-        box-shadow: 0 2px 5px rgba(0,0,0,0.02) inset;
+        border: 2px solid transparent; /* Para mantener consistencia */
+        overflow-x: auto;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.02) inset; /* Sombra interna sutil */
         font-size: 1.1rem;
         color: #333;
-        transition: 0.3s;
     }
 
     /* --- INPUTS --- */
     .input-group { margin-bottom: 20px; }
     
-    label { 
+     label { 
+        display: block; 
         font-size: 12px; 
         font-weight: 700; 
-        color: #555; 
+        margin-bottom: 10px;
         margin-left: 15px; 
-        display: block; 
-        margin-bottom: 8px;
-        text-transform: uppercase;
-        letter-spacing: 0.5px;
+        color: #555; 
+        text-transform: uppercase; 
+        letter-spacing: 0.5px; /* Estilo exacto de form-group label */
     }
     
     input {
@@ -193,7 +197,7 @@
     }
 
     /* --- SWITCH --- */
-    .switch { position: relative; display: inline-block; width: 46px; height: 24px; }
+    .switch { position: relative; display: inline-block; width: 46px; height: 24px; margin-top: 8px}
     .switch input { opacity: 0; width: 0; height: 0; }
     .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background: #ccc; transition: .4s; border-radius: 34px; }
     .slider:before { position: absolute; content: ""; height: 18px; width: 18px; left: 3px; bottom: 3px; background: white; transition: .4s; border-radius: 50%; }
@@ -211,6 +215,7 @@
         font-size: 16px; 
         font-weight: 700;
         cursor: pointer; 
+        margin-bottom: 30px;
         transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
         font-family: 'Open Sans', sans-serif;
         box-shadow: 0 4px 6px rgba(0,0,0,0.05);
@@ -221,20 +226,17 @@
         background: #000;
     }
 
-    #aviso-imaginario {
-        color: #999; 
-        text-align: center; 
-        font-size: 12px; 
-        margin-top: 20px;
-        display: block; 
-        font-weight: 600;
+  @media (max-width: 400px) {
+    .controls-container {
+        grid-template-columns: 1fr;
     }
+}
 
     /* --- PÍLDORAS (Navegación) --- */
     .pills-nav { display: flex; justify-content: center; gap: 10px; margin-top: 30px; flex-wrap: wrap; }
     .pill { 
         background: #f4f4f4; 
-        border: 2px solid transparent; 
+        border: 1px solid transparent; 
         padding: 10px 18px; 
         border-radius: 999px; 
         font-size: 13px; 
@@ -290,51 +292,57 @@
     /* MODO OSCURO                   */
     /* ========================================= */
     
-    [data-theme="dark"] body { background: #111; }
-
-    [data-theme="dark"] .calculadora {
-        background: #1a1a1a; 
+  [data-theme="dark"] .calculadora {
+        background: transparent; /* O #1a1a1a si prefieres tarjeta sólida */
         box-shadow: none;
         border: 1px solid rgba(255,255,255,0.1);
     }
 
     [data-theme="dark"] .header-section h1 { color: #ffffff; }
     [data-theme="dark"] .header-section p { color: #888; }
-    [data-theme="dark"] label { color: #aaa; }
+    [data-theme="dark"] label { color: #888; }
 
-    [data-theme="dark"] #preview-container, 
-    [data-theme="dark"] #resultado,
-    [data-theme="dark"] input,
-    [data-theme="dark"] .opcion-decimal {
+    /* Inputs Dark Mode */
+    [data-theme="dark"] input[type="text"], 
+    [data-theme="dark"] select,
+    [data-theme="dark"] #preview-container,
+    [data-theme="dark"] .opcion-decimal-container {
         background: #1e1e1e; 
-        color: #fff; 
-        border-color: #333;
+        color: #ffffff; 
+        box-shadow: none;
+        border: 1px solid #333;
     }
     
-    [data-theme="dark"] input:focus { 
-        background: #252525; 
-        border-color: #666; 
+    [data-theme="dark"] input:focus, [data-theme="dark"] select:focus {
+        border-color: #666;
+        background: #252525;
     }
-
-    [data-theme="dark"] .btn-mini {
-        border-color: #444;
-        color: #ccc;
-    }
-    [data-theme="dark"] .btn-mini:hover {
-        background: #333;
+    
+    [data-theme="dark"] #resultado {
+        background: #1e1e1e;
         color: #fff;
+        border: 1px solid #333;
     }
 
+    /* Botones Dark Mode */
     [data-theme="dark"] .btn-principal {
         background: #ffffff;
         color: #000000;
         box-shadow: 0 4px 15px rgba(255,255,255,0.1);
     }
     [data-theme="dark"] .btn-principal:hover { background: #e0e0e0; }
+    
+    [data-theme="dark"] .btn-secundario {
+        border-color: #444;
+        color: #ccc;
+    }
+    [data-theme="dark"] .btn-secundario:hover { background: #333; color: white; }
 
+    /* Chips Dark Mode */
     [data-theme="dark"] .pill { background: #1e1e1e; color: #ccc; border-color: transparent; }
     [data-theme="dark"] .pill.active { background: #ffffff; color: #000; }
 
+    /* Symbols Dark Mode */
     [data-theme="dark"] .symbols-container {
         background: #1a1a1a;
         border-color: #333;
@@ -345,6 +353,8 @@
         color: #eee;
     }
     [data-theme="dark"] .sym-btn:hover { background: #333; }
+    
+    
 </style>
   
     </head>
@@ -493,6 +503,7 @@
         </div>
     </div>
 </div>
+
             
 
 <footer class="footer-global">
