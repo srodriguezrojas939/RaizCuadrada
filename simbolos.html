@@ -697,6 +697,76 @@
     box-shadow: var(--card-shadow);
 }
 
+
+/* --- AVISO DE USO (Instrucciones - Estilo Monocromático) --- */
+.usage-toast {
+    position: fixed;
+    bottom: 30px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 10000;
+    
+    /* Fondo blanco puro con borde gris sutil */
+    background-color: #ffffff;
+    color: #1a1a1a; /* Texto negro suave */
+    border: 1px solid #e0e0e0;
+    
+    /* Sombra elegante */
+    box-shadow: 0 5px 25px rgba(0,0,0,0.1); 
+    
+    padding: 10px 12px 10px 20px;
+    border-radius: 50px;
+    
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    
+    font-family: 'Open Sans', sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.3px;
+    
+    transition: all 0.3s ease;
+    animation: slideUpFade 0.5s ease-out forwards;
+}
+
+@keyframes slideUpFade {
+    from { opacity: 0; transform: translateX(-50%) translateY(20px); }
+    to   { opacity: 1; transform: translateX(-50%) translateY(0); }
+}
+
+/* EL BOTÓN CIRCULAR "ACEPTAR" (Gris/Negro) */
+.usage-accept-btn {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    
+    /* CAMBIO: Gris muy suave en lugar de verde */
+    background-color: #f2f2f2; 
+    color: #666666; /* Icono gris */
+    border: 1px solid transparent; /* Para evitar saltos */
+    
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+}
+
+.usage-accept-btn:hover {
+    /* CAMBIO: Se vuelve negro al pasar el mouse */
+    background-color: #1a1a1a; 
+    color: #ffffff; /* Icono blanco */
+    transform: scale(1.1);
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+.usage-accept-btn i, 
+.usage-accept-btn svg {
+    width: 16px;
+    height: 16px;
+    stroke-width: 3px;
+}
 </style>
   
     </head>
@@ -1473,6 +1543,27 @@ renderFavorites();
 <div id="favorite-toast" class="favorite-toast">
     Selecciona los símbolos que quieras guardar
 </div>
+
+<div id="usage-toast" class="usage-toast">
+    <span class="usage-text">
+        Click: Copiar Símbolo &nbsp;|&nbsp; Doble Click: Copiar LaTeX
+    </span>
+    <button class="usage-accept-btn" onclick="closeUsageToast()" title="Entendido">
+        <i data-lucide="check"></i>
+    </button>
+</div>
+
+<script>
+    // Script simple para cerrar el aviso
+    function closeUsageToast() {
+        const toast = document.getElementById('usage-toast');
+        toast.style.opacity = '0';
+        toast.style.transform = 'translateX(-50%) translateY(20px)'; // Se va hacia abajo
+        setTimeout(() => {
+            toast.style.display = 'none';
+        }, 300);
+    }
+</script>
 
 
 </html>
