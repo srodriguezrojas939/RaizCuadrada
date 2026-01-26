@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>√(Raiz) Cuadrada² </title>
+    <title> Trans. Laplace | √(Raiz) Cuadrada² </title>
 
     <script>
         (function() {
@@ -128,6 +128,8 @@
         color: #555; 
         text-transform: uppercase; 
         letter-spacing: 0.5px; 
+      margin-top: 20px;
+        
     }
     
     /* --- INPUTS Y SELECTS --- */
@@ -145,6 +147,7 @@
         margin-bottom: 0; /* El margen lo maneja el row o el padre */
         outline: none;
         box-sizing: border-box;
+      
     }
 
     input:focus, select:focus {
@@ -482,8 +485,11 @@
     <div id="resultado">Esperando datos...</div>
 
     <div class="pills-nav" id="pillsNav">
-        <button class="pill active" onclick="showCategory('directas', this)">Directas</button>
-        <button class="pill" onclick="showCategory('inversas', this)">Inversas</button>
+        <button class="pill active" onclick="showCategory('directas', this)">Directas (t)</button>
+        <button class="pill" onclick="showCategory('inversas', this)">Inversas (s)</button>
+         <button class="pill active" onclick="showCategory('principales', this)">Principales</button>
+        <button class="pill" onclick="showCategory('trig', this)">Trigonometricas</button>
+            <button class="pill" onclick="showCategory('inv', this)">Trig. Inversas</button>
     </div>
 
     <div id="symbolsPanel" class="symbols-container">
@@ -623,12 +629,74 @@ const categorias = {
         // ESPECIALES
         { s: 'log((s+a)/(s+b))', t: 'Logaritmo' },
         { s: 'atan(a/s)', t: 'Arcotangente' }
-    ]
+    ],
+    
+     principales: [
+        { s: '(', t: 'ABRIR (' }, 
+        { s: ')', t: 'CERRAR )' },
+        { s: '+', t: 'SUMA' }, 
+        { s: '-', t: 'RESTA' },
+        { s: '*', t: 'MULT.' }, 
+        { s: '/', t: 'DIV.' },
+        { s: '( )/( )', t: 'FRACCIÓN' }, 
+        { s: '^', t: 'POTENCIA' },
+        { s: '√', t: 'RAÍZ' }, 
+        { s: 'x', t: 'VAR X' }, 
+        { s: 'y', t: 'VAR Y' },
+        { s: 'π', t: 'PI' }, 
+        { s: 'e', t: 'EULER' },
+        { s: '∞', t: 'INFINITO' }, 
+        { s: '-∞', t: '- INFINITO' },
+        { s: ' |x| ', t: 'ABS.' }, 
+        { s: '!', t: 'FACT.' },
+  { s: '¹',  t: 'POTENCIA (1)' },
+  { s: '²',  t: 'POTENCIA (2)' },
+  { s: '³',  t: 'POTENCIA (3)' },
+  { s: '⁴',  t: 'POTENCIA (4)' },
+  { s: '⁵',  t: 'POTENCIA (5)' },
+  { s: '⁶',  t: 'POTENCIA (6)' },
+  { s: '⁷',  t: 'POTENCIA (7)' },
+  { s: '⁸',  t: 'POTENCIA (8)' },
+  { s: '⁹',  t: 'POTENCIA (9)' },
+  { s: '¹⁰', t: 'POTENCIA (10)' },
+  { s: 'ˣ',  t: 'POTENCIA (X)' },
+  { s: 'ʸ',  t: 'POTENCIA (Y)' }
+    ],
+    trig: [
+       { s: 'sin()', t: 'SENO' }, 
+        { s: 'cos()', t: 'COSENO' }, 
+        { s: 'tan()', t: 'TAN' }, 
+        { s: 'sec()', t: 'SEC' }, 
+        { s: 'csc()', t: 'CSC' }, 
+        { s: 'cot()', t: 'COT' },
+        { s: 'sinh()', t: 'SENH' }, 
+        { s: 'cosh()', t: 'COSH' }, 
+        { s: 'tanh()', t: 'TANH' },
+        { s: 'coth()', t: 'COTH' }, 
+        { s: 'sech()', t: 'SECH' }, 
+        { s: 'csch()', t: 'CSCH' }
+    ],
+    inv: [
+    { s: 'asin()', t: 'ARCSIN' }, 
+        { s: 'acos()', t: 'ARCCOS' }, 
+        { s: 'atan()', t: 'ARCTAN' },
+          { s: 'asec()', t: 'ARCSEC' }, 
+        { s: 'acsc()', t: 'ARCCSC' },
+        { s: 'asinh()', t: 'ARSINH' }, 
+        { s: 'acosh()', t: 'ARCOSH' }, 
+        { s: 'atanh()', t: 'ARTANH' },
+        { s: 'acoth()', t: 'ARCOTH' },
+        { s: 'asech()', t: 'ARSECH' }, 
+        { s: 'acsch()', t: 'ARCSCH' }
+    ],
+ 
+    
 };
 
 function showCategory(cat, btn) {
     document.querySelectorAll('.pill').forEach(p => p.classList.remove('active'));
     btn.classList.add('active');
+
     const grid = document.getElementById('grid-content');
     grid.innerHTML = '';
     
@@ -636,16 +704,118 @@ function showCategory(cat, btn) {
         const div = document.createElement('div');
         div.className = 'sym-btn';
         div.innerHTML = `<span>${item.s}</span><small>${item.t}</small>`;
+
         div.onclick = () => {
-            document.getElementById('funcion').value = item.s;
-            // Cambiar el selector de tipo automáticamente según la categoría
-            document.getElementById('tipo').value = (cat === 'directas') ? "LaplaceTransform" : "InverseLaplaceTransform";
-            sincronizar();
+            const inputEl = document.getElementById('funcion');
+
+            if (cat === 'directas' || cat === 'inversas') {
+               
+                inputEl.value = item.s;
+
+                document.getElementById('tipo').value =
+                    (cat === 'directas')
+                        ? "LaplaceTransform"
+                        : "InverseLaplaceTransform";
+
+                sincronizar();
+            } else {
+              
+                insertarEnCursor(inputEl, item.s);
+            }
+
             actualizarPreview();
         };
+
         grid.appendChild(div);
     });
 }
+
+
+function insertarEnCursor(input, texto) {
+    const start = input.selectionStart;
+    const end = input.selectionEnd;
+    input.value =
+        input.value.slice(0, start) +
+        texto +
+        input.value.slice(end);
+    input.selectionStart = input.selectionEnd = start + texto.length;
+    input.focus();
+}
+
+
+
+    function normalizar(expr) { 
+        if (!expr) return '';
+
+        // 1. Quitar espacios y pasar a minúsculas
+        let s = expr.toLowerCase().replace(/\s+/g, '');
+        
+        // CASO E: Valor absoluto |x| -> abs(x)
+        s = s.replace(/\|([^|]+)\|/g, 'abs($1)');
+
+        // CASO F: Superíndices
+        const superindices = { '⁰':'0', '¹':'1', '²':'2', '³':'3', '⁴':'4', '⁵':'5', '⁶':'6', '⁷':'7', '⁸':'8', '⁹':'9' };
+        s = s.replace(/[⁰¹²³⁴⁵⁶⁷⁸⁹]/g, match => `^${superindices[match]}`);
+
+        // 2. Diccionario de Traducción
+        const reemplazos = [
+            { from: /arctan/g, to: 'atan' },
+            { from: /arctg/g, to: 'atan' },
+            { from: /arcsin/g, to: 'asin' },
+            { from: /arccos/g, to: 'acos' },
+            { from: /arcsec/g, to: 'asec' },
+            { from: /arccsc/g, to: 'acsc' },
+            { from: /arccot/g, to: 'acot' },
+            { from: /sen/g, 'to': 'sin' },
+            { from: /tg/g, 'to': 'tan' },
+            { from: /ln/g, 'to': 'log' }, 
+            { from: /√/g, 'to': 'sqrt' },
+            { from: /π/g, 'to': 'pi' },
+            { from: /·/g, 'to': '*' }
+        ];
+
+        reemplazos.forEach(r => { s = s.replace(r.from, r.to); });
+
+        // 3. Notación inversa
+        s = s.replace(/sin\^-1/g, 'asin').replace(/cos\^-1/g, 'acos').replace(/tan\^-1/g, 'atan');
+
+        const funcsTrig = 'sin|cos|tan|csc|sec|cot';
+        const reTrigPow = new RegExp(`(${funcsTrig})\\^(\\d+)\\(?([st])\\)?`, 'g');
+
+        s = s.replace(reTrigPow, '($1($3))^$2');
+        
+        // 4. Inteligencia: Funciones sin paréntesis
+        const funciones = ['asin', 'acos', 'atan', 'asec', 'acsc', 'acot', 'sin', 'cos', 'tan', 'sec', 'csc', 'cot', 'sqrt', 'log', 'abs', 'exp'];
+        
+        funciones.forEach(fn => {
+          const re = new RegExp(`${fn}([st\\d])`, 'g');
+
+            s = s.replace(re, `${fn}($1)`);
+        });
+
+        // 5. Multiplicación Implícita
+        // CASO A: Número seguido de Variable o Paréntesis (2x -> 2*x)
+        s = s.replace(/(\d)([a-z\(])/g, '$1*$2');
+
+        // CASO B: Variable explícita seguida de función
+        const funcionPattern = funciones.join('|');
+       const reMultFunc = new RegExp(`([st\\)])(${funcionPattern})`, 'g');
+
+        s = s.replace(reMultFunc, '$1*$2');
+
+        // CASO C: Variable seguida de variable (xx -> x*x)
+  s = s.replace(/([st])([st])/g, '$1*$2');
+
+
+        // CASO D: Corchetes
+        s = s.replace(/[\[\{]/g, '(').replace(/[\]\}]/g, ')');
+        
+        // NORMALIZAR INECUACIONES (Unicode → ASCII)
+s = s.replace(/≤/g, '<=').replace(/≥/g, '>=');
+
+        return s;
+    }
+    
 
 function sincronizar() {
     const tipo = document.getElementById('tipo').value;
@@ -653,17 +823,28 @@ function sincronizar() {
 }
 
 function actualizarPreview() {
-    const input = document.getElementById('funcion').value;
+    const raw = document.getElementById('funcion').value;
+    const input = normalizar(raw);
     const preview = document.getElementById('latex-preview');
-    if(!input) return;
+
+    if (!input) {
+        preview.innerHTML = '';   
+        return;
+    }
+
     try {
         preview.innerHTML = `$$ ${nerdamer(input).toTeX()} $$`;
         MathJax.typesetPromise([preview]);
-    } catch(e) {}
+    } catch (e) {
+        preview.innerHTML = '';
+    }
 }
 
+
 async function resolver() {
-    const input = document.getElementById('funcion').value.trim();
+const raw = document.getElementById('funcion').value.trim();
+const input = normalizar(raw);
+
     const tipo = document.getElementById('tipo').value;
     const variable = document.getElementById('variable').value;
     const out = document.getElementById('resultado');
