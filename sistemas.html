@@ -358,6 +358,30 @@
     }
     [data-theme="dark"] .sym-btn:hover { background: #333; }
     
+    /* Contenedor del switch */
+[data-theme="dark"] .opcion-decimal {
+    background: #1e1e1e;   /* Un gris oscuro para diferenciarse del fondo negro */
+    color: #ffffff;
+    border: 1px solid #333;
+    box-shadow: none;
+}
+
+/* El riel del switch cuando está apagado */
+[data-theme="dark"] .slider {
+    background-color: #333; 
+}
+
+/* El riel del switch cuando está ENCENDIDO (Blanco para resaltar) */
+[data-theme="dark"] input:checked + .slider {
+    background-color: #ffffff;
+}
+
+/* La bolita del switch cuando está ENCENDIDO (Negra para contraste) */
+[data-theme="dark"] input:checked + .slider:before {
+    background-color: #000000;
+}
+
+    
     @media (max-width: 480px) {
     /* En celular quitamos flex para evitar que centre recortando bordes */
     body {
@@ -674,13 +698,83 @@
         actualizarVistaPrevia();
     }
 
+ function normalizar(expr) { 
+        if (!expr) return '';
+
+        // 1. Quitar espacios y pasar a minúsculas
+        let s = expr.toLowerCase().replace(/\s+/g, '');
+        
+        // CASO E: Valor absoluto |x| -> abs(x)
+        s = s.replace(/\|([^|]+)\|/g, 'abs($1)');
+
+        // CASO F: Superíndices
+        const superindices = { '⁰':'0', '¹':'1', '²':'2', '³':'3', '⁴':'4', '⁵':'5', '⁶':'6', '⁷':'7', '⁸':'8', '⁹':'9' };
+        s = s.replace(/[⁰¹²³⁴⁵⁶⁷⁸⁹]/g, match => `^${superindices[match]}`);
+
+        // 2. Diccionario de Traducción
+        const reemplazos = [
+            { from: /arctan/g, to: 'atan' },
+            { from: /arctg/g, to: 'atan' },
+            { from: /arcsin/g, to: 'asin' },
+            { from: /arccos/g, to: 'acos' },
+            { from: /arcsec/g, to: 'asec' },
+            { from: /arccsc/g, to: 'acsc' },
+            { from: /arccot/g, to: 'acot' },
+            { from: /sen/g, 'to': 'sin' },
+            { from: /tg/g, 'to': 'tan' },
+            { from: /ln/g, 'to': 'log' }, 
+            { from: /√/g, 'to': 'sqrt' },
+            { from: /π/g, 'to': 'pi' },
+            { from: /·/g, 'to': '*' }
+        ];
+
+        reemplazos.forEach(r => { s = s.replace(r.from, r.to); });
+
+        // 3. Notación inversa
+        s = s.replace(/sin\^-1/g, 'asin').replace(/cos\^-1/g, 'acos').replace(/tan\^-1/g, 'atan');
+
+        const funcsTrig = 'sin|cos|tan|csc|sec|cot';
+        const reTrigPow = new RegExp(`(${funcsTrig})\\^(\\d+)\\(?([xyz])\\)?`, 'g');
+        s = s.replace(reTrigPow, '($1($3))^$2');
+        
+        // 4. Inteligencia: Funciones sin paréntesis
+        const funciones = ['asin', 'acos', 'atan', 'asec', 'acsc', 'acot', 'sin', 'cos', 'tan', 'sec', 'csc', 'cot', 'sqrt', 'log', 'abs', 'exp'];
+        
+        funciones.forEach(fn => {
+            const re = new RegExp(`${fn}([xyz\\d])`, 'g');
+            s = s.replace(re, `${fn}($1)`);
+        });
+
+        // 5. Multiplicación Implícita
+        // CASO A: Número seguido de Variable o Paréntesis (2x -> 2*x)
+        s = s.replace(/(\d)([a-z\(])/g, '$1*$2');
+
+        // CASO B: Variable explícita seguida de función
+        const funcionPattern = funciones.join('|');
+        const reMultFunc = new RegExp(`([xyz\\)])(${funcionPattern})`, 'g');
+        s = s.replace(reMultFunc, '$1*$2');
+
+        // CASO C: Variable seguida de variable (xx -> x*x)
+        s = s.replace(/([xytz])([xytz])/g, '$1*$2');
+
+        // CASO D: Corchetes
+        s = s.replace(/[\[\{]/g, '(').replace(/[\]\}]/g, ')');
+        
+        // NORMALIZAR INECUACIONES (Unicode → ASCII)
+s = s.replace(/≤/g, '<=').replace(/≥/g, '>=');
+
+        return s;
+    }
+    
+    
     function actualizarVistaPrevia() {
         const inputs = document.querySelectorAll('.eq-input');
         const preview = document.getElementById('latex-preview');
         let lineasLatex = [];
 
         inputs.forEach(i => {
-            let val = i.value.trim();
+            let val = normalizar(i.value.trim());
+
             if(val !== "") {
                 try {
                     if (val.includes('=')) {
@@ -722,6 +816,138 @@
         actualizarVistaPrevia();
     }
 
+function detectarVariables(eqs) {
+    const vars = new Set();
+    eqs.forEach(eq => {
+        (eq.match(/\b[x-z]\b/g) || []).forEach(v => vars.add(v));
+    });
+    return [...vars];
+}
+
+
+function evaluarSistema(eqs, vars, valores) {
+    // valores = {x:1, y:2}
+    return eqs.map(eq => {
+        let expr = eq;
+        vars.forEach(v => {
+            expr = expr.replaceAll(v, `(${valores[v]})`);
+        });
+        try {
+            return parseFloat(nerdamer(expr).evaluate().text());
+        } catch {
+            return NaN;
+        }
+    });
+}
+
+function jacobianoNumerico(eqs, vars, valores, h = 1e-6) {
+    const J = [];
+
+    const f0 = evaluarSistema(eqs, vars, valores);
+
+    for (let i = 0; i < eqs.length; i++) {
+        J[i] = [];
+        for (let j = 0; j < vars.length; j++) {
+            let vTemp = { ...valores };
+            vTemp[vars[j]] += h;
+            let f1 = evaluarSistema(eqs, vars, vTemp);
+            J[i][j] = (f1[i] - f0[i]) / h;
+        }
+    }
+    return J;
+}
+
+
+function resolverLineal(A, b) {
+    const n = A.length;
+    let M = A.map((row, i) => [...row, b[i]]);
+
+    for (let i = 0; i < n; i++) {
+        // Pivot
+        let max = i;
+        for (let k = i+1; k < n; k++)
+            if (Math.abs(M[k][i]) > Math.abs(M[max][i])) max = k;
+        [M[i], M[max]] = [M[max], M[i]];
+
+        if (Math.abs(M[i][i]) < 1e-12) return null;
+
+        // Eliminar
+        for (let k = i+1; k < n; k++) {
+            let c = M[k][i] / M[i][i];
+            for (let j = i; j <= n; j++)
+                M[k][j] -= c * M[i][j];
+        }
+    }
+
+    // Sustitución atrás
+    let x = Array(n).fill(0);
+    for (let i = n-1; i >= 0; i--) {
+        x[i] = M[i][n] / M[i][i];
+        for (let k = i-1; k >= 0; k--)
+            M[k][n] -= M[k][i] * x[i];
+    }
+    return x;
+}
+
+function newtonGeneral(eqs, vars, x0, maxIter = 50, tol = 1e-6) {
+    let x = { ...x0 };
+
+    for (let k = 0; k < maxIter; k++) {
+        const F = evaluarSistema(eqs, vars, x);
+        const norm = Math.max(...F.map(v => Math.abs(v)));
+        if (norm < tol) return x;
+
+        const J = jacobianoNumerico(eqs, vars, x);
+        const delta = resolverLineal(J, F.map(v => -v));
+        if (!delta) return null;
+
+        vars.forEach((v, i) => x[v] += delta[i]);
+    }
+    return null;
+}
+
+function gaussNewton(eqs, vars, x0, maxIter = 50, tol = 1e-6) {
+    let x = { ...x0 };
+
+    for (let k = 0; k < maxIter; k++) {
+        const F = evaluarSistema(eqs, vars, x);
+        const J = jacobianoNumerico(eqs, vars, x);
+
+        const JT = J[0].map((_, i) => J.map(r => r[i]));
+        const JTJ = JT.map(r => r.map((_, j) => r.reduce((s, v, k) => s + v * JT[j][k], 0)));
+        const JTF = JT.map(r => -r.reduce((s, v, i) => s + v * F[i], 0));
+
+        const delta = resolverLineal(JTJ, JTF);
+        if (!delta) return null;
+
+        vars.forEach((v, i) => x[v] += delta[i]);
+
+        if (Math.max(...delta.map(d => Math.abs(d))) < tol) return x;
+    }
+    return null;
+}
+
+function resolverNumericoUniversal(eqs) {
+    const vars = detectarVariables(eqs);
+    const semillas = Array.from({length: 8}, () =>
+        Object.fromEntries(vars.map(v => [v, (Math.random()-0.5)*4]))
+    );
+
+    for (let s of semillas) {
+        let sol =
+            eqs.length === vars.length
+                ? newtonGeneral(eqs, vars, s)
+                : gaussNewton(eqs, vars, s);
+
+        if (sol) return sol;
+    }
+    return null;
+}
+
+
+
+
+
     function resolver() {
         const inputs = document.querySelectorAll('.eq-input');
         const esDecimal = document.getElementById('modoDecimal').checked;
@@ -729,7 +955,8 @@
         let eqs = [];
 
         inputs.forEach(i => {
-            let val = i.value.trim();
+          let val = normalizar(i.value.trim());
+
             if(val) {
                 if(val.includes('=')) {
                     let parts = val.split('=');
@@ -772,10 +999,25 @@
             if(outputLatex.length === 0) throw new Error();
             resDiv.innerHTML = `$$ ${outputLatex.join(' ; \\quad ')} $$`;
             MathJax.typesetPromise([resDiv]);
+ }
+     catch (e) {
+    const solNum = resolverNumericoUniversal(eqs);
 
-        } catch (e) {
-            resDiv.innerHTML = "<span style='color:red; font-size:14px;'>Error: Sistema inconsistente o error de escritura.</span>";
-        }
+    if (solNum) {
+        let salida = Object.entries(solNum)
+            .map(([v, val]) => `${v} \\approx ${val.toFixed(6)}`)
+            .join(' \\quad ; \\quad ');
+
+        resDiv.innerHTML = `$$ ${salida} $$`;
+        MathJax.typesetPromise([resDiv]);
+
+    } else {
+        resDiv.innerHTML =
+            "<span style='color:red;'>No se pudo resolver ni simbólica ni numéricamente.</span>";
+    }
+}
+
+   
     }
 
     // Inicializar categoría principales al cargar
