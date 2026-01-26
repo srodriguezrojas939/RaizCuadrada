@@ -1378,6 +1378,17 @@ let draggedSection = null;
 
 document.querySelectorAll('.section-wrapper').forEach(section => {
 
+const header = section.querySelector('.section-header');
+    if (header) {
+        header.addEventListener('click', (e) => {
+            // Si el click fue en el icono de arrastrar (grip), no colapsamos
+            if (e.target.closest('.drag-handle')) return;
+            
+            // Alternamos la clase que oculta el grid
+            section.classList.toggle('collapsed');
+        });
+    }
+    
     section.addEventListener('dragstart', e => {
         draggedSection = section;
         section.classList.add('dragging');
