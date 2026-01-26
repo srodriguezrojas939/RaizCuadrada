@@ -894,6 +894,7 @@ function newtonGeneral(eqs, vars, x0, maxIter = 50, tol = 1e-6) {
 
     for (let k = 0; k < maxIter; k++) {
         const F = evaluarSistema(eqs, vars, x);
+        if (F.some(v => !isFinite(v))) return null;
         const norm = Math.max(...F.map(v => Math.abs(v)));
         if (norm < tol) return x;
 
@@ -901,7 +902,8 @@ function newtonGeneral(eqs, vars, x0, maxIter = 50, tol = 1e-6) {
         const delta = resolverLineal(J, F.map(v => -v));
         if (!delta) return null;
 
-        vars.forEach((v, i) => x[v] += delta[i]);
+       vars.forEach((v, i) => x[v] += 0.5 * delta[i]);
+
     }
     return null;
 }
@@ -933,13 +935,23 @@ function resolverNumericoUniversal(eqs) {
         Object.fromEntries(vars.map(v => [v, (Math.random()-0.5)*4]))
     );
 
-    for (let s of semillas) {
+   let start = performance.now();
+
+for (let s of semillas) {
+    if (performance.now() - start > 1500) break;
+
         let sol =
             eqs.length === vars.length
                 ? newtonGeneral(eqs, vars, s)
                 : gaussNewton(eqs, vars, s);
 
-        if (sol) return sol;
+
+      if (sol) {
+    const Ffinal = evaluarSistema(eqs, vars, sol);
+    if (Math.max(...Ffinal.map(v => Math.abs(v))) > 1e-4) continue;
+    return sol;
+}
+
     }
     return null;
 }
@@ -952,7 +964,11 @@ function resolverNumericoUniversal(eqs) {
         const inputs = document.querySelectorAll('.eq-input');
         const esDecimal = document.getElementById('modoDecimal').checked;
         const resDiv = document.getElementById('resultado');
+        
+        resDiv.innerHTML = "<span style='color:#777;'>Resolviendo...</span>";
+        
         let eqs = [];
+
 
         inputs.forEach(i => {
           let val = normalizar(i.value.trim());
