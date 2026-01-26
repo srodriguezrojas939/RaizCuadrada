@@ -472,6 +472,23 @@ window.MathJax = {
     cursor: pointer;
 }
 
+     @media (max-width: 480px) {
+    /* En celular quitamos flex para evitar que centre recortando bordes */
+    body {
+        display: block; 
+        padding: 10px; /* Menos espacio en los bordes de la pantalla */
+    }
+
+    /* Ajustamos el margen para que se centre con block */
+    .fade-in {
+        margin: 20px auto; 
+    }
+
+    /* Reducimos el relleno interno de la tarjeta para ganar espacio útil */
+    .calculadora {
+        padding: 30px 20px; 
+    }
+}
 
 </style>
   
