@@ -600,13 +600,16 @@
     display: flex;
     align-items: center;
     gap: 10px;
-    padding: 8px 12px;
-    margin: 8px 0;
+    max-width: 600px;
+    margin: 0 auto 40px auto; /* Centrado y separado del contenido */
+    padding: 0 20px;
     background-color: var(--card-bg); /* mismo color de tarjetas */
     border-radius: 999px;
     box-shadow: var(--card-shadow);
     flex-wrap: wrap;
 }
+
+
 
 .clipboard-bar.hidden {
     display: none;
@@ -645,6 +648,25 @@
 
 .clipboard-copy-btn:hover {
     background-color: var(--btn-hover);
+}
+
+.clipboard-actions {
+    display: flex;
+    gap: 8px;
+    margin-top: 8px;
+}
+
+.clipboard-actions button {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 6px 10px;
+    cursor: pointer;
+    color: var(--text);
+}
+
+.clipboard-actions button:hover {
+    background: var(--hover);
 }
 
 
@@ -764,9 +786,17 @@
 <div id="clipboard-bar" class="clipboard-bar hidden">
     <div id="clipboard-items" class="clipboard-items"></div>
     <button id="copy-clipboard-btn" class="clipboard-copy-btn">
-        <i data-lucide="clipboard" class="icon"></i> Copiar todo
+        <i data-lucide="files" class="icon"></i> 
+    </button>
+      <button id="remove-last-btn" title="Borrar último">
+        <i data-lucide="delete"></i>
+    </button>
+
+    <button id="clear-all-btn" title="Borrar todo">
+        <i data-lucide="trash-2"></i>
     </button>
 </div>
+
 
             <div class="container" id="main-container">
         </div>
@@ -897,8 +927,6 @@
     { s: "∁", name: "Complemento", latex: "\\complement", def: "Elementos del universo que NO están en el conjunto A." },
     { s: "℘", name: "Conjunto Potencia", latex: "\\mathcal{P}(A)", def: "Conjunto formado por todos los subconjuntos de A." },
     { s: "ℵ₀", name: "Aleph-Cero", latex: "\\aleph_0", def: "Cardinalidad (tamaño) de los números naturales (infinito numerable)." },
-    
-    
     { s: "⊓", name: "Intersec. Cuadrada", latex: "\\sqcap", def: "Operador 'meet' o ínfimo en teoría de retículos." },
     { s: "⊔", name: "Unión Cuadrada", latex: "\\sqcup", def: "Operador 'join' o supremo en teoría de retículos." },
     { s: "⨆", name: "Unión Cuadr. G", latex: "\\bigsqcup", def: "Unión cuadrada generalizada (para familias de conjuntos)." },
@@ -916,9 +944,8 @@
     { s: "⊐", name: "Superconj. Estricto", latex: "\\sqsupset", def: "Sucede estrictamente en el orden definido." },
     { s: "⊊", name: "Subconj. No Igual", latex: "\\subsetneq", def: "Subconjunto propio (contenido pero no idéntico)." },
     { s: "⊋", name: "Superconj. No Igual", latex: "\\supsetneq", def: "Superconjunto propio (contiene pero no es idéntico)." },
-    { s: "∆", name: "Dif. Simétrica", latex: "\\Delta", def: "Elementos que están en A o B, pero no en ambos." },
     { s: "⨿", name: "Coproducto", latex: "\\amalg", def: "Unión disjunta o coproducto en teoría de categorías." },
-    { s: "↾", name: "Restricción", latex: "\\upharpoonright", def: "Restricción de una función a un subdominio específico." }
+    { s: "↾", name: "Restricción", latex: "\\upharpoonright", def: "Restricción de una función a un subdominio específico." },
 
 ]
         },
@@ -1030,11 +1057,28 @@ container.appendChild(favWrapper);
         document.body.removeChild(textArea);
     }
     
-    const clipboardBar = document.getElementById("clipboard-bar");
+    // 1. Referencias DOM
+const clipboardBar = document.getElementById("clipboard-bar");
 const clipboardItemsContainer = document.getElementById("clipboard-items");
 const copyClipboardBtn = document.getElementById("copy-clipboard-btn");
 
+const removeLastBtn = document.getElementById("remove-last-btn");
+const clearAllBtn = document.getElementById("clear-all-btn");
+
+// 2. Estado
 let clipboardSymbols = [];
+
+// 3. Eventos de los botones
+removeLastBtn.addEventListener("click", () => {
+    if (clipboardSymbols.length === 0) return;
+    clipboardSymbols.pop();
+    renderClipboard();
+});
+
+clearAllBtn.addEventListener("click", () => {
+    clipboardSymbols = [];
+    renderClipboard();
+});
 
 // Función para actualizar la barra
 function renderClipboard() {
@@ -1143,14 +1187,18 @@ sectionWrapper.setAttribute("draggable", "true");
 });
 
             
-            // Doble Click: Copiar LaTeX
-            card.addEventListener('dblclick', (e) => {
-                e.stopPropagation();
-                copyToClipboard(item.latex, card, "LaTeX Copiado ✓");
-            });
-header.addEventListener("click", () => {
-    sectionWrapper.classList.toggle("collapsed");
+   card.addEventListener('dblclick', (e) => {
+    e.stopPropagation();
+    copyToClipboard(item.latex, card, "LaTeX Copiado ✓");
+
+    // --- AÑADIR TAMBIÉN AL CLIPBOARD VISUAL ---
+    if (!clipboardSymbols.includes(item.latex)) {
+        clipboardSymbols.push(item.latex);
+        renderClipboard();
+    }
 });
+
+
 
 card.addEventListener("click", () => {
     if (!selectingFavorites) return;
@@ -1349,7 +1397,13 @@ function renderFavorites() {
                 localStorage.setItem("favorites", JSON.stringify(favorites));
                 renderFavorites();
             } else {
-                copyToClipboard(item.s, card, "Copiado ✓");
+             copyToClipboard(item.s, card, "Copiado ✓");
+
+if (!clipboardSymbols.includes(item.s)) {
+    clipboardSymbols.push(item.s);
+    renderClipboard();
+}
+
             }
         });
 
@@ -1357,6 +1411,12 @@ function renderFavorites() {
         card.addEventListener("dblclick", (e) => {
             e.stopPropagation();
             copyToClipboard(item.latex, card, "LaTeX Copiado ✓");
+
+if (!clipboardSymbols.includes(item.latex)) {
+    clipboardSymbols.push(item.latex);
+    renderClipboard();
+}
+
         });
 
         // --- CLICK DERECHO: quitar favorito (alternativo) ---
