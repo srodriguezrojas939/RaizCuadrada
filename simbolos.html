@@ -596,6 +596,58 @@
     [data-theme="dark"] .header-section h1 { color: #ffffff; }
     [data-theme="dark"] label { color: #888; }
     
+    .clipboard-bar {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 12px;
+    margin: 8px 0;
+    background-color: var(--card-bg); /* mismo color de tarjetas */
+    border-radius: 999px;
+    box-shadow: var(--card-shadow);
+    flex-wrap: wrap;
+}
+
+.clipboard-bar.hidden {
+    display: none;
+}
+
+.clipboard-items {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    flex: 1;
+}
+
+.clipboard-item {
+    background-color: var(--highlight-bg);
+    padding: 4px 8px;
+    border-radius: 999px;
+    font-weight: 500;
+    cursor: pointer;
+}
+
+.clipboard-item:hover {
+    background-color: var(--highlight-hover);
+}
+
+.clipboard-copy-btn {
+    background-color: var(--btn-bg);
+    color: var(--btn-text);
+    border: none;
+    padding: 6px 12px;
+    border-radius: 6px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.clipboard-copy-btn:hover {
+    background-color: var(--btn-hover);
+}
+
+
 </style>
   
     </head>
@@ -701,12 +753,21 @@
         
         <input type="text" id="searchInput" placeholder="Buscar símbolo (ej. suma, pi, integral)..." autocomplete="off">
     </div>
+    
 </div>
 
 <div class="scroll-wrapper">
     <div class="mode-switcher" id="category-nav">
         </div>
 </div>
+
+<div id="clipboard-bar" class="clipboard-bar hidden">
+    <div id="clipboard-items" class="clipboard-items"></div>
+    <button id="copy-clipboard-btn" class="clipboard-copy-btn">
+        <i data-lucide="clipboard" class="icon"></i> Copiar todo
+    </button>
+</div>
+
             <div class="container" id="main-container">
         </div>
             
@@ -783,8 +844,7 @@
                 { s: "!", name: "Factorial", latex: "!", def: "Producto de todos los enteros positivos menores o iguales a n." },
                 { s: "∑", name: "Sumatoria", latex: "\\sum", def: "Suma de todos los términos de una sucesión." },
 { s: "∏", name: "Productoria", latex: "\\prod", def: "Multiplicación de una secuencia de términos." },
-           
-           { s: "ⁿ√", name: "Raíz N-ésima", latex: "\\sqrt[n]{x}", def: "Raíz de índice n de un número." },
+        
 { s: "log", name: "Logaritmo", latex: "\\log", def: "Exponente al que hay que elevar una base para obtener un número." },
 { s: "ln", name: "Log Natural", latex: "\\ln", def: "Logaritmo con base e." },
 ]
@@ -811,7 +871,6 @@
     { s: "∇", name: "Nabla / Gradiente", latex: "\\nabla", def: "Operador vectorial para gradiente, divergencia y rotacional." },
     { s: "ε", name: "Epsilon", latex: "\\epsilon", def: "Representa una cantidad pequeña arbitraria (usado en límites)." },
     { s: "δ", name: "Delta (minúscula)", latex: "\\delta", def: "Usada junto a épsilon en definiciones formales de límites." },
-    { s: "lim x→∞", name: "Límite al Infinito", latex: "\\lim_{x \\to \\infty}", def: "Valor al que tiende f(x) cuando x crece indefinidamente." },
 
             ]
         },
@@ -827,23 +886,40 @@
     { s: "⊆", name: "Subconjunto o igual", latex: "\\subseteq", def: "El conjunto A está contenido o es idéntico a B." },
     { s: "⊄", name: "No es subconjunto", latex: "\\not\\subset", def: "El conjunto A no está contenido en B." },
     { s: "∖", name: "Diferencia", latex: "\\setminus", def: "Elementos que están en A pero NO en B." },
-    { s: "∆", name: "Diferencia Simétrica", latex: "\\Delta", def: "Elementos que están en A o B, pero no en ambos." },
     { s: "ℕ", name: "Naturales", latex: "\\mathbb{N}", def: "Números de conteo positivos {1, 2, 3...}." },
     { s: "ℤ", name: "Enteros", latex: "\\mathbb{Z}", def: "Incluye naturales, cero y negativos {..., -1, 0, 1, ...}." },
     { s: "ℚ", name: "Racionales", latex: "\\mathbb{Q}", def: "Números que pueden expresarse como fracción a/b." },
-    { s: "ℝ", name: "Reales", latex: "\\mathbb{R}", def: "Unión de racionales e irracionales (todos los continuos)." },
+    { s: "𝕀", name: "Irracionales", latex: "\\mathbb{I}", def: "Conjunto de números reales que no son racionales (decimales infinitos no periódicos)." },
+    { s: "ℝ", name: "Reales", latex: "\\mathbb{R}", def: "Unión de racionales e irracionales (todos los continuos)." }, 
     { s: "ℂ", name: "Complejos", latex: "\\mathbb{C}", def: "Números con parte real e imaginaria (a + bi)." },
-
-    { s: "∧", name: "Y (Conjunción)", latex: "\\land", def: "Es verdadero solo si ambas proposiciones son verdaderas." },
-    { s: "∨", name: "O (Disyunción)", latex: "\\lor", def: "Es verdadero si al menos una proposición es verdadera." },
-    { s: "¬", name: "Negación", latex: "\\neg", def: "Invierte el valor de verdad de una proposición." },
-    { s: "×", name: "Prod. Cartesiano", latex: "\\times", def: "Conjunto de pares ordenados (a,b) de A y B." },
+    { s: "𝕌", name: "Universo", latex: "\\mathbb{U}", def: "El conjunto universal que contiene todos los objetos de estudio." },
+    { s: "ℙ", name: "Primos", latex: "\\mathbb{P}", def: "Conjunto de todos los números primos." },
     { s: "∁", name: "Complemento", latex: "\\complement", def: "Elementos del universo que NO están en el conjunto A." },
     { s: "℘", name: "Conjunto Potencia", latex: "\\mathcal{P}(A)", def: "Conjunto formado por todos los subconjuntos de A." },
-    { s: "∴", name: "Por lo tanto", latex: "\\therefore", def: "Conclusión lógica derivada de premisas anteriores." },
-    { s: "∵", name: "Porque / Debido a", latex: "\\because", def: "Justificación o razón de una afirmación." },
-    { s: "∎", name: "Q.E.D.", latex: "\\blacksquare", def: "Fin de la demostración (Quod Erat Demonstrandum)." },
-    { s: "ℵ₀", name: "Aleph-Cero", latex: "\\aleph_0", def: "Cardinalidad (tamaño) de los números naturales (infinito numerable)." }
+    { s: "ℵ₀", name: "Aleph-Cero", latex: "\\aleph_0", def: "Cardinalidad (tamaño) de los números naturales (infinito numerable)." },
+    
+    
+    { s: "⊓", name: "Intersec. Cuadrada", latex: "\\sqcap", def: "Operador 'meet' o ínfimo en teoría de retículos." },
+    { s: "⊔", name: "Unión Cuadrada", latex: "\\sqcup", def: "Operador 'join' o supremo en teoría de retículos." },
+    { s: "⨆", name: "Unión Cuadr. G", latex: "\\bigsqcup", def: "Unión cuadrada generalizada (para familias de conjuntos)." },
+    { s: "⋒", name: "Intersec. Doble", latex: "\\Cap", def: "Intersección doble (usada en teoría de tipos o topología)." },
+    { s: "⋓", name: "Unión Doble", latex: "\\Cup", def: "Unión doble (operador avanzado)." },
+    { s: "⨄", name: "Unión Plus G", latex: "\\biguplus", def: "Unión disjunta generalizada." },
+    { s: "⋂", name: "Intersección G", latex: "\\bigcap", def: "Intersección de una familia infinita o indexada de conjuntos." },
+    { s: "⋃", name: "Unión G", latex: "\\bigcup", def: "Unión de una familia infinita o indexada de conjuntos." },
+    { s: "⨁", name: "Suma Directa", latex: "\\bigoplus", def: "Suma directa de espacios vectoriales o módulos." },
+    { s: "⨂", name: "Producto Tensor", latex: "\\bigotimes", def: "Producto tensorial generalizado." },
+    { s: "⨀", name: "Punto Grande", latex: "\\bigodot", def: "Operador de producto punto generalizado (Hadamard)." },
+    { s: "⊑", name: "Subconj. Cuadrado", latex: "\\sqsubseteq", def: "Orden parcial: menor o igual bajo un orden específico." },
+    { s: "⊒", name: "Superconj. Cuadrado", latex: "\\sqsupseteq", def: "Orden parcial: mayor o igual bajo un orden específico." },
+    { s: "⊏", name: "Subconj. Estricto", latex: "\\sqsubset", def: "Precede estrictamente en el orden definido." },
+    { s: "⊐", name: "Superconj. Estricto", latex: "\\sqsupset", def: "Sucede estrictamente en el orden definido." },
+    { s: "⊊", name: "Subconj. No Igual", latex: "\\subsetneq", def: "Subconjunto propio (contenido pero no idéntico)." },
+    { s: "⊋", name: "Superconj. No Igual", latex: "\\supsetneq", def: "Superconjunto propio (contiene pero no es idéntico)." },
+    { s: "∆", name: "Dif. Simétrica", latex: "\\Delta", def: "Elementos que están en A o B, pero no en ambos." },
+    { s: "⨿", name: "Coproducto", latex: "\\amalg", def: "Unión disjunta o coproducto en teoría de categorías." },
+    { s: "↾", name: "Restricción", latex: "\\upharpoonright", def: "Restricción de una función a un subdominio específico." }
+
 ]
         },
         {
@@ -953,6 +1029,44 @@ container.appendChild(favWrapper);
         }
         document.body.removeChild(textArea);
     }
+    
+    const clipboardBar = document.getElementById("clipboard-bar");
+const clipboardItemsContainer = document.getElementById("clipboard-items");
+const copyClipboardBtn = document.getElementById("copy-clipboard-btn");
+
+let clipboardSymbols = [];
+
+// Función para actualizar la barra
+function renderClipboard() {
+    clipboardItemsContainer.innerHTML = "";
+    if (clipboardSymbols.length === 0) {
+        clipboardBar.classList.add("hidden");
+        return;
+    }
+    clipboardBar.classList.remove("hidden");
+
+    clipboardSymbols.forEach((symbol, index) => {
+        const span = document.createElement("span");
+        span.className = "clipboard-item";
+        span.textContent = symbol;
+        span.title = "Click para eliminar";
+        span.addEventListener("click", () => {
+            clipboardSymbols.splice(index, 1);
+            renderClipboard();
+        });
+        clipboardItemsContainer.appendChild(span);
+    });
+}
+
+
+
+// Botón copiar todo
+copyClipboardBtn.addEventListener("click", () => {
+    if (clipboardSymbols.length === 0) return;
+    copyToClipboard(clipboardSymbols.join(" "), copyClipboardBtn, "Todos copiados ✓");
+});
+
+
 
     // --- 1. GENERAR BOTONES DE NAVEGACIÓN (Píldora) ---
     if (navContainer) {
@@ -1018,7 +1132,16 @@ sectionWrapper.setAttribute("draggable", "true");
             `;
 
             // Click: Copiar Símbolo
-            card.addEventListener('click', () => copyToClipboard(item.s, card, "Copiado ✓"));
+   card.addEventListener('click', () => {
+    copyToClipboard(item.s, card, "Copiado ✓");
+
+    // --- AÑADIR A LA BARRA DE CLIPBOARD ---
+    if (!clipboardSymbols.includes(item.s)) {
+        clipboardSymbols.push(item.s);
+        renderClipboard();
+    }
+});
+
             
             // Doble Click: Copiar LaTeX
             card.addEventListener('dblclick', (e) => {
@@ -1068,37 +1191,43 @@ card.addEventListener("click", () => {
     }
 
     // --- 4. LÓGICA DE BÚSQUEDA (Search Bar) ---
-    if (searchInput) {
-        searchInput.addEventListener('input', (e) => {
-            const term = e.target.value.toLowerCase().trim();
-            const sections = document.querySelectorAll('.section-wrapper');
-            
-            sections.forEach(wrapper => {
-                const cards = wrapper.querySelectorAll('.card');
-                let visibleCount = 0;
+if (searchInput) {
+    searchInput.addEventListener('input', (e) => {
+        // Convertimos a minúsculas y normalizamos para quitar tildes
+        const term = e.target.value.toLowerCase().trim().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
 
-                cards.forEach(card => {
-                    const name = card.querySelector('.name').innerText.toLowerCase();
-                    const symbol = card.querySelector('.symbol').innerText.toLowerCase();
-                    
-                    if (name.includes(term) || symbol.includes(term)) {
-                        card.classList.remove('hidden');
-                        visibleCount++;
-                    } else {
-                        card.classList.add('hidden');
-                    }
-                });
+        const sections = document.querySelectorAll('.section-wrapper');
 
-                // Si no hay cartas visibles en la sección, ocultamos la sección entera
-                if (visibleCount === 0) {
-                    wrapper.classList.add('hidden');
+        sections.forEach(wrapper => {
+            const cards = wrapper.querySelectorAll('.card');
+            let visibleCount = 0;
+
+            cards.forEach(card => {
+                // Ignorar el botón de añadir favoritos
+                if (card.id === "add-favorite") return;
+
+                // Tomamos nombre y símbolo, normalizando tildes
+                const name = card.querySelector('.name').innerText.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+                const symbol = card.querySelector('.symbol').innerText.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+
+                if (name.includes(term) || symbol.includes(term)) {
+                    card.classList.remove('hidden');
+                    visibleCount++;
                 } else {
-                    wrapper.classList.remove('hidden');
+                    card.classList.add('hidden');
                 }
             });
+
+            // Mostrar u ocultar la sección completa
+            if (visibleCount === 0) {
+                wrapper.classList.add('hidden');
+            } else {
+                wrapper.classList.remove('hidden');
+            }
         });
-    }
-    
+    });
+}
+
 
 let draggedSection = null;
 
