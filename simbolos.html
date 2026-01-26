@@ -596,79 +596,106 @@
     [data-theme="dark"] .header-section h1 { color: #ffffff; }
     [data-theme="dark"] label { color: #888; }
     
-    .clipboard-bar {
-    display: flex;
-    align-items: center;
-    gap: 10px;
+ 
+ /* --- BARRA DE PORTAPAPELES (Estilo idéntico a SearchBar) --- */
+
+/* 1. El contenedor principal (La Píldora) */
+.clipboard-bar {
+    /* Dimensiones y posición igual al search-wrapper + input */
     max-width: 600px;
-    margin: 0 auto 40px auto; /* Centrado y separado del contenido */
-    padding: 0 20px;
-    background-color: var(--card-bg); /* mismo color de tarjetas */
-    border-radius: 999px;
+    margin: 0 auto 40px auto; 
+    
+    /* Estética Zen (Variables del Search) */
+    background: var(--card-bg);
     box-shadow: var(--card-shadow);
-    flex-wrap: wrap;
-}
-
-
-
-.clipboard-bar.hidden {
-    display: none;
-}
-
-.clipboard-items {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 6px;
-    flex: 1;
-}
-
-.clipboard-item {
-    background-color: var(--highlight-bg);
-    padding: 4px 8px;
     border-radius: 999px;
-    font-weight: 500;
-    cursor: pointer;
-}
-
-.clipboard-item:hover {
-    background-color: var(--highlight-hover);
-}
-
-.clipboard-copy-btn {
-    background-color: var(--btn-bg);
-    color: var(--btn-text);
-    border: none;
-    padding: 6px 12px;
-    border-radius: 6px;
-    cursor: pointer;
+    
+    /* Flexbox para alinear ítems a la izq y botones a la der */
     display: flex;
     align-items: center;
-    gap: 4px;
+    justify-content: space-between;
+    
+    /* Padding calculado para igualar el grosor de la barra de búsqueda */
+    padding: 10px 20px; 
+    min-height: 55px; /* Altura forzada para que sea igual de gruesa */
+    
+    /* Transiciones y bordes */
+    transition: all 0.3s ease;
+    border: 2px solid transparent;
+    box-sizing: border-box;
 }
 
-.clipboard-copy-btn:hover {
-    background-color: var(--btn-hover);
+/* Estado oculto */
+.clipboard-bar.hidden {
+    display: none !important;
 }
 
-.clipboard-actions {
+/* 2. Área de texto/símbolos (Simula el input de texto) */
+.clipboard-items {
+    flex: 1; /* Ocupa todo el espacio sobrante */
     display: flex;
-    gap: 8px;
-    margin-top: 8px;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 2px;
+    
+    /* Tipografía matemática elegante */
+    font-family: 'Times New Roman', serif;
+    font-size: 22px; 
+    color: var(--text-main);
+    
+    /* Para que no se desborde */
+    overflow: hidden;
+    margin-right: 15px; /* Separación con los botones */
 }
 
-.clipboard-actions button {
-    background: var(--card-bg);
-    border: 1px solid var(--border);
-    border-radius: 10px;
-    padding: 6px 10px;
+/* Los símbolos individuales */
+.clipboard-item {
+    padding: 0 2px;
+    border-radius: 4px;
+    cursor: default;
+}
+
+/* 3. Estilo unificado para TODOS los botones (Copiar, Borrar, Trash) */
+/* Los hacemos transparentes y limpios como iconos */
+.clipboard-bar button {
+    background: transparent;
+    border: none;
     cursor: pointer;
-    color: var(--text);
+    color: var(--text-sec); /* Gris suave por defecto */
+    padding: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    transition: all 0.2s ease;
 }
 
-.clipboard-actions button:hover {
-    background: var(--hover);
+/* Hover de los botones: Efecto lupa o cambio de color */
+.clipboard-bar button:hover {
+    color: var(--text-main);
+    background-color: rgba(128, 128, 128, 0.1); /* Fondo sutil al pasar mouse */
+    transform: scale(1.1);
 }
 
+/* Ajuste específico para el botón de Copiar si quieres que destaque un poco más */
+.clipboard-copy-btn {
+    color: var(--text-main) !important; /* Un poco más oscuro que los de borrar */
+}
+
+/* Ajuste específico para iconos Lucide dentro de los botones */
+.clipboard-bar button i, 
+.clipboard-bar button svg {
+    width: 20px;
+    height: 20px;
+    stroke-width: 2px;
+}
+
+/* MODO OSCURO (Ajustes automáticos) */
+/* Al usar tus variables var(--card-bg), etc., ya se adapta solo, 
+   pero aseguramos que al hacer hover en el contenedor no haga cosas raras */
+[data-theme="dark"] .clipboard-bar {
+    box-shadow: var(--card-shadow);
+}
 
 </style>
   
