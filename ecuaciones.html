@@ -972,25 +972,78 @@ let latex = '';
     MathJax.typesetPromise([preview]);
 }
 
-function radicalBonito(valor, tol = 1e-6, maxN = 10) {
-    for (let n = 2; n <= maxN; n++) {
-        let pot = Math.pow(valor, n);
-        let redondeado = Math.round(pot);
 
-        if (Math.abs(pot - redondeado) < tol) {
-            if (redondeado === 1) return `1`;
-            return `\\sqrt[${n}]{${redondeado}}`;
+function radicalBonito(valor, tol = 1e-6, maxN = 6, maxCoef = 10) {
+    let sign = valor < 0 ? -1 : 1;
+    valor = Math.abs(valor);
+
+    for (let n = 2; n <= maxN; n++) {
+        for (let k = 1; k <= maxCoef; k++) {
+            let base = valor / k;
+            let pot = Math.pow(base, n);
+            let r = Math.round(pot);
+
+            if (Math.abs(pot - r) < tol) {
+                let rad = r === 1 ? '' : `\\sqrt[${n}]{${r}}`;
+                let coef = k === 1 ? '' : k;
+                return `${sign < 0 ? '-' : ''}${coef}${rad || '1'}`;
+            }
         }
     }
     return null;
 }
 
+function radicalFraccionBonita(valor, tol = 1e-6, maxN = 4, maxCoef = 12, maxDen = 12) {
+    let sign = valor < 0 ? -1 : 1;
+    valor = Math.abs(valor);
 
-function fraccionBonita(valor, tolerancia = 1e-4, maxDen = 20) {
+    for (let den = 1; den <= maxDen; den++) {
+        let v = valor * den;
+
+        for (let n = 2; n <= maxN; n++) {
+            for (let coef = 1; coef <= maxCoef; coef++) {
+                let base = v / coef;
+                let pot = Math.pow(base, n);
+                let r = Math.round(pot);
+
+                if (Math.abs(pot - r) < tol) {
+                    let rad = r === 1 ? '' : `\\sqrt[${n}]{${r}}`;
+                    let c = coef === 1 ? '' : coef;
+                    let num = `${c}${rad || '1'}`;
+                    let frac = den === 1 ? num : `\\frac{${num}}{${den}}`;
+                    return `${sign < 0 ? '-' : ''}${frac}`;
+                }
+            }
+        }
+    }
+    return null;
+}
+
+function mcd(a, b) {
+    return b ? mcd(b, a % b) : Math.abs(a);
+}
+
+function fraccionBonita(valor, tolerancia = 1e-5, maxDen = 20) {
+    if (!isFinite(valor)) return null;
+
+    let sign = valor < 0 ? -1 : 1;
+    valor = Math.abs(valor);
+
     for (let den = 1; den <= maxDen; den++) {
         let num = Math.round(valor * den);
+
         if (Math.abs(valor - num / den) < tolerancia) {
-          return `\\frac{${num}}{${den}}`;
+            if (num === 0) return '0';
+
+            let d = mcd(num, den);
+            num /= d;
+            den /= d;
+
+            let frac = den === 1
+                ? `${num}`
+                : `\\frac{${num}}{${den}}`;
+
+            return sign < 0 ? `-${frac}` : frac;
         }
     }
     return null;
@@ -1078,22 +1131,21 @@ function resolverEcuacion() {
                 }
             } else {
     try {
-        let val = parseFloat(nerdamer(s).evaluate().text());
-        let rad = radicalBonito(val);
-if (rad) {
-    res = rad;
-    return solucionesFinales.length > 1
-        ? `${v}_{${i+1}} = ${res}`
-        : `${v} = ${res}`;
+     let val = parseFloat(nerdamer(s).evaluate().text());
+
+let radFrac = radicalFraccionBonita(val);
+if (radFrac) {
+    res = radFrac;
+} else {
+   
+    let frac = fraccionBonita(val);
+    if (frac) {
+        res = frac;
+    } else {
+        res = nerdamer(s).toTeX();
+    }
 }
 
-        let frac = fraccionBonita(val);
-
-        if (frac) {
-            res = frac;
-        } else {
-            res = nerdamer(s).toTeX();
-        }
     } catch {
         res = nerdamer(s).toTeX();
     }
