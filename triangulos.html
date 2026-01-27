@@ -1,0 +1,838 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>√(Raiz) Cuadrada² </title>
+
+    <script>
+        (function() {
+            // 1. Intentamos leer la memoria
+            const localTheme = localStorage.getItem('theme');
+            // 2. Si hay algo guardado lo usamos, si no, usamos 'light'
+            const themeToSet = localTheme || 'light';
+            // 3. Lo aplicamos INMEDIATAMENTE al HTML
+            document.documentElement.setAttribute('data-theme', themeToSet);
+        })();
+    </script>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600&family=Playfair+Display:ital,wght@0,700;0,900;1,700&display=swap" rel="stylesheet">
+    
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <link rel="stylesheet" href="styles.css">
+
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700;900&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700&display=swap');
+
+    /* --- ANIMACIONES --- */
+    .fade-in { 
+        opacity: 0; 
+        transform: translateY(20px); 
+        animation: fadeUp 0.8s cubic-bezier(0.2, 0.8, 0.2, 1) forwards; 
+    }
+    
+    @keyframes fadeUp { 
+        to { opacity: 1; transform: translateY(0); } 
+    }
+
+    /* --- BODY & CENTRADO --- */
+    body { 
+      
+        display: flex; 
+        justify-content: center; 
+        align-items: center; 
+        min-height: 100vh; 
+        margin: 0; 
+        padding: 20px; 
+        box-sizing: border-box; 
+        color: #333;
+        font-family: 'Open Sans', sans-serif;
+    }
+
+    /* --- TARJETA PRINCIPAL (ESTILO "ECUACIONES") --- */
+    .calculadora-moderna {
+        background: #ffffff;
+        padding: 40px 35px; 
+        border-radius: 40px;
+        box-shadow: 0 20px 40px rgba(0,0,0,0.08); /* Sombra idéntica */
+        width: 100%;
+        max-width: 700px;
+        box-sizing: border-box;
+        transition: all 0.3s ease;
+    }
+
+    /* --- HEADER --- */
+    .header-section { text-align: center; margin-bottom: 35px; }
+    
+    .header-section h1 { 
+        font-family: 'Playfair Display', serif; 
+        font-size: clamp(24px, 6vw, 32px);
+        margin: 0; 
+        font-weight: 700; 
+        color: #1a1a1a; 
+        line-height: 1.1;
+    }
+    
+    .header-section p { 
+        font-family: 'Open Sans', sans-serif; 
+        font-size: 13px; 
+        margin: 10px 0 0; 
+        font-weight: 700; 
+        color: #999; 
+        text-transform: uppercase; 
+        letter-spacing: 1.5px; 
+    }
+
+    /* --- PILLS / PESTAÑAS (ESTILO PREMIUM) --- */
+    .pill-container { 
+        display: flex; 
+        justify-content: center; 
+        margin-bottom: 30px; 
+        gap: 10px;
+    }
+    
+    /* Nota: Adaptado para que funcione con tu estructura HTML actual */
+    .pill { 
+        background: transparent; 
+        border: none; 
+        padding: 0;
+    }
+
+    .pill-btn { 
+        background: #f4f4f4; 
+        border: 2px solid transparent; 
+        padding: 10px 22px; 
+        border-radius: 999px; 
+        font-size: 13px; 
+        font-weight: 600; 
+        cursor: pointer; 
+        transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+        color: #666; 
+        font-family: 'Open Sans', sans-serif; 
+    }
+    
+    .pill-btn.active { 
+        background: #1a1a1a; 
+        color: white; 
+        border-color: #1a1a1a;
+        box-shadow: 0 8px 15px rgba(0,0,0,0.15); 
+        transform: scale(1.05);
+    }
+    
+    .pill-btn:hover:not(.active) { background: #e0e0e0; }
+
+    /* --- REFERENCE BOX & STATUS --- */
+    .reference-box { 
+        background: #f9f9f9; 
+        border-radius: 25px; 
+        padding: 20px; 
+        margin-bottom: 25px; 
+        border: 2px solid transparent; 
+        display: flex; 
+        flex-direction: column; 
+        align-items: center; 
+        box-shadow: 0 2px 5px rgba(0,0,0,0.02) inset;
+    }
+    
+    .reference-title { 
+        font-size: 11px; 
+        font-weight: 700; 
+        color: #999; 
+        text-transform: uppercase; 
+        margin-bottom: 10px; 
+        letter-spacing: 1px;
+    }
+
+    #data-status { 
+        font-size: 13px; 
+        color: #888; 
+        text-align: center; 
+        margin-bottom: 15px; 
+        min-height: 20px; 
+        font-weight: 600; 
+    }
+
+    /* --- INPUTS GRID (MANTENIENDO TU ESTRUCTURA) --- */
+    .grid-inputs { 
+        display: grid; 
+        grid-template-columns: repeat(3, 1fr); 
+        gap: 15px; 
+        margin-bottom: 25px; 
+    }
+    
+    .input-group { display: flex; flex-direction: column; }
+    
+    label { 
+        font-size: 12px; 
+        font-weight: 700; 
+        margin-bottom: 8px; 
+        margin-left: 15px; 
+        color: #555; 
+        text-transform: uppercase; 
+        letter-spacing: 0.5px;
+    }
+    
+    input { 
+        width: 100%; 
+        background: #f9f9f9; 
+        border: 2px solid transparent; 
+        padding: 14px 18px; 
+        border-radius: 25px; 
+        font-family: inherit; 
+        font-size: 15px; 
+        color: #333; 
+        transition: all 0.3s ease; 
+        box-shadow: 0 2px 5px rgba(0,0,0,0.02) inset;
+        box-sizing: border-box;
+        outline: none;
+    }
+    
+    input:focus { 
+        background: white; 
+        border-color: #1a1a1a; 
+        box-shadow: 0 10px 25px rgba(0,0,0,0.08); 
+        transform: translateY(-2px); 
+    }
+
+    input:disabled {
+        background: #f0f0f0;
+        color: #bbb;
+        cursor: not-allowed;
+    }
+
+    /* --- BOTONES (ESTILO PÍLDORA) --- */
+    .botones-container { display: flex; flex-direction: column; gap: 15px; }
+    
+    .boton-estilo { 
+        padding: 16px; 
+        border-radius: 999px; 
+        font-weight: 700; 
+        font-size: 15px; 
+        cursor: pointer; 
+        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1); 
+        font-family: 'Open Sans', sans-serif; 
+        display: flex; 
+        align-items: center; 
+        justify-content: center; 
+        border: none;
+    }
+    
+    /* Botón Principal (Negro) */
+    .boton-principal { 
+        background: #1a1a1a; 
+        color: white; 
+        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    }
+    
+    .boton-principal:hover { 
+        transform: translateY(-3px) scale(1.02); 
+        background: #000; 
+        box-shadow: 0 8px 15px rgba(0,0,0,0.15); 
+    }
+
+    /* Botón Secundario (Simulado con tu clase boton-estilo si no tiene clase principal) */
+    .boton-estilo:not(.boton-principal) {
+        background: transparent;
+        color: #666;
+        border: 1px solid #e0e0e0;
+    }
+    .boton-estilo:not(.boton-principal):hover {
+        background: #f4f4f4;
+        border-color: #ccc;
+        color: #333;
+    }
+
+    /* --- RESULTADOS Y VISUALIZACIÓN --- */
+    #resultados, #visualizacion { 
+        margin-top: 25px; 
+        padding: 25px; 
+        background: #f9f9f9; 
+        border-radius: 25px; 
+        border: 2px solid transparent; 
+        display: none; /* Se activa con JS */
+        box-shadow: 0 2px 5px rgba(0,0,0,0.02) inset;
+    }
+
+    #visualizacion {
+        position: relative; 
+        height: 350px; 
+        display: none; /* Flex cuando activo */
+        justify-content: center; 
+        align-items: center; 
+        overflow: hidden;
+    }
+
+    #svg-draw { width: 100%; height: 100%; }
+
+    .res-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; font-size: 14px; }
+    
+    .res-item { 
+        border-bottom: 1px solid #eee; 
+        padding: 8px 0; 
+        display: flex; 
+        justify-content: space-between; 
+        align-items: center;
+        color: #555;
+    }
+    
+    .res-item span:last-child { 
+        font-weight: 700; 
+        color: #1a1a1a; 
+    
+        font-size: 1.1em;
+    }
+
+    /* --- MEDIA QUERIES (OPTIMIZACIÓN CELULAR) --- */
+    @media (max-width: 600px) { 
+        body { padding: 10px; display: block; }
+        .calculadora-moderna { padding: 30px 20px; margin: 20px auto; }
+        .grid-inputs { grid-template-columns: 1fr; gap: 10px; } /* Una columna en móvil */
+        .res-grid { grid-template-columns: 1fr; }
+    }
+
+    /* --- MODO OSCURO COMPLETO (GEMELO A ECUACIONES) --- */
+    [data-theme="dark"] body { background: 
+    #0a0a0a; }
+    
+    [data-theme="dark"] .calculadora-moderna {
+        background: #1a1a1a; /* O transparent con borde */
+        box-shadow: none;
+        border: 1px solid rgba(255,255,255,0.1);
+    }
+
+    [data-theme="dark"] .header-section h1 { color: #ffffff; }
+    [data-theme="dark"] .header-section p { color: #888; }
+    [data-theme="dark"] label { color: #888; }
+    [data-theme="dark"] #data-status { color: #aaa; }
+
+    /* Inputs Dark */
+    [data-theme="dark"] input,
+    [data-theme="dark"] .reference-box,
+    [data-theme="dark"] #resultados,
+    [data-theme="dark"] #visualizacion {
+        background: #1e1e1e;
+        color: #fff;
+        border: 1px solid #333;
+        box-shadow: none;
+    }
+    
+    [data-theme="dark"] input:focus {
+        border-color: #666;
+        background: #252525;
+    }
+
+    /* Buttons Dark */
+    [data-theme="dark"] .pill-btn { background: #1e1e1e; color: #ccc; }
+    [data-theme="dark"] .pill-btn.active { background: #fff; color: #000; }
+    
+    [data-theme="dark"] .boton-principal { 
+        background: #ffffff; 
+        color: #000; 
+    }
+    [data-theme="dark"] .boton-principal:hover { background: #e0e0e0; }
+    
+    [data-theme="dark"] .boton-estilo:not(.boton-principal) {
+        border-color: #444;
+        color: #ccc;
+    }
+    [data-theme="dark"] .boton-estilo:not(.boton-principal):hover {
+        background: #333; color: white;
+    }
+
+    [data-theme="dark"] .res-item { border-bottom-color: #333; color: #aaa; }
+    [data-theme="dark"] .res-item span:last-child { color: #fff; }
+</style>
+  
+    </head>
+<body>
+
+    
+    <header class="mobile-header">
+        <div class="nav-header">
+            <button class="icon-btn"><i data-lucide="search"></i></button>
+            <button class="icon-btn" onclick="toggleTheme()"><i data-lucide="moon"></i></button>
+        </div>
+        <button class="icon-btn" onclick="toggleMenu()"><i data-lucide="menu"></i></button>
+    </header>
+
+    <div class="wrapper">
+        <aside class="sidebar" id="sidebar">
+            <div class="nav-header">
+                <button class="icon-btn" title="Buscar"><i data-lucide="search"></i></button>
+                <button class="icon-btn" title="Modo" onclick="toggleTheme()"><i id="theme-icon" data-lucide="moon"></i></button>
+                <button class="icon-btn" onclick="toggleMenu()" id="close-menu"><i data-lucide="x"></i></button>
+            </div>
+
+            <nav>
+                <ul class="nav-links">
+                    <li><a href="index.html"><i data-lucide="home"></i> Página Principal</a></li>
+
+                    
+                    <div class="nav-group">
+    <div class="nav-item has-submenu" onclick="toggleSubmenu(this)">
+        <div class="nav-text-container">
+            <i data-lucide="calculator"></i>
+            <span>CALCULADORA</span>
+        </div>
+        <i data-lucide="chevron-down" class="arrow-icon"></i>
+    </div>
+    
+    <div class="submenu">
+        <a href="ecuaciones.html"><i data-lucide="equal" class="sub-icon"></i> Ecuaciones</a>
+        <a href="sistemas.html"><i data-lucide="layers" class="sub-icon"></i> Sistemas Ecuaciones</a>
+        <a href="matrices.html"><i data-lucide="grid-3x3" class="sub-icon"></i> Matrices</a>
+        <a href="derivadas.html"><i data-lucide="trending-up" class="sub-icon"></i> Derivadas</a>
+        <a href="integrales.html"><i data-lucide="sigma" class="sub-icon"></i> Integrales</a>
+        <a href="laplace.html"><i data-lucide="waves" class="sub-icon"></i> Transf. Laplace</a>
+    </div>
+</div>
+
+<div class="nav-group">
+    <div class="nav-item has-submenu" onclick="toggleSubmenu(this)">
+        <div class="nav-text-container">
+            <i data-lucide="ruler"></i>
+            <span>HERRAMIENTAS</span>
+        </div>
+        <i data-lucide="chevron-down" class="arrow-icon"></i>
+    </div>
+    
+    <div class="submenu">
+        <a href="simbolos.html"><i data-lucide="omega" class="sub-icon"></i> Símbolos</a>
+        <a href="factorizar.html"><i data-lucide="divide" class="sub-icon"></i> Factorizadora</a>
+        <a href="fraccionesparciales.html"><i data-lucide="percent" class="sub-icon"></i> Fracciones Parciales</a>
+        <a href="triangulos.html"><i data-lucide="triangle" class="sub-icon"></i> Calc. Triángulos</a>
+        <a href="vectores.html"><i data-lucide="move-diagonal" class="sub-icon"></i> Vectores</a>
+        <a href="circulounitario.html"><i data-lucide="circle" class="sub-icon"></i> Círculo Unitario</a>
+        <a href="editor.html"><i data-lucide="edit-3" class="sub-icon"></i> Editor Expresiones</a>
+    </div>
+</div>
+
+<div class="nav-group">
+    <div class="nav-item has-submenu" onclick="toggleSubmenu(this)">
+        <div class="nav-text-container">
+            <i data-lucide="activity"></i>
+            <span>GRAFICADORAS</span>
+        </div>
+        <i data-lucide="chevron-down" class="arrow-icon"></i>
+    </div>
+    
+    <div class="submenu">
+        <a href="graficadora2d.html"><i data-lucide="line-chart" class="sub-icon"></i> Funciones 2D</a>
+        <a href="graficadora3d.html"><i data-lucide="box" class="sub-icon"></i> Graficadora 3D</a>
+        <a href="conicas.html"><i data-lucide="orbit" class="sub-icon"></i> Cónicas</a>
+        <a href="campos.html"><i data-lucide="wind" class="sub-icon"></i> Campos Vectoriales</a>
+    </div>
+</div>
+
+                    
+                    <li><a href="cursos.html"><i data-lucide="book-open"></i> CURSOS</a></li>
+                    <li><a href="formularios.html"><i data-lucide="file-text"></i> FORMULARIOS</a></li>
+                    <li><a href="youtube.html"><i data-lucide="youtube"></i> Canal de YouTube</a></li>
+                    <li><a href="autor.html"><i data-lucide="user"></i> Sobre el autor</a></li>
+                </ul>
+            </nav>
+        </aside>
+
+        <main class="content">
+            
+            
+            <div class="fade-in" style="width: 100%; display: flex; justify-content: center;">
+    <div class="calculadora-moderna">
+        <div class="header-section">
+            <h1>Resolución de Triángulos</h1>
+            <p>√(Raiz) Cuadrada²</p>
+        </div>
+
+        <div class="pill-container">
+            <div class="pill">
+                <button id="mode-rect" class="pill-btn active" onclick="setMode('rect')">Rectángulo</button>
+                <button id="mode-obli" class="pill-btn" onclick="setMode('obli')">Oblicuángulo</button>
+            </div>
+        </div>
+
+        <div class="reference-box">
+            <span class="reference-title">Diagrama de Referencia</span>
+            <svg id="ref-svg" width="220" height="120" viewBox="0 0 200 120"></svg>
+        </div>
+
+        <div id="data-status">Introduce los datos para comenzar</div>
+
+        <div class="grid-inputs">
+            <div class="input-group">
+                <label>Lado a (Cateto)</label>
+                <input type="number" id="val-a" step="any" oninput="controlDeEntradas()">
+            </div>
+            <div class="input-group">
+                <label id="label-b">Lado b (Hipotenusa)</label>
+                <input type="number" id="val-b" step="any" oninput="controlDeEntradas()">
+            </div>
+            <div class="input-group">
+                <label>Lado c (Cateto)</label>
+                <input type="number" id="val-c" step="any" oninput="controlDeEntradas()">
+            </div>
+            <div class="input-group">
+                <label>Ángulo α (Alfa)</label>
+                <input type="number" id="val-alpha" placeholder="°" step="any" oninput="controlDeEntradas()">
+            </div>
+            <div class="input-group">
+                <label>Ángulo β (Beta)</label>
+                <input type="number" id="val-beta" value="90" disabled>
+            </div>
+            <div class="input-group">
+                <label>Ángulo γ (Gamma)</label>
+                <input type="number" id="val-gamma" placeholder="°" step="any" oninput="controlDeEntradas()">
+            </div>
+        </div>
+
+        <div class="botones-container">
+            <button onclick="resolver()" class="boton-estilo boton-principal">Calcular Resultados</button>
+         <button onclick="exportarPNG()" id="btn-export" class="boton-estilo" style="display:none; align-items: center; justify-content: center;">
+    <i data-lucide="download" width="20" height="20" style="margin-right: 8px;"></i>
+    Descargar en PNG
+</button>
+            <button onclick="limpiar()" class="boton-estilo">Limpiar Campos</button>
+        </div>
+
+        <div id="resultados">
+            <div class="res-grid" id="res-content"></div>
+        </div>
+
+        <div id="visualizacion" style="display:none;">
+            <svg id="svg-draw" viewBox="0 0 350 300"></svg>
+        </div>
+    </div>
+</div>
+
+<canvas id="export-canvas" style="display:none;"></canvas>
+            
+
+<footer class="footer-global">
+    <div class="footer-wrapper">
+        
+        <div class="footer-section">
+            <h4 class="footer-h4">Contacto</h4>
+            <a href="mailto:s.rodriguezrojas939@gmail.com" class="footer-email">
+                s.rodriguezrojas939@gmail.com
+            </a>
+            <div class="footer-socials">
+                <a href="https://wa.me/573196510401" target="_blank" title="WhatsApp">
+                    <i data-lucide="message-circle"></i>
+                </a>
+                <a href="https://www.youtube.com/@ElRaizCuadrada" target="_blank" title="YouTube">
+                    <i data-lucide="youtube"></i>
+                </a>
+                <a href="mailto:s.rodriguezrojas939@gmail.com" title="Correo">
+                    <i data-lucide="mail"></i>
+                </a>
+                <a href="https://github.com" target="_blank" title="GitHub">
+                    <i data-lucide="github"></i>
+                </a>
+            </div>
+        </div>
+
+        <div class="footer-section">
+            <a href="https://www.youtube.com/@ElRaizCuadrada" target="_blank" class="footer-logo-link">
+                <h1 class="footer-title">√(Raiz) Cuadrada²</h1>
+            </a>
+        </div>
+
+        <div class="footer-section">
+            <h4 class="footer-h4">Visitas al sitio</h4>
+            <div class="visitor-counter">
+                <img src="https://hitwebcounter.com/counter/counter.php?page=21465053&style=0024&nbdigits=5&type=page&initCount=0" alt="Visitas">
+            </div>
+        </div>
+
+    </div>
+</footer>
+           
+        </main>
+        
+     <script src="script.js"></script>
+
+      <script>
+    let mode = 'rect';
+    const toRad = (d) => d * Math.PI / 180;
+    const toDeg = (r) => r * 180 / Math.PI;
+
+    function setMode(newMode) {
+        mode = newMode;
+        document.getElementById('mode-rect').classList.toggle('active', mode === 'rect');
+        document.getElementById('mode-obli').classList.toggle('active', mode === 'obli');
+        
+        const betaInput = document.getElementById('val-beta');
+        const lb = document.getElementById('label-b');
+
+        if (mode === 'rect') {
+            betaInput.value = 90;
+            betaInput.disabled = true;
+            lb.innerText = "Lado b (Hipotenusa)";
+        } else {
+            betaInput.value = "";
+            betaInput.disabled = false;
+            lb.innerText = "Lado b";
+        }
+        updateRefDiagram();
+        limpiar();
+    }
+
+    function updateRefDiagram() {
+        const svg = document.getElementById('ref-svg');
+        if (mode === 'rect') {
+            svg.innerHTML = `
+                <path d="M40,20 L40,100 L160,100 Z" fill="none" stroke="#666" stroke-width="2"/>
+                <rect x="40" y="85" width="15" height="15" fill="none" stroke="#ccc"/>
+                <text x="30" y="60" font-size="12" font-family="Open Sans">a</text>
+                <text x="100" y="115" font-size="12" font-family="Open Sans">c</text>
+                <text x="110" y="55" font-size="12" font-family="Open Sans">b</text>
+                <text x="50" y="35" font-size="11" fill="#888">γ</text>
+                <text x="45" y="95" font-size="11" fill="#888">β</text>
+                <text x="135" y="95" font-size="11" fill="#888">α</text>
+            `;
+        } else {
+            svg.innerHTML = `
+                <path d="M40,100 L160,100 L100,30 Z" fill="none" stroke="#666" stroke-width="2"/>
+                <text x="65" y="65" font-size="12" font-family="Open Sans">b</text>
+                <text x="135" y="65" font-size="12" font-family="Open Sans">a</text>
+                <text x="100" y="115" font-size="12" font-family="Open Sans">c</text>
+                <text x="55" y="95" font-size="11" fill="#888">α</text>
+                <text x="145" y="95" font-size="11" fill="#888">β</text>
+                <text x="100" y="45" font-size="11" fill="#888">γ</text>
+            `;
+        }
+    }
+
+    function controlDeEntradas() {
+        const IDs = ['val-a', 'val-b', 'val-c', 'val-alpha', 'val-gamma'];
+        if (mode === 'obli') IDs.push('val-beta');
+
+        const llenos = IDs.filter(id => document.getElementById(id).value !== "");
+        const status = document.getElementById('data-status');
+        const limite = (mode === 'rect') ? 2 : 3;
+
+        if (llenos.length >= limite) {
+            status.innerText = "Con esta cantidad de datos es suficiente";
+            status.style.color = "#555";
+            IDs.forEach(id => {
+                const el = document.getElementById(id);
+                if (el.value === "") el.disabled = true;
+            });
+        } else {
+            status.innerText = "Introduce los datos para comenzar";
+            status.style.color = "#888";
+            IDs.forEach(id => {
+                const el = document.getElementById(id);
+                if (id !== 'val-beta') el.disabled = false;
+            });
+        }
+    }
+
+    function resolver() {
+        let a = parseFloat(document.getElementById('val-a').value) || null;
+        let b = parseFloat(document.getElementById('val-b').value) || null;
+        let c = parseFloat(document.getElementById('val-c').value) || null;
+        let A = parseFloat(document.getElementById('val-alpha').value) || null;
+        let B = parseFloat(document.getElementById('val-beta').value) || (mode === 'rect' ? 90 : null);
+        let G = parseFloat(document.getElementById('val-gamma').value) || null;
+
+        // Caso especial: Pitágoras directo para Rectángulos antes del loop
+        if (mode === 'rect') {
+            if (a && b && !c) c = Math.sqrt(Math.abs(b*b - a*a));
+            if (c && b && !a) a = Math.sqrt(Math.abs(b*b - c*c));
+            if (a && c && !b) b = Math.sqrt(a*a + c*c);
+        }
+
+        // Motor Matemático Iterativo
+        for (let i = 0; i < 6; i++) {
+            if (A && B && !G) G = 180 - A - B;
+            if (A && G && !B) B = 180 - A - G;
+            if (B && G && !A) A = 180 - B - G;
+
+            if (a && c && B && !b) b = Math.sqrt(a*a + c*c - 2*a*c*Math.cos(toRad(B)));
+            if (b && c && A && !a) a = Math.sqrt(b*b + c*c - 2*b*c*Math.cos(toRad(A)));
+            if (a && b && G && !c) c = Math.sqrt(a*a + b*b - 2*a*b*Math.cos(toRad(G)));
+
+            if (a && b && c) {
+                if(a+b<=c || a+c<=b || b+c<=a) { alert("Error: No forma un triángulo válido."); return; }
+                if (!A) A = toDeg(Math.acos((b*b + c*c - a*a) / (2*b*c)));
+                if (!B) B = toDeg(Math.acos((a*a + c*c - b*b) / (2*a*c)));
+                if (!G) G = 180 - (A || 0) - (B || 0);
+            }
+            if (a && A) {
+                if (B && !b) b = a * Math.sin(toRad(B)) / Math.sin(toRad(A));
+                if (G && !c) c = a * Math.sin(toRad(G)) / Math.sin(toRad(A));
+            }
+            if (b && B) {
+                if (A && !a) a = b * Math.sin(toRad(A)) / Math.sin(toRad(B));
+                if (G && !c) c = b * Math.sin(toRad(G)) / Math.sin(toRad(B));
+            }
+            if (c && G) {
+                if (A && !a) a = c * Math.sin(toRad(A)) / Math.sin(toRad(G));
+                if (B && !b) b = c * Math.sin(toRad(B)) / Math.sin(toRad(G));
+            }
+        }
+
+        if (!a || isNaN(a) || a<=0 || b<=0 || c<=0 || G <= 0 || A <= 0 || B <= 0) { 
+            alert("Error: Triángulo imposible o datos inconsistentes."); return; 
+        }
+
+        mostrar(a, b, c, A, B, G);
+        dibujar(a, b, c, A, B, G);
+        document.getElementById('btn-export').style.display = 'flex';
+    }
+
+    function mostrar(a, b, c, A, B, G) {
+        document.getElementById('resultados').style.display = 'block';
+        const s = (a + b + c) / 2;
+        const area = Math.sqrt(s * (s - a) * (s - b) * (s - c));
+        document.getElementById('res-content').innerHTML = `
+            <div class="res-item"><span>Lado a:</span><span>${a.toFixed(2)}</span></div>
+            <div class="res-item"><span>Lado b ${mode==='rect'?'(Hipotenusa)':''}:</span><span>${b.toFixed(2)}</span></div>
+            <div class="res-item"><span>Lado c:</span><span>${c.toFixed(2)}</span></div>
+            <div class="res-item"><span>Ángulo α:</span><span>${A.toFixed(2)}°</span></div>
+            <div class="res-item"><span>Ángulo β:</span><span>${B.toFixed(2)}°</span></div>
+            <div class="res-item"><span>Ángulo γ:</span><span>${G.toFixed(2)}°</span></div>
+            <div class="res-item"><span>Área:</span><span>${area.toFixed(2)}</span></div>
+            <div class="res-item"><span>Perímetro:</span><span>${(a+b+c).toFixed(2)}</span></div>
+        `;
+    }
+
+  function dibujar(a, b, c, A, B, G) {
+        const svg = document.getElementById('svg-draw');
+        document.getElementById('visualizacion').style.display = 'block';
+        svg.innerHTML = '';
+
+        // --- LÓGICA DE COORDENADAS PARA COINCIDIR CON EL DIAGRAMA ---
+        let v1, v2, v3;
+
+        if (mode === 'rect') {
+            // En Rectángulo: Beta (90°) en el origen (izquierda)
+            v1 = {x: 0, y: 0}; // Vértice Beta (90°)
+            v2 = {x: c, y: 0}; // Vértice Alpha
+            v3 = {x: 0, y: a}; // Vértice Gamma
+        } else {
+            // En Oblicuángulo: Alpha en el origen (izquierda) para que coincida con el diagrama
+            v1 = {x: 0, y: 0}; // Vértice Alpha
+            v2 = {x: c, y: 0}; // Vértice Beta
+            v3 = {x: b * Math.cos(toRad(A)), y: b * Math.sin(toRad(A))}; // Vértice Gamma
+        }
+
+        // --- ESCALADO Y CENTRADO ---
+        const minX = Math.min(v1.x, v2.x, v3.x);
+        const maxX = Math.max(v1.x, v2.x, v3.x);
+        const minY = Math.min(v1.y, v2.y, v3.y);
+        const maxY = Math.max(v1.y, v2.y, v3.y);
+        
+        const triW = maxX - minX;
+        const triH = maxY - minY;
+        const svgW = 350, svgH = 300;
+        const margin = 60;
+        
+        const scale = Math.min((svgW - margin*2) / triW, (svgH - margin*2) / triH);
+        const offsetX = (svgW - triW * scale) / 2 - minX * scale;
+        const offsetY = (svgH - triH * scale) / 2 - minY * scale;
+
+        // Convertir a coordenadas de pantalla (invertir Y para que crezca hacia arriba)
+        const p1 = {x: v1.x * scale + offsetX, y: svgH - (v1.y * scale + offsetY)};
+        const p2 = {x: v2.x * scale + offsetX, y: svgH - (v2.y * scale + offsetY)};
+        const p3 = {x: v3.x * scale + offsetX, y: svgH - (v3.y * scale + offsetY)};
+
+        // --- DIBUJAR TRIÁNGULO ---
+        const tri = document.createElementNS("http://www.w3.org/2000/svg", "path");
+        tri.setAttribute("d", `M${p1.x},${p1.y} L${p2.x},${p2.y} L${p3.x},${p3.y} Z`);
+        tri.setAttribute("fill", "#00000005");
+        tri.setAttribute("stroke", "black");
+        tri.setAttribute("stroke-width", "2");
+        svg.appendChild(tri);
+
+        // --- POSICIONAR ETIQUETAS ---
+        // Lado c (Base)
+        svg.appendChild(crearTxt((p1.x + p2.x) / 2, Math.max(p1.y, p2.y) + 25, "c = " + c.toFixed(1), "#888", "12px", "bold"));
+        
+        if (mode === 'rect') {
+            // Lado a (Altura izquierda)
+            svg.appendChild(crearTxt(p1.x - 35, (p1.y + p3.y) / 2, "a = " + a.toFixed(1), "#888", "12px", "bold"));
+            // Lado b (Hipotenusa)
+            svg.appendChild(crearTxt((p2.x + p3.x) / 2 + 25, (p2.y + p3.y) / 2 - 10, "b = " + b.toFixed(1), "#888", "12px", "bold"));
+            
+            // Ángulos
+            svg.appendChild(crearTxt(p2.x - 30, p2.y - 10, A.toFixed(0) + "° (α)", "#aaa", "11px"));
+            svg.appendChild(crearTxt(p1.x + 20, p1.y - 10, B.toFixed(0) + "° (β)", "#aaa", "11px"));
+            svg.appendChild(crearTxt(p3.x + 10, p3.y + 25, G.toFixed(0) + "° (γ)", "#aaa", "11px"));
+        } else {
+            // Lado b (Izquierda)
+            svg.appendChild(crearTxt((p1.x + p3.x) / 2 - 35, (p1.y + p3.y) / 2, "b = " + b.toFixed(1), "#888", "12px", "bold"));
+            // Lado a (Derecha)
+            svg.appendChild(crearTxt((p2.x + p3.x) / 2 + 35, (p2.y + p3.y) / 2, "a = " + a.toFixed(1), "#888", "12px", "bold"));
+            
+            // Ángulos
+            svg.appendChild(crearTxt(p1.x + 25, p1.y - 10, A.toFixed(0) + "° (α)", "#aaa", "11px"));
+            svg.appendChild(crearTxt(p2.x - 25, p2.y - 10, B.toFixed(0) + "° (β)", "#aaa", "11px"));
+            svg.appendChild(crearTxt(p3.x, p3.y - 15, G.toFixed(0) + "° (γ)", "#aaa", "11px"));
+        }
+
+        // Marca de agua
+        const water = document.createElementNS("http://www.w3.org/2000/svg", "text");
+        water.setAttribute("x", svgW - 20); water.setAttribute("y", svgH - 20);
+        water.setAttribute("text-anchor", "end"); water.setAttribute("font-family", "Playfair Display");
+        water.setAttribute("font-weight", "bold"); water.setAttribute("font-size", "12");
+        water.setAttribute("fill", "#bbb"); water.textContent = "√(Raiz) Cuadrada²";
+        svg.appendChild(water);
+    }
+
+    function crearTxt(x, y, txt, col, size, weight="normal") {
+        const t = document.createElementNS("http://www.w3.org/2000/svg", "text");
+        t.setAttribute("x", x); t.setAttribute("y", y); t.setAttribute("fill", col);
+        t.setAttribute("font-size", size); t.setAttribute("font-family", "Open Sans");
+        t.setAttribute("font-weight", weight); t.textContent = txt;
+        return t;
+    }
+
+    function exportarPNG() {
+        const svg = document.getElementById('svg-draw');
+        const canvas = document.getElementById('export-canvas');
+        const ctx = canvas.getContext('2d');
+        svg.setAttribute('width', '700'); svg.setAttribute('height', '600');
+        const xml = new XMLSerializer().serializeToString(svg);
+        const svg64 = btoa(unescape(encodeURIComponent(xml)));
+        const img = new Image();
+        canvas.width = 700; canvas.height = 600;
+        img.onload = function() {
+            ctx.fillStyle = "white"; ctx.fillRect(0, 0, canvas.width, canvas.height);
+            ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+            const link = document.createElement('a');
+            link.download = 'triangulo-raiz-cuadrada.png';
+            link.href = canvas.toDataURL(); link.click();
+            svg.removeAttribute('width'); svg.removeAttribute('height');
+        };
+        img.src = 'data:image/svg+xml;base64,' + svg64;
+    }
+
+    function limpiar() {
+        document.querySelectorAll('input:not(#val-beta)').forEach(i => {
+            i.value = '';
+            i.disabled = false;
+        });
+        document.getElementById('resultados').style.display = 'none';
+        document.getElementById('visualizacion').style.display = 'none';
+        document.getElementById('btn-export').style.display = 'none';
+        const st = document.getElementById('data-status');
+        st.innerText = "Introduce los datos para comenzar";
+        st.style.color = "#888";
+    }
+
+    updateRefDiagram();
+</script>
+      
+</body>
+<button class="mobile-theme-toggle" onclick="toggleTheme()" aria-label="Cambiar tema">
+    <i data-lucide="sun" class="icon-sun"></i>
+    <i data-lucide="moon" class="icon-moon"></i>
+</button>
+
+
+</html>
