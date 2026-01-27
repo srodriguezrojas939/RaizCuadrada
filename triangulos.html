@@ -382,6 +382,79 @@
     fill: #bbbbbb; /* Texto secundario gris claro */
 }
 
+.dibujo-linea {
+    fill: rgba(0,0,0,0.01);
+}
+
+[data-theme="dark"] .dibujo-linea {
+    fill: rgba(255,255,255,0.01);
+}
+
+
+/* --- PÍLDORA DE MODOS (SEGMENTED CONTROL) --- */
+    .mode-switcher {
+        display: flex;
+        background:  #f9f9f9; /* Fondo gris suave contenedor */
+        padding: 5px;
+        border-radius: 999px;
+        margin-bottom: 25px; /* Separación con el visor Latex */
+        position: relative;
+        justify-content: space-between;
+        box-shadow: inset 0 1px 3px rgba(0,0,0,0.06);
+    }
+
+    .mode-btn {
+        flex: 1;
+        border: none;
+        background: transparent;
+        padding: 10px 0;
+        border-radius: 999px;
+        cursor: pointer;
+        font-family: 'Open Sans', sans-serif;
+        font-weight: 700;
+        font-size: 14px;
+        color: #888;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 6px;
+    }
+
+    /* Estilo del símbolo matemático dentro del botón */
+    .mode-btn span {
+        font-size: 1.2em;
+        font-weight: 400;
+        font-family: 'Playfair Display', serif; /* Toque elegante para el símbolo */
+    }
+
+    .mode-btn:hover:not(.active) {
+        color: #555;
+    }
+
+    /* ESTADO ACTIVO (La píldora blanca flotante) */
+    .mode-btn.active {
+        background: #ffffff;
+        color: #1a1a1a;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.12);
+        transform: scale(1.02);
+    }
+    
+    /* --- AJUSTES MODO OSCURO --- */
+    [data-theme="dark"] .mode-switcher { 
+        background: #151515; 
+        box-shadow: inset 0 1px 3px rgba(255,255,255,0.05);
+    }
+    [data-theme="dark"] .mode-btn { color: #666; }
+    [data-theme="dark"] .mode-btn:hover:not(.active) { color: #999; }
+    
+    [data-theme="dark"] .mode-btn.active { 
+        background: #333; 
+        color: #fff; 
+        box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+    }
+    
+    
 </style>
   
     </head>
@@ -484,12 +557,16 @@
             <p>√(Raiz) Cuadrada²</p>
         </div>
 
-        <div class="pill-container">
-            <div class="pill">
-                <button id="mode-rect" class="pill-btn active" onclick="setMode('rect')">Rectángulo</button>
-                <button id="mode-obli" class="pill-btn" onclick="setMode('obli')">Oblicuángulo</button>
-            </div>
-        </div>
+      <div class="mode-switcher">
+    <button class="mode-btn active" id="btn-rect" onclick="setModeUI('rect')">
+        Rectángulo
+    </button>
+
+    <button class="mode-btn" id="btn-obli" onclick="setModeUI('obli')">
+        Oblicuángulo
+    </button>
+</div>
+
 
         <div class="reference-box">
             <span class="reference-title">Diagrama de Referencia</span>
@@ -596,26 +673,45 @@
     const toRad = (d) => d * Math.PI / 180;
     const toDeg = (r) => r * 180 / Math.PI;
 
-    function setMode(newMode) {
-        mode = newMode;
-        document.getElementById('mode-rect').classList.toggle('active', mode === 'rect');
-        document.getElementById('mode-obli').classList.toggle('active', mode === 'obli');
-        
-        const betaInput = document.getElementById('val-beta');
-        const lb = document.getElementById('label-b');
+function setMode(newMode) {
+    mode = newMode;
 
-        if (mode === 'rect') {
-            betaInput.value = 90;
-            betaInput.disabled = true;
-            lb.innerText = "Lado b (Hipotenusa)";
-        } else {
-            betaInput.value = "";
-            betaInput.disabled = false;
-            lb.innerText = "Lado b";
-        }
-        updateRefDiagram();
-        limpiar();
+    const betaInput = document.getElementById('val-beta');
+    const lb = document.getElementById('label-b');
+
+    if (mode === 'rect') {
+        betaInput.value = 90;
+        betaInput.disabled = true;
+        lb.innerText = "Lado b (Hipotenusa)";
+    } else {
+        betaInput.value = "";
+        betaInput.disabled = false;
+        lb.innerText = "Lado b";
     }
+
+    updateRefDiagram();
+    limpiar();
+}
+
+
+function setModeUI(newMode) {
+    // Estado visual
+    document.getElementById('btn-rect').classList.toggle('active', newMode === 'rect');
+    document.getElementById('btn-obli').classList.toggle('active', newMode === 'obli');
+
+    // Estado lógico (tu motor)
+    setMode(newMode);
+}
+
+document.querySelector('.calculadora-moderna')
+    .classList.add('fade-in');
+
+setTimeout(() => {
+    document.querySelector('.calculadora-moderna')
+        .classList.remove('fade-in');
+}, 300);
+
+
 
 function updateRefDiagram() {
     const svg = document.getElementById('ref-svg');
@@ -831,88 +927,6 @@ function crearTxt(x, y, txt, cssClass, size, weight="normal") {
         `;
     }
 
-  function dibujar(a, b, c, A, B, G) {
-        const svg = document.getElementById('svg-draw');
-        document.getElementById('visualizacion').style.display = 'block';
-        svg.innerHTML = '';
-
-        // --- LÓGICA DE COORDENADAS PARA COINCIDIR CON EL DIAGRAMA ---
-        let v1, v2, v3;
-
-        if (mode === 'rect') {
-            // En Rectángulo: Beta (90°) en el origen (izquierda)
-            v1 = {x: 0, y: 0}; // Vértice Beta (90°)
-            v2 = {x: c, y: 0}; // Vértice Alpha
-            v3 = {x: 0, y: a}; // Vértice Gamma
-        } else {
-            // En Oblicuángulo: Alpha en el origen (izquierda) para que coincida con el diagrama
-            v1 = {x: 0, y: 0}; // Vértice Alpha
-            v2 = {x: c, y: 0}; // Vértice Beta
-            v3 = {x: b * Math.cos(toRad(A)), y: b * Math.sin(toRad(A))}; // Vértice Gamma
-        }
-
-        // --- ESCALADO Y CENTRADO ---
-        const minX = Math.min(v1.x, v2.x, v3.x);
-        const maxX = Math.max(v1.x, v2.x, v3.x);
-        const minY = Math.min(v1.y, v2.y, v3.y);
-        const maxY = Math.max(v1.y, v2.y, v3.y);
-        
-        const triW = maxX - minX;
-        const triH = maxY - minY;
-        const svgW = 350, svgH = 300;
-        const margin = 60;
-        
-        const scale = Math.min((svgW - margin*2) / triW, (svgH - margin*2) / triH);
-        const offsetX = (svgW - triW * scale) / 2 - minX * scale;
-        const offsetY = (svgH - triH * scale) / 2 - minY * scale;
-
-        // Convertir a coordenadas de pantalla (invertir Y para que crezca hacia arriba)
-        const p1 = {x: v1.x * scale + offsetX, y: svgH - (v1.y * scale + offsetY)};
-        const p2 = {x: v2.x * scale + offsetX, y: svgH - (v2.y * scale + offsetY)};
-        const p3 = {x: v3.x * scale + offsetX, y: svgH - (v3.y * scale + offsetY)};
-
-        // --- DIBUJAR TRIÁNGULO ---
-        const tri = document.createElementNS("http://www.w3.org/2000/svg", "path");
-        tri.setAttribute("d", `M${p1.x},${p1.y} L${p2.x},${p2.y} L${p3.x},${p3.y} Z`);
-        tri.setAttribute("fill", "#00000005");
-        tri.setAttribute("stroke", "black");
-        tri.setAttribute("stroke-width", "2");
-        svg.appendChild(tri);
-
-        // --- POSICIONAR ETIQUETAS ---
-        // Lado c (Base)
-        svg.appendChild(crearTxt((p1.x + p2.x) / 2, Math.max(p1.y, p2.y) + 25, "c = " + c.toFixed(1), "#888", "12px", "bold"));
-        
-        if (mode === 'rect') {
-            // Lado a (Altura izquierda)
-            svg.appendChild(crearTxt(p1.x - 35, (p1.y + p3.y) / 2, "a = " + a.toFixed(1), "#888", "12px", "bold"));
-            // Lado b (Hipotenusa)
-            svg.appendChild(crearTxt((p2.x + p3.x) / 2 + 25, (p2.y + p3.y) / 2 - 10, "b = " + b.toFixed(1), "#888", "12px", "bold"));
-            
-            // Ángulos
-            svg.appendChild(crearTxt(p2.x - 30, p2.y - 10, A.toFixed(0) + "° (α)", "#aaa", "11px"));
-            svg.appendChild(crearTxt(p1.x + 20, p1.y - 10, B.toFixed(0) + "° (β)", "#aaa", "11px"));
-            svg.appendChild(crearTxt(p3.x + 10, p3.y + 25, G.toFixed(0) + "° (γ)", "#aaa", "11px"));
-        } else {
-            // Lado b (Izquierda)
-            svg.appendChild(crearTxt((p1.x + p3.x) / 2 - 35, (p1.y + p3.y) / 2, "b = " + b.toFixed(1), "#888", "12px", "bold"));
-            // Lado a (Derecha)
-            svg.appendChild(crearTxt((p2.x + p3.x) / 2 + 35, (p2.y + p3.y) / 2, "a = " + a.toFixed(1), "#888", "12px", "bold"));
-            
-            // Ángulos
-            svg.appendChild(crearTxt(p1.x + 25, p1.y - 10, A.toFixed(0) + "° (α)", "#aaa", "11px"));
-            svg.appendChild(crearTxt(p2.x - 25, p2.y - 10, B.toFixed(0) + "° (β)", "#aaa", "11px"));
-            svg.appendChild(crearTxt(p3.x, p3.y - 15, G.toFixed(0) + "° (γ)", "#aaa", "11px"));
-        }
-
-        // Marca de agua
-        const water = document.createElementNS("http://www.w3.org/2000/svg", "text");
-        water.setAttribute("x", svgW - 20); water.setAttribute("y", svgH - 20);
-        water.setAttribute("text-anchor", "end"); water.setAttribute("font-family", "Playfair Display");
-        water.setAttribute("font-weight", "bold"); water.setAttribute("font-size", "12");
-        water.setAttribute("fill", "#bbb"); water.textContent = "√(Raiz) Cuadrada²";
-        svg.appendChild(water);
-    }
 
     function crearTxt(x, y, txt, col, size, weight="normal") {
         const t = document.createElementNS("http://www.w3.org/2000/svg", "text");
