@@ -380,11 +380,11 @@
 }
 
 [data-theme="dark"] .dibujo-texto {
-    fill: #eeeeee; /* TEXTO BLANCO BRILLANTE */
+   stroke: #eeeeee;
 }
 
 [data-theme="dark"] .dibujo-texto-secundario {
-    fill: #bbbbbb; /* Texto secundario gris claro */
+    stroke: ##e6e6e6;
 }
 
 .dibujo-linea {
@@ -460,23 +460,7 @@
     }
     
     
-    /* TEXTO SVG */
-.dibujo-texto {
-    fill: #222;
-}
-
-.dibujo-texto-secundario {
-    fill: #888;
-}
-
-/* MODO OSCURO */
-[data-theme="dark"] .dibujo-texto {
-    fill: #ffffff;
-}
-
-[data-theme="dark"] .dibujo-texto-secundario {
-    fill: #bbbbbb;
-}
+ 
 
 
 
@@ -967,39 +951,68 @@ function exportarPNG() {
     const canvas = document.getElementById('export-canvas');
     const ctx = canvas.getContext('2d');
     
-    // Configurar dimensiones
-    svg.setAttribute('width', '700'); 
-    svg.setAttribute('height', '600');
+    // 1. Configurar dimensiones (700x600 para buena calidad)
+    const width = 700;
+    const height = 600;
+    svg.setAttribute('width', width); 
+    svg.setAttribute('height', height);
     
-    // Serializar SVG
+    // 2. Serializar el SVG a texto
     let xml = new XMLSerializer().serializeToString(svg);
     
-    // TRUCO: Antes de convertir a imagen, reemplazamos las clases de modo oscuro
-    // para forzar colores negros en el archivo PNG (ya que el fondo será blanco)
-    // Esto no afecta lo que ves en pantalla, solo al archivo generado.
-    xml = xml.replace(/class="dibujo-linea"/g, 'style="stroke:black; fill:none; stroke-width:2"');
-    xml = xml.replace(/class="dibujo-texto"/g, 'style="fill:black; font-family:Open Sans"');
-    xml = xml.replace(/class="dibujo-texto-secundario"/g, 'style="fill:#555; font-size:11px; font-family:Open Sans"');
+    // --- PASO CRUCIAL: ESTILOS FORZADOS PARA LA IMAGEN ---
+    
+    // A) Etiquetas Principales (Lados a, b, c): 
+    // Forzamos "sans-serif" para que los números se vean limpios (como Open Sans) y Color NEGRO fijo.
+    xml = xml.replace(/class="dibujo-texto"/g, 'style="fill:#000; font-family: sans-serif, Arial; font-weight:bold; font-size:14px"');
+
+    // B) Etiquetas Secundarias (Ángulos):
+    // Forzamos "sans-serif" y un gris oscuro.
+    xml = xml.replace(/class="dibujo-texto-secundario"/g, 'style="fill:#444; font-family: sans-serif, Arial; font-size:12px"');
+
+    // C) Líneas del triángulo:
+    // Forzamos color negro para que se vea bien sobre fondo blanco.
+    xml = xml.replace(/class="dibujo-linea"/g, 'style="stroke:#000; fill:none; stroke-width:2"');
+
+    // D) BORRAR la marca de agua antigua del SVG (para dibujarla nosotros después en HD)
+    // Buscamos el texto exacto que pusiste en el SVG y lo eliminamos del código XML
+    xml = xml.replace(/>\s*√\(Raiz\) Cuadrada²\s*<\/text>/, '></text>'); 
+    // (Por seguridad, intento borrar también el contenido simple por si acaso varía el espaciado)
+    xml = xml.replace('√(Raiz) Cuadrada²', '');
 
     const svg64 = btoa(unescape(encodeURIComponent(xml)));
     const img = new Image();
     
-    canvas.width = 700; 
-    canvas.height = 600;
+    canvas.width = width; 
+    canvas.height = height;
     
     img.onload = function() {
-        // Fondo blanco obligatorio para PNG
+        // 3. Pintar fondo blanco (Obligatorio para PNG)
         ctx.fillStyle = "white"; 
         ctx.fillRect(0, 0, canvas.width, canvas.height);
         
+        // 4. Dibujar el triángulo
         ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
         
+        // 5. DIBUJAR LA MARCA DE AGUA (ESTILO "ECUACIONES")
+        // Aquí sí usamos Playfair Display porque el Canvas tiene acceso a las fuentes cargadas en el CSS
+        ctx.save(); // Guardar estado
+        ctx.font = "900 26px 'Playfair Display'"; // Fuente gruesa y elegante
+        ctx.fillStyle = "#1a1a1a";                 // Color casi negro elegante
+        ctx.textAlign = "right";
+        ctx.textBaseline = "bottom";
+        
+        // Dibujamos el texto abajo a la derecha
+        ctx.fillText("√(Raiz) Cuadrada²", canvas.width - 40, canvas.height - 40);
+        ctx.restore(); // Restaurar estado
+
+        // 6. Descargar
         const link = document.createElement('a');
         link.download = 'triangulo-raiz-cuadrada.png';
         link.href = canvas.toDataURL(); 
         link.click();
         
-        // Limpiar atributos temporales
+        // Limpieza final
         svg.removeAttribute('width'); 
         svg.removeAttribute('height');
     };
