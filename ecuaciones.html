@@ -972,6 +972,20 @@ let latex = '';
     MathJax.typesetPromise([preview]);
 }
 
+function radicalBonito(valor, tol = 1e-6, maxN = 10) {
+    for (let n = 2; n <= maxN; n++) {
+        let pot = Math.pow(valor, n);
+        let redondeado = Math.round(pot);
+
+        if (Math.abs(pot - redondeado) < tol) {
+            if (redondeado === 1) return `1`;
+            return `\\sqrt[${n}]{${redondeado}}`;
+        }
+    }
+    return null;
+}
+
+
 function fraccionBonita(valor, tolerancia = 1e-4, maxDen = 20) {
     for (let den = 1; den <= maxDen; den++) {
         let num = Math.round(valor * den);
@@ -1021,11 +1035,33 @@ function resolverEcuacion() {
         });
 
         // 4. MANEJO DE RESULTADOS VACÍOS
-        if (solucionesFinales.length === 0) {
-            // Mensaje genérico, ya no distinguimos si había imaginarios ocultos
-            out.innerHTML = "<span style='color:#777; font-size:16px;'>No hay solución real.</span>";
-            return;
-        }
+     if (solucionesFinales.length === 0) {
+    // --- FALLBACK NUMÉRICO ---
+    let fExpr = normalized.includes('=')
+        ? normalized.replace('=', '-(') + ')'
+        : normalized;
+
+    let numericas = resolverNumerico(fExpr, v);
+
+    if (numericas.length > 0) {
+        let resultados = numericas.map((r, i) =>
+            numericas.length > 1
+                ? `${v}_{${i+1}} \\approx ${r.toFixed(6)}`
+                : `${v} \\approx ${r.toFixed(6)}`
+        );
+
+        out.innerHTML = `
+            <small style="color:#888">Solución aproximada (método numérico)</small>
+            $$ ${resultados.join(' ; ')} $$
+        `;
+        MathJax.typesetPromise([out]);
+        return;
+    }
+
+    out.innerHTML = "<span style='color:#777; font-size:16px;'>No hay solución real.</span>";
+    return;
+}
+
 
         // 5. MAPEO Y DECIMALES (SIMPLIFICADO)
         let resultados = solucionesFinales.map((s, i) => {
@@ -1043,6 +1079,14 @@ function resolverEcuacion() {
             } else {
     try {
         let val = parseFloat(nerdamer(s).evaluate().text());
+        let rad = radicalBonito(val);
+if (rad) {
+    res = rad;
+    return solucionesFinales.length > 1
+        ? `${v}_{${i+1}} = ${res}`
+        : `${v} = ${res}`;
+}
+
         let frac = fraccionBonita(val);
 
         if (frac) {
@@ -1156,6 +1200,30 @@ const formato = document.getElementById('formatoInecuacion')?.value || 'interval
             rootsNum = (solN.symbol.elements || [solN]).map(r => parseFloat(nerdamer(r).evaluate().text())).filter(r => !isNaN(r));
         }
         
+        
+        if (rootsNum.length === 0) {
+    let numericas = encontrarRaicesNumericas(fx, v);
+    rootsNum.push(...numericas);
+}
+
+rootsNum = rootsNum
+    .filter(x => isFinite(x))
+    .map(x => parseFloat(x.toFixed(6)));
+
+rootsDen = rootsDen
+    .filter(x => isFinite(x))
+    .map(x => parseFloat(x.toFixed(6)));
+    
+    let discNum = encontrarDiscontinuidadesNumericas(fx, v);
+rootsDen.push(...discNum);
+
+rootsDen = rootsDen
+    .filter(x => isFinite(x))
+    .map(x => parseFloat(x.toFixed(6)));
+
+rootsDen = [...new Set(rootsDen)];
+
+
         // Función auxiliar: ¿Es asíntota?
         const esPuntoProhibido = x => rootsDen.some(d => Math.abs(d - x) < 1e-9);
 
@@ -1298,6 +1366,73 @@ const formato = document.getElementById('formatoInecuacion')?.value || 'interval
 }
 
 
+function encontrarRaicesNumericas(fx, v, min = -50, max = 50, pasos = 2000) {
+    let raices = [];
+    let paso = (max - min) / pasos;
+
+    let prevX = min;
+    let prevY = null;
+
+    for (let i = 0; i <= pasos; i++) {
+        let x = min + i * paso;
+        let y;
+
+        try {
+            y = nerdamer(fx, { [v]: x }).evaluate().valueOf();
+        } catch {
+            prevY = null;
+            continue;
+        }
+
+        if (prevY !== null && y !== null && prevY * y < 0) {
+            raices.push((prevX + x) / 2);
+        }
+
+        prevX = x;
+        prevY = y;
+    }
+
+    return raices;
+}
+
+
+function encontrarDiscontinuidadesNumericas(fx, v, min = -50, max = 50, pasos = 2000) {
+    let discontinuidades = [];
+    let paso = (max - min) / pasos;
+
+    let prevX = min;
+    let prevY = null;
+
+    for (let i = 0; i <= pasos; i++) {
+        let x = min + i * paso;
+        let y;
+
+        try {
+            y = nerdamer(fx, { [v]: x }).evaluate().valueOf();
+        } catch {
+            discontinuidades.push(x);
+            prevY = null;
+            continue;
+        }
+
+        if (!isFinite(y)) {
+            discontinuidades.push(x);
+            prevY = null;
+            continue;
+        }
+
+        if (prevY !== null && Math.abs(y - prevY) > 1e3) {
+            discontinuidades.push((prevX + x) / 2);
+        }
+
+        prevX = x;
+        prevY = y;
+    }
+
+    return discontinuidades;
+}
+
+
 function latexALineal(latex) {
     if (!latex) return '';
 
@@ -1345,6 +1480,7 @@ document.getElementById('preview-container').addEventListener('click', () => {
 document.getElementById('resultado').addEventListener('click', () => {
     copiarConToast(latexALineal(ultimoLatexResultado));
 });
+
 
 
 
