@@ -290,9 +290,14 @@
     @media (max-width: 600px) { 
         body { padding: 10px; display: block; }
         .calculadora-moderna { padding: 30px 20px; margin: 20px auto; }
-        .grid-inputs { grid-template-columns: 1fr; gap: 10px; } /* Una columna en móvil */
-        .res-grid { grid-template-columns: 1fr; }
     }
+
+.grid-inputs {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(90px, 1fr));
+    gap: 15px;
+}
+
 
     /* --- MODO OSCURO COMPLETO (GEMELO A ECUACIONES) --- */
     [data-theme="dark"] body { background: 
@@ -455,6 +460,26 @@
     }
     
     
+    /* TEXTO SVG */
+.dibujo-texto {
+    fill: #222;
+}
+
+.dibujo-texto-secundario {
+    fill: #888;
+}
+
+/* MODO OSCURO */
+[data-theme="dark"] .dibujo-texto {
+    fill: #ffffff;
+}
+
+[data-theme="dark"] .dibujo-texto-secundario {
+    fill: #bbbbbb;
+}
+
+
+
 </style>
   
     </head>
@@ -821,13 +846,14 @@ function dibujar(a, b, c, A, B, G) {
 }
 
 // Función auxiliar modificada para aceptar CLASE CSS en lugar de COLOR
-function crearTxt(x, y, txt, cssClass, size, weight="normal") {
+function crearTxt(x, y, txt, clase, size, weight = "normal") {
     const t = document.createElementNS("http://www.w3.org/2000/svg", "text");
-    t.setAttribute("x", x); 
-    t.setAttribute("y", y); 
-    t.setAttribute("class", cssClass); // Asignamos la clase
-    t.setAttribute("font-size", size); 
-    t.setAttribute("font-weight", weight); 
+    t.setAttribute("x", x);
+    t.setAttribute("y", y);
+    t.setAttribute("class", clase);  
+    t.setAttribute("font-size", size);
+    t.setAttribute("font-family", "Open Sans");
+    t.setAttribute("font-weight", weight);
     t.textContent = txt;
     return t;
 }
