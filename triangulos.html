@@ -345,6 +345,43 @@
 
     [data-theme="dark"] .res-item { border-bottom-color: #333; color: #aaa; }
     [data-theme="dark"] .res-item span:last-child { color: #fff; }
+    
+    /* --- ESTILOS PARA EL SVG (LÍNEAS Y TEXTO) --- */
+
+/* Estilos por defecto (Modo Claro) */
+.dibujo-linea {
+    stroke: #333333; /* Gris oscuro */
+    fill: none;
+    stroke-width: 2;
+    transition: stroke 0.3s ease;
+}
+
+.dibujo-texto {
+    fill: #555555; /* Texto principal oscuro */
+    font-family: 'Open Sans', sans-serif;
+    transition: fill 0.3s ease;
+}
+
+.dibujo-texto-secundario {
+    fill: #999999; /* Texto secundario (ángulos) */
+    font-size: 11px;
+    font-family: 'Open Sans', sans-serif;
+    transition: fill 0.3s ease;
+}
+
+/* Estilos para MODO OSCURO */
+[data-theme="dark"] .dibujo-linea {
+    stroke: #ffffff; /* LÍNEAS BLANCAS */
+}
+
+[data-theme="dark"] .dibujo-texto {
+    fill: #eeeeee; /* TEXTO BLANCO BRILLANTE */
+}
+
+[data-theme="dark"] .dibujo-texto-secundario {
+    fill: #bbbbbb; /* Texto secundario gris claro */
+}
+
 </style>
   
     </head>
@@ -580,31 +617,124 @@
         limpiar();
     }
 
-    function updateRefDiagram() {
-        const svg = document.getElementById('ref-svg');
-        if (mode === 'rect') {
-            svg.innerHTML = `
-                <path d="M40,20 L40,100 L160,100 Z" fill="none" stroke="#666" stroke-width="2"/>
-                <rect x="40" y="85" width="15" height="15" fill="none" stroke="#ccc"/>
-                <text x="30" y="60" font-size="12" font-family="Open Sans">a</text>
-                <text x="100" y="115" font-size="12" font-family="Open Sans">c</text>
-                <text x="110" y="55" font-size="12" font-family="Open Sans">b</text>
-                <text x="50" y="35" font-size="11" fill="#888">γ</text>
-                <text x="45" y="95" font-size="11" fill="#888">β</text>
-                <text x="135" y="95" font-size="11" fill="#888">α</text>
-            `;
-        } else {
-            svg.innerHTML = `
-                <path d="M40,100 L160,100 L100,30 Z" fill="none" stroke="#666" stroke-width="2"/>
-                <text x="65" y="65" font-size="12" font-family="Open Sans">b</text>
-                <text x="135" y="65" font-size="12" font-family="Open Sans">a</text>
-                <text x="100" y="115" font-size="12" font-family="Open Sans">c</text>
-                <text x="55" y="95" font-size="11" fill="#888">α</text>
-                <text x="145" y="95" font-size="11" fill="#888">β</text>
-                <text x="100" y="45" font-size="11" fill="#888">γ</text>
-            `;
-        }
+function updateRefDiagram() {
+    const svg = document.getElementById('ref-svg');
+    // Usamos las clases CSS 'dibujo-linea', 'dibujo-texto', etc.
+    if (mode === 'rect') {
+        svg.innerHTML = `
+            <path d="M40,20 L40,100 L160,100 Z" class="dibujo-linea"/>
+            <rect x="40" y="85" width="15" height="15" fill="none" stroke="#ccc"/>
+            <text x="30" y="60" font-size="12" class="dibujo-texto">a</text>
+            <text x="100" y="115" font-size="12" class="dibujo-texto">c</text>
+            <text x="110" y="55" font-size="12" class="dibujo-texto">b</text>
+            <text x="50" y="35" class="dibujo-texto-secundario">γ</text>
+            <text x="45" y="95" class="dibujo-texto-secundario">β</text>
+            <text x="135" y="95" class="dibujo-texto-secundario">α</text>
+        `;
+    } else {
+        svg.innerHTML = `
+            <path d="M40,100 L160,100 L100,30 Z" class="dibujo-linea"/>
+            <text x="65" y="65" font-size="12" class="dibujo-texto">b</text>
+            <text x="135" y="65" font-size="12" class="dibujo-texto">a</text>
+            <text x="100" y="115" font-size="12" class="dibujo-texto">c</text>
+            <text x="55" y="95" class="dibujo-texto-secundario">α</text>
+            <text x="145" y="95" class="dibujo-texto-secundario">β</text>
+            <text x="100" y="45" class="dibujo-texto-secundario">γ</text>
+        `;
     }
+}
+
+function dibujar(a, b, c, A, B, G) {
+    const svg = document.getElementById('svg-draw');
+    document.getElementById('visualizacion').style.display = 'flex'; // Usar flex para centrar
+    svg.innerHTML = '';
+
+    // --- LÓGICA DE COORDENADAS ---
+    let v1, v2, v3;
+
+    if (mode === 'rect') {
+        v1 = {x: 0, y: 0}; 
+        v2 = {x: c, y: 0}; 
+        v3 = {x: 0, y: a}; 
+    } else {
+        v1 = {x: 0, y: 0}; 
+        v2 = {x: c, y: 0}; 
+        v3 = {x: b * Math.cos(toRad(A)), y: b * Math.sin(toRad(A))}; 
+    }
+
+    // --- ESCALADO ---
+    const minX = Math.min(v1.x, v2.x, v3.x);
+    const maxX = Math.max(v1.x, v2.x, v3.x);
+    const minY = Math.min(v1.y, v2.y, v3.y);
+    const maxY = Math.max(v1.y, v2.y, v3.y);
+    
+    const triW = maxX - minX;
+    const triH = maxY - minY;
+    const svgW = 350, svgH = 300;
+    const margin = 60;
+    
+    const scale = Math.min((svgW - margin*2) / triW, (svgH - margin*2) / triH);
+    const offsetX = (svgW - triW * scale) / 2 - minX * scale;
+    const offsetY = (svgH - triH * scale) / 2 - minY * scale;
+
+    const p1 = {x: v1.x * scale + offsetX, y: svgH - (v1.y * scale + offsetY)};
+    const p2 = {x: v2.x * scale + offsetX, y: svgH - (v2.y * scale + offsetY)};
+    const p3 = {x: v3.x * scale + offsetX, y: svgH - (v3.y * scale + offsetY)};
+
+    // --- DIBUJAR TRIÁNGULO ---
+    const tri = document.createElementNS("http://www.w3.org/2000/svg", "path");
+    tri.setAttribute("d", `M${p1.x},${p1.y} L${p2.x},${p2.y} L${p3.x},${p3.y} Z`);
+    // AQUÍ ESTÁ EL CAMBIO IMPORTANTE: Usamos la clase CSS en vez de atributos fijos
+    tri.setAttribute("class", "dibujo-linea"); 
+    // Mantenemos un fill transparente por si acaso
+    tri.setAttribute("fill", "rgba(0,0,0,0.02)"); 
+    svg.appendChild(tri);
+
+    // --- POSICIONAR ETIQUETAS ---
+    // Usamos "dibujo-texto" para lados (negrita) y "dibujo-texto-secundario" para ángulos
+    
+    // Lado c (Base)
+    svg.appendChild(crearTxt((p1.x + p2.x) / 2, Math.max(p1.y, p2.y) + 25, "c = " + c.toFixed(1), "dibujo-texto", "12px", "bold"));
+    
+    if (mode === 'rect') {
+        svg.appendChild(crearTxt(p1.x - 35, (p1.y + p3.y) / 2, "a = " + a.toFixed(1), "dibujo-texto", "12px", "bold"));
+        svg.appendChild(crearTxt((p2.x + p3.x) / 2 + 25, (p2.y + p3.y) / 2 - 10, "b = " + b.toFixed(1), "dibujo-texto", "12px", "bold"));
+        
+        svg.appendChild(crearTxt(p2.x - 30, p2.y - 10, A.toFixed(0) + "° (α)", "dibujo-texto-secundario", "11px"));
+        svg.appendChild(crearTxt(p1.x + 20, p1.y - 10, B.toFixed(0) + "° (β)", "dibujo-texto-secundario", "11px"));
+        svg.appendChild(crearTxt(p3.x + 10, p3.y + 25, G.toFixed(0) + "° (γ)", "dibujo-texto-secundario", "11px"));
+    } else {
+        svg.appendChild(crearTxt((p1.x + p3.x) / 2 - 35, (p1.y + p3.y) / 2, "b = " + b.toFixed(1), "dibujo-texto", "12px", "bold"));
+        svg.appendChild(crearTxt((p2.x + p3.x) / 2 + 35, (p2.y + p3.y) / 2, "a = " + a.toFixed(1), "dibujo-texto", "12px", "bold"));
+        
+        svg.appendChild(crearTxt(p1.x + 25, p1.y - 10, A.toFixed(0) + "° (α)", "dibujo-texto-secundario", "11px"));
+        svg.appendChild(crearTxt(p2.x - 25, p2.y - 10, B.toFixed(0) + "° (β)", "dibujo-texto-secundario", "11px"));
+        svg.appendChild(crearTxt(p3.x, p3.y - 15, G.toFixed(0) + "° (γ)", "dibujo-texto-secundario", "11px"));
+    }
+
+    // Marca de agua (Se mantiene fija en gris claro, no depende tanto del tema)
+    const water = document.createElementNS("http://www.w3.org/2000/svg", "text");
+    water.setAttribute("x", svgW - 20); water.setAttribute("y", svgH - 20);
+    water.setAttribute("text-anchor", "end"); water.setAttribute("font-family", "Playfair Display");
+    water.setAttribute("font-weight", "bold"); water.setAttribute("font-size", "12");
+    water.setAttribute("fill", "#bbb"); // Gris claro fijo
+    water.textContent = "√(Raiz) Cuadrada²";
+    svg.appendChild(water);
+
+    document.getElementById('btn-export').style.display = 'flex';
+}
+
+// Función auxiliar modificada para aceptar CLASE CSS en lugar de COLOR
+function crearTxt(x, y, txt, cssClass, size, weight="normal") {
+    const t = document.createElementNS("http://www.w3.org/2000/svg", "text");
+    t.setAttribute("x", x); 
+    t.setAttribute("y", y); 
+    t.setAttribute("class", cssClass); // Asignamos la clase
+    t.setAttribute("font-size", size); 
+    t.setAttribute("font-weight", weight); 
+    t.textContent = txt;
+    return t;
+}
 
     function controlDeEntradas() {
         const IDs = ['val-a', 'val-b', 'val-c', 'val-alpha', 'val-gamma'];
@@ -792,25 +922,50 @@
         return t;
     }
 
-    function exportarPNG() {
-        const svg = document.getElementById('svg-draw');
-        const canvas = document.getElementById('export-canvas');
-        const ctx = canvas.getContext('2d');
-        svg.setAttribute('width', '700'); svg.setAttribute('height', '600');
-        const xml = new XMLSerializer().serializeToString(svg);
-        const svg64 = btoa(unescape(encodeURIComponent(xml)));
-        const img = new Image();
-        canvas.width = 700; canvas.height = 600;
-        img.onload = function() {
-            ctx.fillStyle = "white"; ctx.fillRect(0, 0, canvas.width, canvas.height);
-            ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-            const link = document.createElement('a');
-            link.download = 'triangulo-raiz-cuadrada.png';
-            link.href = canvas.toDataURL(); link.click();
-            svg.removeAttribute('width'); svg.removeAttribute('height');
-        };
-        img.src = 'data:image/svg+xml;base64,' + svg64;
-    }
+function exportarPNG() {
+    const svg = document.getElementById('svg-draw');
+    const canvas = document.getElementById('export-canvas');
+    const ctx = canvas.getContext('2d');
+    
+    // Configurar dimensiones
+    svg.setAttribute('width', '700'); 
+    svg.setAttribute('height', '600');
+    
+    // Serializar SVG
+    let xml = new XMLSerializer().serializeToString(svg);
+    
+    // TRUCO: Antes de convertir a imagen, reemplazamos las clases de modo oscuro
+    // para forzar colores negros en el archivo PNG (ya que el fondo será blanco)
+    // Esto no afecta lo que ves en pantalla, solo al archivo generado.
+    xml = xml.replace(/class="dibujo-linea"/g, 'style="stroke:black; fill:none; stroke-width:2"');
+    xml = xml.replace(/class="dibujo-texto"/g, 'style="fill:black; font-family:Open Sans"');
+    xml = xml.replace(/class="dibujo-texto-secundario"/g, 'style="fill:#555; font-size:11px; font-family:Open Sans"');
+
+    const svg64 = btoa(unescape(encodeURIComponent(xml)));
+    const img = new Image();
+    
+    canvas.width = 700; 
+    canvas.height = 600;
+    
+    img.onload = function() {
+        // Fondo blanco obligatorio para PNG
+        ctx.fillStyle = "white"; 
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        
+        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+        
+        const link = document.createElement('a');
+        link.download = 'triangulo-raiz-cuadrada.png';
+        link.href = canvas.toDataURL(); 
+        link.click();
+        
+        // Limpiar atributos temporales
+        svg.removeAttribute('width'); 
+        svg.removeAttribute('height');
+    };
+    
+    img.src = 'data:image/svg+xml;base64,' + svg64;
+}
 
     function limpiar() {
         document.querySelectorAll('input:not(#val-beta)').forEach(i => {
