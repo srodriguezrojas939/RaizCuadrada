@@ -459,7 +459,45 @@
         box-shadow: 0 4px 12px rgba(0,0,0,0.3);
     }
     
-    
+    /* --- BOTÓN DE ROTACIÓN --- */
+.reference-box {
+    position: relative; /* Necesario para posicionar el botón */
+}
+
+.rotate-btn {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    color: #bbb;
+    padding: 5px;
+    border-radius: 50%;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10;
+}
+
+.rotate-btn:hover {
+    background: rgba(0,0,0,0.05);
+    color: #333;
+    transform: rotate(180deg); /* Pequeña animación al pasar el mouse */
+}
+
+[data-theme="dark"] .rotate-btn:hover {
+    background: rgba(255,255,255,0.1);
+    color: #fff;
+}
+
+/* Transición suave para la rotación de los diagramas */
+#ref-svg, #svg-draw {
+    transition: transform 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+    transform-origin: center center;
+}
+
  
 
 
@@ -572,16 +610,20 @@
     </button>
 
     <button class="mode-btn" id="btn-obli" onclick="setModeUI('obli')">
-        NO-Rectangulo
+        Oblicuángulo
     </button>
 </div>
 
 
-        <div class="reference-box">
-            <span class="reference-title">Diagrama de Referencia</span>
-            <svg id="ref-svg" width="220" height="120" viewBox="0 0 200 120"></svg>
-        </div>
-
+<div class="reference-box">
+    <button class="rotate-btn" onclick="toggleRotation()" title="Rotar vista">
+        <i data-lucide="repeat-2" width="18" height="18"></i>
+    </button>
+    <span class="reference-title">Diagrama de Referencia</span>
+    <svg id="ref-svg" width="220" height="120" viewBox="0 0 200 120"></svg>
+</div>
+  
+        
         <div id="data-status">Introduce los datos para comenzar</div>
 
         <div class="grid-inputs">
@@ -1019,6 +1061,31 @@ function exportarPNG() {
     
     img.src = 'data:image/svg+xml;base64,' + svg64;
 }
+
+let rotationState = 0;
+
+function toggleRotation() {
+    // Ciclo de estados: 0 -> 1 -> 2 -> 3 -> 4 -> 0
+    rotationState = (rotationState + 1) % 5;
+    
+    // Obtenemos ambos diagramas (Referencia y Resultado)
+    const targets = [document.getElementById('ref-svg'), document.getElementById('svg-draw')];
+    let cssTransform = "";
+
+    switch(rotationState) {
+        case 0: cssTransform = "none"; break;              // Normal
+        case 1: cssTransform = "rotate(90deg)"; break;     // 90°
+        case 2: cssTransform = "rotate(180deg)"; break;    // 180°
+        case 3: cssTransform = "scaleX(-1)"; break;        // Espejo Horizontal
+        case 4: cssTransform = "scaleY(-1)"; break;        // Espejo Vertical
+    }
+
+    // Aplicar a ambos diagramas si existen
+    targets.forEach(el => {
+        if (el) el.style.transform = cssTransform;
+    });
+}
+
 
     function limpiar() {
         document.querySelectorAll('input:not(#val-beta)').forEach(i => {
