@@ -23,6 +23,10 @@
     <script src="https://unpkg.com/lucide@latest"></script>
 
     <link rel="stylesheet" href="styles.css">
+    
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+<script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
 
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700;900&display=swap');
@@ -745,6 +749,14 @@ svg text {
     <svg id="svg-draw" width="300" height="300" style="background: var(--bg-card); border-radius:8px;"></svg>
 </div>
 
+<div id="procedimiento-contenedor" style="display:none; margin-top: 20px; border-top: 1px solid #eee; padding-top: 15px; text-align: center">
+    <h3 style=" font-size: 1.2rem; color: #333; margin-bottom: 10px;">
+        <i data-lucide="book-open" style="width:18px; vertical-align:middle;"></i> Paso a paso:
+    </h3>
+    <div id="pasos-lista" style="font-size: 0.95rem; color: #555; line-height: 1.6;">
+        </div>
+</div>
+
     </div>
 </div>
 
@@ -1003,76 +1015,235 @@ t.setAttribute("text-anchor", "middle"); // Centra el texto horizontalmente
 t.setAttribute("dominant-baseline", "middle"); // Centra el texto verticalmente
     }
 
-    function resolver() {
-        let a = parseFloat(document.getElementById('val-a').value) || null;
-        let b = parseFloat(document.getElementById('val-b').value) || null;
-        let c = parseFloat(document.getElementById('val-c').value) || null;
-        let A = parseFloat(document.getElementById('val-alpha').value) || null;
-        let B = parseFloat(document.getElementById('val-beta').value) || (mode === 'rect' ? 90 : null);
-        let G = parseFloat(document.getElementById('val-gamma').value) || null;
+function resolver() {
+    let a = parseFloat(document.getElementById('val-a').value) || null;
+    let b = parseFloat(document.getElementById('val-b').value) || null;
+    let c = parseFloat(document.getElementById('val-c').value) || null;
+    let A = parseFloat(document.getElementById('val-alpha').value) || null;
+    let B = parseFloat(document.getElementById('val-beta').value) || (mode === 'rect' ? 90 : null);
+    let G = parseFloat(document.getElementById('val-gamma').value) || null;
 
-        // Caso especial: Pitágoras directo para Rectángulos antes del loop
-        if (mode === 'rect') {
-            if (a && b && !c) c = Math.sqrt(Math.abs(b*b - a*a));
-            if (c && b && !a) a = Math.sqrt(Math.abs(b*b - c*c));
-            if (a && c && !b) b = Math.sqrt(a*a + c*c);
+    let pasos = [];
+
+    // Función auxiliar para redondear en texto (limpia el código abajo)
+    const f = (n) => Number(n).toFixed(2); 
+
+    // --- CASO ESPECIAL: PITÁGORAS ---
+    if (mode === 'rect') {
+        if (a && b && !c) {
+            c = Math.sqrt(Math.abs(b*b - a*a));
+            pasos.push(`<b>Teorema de Pitágoras:</b><br>
+            $$ c = \\sqrt{b^2 - a^2} = \\sqrt{${f(b)}^2 - ${f(a)}^2} = \\mathbf{${f(c)}} $$`);
         }
-
-        // Motor Matemático Iterativo
-        for (let i = 0; i < 6; i++) {
-            if (A && B && !G) G = 180 - A - B;
-            if (A && G && !B) B = 180 - A - G;
-            if (B && G && !A) A = 180 - B - G;
-
-            if (a && c && B && !b) b = Math.sqrt(a*a + c*c - 2*a*c*Math.cos(toRad(B)));
-            if (b && c && A && !a) a = Math.sqrt(b*b + c*c - 2*b*c*Math.cos(toRad(A)));
-            if (a && b && G && !c) c = Math.sqrt(a*a + b*b - 2*a*b*Math.cos(toRad(G)));
-
-            if (a && b && c) {
-                if(a+b<=c || a+c<=b || b+c<=a) { alert("Error: No forma un triángulo válido."); return; }
-                if (!A) A = toDeg(Math.acos((b*b + c*c - a*a) / (2*b*c)));
-                if (!B) B = toDeg(Math.acos((a*a + c*c - b*b) / (2*a*c)));
-                if (!G) G = 180 - (A || 0) - (B || 0);
-            }
-            if (a && A) {
-                if (B && !b) b = a * Math.sin(toRad(B)) / Math.sin(toRad(A));
-                if (G && !c) c = a * Math.sin(toRad(G)) / Math.sin(toRad(A));
-            }
-            if (b && B) {
-                if (A && !a) a = b * Math.sin(toRad(A)) / Math.sin(toRad(B));
-                if (G && !c) c = b * Math.sin(toRad(G)) / Math.sin(toRad(B));
-            }
-            if (c && G) {
-                if (A && !a) a = c * Math.sin(toRad(A)) / Math.sin(toRad(G));
-                if (B && !b) b = c * Math.sin(toRad(B)) / Math.sin(toRad(G));
-            }
+        if (c && b && !a) {
+            a = Math.sqrt(Math.abs(b*b - c*c));
+            pasos.push(`<b>Teorema de Pitágoras:</b><br>
+            $$ a = \\sqrt{b^2 - c^2} = \\sqrt{${f(b)}^2 - ${f(c)}^2} = \\mathbf{${f(a)}} $$`);
         }
-
-        if (!a || isNaN(a) || a<=0 || b<=0 || c<=0 || G <= 0 || A <= 0 || B <= 0) { 
-            alert("Error: Triángulo imposible o datos inconsistentes."); return; 
+        if (a && c && !b) {
+            b = Math.sqrt(a*a + c*c);
+            pasos.push(`<b>Teorema de Pitágoras:</b><br>
+            $$ b = \\sqrt{a^2 + c^2} = \\sqrt{${f(a)}^2 + ${f(c)}^2} = \\mathbf{${f(b)}} $$`);
         }
-
-        mostrar(a, b, c, A, B, G);
-        dibujar(a, b, c, A, B, G);
-        document.getElementById('btn-export').style.display = 'flex';
     }
 
-    function mostrar(a, b, c, A, B, G) {
-        document.getElementById('resultados').style.display = 'block';
-        const s = (a + b + c) / 2;
-        const area = Math.sqrt(s * (s - a) * (s - b) * (s - c));
-        document.getElementById('res-content').innerHTML = `
-            <div class="res-item"><span>Lado a:</span><span>${a.toFixed(2)}</span></div>
-            <div class="res-item"><span>Lado b ${mode==='rect'?'(Hipotenusa)':''}:</span><span>${b.toFixed(2)}</span></div>
-            <div class="res-item"><span>Lado c:</span><span>${c.toFixed(2)}</span></div>
-            <div class="res-item"><span>Ángulo α:</span><span>${A.toFixed(2)}°</span></div>
-            <div class="res-item"><span>Ángulo β:</span><span>${B.toFixed(2)}°</span></div>
-            <div class="res-item"><span>Ángulo γ:</span><span>${G.toFixed(2)}°</span></div>
-            <div class="res-item"><span>Área:</span><span>${area.toFixed(2)}</span></div>
-            <div class="res-item"><span>Perímetro:</span><span>${(a+b+c).toFixed(2)}</span></div>
-        `;
+    // --- MOTOR MATEMÁTICO ITERATIVO ---
+    for (let i = 0; i < 6; i++) {
+        // 1. Suma de Ángulos
+        if (A && B && !G) { 
+            G = 180 - A - B; 
+            pasos.push(`<b>Suma de Ángulos:</b><br>
+            $$ \\gamma = 180^\\circ - \\alpha - \\beta = 180^\\circ - ${f(A)}^\\circ - ${f(B)}^\\circ = \\mathbf{${f(G)}^\\circ} $$`);
+        }
+        if (A && G && !B) { 
+            B = 180 - A - G; 
+            pasos.push(`<b>Suma de Ángulos:</b><br>
+            $$ \\beta = 180^\\circ - \\alpha - \\gamma = 180^\\circ - ${f(A)}^\\circ - ${f(G)}^\\circ = \\mathbf{${f(B)}^\\circ} $$`);
+        }
+        if (B && G && !A) { 
+            A = 180 - B - G; 
+            pasos.push(`<b>Suma de Ángulos:</b><br>
+            $$ \\alpha = 180^\\circ - \\beta - \\gamma = 180^\\circ - ${f(B)}^\\circ - ${f(G)}^\\circ = \\mathbf{${f(A)}^\\circ} $$`);
+        }
+
+        // 2. Ley de Cosenos (Lados)
+        // Usamos \\cdot para multiplicación y \\cos para la función
+        if (a && c && B && !b) {
+            b = Math.sqrt(a*a + c*c - 2*a*c*Math.cos(toRad(B)));
+            pasos.push(`<b>Ley de Cosenos (Hallar Lado):</b><br>
+            $$ b = \\sqrt{a^2 + c^2 - 2ac \\cdot \\cos(\\beta)} $$
+            $$ b = \\sqrt{${f(a)}^2 + ${f(c)}^2 - 2(${f(a)})(${f(c)}) \\cos(${f(B)}^\\circ)} = \\mathbf{${f(b)}} $$`);
+        }
+        if (b && c && A && !a) {
+            a = Math.sqrt(b*b + c*c - 2*b*c*Math.cos(toRad(A)));
+            pasos.push(`<b>Ley de Cosenos (Hallar Lado):</b><br>
+            $$ a = \\sqrt{b^2 + c^2 - 2bc \\cdot \\cos(\\alpha)} $$
+            $$ a = \\sqrt{${f(b)}^2 + ${f(c)}^2 - 2(${f(b)})(${f(c)}) \\cos(${f(A)}^\\circ)} = \\mathbf{${f(a)}} $$`);
+        }
+        if (a && b && G && !c) {
+            c = Math.sqrt(a*a + b*b - 2*a*b*Math.cos(toRad(G)));
+            pasos.push(`<b>Ley de Cosenos (Hallar Lado):</b><br>
+            $$ c = \\sqrt{a^2 + b^2 - 2ab \\cdot \\cos(\\gamma)} $$
+            $$ c = \\sqrt{${f(a)}^2 + ${f(b)}^2 - 2(${f(a)})(${f(b)}) \\cos(${f(G)}^\\circ)} = \\mathbf{${f(c)}} $$`);
+        }
+
+        // 3. Caso LLL (Hallar Ángulos) -> AQUÍ ESTÁ LA FRACCIÓN QUE PEDISTE
+        if (a && b && c) {
+            if(a+b<=c || a+c<=b || b+c<=a) { alert("Error: No forma un triángulo válido."); return; }
+            
+            if (!A) {
+                A = toDeg(Math.acos((b*b + c*c - a*a) / (2*b*c)));
+                pasos.push(`<b>Planteamiento (Ley de Cosenos):</b><br>
+                Partimos de la fórmula original para el lado 'a':
+                $$ a^2 = b^2 + c^2 - 2bc \\cdot \\cos(\\alpha) $$`);
+                pasos.push(`<b>Ley de Cosenos (Despejando Ángulo):</b><br>
+                $$ \\cos(\\alpha) = \\frac{b^2 + c^2 - a^2}{2bc} $$
+                $$ \\alpha = \\arccos \\left( \\frac{${f(b)}^2 + ${f(c)}^2 - ${f(a)}^2}{2 \\cdot ${f(b)} \\cdot ${f(c)}} \\right) = \\mathbf{${f(A)}^\\circ} $$`);
+            }
+            if (!B) {
+                B = toDeg(Math.acos((a*a + c*c - b*b) / (2*a*c)));
+                pasos.push(`<b>Planteamiento (Ley de Cosenos):</b><br>
+                Partimos de la fórmula original para el lado 'b':
+                $$ b^2 = a^2 + c^2 - 2ac \\cdot \\cos(\\beta) $$`);
+                pasos.push(`<b>Ley de Cosenos (Despejando Ángulo):</b><br>
+                $$ \\beta = \\arccos \\left( \\frac{a^2 + c^2 - b^2}{2ac} \\right) $$
+                $$ \\beta = \\arccos \\left( \\frac{${f(a)}^2 + ${f(c)}^2 - ${f(b)}^2}{2 \\cdot ${f(a)} \\cdot ${f(c)}} \\right) = \\mathbf{${f(B)}^\\circ} $$`);
+            }
+        }
+
+  // 4. Ley de Senos (Proporciones)
+        // Usamos \\frac para que se vea como fracción vertical
+        if (a && A) {
+            if (B && !b) { 
+                b = a * Math.sin(toRad(B)) / Math.sin(toRad(A)); 
+                pasos.push(`<b>Planteamiento (Ley de Senos):</b><br>
+                Igualamos las razones del lado 'a' y el lado 'b':
+                $$ \\frac{a}{\\sin(\\alpha)} = \\frac{b}{\\sin(\\beta)} $$`);
+                
+                pasos.push(`<b>Ley de Senos (Despejando lado b):</b><br>
+                $$ b = \\frac{a \\cdot \\sin(\\beta)}{\\sin(\\alpha)} = \\frac{${f(a)} \\cdot \\sin(${f(B)}^\\circ)}{\\sin(${f(A)}^\\circ)} = \\mathbf{${f(b)}} $$`);
+            }
+            if (G && !c) { 
+                c = a * Math.sin(toRad(G)) / Math.sin(toRad(A)); 
+                pasos.push(`<b>Planteamiento (Ley de Senos):</b><br>
+                Igualamos las razones del lado 'a' y el lado 'c':
+                $$ \\frac{a}{\\sin(\\alpha)} = \\frac{c}{\\sin(\\gamma)} $$`);
+                
+                pasos.push(`<b>Ley de Senos (Despejando lado c):</b><br>
+                $$ c = \\frac{a \\cdot \\sin(\\gamma)}{\\sin(\\alpha)} = \\frac{${f(a)} \\cdot \\sin(${f(G)}^\\circ)}{\\sin(${f(A)}^\\circ)} = \\mathbf{${f(c)}} $$`);
+            }
+        }
+        
+        if (b && B) {
+            if (A && !a) { 
+                a = b * Math.sin(toRad(A)) / Math.sin(toRad(B)); 
+                pasos.push(`<b>Planteamiento (Ley de Senos):</b><br>
+                Igualamos las razones del lado 'b' y el lado 'a':
+                $$ \\frac{b}{\\sin(\\beta)} = \\frac{a}{\\sin(\\alpha)} $$`);
+                
+                pasos.push(`<b>Ley de Senos (Despejando lado a):</b><br>
+                $$ a = \\frac{b \\cdot \\sin(\\alpha)}{\\sin(\\beta)} = \\frac{${f(b)} \\cdot \\sin(${f(A)}^\\circ)}{\\sin(${f(B)}^\\circ)} = \\mathbf{${f(a)}} $$`);
+            }
+            if (G && !c) { 
+                c = b * Math.sin(toRad(G)) / Math.sin(toRad(B)); 
+                pasos.push(`<b>Planteamiento (Ley de Senos):</b><br>
+                Igualamos las razones del lado 'b' y el lado 'c':
+                $$ \\frac{b}{\\sin(\\beta)} = \\frac{c}{\\sin(\\gamma)} $$`);
+                
+                pasos.push(`<b>Ley de Senos (Despejando lado c):</b><br>
+                $$ c = \\frac{b \\cdot \\sin(\\gamma)}{\\sin(\\beta)} = \\frac{${f(b)} \\cdot \\sin(${f(G)}^\\circ)}{\\sin(${f(B)}^\\circ)} = \\mathbf{${f(c)}} $$`);
+            }
+        }
+        
+        if (c && G) {
+            if (A && !a) {
+                a = c * Math.sin(toRad(A)) / Math.sin(toRad(G));
+                pasos.push(`<b>Planteamiento (Ley de Senos):</b><br>
+                Igualamos las razones del lado 'c' y el lado 'a':
+                $$ \\frac{c}{\\sin(\\gamma)} = \\frac{a}{\\sin(\\alpha)} $$`);
+                
+                pasos.push(`<b>Ley de Senos (Despejando lado a):</b><br>
+                $$ a = \\frac{c \\cdot \\sin(\\alpha)}{\\sin(\\gamma)} = \\frac{${f(c)} \\cdot \\sin(${f(A)}^\\circ)}{\\sin(${f(G)}^\\circ)} = \\mathbf{${f(a)}} $$`);
+            }
+            if (B && !b) {
+                b = c * Math.sin(toRad(B)) / Math.sin(toRad(G));
+                pasos.push(`<b>Planteamiento (Ley de Senos):</b><br>
+                Igualamos las razones del lado 'c' y el lado 'b':
+                $$ \\frac{c}{\\sin(\\gamma)} = \\frac{b}{\\sin(\\beta)} $$`);
+                
+                pasos.push(`<b>Ley de Senos (Despejando lado b):</b><br>
+                $$ b = \\frac{c \\cdot \\sin(\\beta)}{\\sin(\\gamma)} = \\frac{${f(c)} \\cdot \\sin(${f(B)}^\\circ)}{\\sin(${f(G)}^\\circ)} = \\mathbf{${f(b)}} $$`);
+            }
+        }
     }
 
+    if (!a || isNaN(a) || a<=0 || b<=0 || c<=0 || G <= 0 || A <= 0 || B <= 0) { 
+        alert("Error: Triángulo imposible o datos inconsistentes."); return; 
+    }
+
+    mostrar(a, b, c, A, B, G, pasos);
+    dibujar(a, b, c, A, B, G);
+    document.getElementById('btn-export').style.display = 'flex';
+}
+
+function mostrar(a, b, c, A, B, G, pasos) {
+    document.getElementById('resultados').style.display = 'block';
+    
+    const s = (a + b + c) / 2;
+    const area = Math.sqrt(s * (s - a) * (s - b) * (s - c));
+    const perimetro = a + b + c;
+    
+    document.getElementById('res-content').innerHTML = `
+        <div class="res-item"><span>Lado a:</span><span>${a.toFixed(2)}</span></div>
+        <div class="res-item"><span>Lado b ${mode==='rect'?'(Hipotenusa)':''}:</span><span>${b.toFixed(2)}</span></div>
+        <div class="res-item"><span>Lado c:</span><span>${c.toFixed(2)}</span></div>
+        <div class="res-item"><span>Ángulo α:</span><span>${A.toFixed(2)}°</span></div>
+        <div class="res-item"><span>Ángulo β:</span><span>${B.toFixed(2)}°</span></div>
+        <div class="res-item"><span>Ángulo γ:</span><span>${G.toFixed(2)}°</span></div>
+        <div class="res-item"><span>Área:</span><span>${area.toFixed(2)}</span></div>
+        <div class="res-item"><span>Perímetro:</span><span>${perimetro.toFixed(2)}</span></div>
+    `;
+
+    const contenedorPasos = document.getElementById('procedimiento-contenedor');
+    const listaPasos = document.getElementById('pasos-lista');
+
+    if (contenedorPasos && listaPasos && pasos && pasos.length > 0) {
+        listaPasos.innerHTML = "";
+        const pasosUnicos = [...new Set(pasos)];
+        
+        pasosUnicos.forEach((textoPaso, index) => {
+            const div = document.createElement('div');
+            // Un poco más de margen para dar espacio a las ecuaciones grandes
+            div.style.padding = "15px 0"; 
+            div.style.borderBottom = "1px solid rgba(0,0,0,0.06)";
+            div.style.display = "flex";
+            div.style.gap = "15px"; // Separación entre número y fórmula
+            div.style.alignItems = "flex-start";
+            
+            div.innerHTML = `
+                <span style="background: var(--primary); color: white; border-radius: 50%; width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: bold; flex-shrink: 0; margin-top: 5px;">
+                    ${index + 1}
+                </span>
+                <div style="color: var(--text-color); opacity: 0.9; width: 100%; overflow-x: auto;">
+                    ${textoPaso}
+                </div>
+            `;
+            listaPasos.appendChild(div);
+        });
+
+        contenedorPasos.style.display = 'block';
+
+        // --- IMPORTANTE: FORZAR EL RENDERIZADO DE MATHJAX ---
+        if (window.MathJax) {
+            MathJax.typesetPromise([listaPasos]).then(() => {
+                console.log("Fórmulas renderizadas");
+            }).catch((err) => console.log(err));
+        }
+
+    } else if (contenedorPasos) {
+        contenedorPasos.style.display = 'none';
+    }
+}
 
 function exportarPNG() {
     const svg = document.getElementById('svg-draw');
