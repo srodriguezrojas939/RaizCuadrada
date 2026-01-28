@@ -38,10 +38,20 @@
 
     <div class="wrapper">
         <aside class="sidebar" id="sidebar">
-            <div class="nav-header">
-                <button class="icon-btn" title="Buscar"><i data-lucide="search"></i></button>
+             <div class="nav-header">
+                <button class="icon-btn raiz-btn" title="Raíz cuadrada"  onclick="window.location.href='index.html'">
+                   
+  <span class="raiz-texto">
+    <span class="raiz-arriba">√Raiz</span>
+    <span class="raiz-abajo">Cuadrada<sup>2</sup></span>
+  </span>
+</button>
+
                 <button class="icon-btn" title="Modo" onclick="toggleTheme()"><i id="theme-icon" data-lucide="moon"></i></button>
-                <button class="icon-btn" onclick="toggleMenu()" id="close-menu"><i data-lucide="x"></i></button>
+                <button class="icon-btn" onclick="location.reload()" id="close-menu">
+  <i data-lucide="x"></i>
+</button>
+
             </div>
 
             <nav>
