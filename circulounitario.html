@@ -7,11 +7,11 @@
 
     <script>
         (function() {
-            // 1. Intentamos leer la memoria
+            
             const localTheme = localStorage.getItem('theme');
-            // 2. Si hay algo guardado lo usamos, si no, usamos 'light'
+            
             const themeToSet = localTheme || 'light';
-            // 3. Lo aplicamos INMEDIATAMENTE al HTML
+            
             document.documentElement.setAttribute('data-theme', themeToSet);
         })();
     </script>
@@ -30,32 +30,32 @@
     * { touch-action: manipulation; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
     
     body { 
-        background: white; /* Fondo gris muy suave para resaltar la tarjeta */
+        background: white; 
         margin: 0; 
         padding: 20px; 
         font-family: 'Open Sans', sans-serif; 
         display: flex; 
         justify-content: center; 
-        align-items: center; /* Centrado vertical */
-        min-height: 100vh; /* Asegura altura completa */
+        align-items: center; 
+        min-height: 100vh; 
         color: #333;
         transition: background 0.3s ease;
     }
 
-    /* --- CONTENEDOR PRINCIPAL --- */
+    
     .container { 
         width: 100%; 
         max-width: 1100px; 
         background: #ffffff; 
         padding: 40px; 
         border-radius: 40px; 
-        box-shadow: 0 20px 40px rgba(0,0,0,0.08); /* Sombra estilo 'comentarios' */
+        box-shadow: 0 20px 40px rgba(0,0,0,0.08); 
         text-align: center;
         transition: all 0.3s ease;
         position: relative;
     }
 
-    /* --- ENCABEZADO --- */
+    
     .header { margin-bottom: 30px; }
     .header h1 { 
         font-family: 'Playfair Display', serif; 
@@ -74,14 +74,14 @@
         letter-spacing: 1.5px;
     }
 
-    /* --- CONTROLES SUPERIORES (PILLS) --- */
+    
     .mode-selector {
         display: inline-flex; 
         flex-wrap: wrap; 
         justify-content: center; 
         background: #f9f9f9; 
         padding: 8px; 
-        border-radius: 50px; /* Píldora completa */
+        border-radius: 50px; 
         margin-bottom: 30px; 
         gap: 10px; 
         align-items: center;
@@ -108,7 +108,7 @@
     }
     .pill:hover:not(.active) { background: #e0e0e0; color: #333; }
 
-    /* --- SELECTOR DE COLOR --- */
+    
     .color-wrapper {
         display: flex; 
         align-items: center; 
@@ -124,10 +124,10 @@
     .color-input-custom::-webkit-color-swatch-wrapper { padding: 0; }
     .color-input-custom::-webkit-color-swatch { border: none; border-radius: 50%; border: 1px solid rgba(0,0,0,0.1); }
 
-/* --- REJILLA DE GRÁFICOS (CANVAS) --- */
+
     .main-grid { 
         display: grid;
-        /* Por defecto (Móvil): Una sola columna */
+        
         grid-template-columns: 1fr; 
         justify-items: center;
         background: #f9f9f9; 
@@ -137,10 +137,10 @@
         border: 2px solid transparent;
     }
     
-    /* MODO PC: Lado a lado (2 columnas iguales) cuando la pantalla es ancha */
+    
     @media (min-width: 850px) {
         .main-grid { 
-            grid-template-columns: 1fr 1fr; /* 50% y 50% */
+            grid-template-columns: 1fr 1fr; 
             align-items: start; 
         } 
     }
@@ -149,27 +149,27 @@
         background: white; 
         padding: 10px; 
         width: 100%; 
-        /* Quitamos el max-width fijo para que aproveche su mitad de la pantalla */
+        
         max-width: 100%; 
         border-radius: 20px;
         display: flex;
         justify-content: center;
         align-items: center;
         box-shadow: 0 4px 10px rgba(0,0,0,0.03);
-        /* Aseguramos que no se desborde */
+        
         overflow: hidden; 
-        min-height: 300px; /* Altura mínima para que se vean bien */
+        min-height: 300px; 
     }
 
     canvas {
         width: 100% !important; 
         height: auto !important; 
         display: block;
-        max-height: 400px; /* Límite de altura para que no se hagan gigantes */
+        max-height: 400px; 
         object-fit: contain;
     }
 
-    /* --- PANELES DE DATOS --- */
+    
     .data-panel {
         display: grid; 
         grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
@@ -196,7 +196,7 @@
     .data-value { font-size: 22px; font-weight: 700; color: #1a1a1a; }
     .data-exact { font-size: 14px; font-weight: 600; color: #666; margin-top: 5px; }
 
-    /* --- INPUTS Y CONTROLES PEQUEÑOS --- */
+    
     .controls-group {
         display: inline-flex; align-items: center; background: #ffffff; 
         padding: 5px; border-radius: 999px; gap: 5px;
@@ -224,7 +224,7 @@
     .eye-btn:hover { color: #333; }
     .eye-btn.hidden { opacity: 0.5; }
 
-    /* --- BOTÓN DESCARGA --- */
+    
     .download-btn {
         margin-top: 35px; 
         padding: 16px 30px; 
@@ -245,9 +245,7 @@
         box-shadow: 0 12px 25px rgba(0,0,0,0.1);
     }
 
-    /* =========================================
-       MODO OSCURO (DATA-THEME="DARK")
-       ========================================= */
+    
     [data-theme="dark"] body { background: #0a0a0a;  }
     
     [data-theme="dark"] .container { 
@@ -292,93 +290,86 @@
      
     }
     
-    /* ===============================
-   CANVAS – MODO OSCURO
-   =============================== */
+    
 
-/* Tarjetas que contienen los canvas */
+
 [data-theme="dark"] .canvas-card {
     background: #0f0f0f;
     border: 1px solid #2a2a2a;
     box-shadow: inset 0 0 0 1px rgba(255,255,255,0.02);
 }
 
-/* Canvas como superficie */
+
 [data-theme="dark"] canvas {
     background: #0f0f0f;
     border-radius: 18px;
 }
 
-/* ===============================
-   TEXTO Y TRAZOS DENTRO DEL CANVAS
-   (simulados con filtros suaves)
-   =============================== */
 
-/* Mejora de contraste general */
+
+
 [data-theme="dark"] .canvas-card canvas {
     filter: contrast(1.05) brightness(1.05);
 }
 
-/* ===============================
-   AJUSTES VISUALES DE APOYO
-   =============================== */
 
-/* Grid de gráficos */
+
+
 [data-theme="dark"] .main-grid {
     background: #111;
     border: 1px solid #2a2a2a;
 }
 
-/* Datos debajo del canvas */
+
 [data-theme="dark"] .data-panel {
     gap: 18px;
 }
 
-/* Refuerzo visual de los valores */
+
 [data-theme="dark"] .data-value {
     text-shadow: 0 0 8px rgba(255,255,255,0.05);
 }
 
-/* Botón descarga más elegante en dark */
+
 [data-theme="dark"] .download-btn {
     background: #0f0f0f;
     border: 1px solid #333;
     box-shadow: 0 8px 25px rgba(0,0,0,0.6);
 }
 
-/* Hover botón descarga */
+
 [data-theme="dark"] .download-btn:hover {
     background: #141414;
 }
 
 
 
-    /* --- RESPONSIVE MOBILE --- */
+    
     @media (max-width: 600px) {
-        body { display: block; padding: 15px; } /* Quitar flex en móvil para evitar recortes */
+        body { display: block; padding: 15px; } 
         .container { padding: 25px 15px; margin-top: 20px; }
-        .data-panel { grid-template-columns: 1fr 1fr; } /* 2 columnas en móvil */
+        .data-panel { grid-template-columns: 1fr 1fr; } 
         .header h1 { font-size: 28px; }
 
         .download-btn { width: 100%; justify-content: center; }
     }
     
-    /* --- CORRECCIÓN PARA CELULAR AL FINAL DEL STYLE --- */
+    
     @media (max-width: 600px) {
         .mode-selector { 
-            flex-direction: row !important; /* Los obliga a ir de lado, no en lista */
+            flex-direction: row !important; 
             border-radius: 25px;
             justify-content: center;
         }
         
         .pill { 
-            width: auto !important; /* Quita el ancho completo */
-            padding: 8px 14px; /* Un poco más pequeños para que quepan más */
-            margin: 2px; /* Separación pequeña */
-            flex-grow: 1; /* Esto hace que se estiren un poco para llenar huecos elegantes */
+            width: auto !important; 
+            padding: 8px 14px; 
+            margin: 2px; 
+            flex-grow: 1; 
         }
         
-        /* Opcional: Centrar el selector de color si se ve raro */
+        
         .color-wrapper {
             width: auto;
             margin: 2px;
@@ -589,45 +580,45 @@
     let mode = 'sin';
     const allFuncs = ['sin', 'cos', 'tan', 'csc', 'sec', 'cot'];
     
-    // Estado de visibilidad (por defecto solo sin y cos activos para no saturar)
+    
 const visibility = { 
     sin: true, cos: true, tan: true, 
     csc: true, sec: true, cot: true 
 };
 
 function toggleVisibility(f, event) {
-    event.stopPropagation(); // Evita que se cambie el modo principal al hacer clic en el ojo
+    event.stopPropagation(); 
     visibility[f] = !visibility[f];
     renderPills();
     drawAll();
 }
-    // Colores iniciales
+    
     const colors = { 
         sin:'#FF2D55', cos:'#007AFF', tan:'#FF9500', 
         csc:'#28CD41', sec:'#FF69B4', cot:'#5AC8FA' 
     };
 
    const exactValues = {
-    // --- CUADRANTE I ---
+    
     0:   { sin:'0', cos:'1', tan:'0', csc:'∞', sec:'1', cot:'∞' },
     30:  { sin:'1/2', cos:'√3/2', tan:'√3/3', csc:'2', sec:'2√3/3', cot:'√3' },
     45:  { sin:'√2/2', cos:'√2/2', tan:'1', csc:'√2', sec:'√2', cot:'1' },
     60:  { sin:'√3/2', cos:'1/2', tan:'√3', csc:'2√3/3', sec:'2', cot:'√3/3' },
     90:  { sin:'1', cos:'0', tan:'∞', csc:'1', sec:'∞', cot:'0' },
 
-    // --- CUADRANTE II ---
+    
     120: { sin:'√3/2', cos:'-1/2', tan:'-√3', csc:'2√3/3', sec:'-2', cot:'-√3/3' },
     135: { sin:'√2/2', cos:'-√2/2', tan:'-1', csc:'√2', sec:'-√2', cot:'-1' },
     150: { sin:'1/2', cos:'-√3/2', tan:'-√3/3', csc:'2', sec:'-2√3/3', cot:'-√3' },
     180: { sin:'0', cos:'-1', tan:'0', csc:'∞', sec:'-1', cot:'∞' },
 
-    // --- CUADRANTE III ---
+    
     210: { sin:'-1/2', cos:'-√3/2', tan:'√3/3', csc:'-2', sec:'-2√3/3', cot:'√3' },
     225: { sin:'-√2/2', cos:'-√2/2', tan:'1', csc:'-√2', sec:'-√2', cot:'1' },
     240: { sin:'-√3/2', cos:'-1/2', tan:'√3', csc:'-2√3/3', sec:'-2', cot:'√3/3' },
     270: { sin:'-1', cos:'0', tan:'∞', csc:'-1', sec:'∞', cot:'0' },
 
-    // --- CUADRANTE IV ---
+    
     300: { sin:'-√3/2', cos:'1/2', tan:'-√3', csc:'-2√3/3', sec:'2', cot:'-√3/3' },
     315: { sin:'-√2/2', cos:'1/2', tan:'-1', csc:'-√2', sec:'√2', cot:'-1' },
     330: { sin:'-1/2', cos:'√3/2', tan:'-√3/3', csc:'-2', sec:'2√3/3', cot:'-√3' },
@@ -641,7 +632,7 @@ function toggleVisibility(f, event) {
             const wrapper = document.createElement('div');
             wrapper.className = 'color-wrapper';
             
-            // Selector de color (Estética imagen)
+            
             const colorInp = document.createElement('input');
             colorInp.type = 'color';
             colorInp.className = 'color-input-custom';
@@ -670,21 +661,21 @@ function toggleVisibility(f, event) {
     const cx = 250, cy = 250, r = 160;
     circleCtx.clearRect(0, 0, 500, 500);
 
-    // Fondo y Ejes (Se mantienen siempre visibles)
+    
     circleCtx.strokeStyle = '#f0f0f0'; circleCtx.lineWidth = 2;
     circleCtx.beginPath(); circleCtx.moveTo(0, cy); circleCtx.lineTo(500, cy); circleCtx.moveTo(cx, 0); circleCtx.lineTo(cx, 500); circleCtx.stroke();
     
-    // Fondo y Ejes - Etiquetas de unidad con más margen
+    
 circleCtx.font = '700 12px "Open Sans"'; circleCtx.fillStyle = '#999';
 
-// Eje X
-circleCtx.textAlign = 'left'; circleCtx.fillText('1', cx + r + 60, cy + 0);    // Antes +5
-circleCtx.textAlign = 'right'; circleCtx.fillText('-1', cx - r - 60, cy +0); // Antes -5
 
-// Eje Y
+circleCtx.textAlign = 'left'; circleCtx.fillText('1', cx + r + 60, cy + 0);    
+circleCtx.textAlign = 'right'; circleCtx.fillText('-1', cx - r - 60, cy +0); 
+
+
 circleCtx.textAlign = 'center'; 
-circleCtx.fillText('1', cx, cy - r - 60);   // Antes -5
-circleCtx.fillText('-1', cx, cy + r + 60);  // Antes +15 (ajustado para mantener equilibrio)
+circleCtx.fillText('1', cx, cy - r - 60);   
+circleCtx.fillText('-1', cx, cy + r + 60);  
 
     const notablesDeg = [0, 30, 45, 60, 90, 120, 135, 150, 180, 210, 225, 240, 270, 300, 315, 330];
     notablesDeg.forEach(deg => {
@@ -711,7 +702,7 @@ circleCtx.fillText('-1', cx, cy + r + 60);  // Antes +15 (ajustado para mantener
         const cotX = cx + r * cotV, cotY = cy - (sinV >= 0 ? r : -r);
         const secX = cx + r * secV, cscY = cy - r * cscV;
 
-        // --- LINEAS PUNTEADAS (PROYECCIONES) ---
+        
         circleCtx.setLineDash([5, 5]); circleCtx.lineWidth = 2;
         
         if(visibility.sin) {
@@ -735,7 +726,7 @@ circleCtx.fillText('-1', cx, cy + r + 60);  // Antes +15 (ajustado para mantener
         
         circleCtx.setLineDash([]);
 
-        // --- LINEAS GRUESAS (REPRESENTACIONES EXTERNAS) ---
+        
         circleCtx.lineWidth = 4;
         if(visibility.sec) {
             circleCtx.strokeStyle = colors.sec; circleCtx.beginPath(); circleCtx.moveTo(cx, cy); circleCtx.lineTo(secX, cy); circleCtx.stroke();
@@ -751,7 +742,7 @@ circleCtx.fillText('-1', cx, cy + r + 60);  // Antes +15 (ajustado para mantener
         }
     }
 
-    // --- LINEAS PRINCIPALES (SEN / COS DENTRO DEL CÍRCULO) ---
+    
     circleCtx.lineWidth = 7;
     if(visibility.cos) {
         circleCtx.strokeStyle = colors.cos; circleCtx.beginPath(); circleCtx.moveTo(cx, cy); circleCtx.lineTo(x, cy); circleCtx.stroke();
@@ -760,59 +751,59 @@ circleCtx.fillText('-1', cx, cy + r + 60);  // Antes +15 (ajustado para mantener
         circleCtx.strokeStyle = colors.sin; circleCtx.beginPath(); circleCtx.moveTo(x, cy); circleCtx.lineTo(x, y); circleCtx.stroke();
     }
 
-    // Radio y Punto de arrastre (Se mantienen siempre para poder interactuar)
+    
     circleCtx.strokeStyle = '#333'; circleCtx.lineWidth = 2;
     circleCtx.beginPath(); circleCtx.moveTo(cx, cy); circleCtx.lineTo(x, y); circleCtx.stroke();
     circleCtx.fillStyle = '#fff'; circleCtx.beginPath(); circleCtx.arc(x, y, 8, 0, Math.PI * 2); circleCtx.fill();
     circleCtx.strokeStyle = '#333'; circleCtx.lineWidth = 3; circleCtx.stroke();
     
-    // --- LÍNEA PUENTE HACIA LA GRÁFICA ---
+    
 circleCtx.setLineDash([5, 5]);
-circleCtx.strokeStyle = 'rgba(0,0,0,0.2)'; // Gris tenue
+circleCtx.strokeStyle = 'rgba(0,0,0,0.2)'; 
 circleCtx.lineWidth = 1;
 circleCtx.beginPath();
 
-// --- LÍNEA DE GUÍA VERTICAL EN EL CÍRCULO ---
+
 circleCtx.setLineDash([5, 5]);
-circleCtx.strokeStyle = 'rgba(0,0,0,0.1)'; // Estilo tenue igual al de la gráfica
+circleCtx.strokeStyle = 'rgba(0,0,0,0.1)'; 
 circleCtx.lineWidth = 1;
 circleCtx.beginPath();
 
-// Dibujamos la línea que cruza todo el canvas verticalmente pasando por 'x'
+
 circleCtx.moveTo(x, 0);
 circleCtx.lineTo(x, 500);
 circleCtx.stroke();
 
-if (visibility[mode]) { // Solo si la función actual es visible
+if (visibility[mode]) { 
     circleCtx.setLineDash([5, 5]);
-    circleCtx.strokeStyle = colors[mode] + '66'; // Mismo color con transparencia
+    circleCtx.strokeStyle = colors[mode] + '66'; 
     circleCtx.lineWidth = 1;
     circleCtx.beginPath();
 
     let anchorX, anchorY;
 
-    // Lógica de anclaje según la naturaleza de la función
+    
     switch(mode) {
         case 'sin': anchorX = x; anchorY = y; break;
-        case 'cos': anchorX = x; anchorY = cy; break; // Nace desde el eje X
+        case 'cos': anchorX = x; anchorY = cy; break; 
         case 'tan': anchorX = cx + r; anchorY = cy - r * Math.tan(currentAngle); break;
         case 'sec': anchorX = cx + r * (1/Math.cos(currentAngle)); anchorY = cy; break;
         case 'csc': anchorX = cx; anchorY = cy - r * (1/Math.sin(currentAngle)); break;
         case 'cot': anchorX = cx + r * (1/Math.tan(currentAngle)); anchorY = cy - (Math.sin(currentAngle) >= 0 ? r : -r); break;
     }
 
-    // Solo dibujamos si el valor es razonable (evita saltos al infinito)
-    const val = Math.abs(Math.sin(currentAngle)); // Referencia para funciones infinitas
+    
+    const val = Math.abs(Math.sin(currentAngle)); 
     if (Math.abs(anchorY - cy) < 1000) {
         circleCtx.moveTo(anchorX, anchorY);
-        circleCtx.lineTo(500, anchorY); // Viaja al borde del canvas
+        circleCtx.lineTo(500, anchorY); 
         circleCtx.stroke();
     }
     circleCtx.setLineDash([]);
 }
 }
 function drawGraph() {
-    const w = 500, h = 500, midY = h / 2, amp = 160; // Sincronizado con el radio r=160
+    const w = 500, h = 500, midY = h / 2, amp = 160; 
     graphCtx.clearRect(0, 0, 500, 500);
 
     const fns = { 
@@ -824,41 +815,41 @@ function drawGraph() {
         cot: a => 1/Math.tan(a) 
     };
 
-    // 1. Cálculos de posición actual (Se calculan una sola vez)
+    
     let n = currentAngle % (Math.PI * 2); 
     if(n < 0) n += Math.PI * 2;
     let vm = fns[mode](n);
-    const gx = 50 + (n / (Math.PI * 2)) * 400; // Mapeo de 0-2π al ancho del gráfico
+    const gx = 50 + (n / (Math.PI * 2)) * 400; 
     const my = midY - vm * amp;
 
-    // 2. Dibujo de Ejes (Al fondo)
+    
     graphCtx.strokeStyle = '#eee'; 
     graphCtx.lineWidth = 2;
     graphCtx.beginPath(); 
-    graphCtx.moveTo(50, 0); graphCtx.lineTo(50, h);   // Eje Y
-    graphCtx.moveTo(0, midY); graphCtx.lineTo(w, midY); // Eje X
+    graphCtx.moveTo(50, 0); graphCtx.lineTo(50, h);   
+    graphCtx.moveTo(0, midY); graphCtx.lineTo(w, midY); 
     graphCtx.stroke();
 
-    // 3. Líneas de Guía (Vínculo visual)
+    
     graphCtx.setLineDash([5, 5]);
     
-    // --- LÍNEA PUENTE HORIZONTAL (Viene del círculo) ---
-    graphCtx.strokeStyle = 'rgba(0,0,0,0.15)'; // Gris tenue para no distraer
+    
+    graphCtx.strokeStyle = 'rgba(0,0,0,0.15)'; 
     graphCtx.beginPath();
     graphCtx.moveTo(0, my); 
     graphCtx.lineTo(gx, my);
     graphCtx.stroke();
 
-    // --- LÍNEA DE GUÍA VERTICAL (Posición del ángulo) ---
+    
     graphCtx.strokeStyle = 'rgba(0,0,0,0.1)'; 
     graphCtx.beginPath();
     graphCtx.moveTo(gx, 0); 
     graphCtx.lineTo(gx, h);
     graphCtx.stroke();
     
-    graphCtx.setLineDash([]); // Resetear estilo de línea
+    graphCtx.setLineDash([]); 
 
-    // 4. Etiquetas de escala y radianes
+    
     graphCtx.fillStyle = '#999'; 
     graphCtx.font = '700 11px "Open Sans"';
     graphCtx.textAlign = 'right'; 
@@ -881,7 +872,7 @@ function drawGraph() {
         graphCtx.stroke();
     });
 
-    // 5. Dibujo de la curva de la función
+    
     graphCtx.strokeStyle = colors[mode]; 
     graphCtx.lineWidth = 3;
     graphCtx.beginPath();
@@ -889,7 +880,7 @@ function drawGraph() {
         const a = (i / 400) * Math.PI * 2;
         let v = fns[mode](a);
         
-        // Evitar que las funciones infinitas (tan, csc...) ensucien el canvas
+        
         if(Math.abs(v) > 15) v = v > 0 ? 15 : -15; 
         const py = midY - v * amp;
 
@@ -903,8 +894,8 @@ function drawGraph() {
     }
     graphCtx.stroke();
 
-    // 6. Punto indicador (La "bola" que recorre la curva)
-    if(Math.abs(vm) < 10) { // Solo dibujar si no está en el infinito
+    
+    if(Math.abs(vm) < 10) { 
         graphCtx.fillStyle = colors[mode]; 
         graphCtx.beginPath(); 
         graphCtx.arc(gx, my, 7, 0, Math.PI * 2); 
@@ -948,18 +939,18 @@ function drawGraph() {
     }
 
     function saveCanvas(canvas, filename) {
-        // Crear canvas temporal para añadir marca de agua
+        
         const tempCanvas = document.createElement('canvas');
         tempCanvas.width = canvas.width;
         tempCanvas.height = canvas.height;
         const ctx = tempCanvas.getContext('2d');
 
-        // Dibujar original
+        
         ctx.fillStyle = "white";
         ctx.fillRect(0,0,tempCanvas.width, tempCanvas.height);
         ctx.drawImage(canvas, 0, 0);
 
-        // Marca de agua
+        
         ctx.font = "bold 16px 'Playfair Display'";
         ctx.fillStyle = "rgba(0,0,0,0.5)";
         ctx.textAlign = "right";
@@ -993,11 +984,11 @@ function renderPills() {
     const container = document.getElementById('pills-container');
     container.innerHTML = '';
 
-    // --- 1. GRUPO DE CONTROLES (Píldora Gris unificada) ---
+    
     const controlsGroup = document.createElement('div');
     controlsGroup.className = 'controls-group';
 
-    // Sub-píldora: Botón Play/Pause (Icono gris)
+    
     const playBtn = document.createElement('div');
     playBtn.className = 'control-item';
     playBtn.innerHTML = isPlaying 
@@ -1006,7 +997,7 @@ function renderPills() {
     playBtn.onclick = togglePlay;
     controlsGroup.appendChild(playBtn);
 
-    // Sub-píldora: Input de Ángulo con Brújula
+    
     const inputWrapper = document.createElement('div');
     inputWrapper.className = 'control-item';
     inputWrapper.style.cursor = 'default';
@@ -1017,10 +1008,10 @@ function renderPills() {
     `;
     controlsGroup.appendChild(inputWrapper);
     
-    // Añadimos el grupo gris al contenedor principal
+    
     container.appendChild(controlsGroup);
 
-    // --- 2. FUNCIONES TRIGONOMÉTRICAS (Tus píldoras de colores) ---
+    
     allFuncs.forEach(f => {
         const wrapper = document.createElement('div');
         wrapper.className = 'color-wrapper';
@@ -1043,7 +1034,7 @@ function renderPills() {
         
         const eyeBtn = document.createElement('div');
     eyeBtn.className = `eye-btn ${!visibility[f] ? 'hidden' : ''}`;
-    // Si la visibilidad es falsa, muestra eye-off
+    
     eyeBtn.innerHTML = visibility[f] 
         ? `<i data-lucide="eye" size="14"></i>` 
         : `<i data-lucide="eye-off" size="14"></i>`;
@@ -1056,16 +1047,16 @@ function renderPills() {
         
     });
 
-    // Inicializar iconos de Lucide para que se rendericen los nuevos cambios
+    
     lucide.createIcons();
 }
 
-// Lógica de Animación
+
 function togglePlay() {
     isPlaying = !isPlaying;
     if (isPlaying) animate();
     else cancelAnimationFrame(animationId);
-    renderPills(); // Para actualizar el icono de play/pause
+    renderPills(); 
 }
 
 function animate() {
@@ -1074,7 +1065,7 @@ function animate() {
     animationId = requestAnimationFrame(animate);
 }
 
-// Lógica de Input Manual
+
 function setManualAngle(val) {
     if (val === "" || isNaN(val)) return;
     currentAngle = (parseFloat(val) * Math.PI / 180);
@@ -1106,7 +1097,7 @@ function fixDPI(canvas) {
     canvas.width = rect.width * dpr;
     canvas.height = rect.height * dpr;
     const ctx = canvas.getContext('2d');
-    ctx.scale(dpr * (rect.width/500), dpr * (rect.height/500)); // Ajuste proporcional
+    ctx.scale(dpr * (rect.width/500), dpr * (rect.height/500)); 
 }
 
     circleCanvas.addEventListener('mousedown', () => isDragging = true);
