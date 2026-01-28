@@ -230,8 +230,7 @@
         margin-top: 35px; 
         padding: 16px 30px; 
         border-radius: 999px; 
-        border: 1px;
-         border-color: #1a1a1a;
+      
         background: #FFFFFF; 
         color: black; 
         font-weight: 700; 
@@ -272,7 +271,6 @@
 
     [data-theme="dark"] .color-wrapper { background: #222; border-color: #444; }
     
-    [data-theme="dark"] .canvas-card { background: ##1a1a1a;}
 
     [data-theme="dark"] .data-item { 
         background: #1a1a1a; 
@@ -289,8 +287,71 @@
     [data-theme="dark"] .download-btn { 
         background: #0a0a0a; 
         color: #ffffff; 
+          border: 1px;
+         border-color: #1a1a1a;
      
     }
+    
+    /* ===============================
+   CANVAS – MODO OSCURO
+   =============================== */
+
+/* Tarjetas que contienen los canvas */
+[data-theme="dark"] .canvas-card {
+    background: #0f0f0f;
+    border: 1px solid #2a2a2a;
+    box-shadow: inset 0 0 0 1px rgba(255,255,255,0.02);
+}
+
+/* Canvas como superficie */
+[data-theme="dark"] canvas {
+    background: #0f0f0f;
+    border-radius: 18px;
+}
+
+/* ===============================
+   TEXTO Y TRAZOS DENTRO DEL CANVAS
+   (simulados con filtros suaves)
+   =============================== */
+
+/* Mejora de contraste general */
+[data-theme="dark"] .canvas-card canvas {
+    filter: contrast(1.05) brightness(1.05);
+}
+
+/* ===============================
+   AJUSTES VISUALES DE APOYO
+   =============================== */
+
+/* Grid de gráficos */
+[data-theme="dark"] .main-grid {
+    background: #111;
+    border: 1px solid #2a2a2a;
+}
+
+/* Datos debajo del canvas */
+[data-theme="dark"] .data-panel {
+    gap: 18px;
+}
+
+/* Refuerzo visual de los valores */
+[data-theme="dark"] .data-value {
+    text-shadow: 0 0 8px rgba(255,255,255,0.05);
+}
+
+/* Botón descarga más elegante en dark */
+[data-theme="dark"] .download-btn {
+    background: #0f0f0f;
+    border: 1px solid #333;
+    box-shadow: 0 8px 25px rgba(0,0,0,0.6);
+}
+
+/* Hover botón descarga */
+[data-theme="dark"] .download-btn:hover {
+    background: #141414;
+}
+
+
 
     /* --- RESPONSIVE MOBILE --- */
     @media (max-width: 600px) {
