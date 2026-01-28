@@ -499,40 +499,4 @@ a:hover {
         
 
      
-        @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@800;900&display=swap');
-
-
-
-.raiz-btn {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  font-family: 'Playfair Display', serif;
-  font-weight: 900;
-}
-
-
-.raiz-texto {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  line-height: 1;
-}
-
-.raiz-arriba {
-  font-size: 16px;
-}
-
-.raiz-abajo {
-  font-size: 16px;
-}
-
-.raiz-abajo sup {
-  font-size: 10px;
-}
-
-.raiz-btn {
-  background: none;
-  border: none;
-  cursor: pointer;
-}
+    
