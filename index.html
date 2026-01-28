@@ -8,11 +8,11 @@
     
     <script>
         (function() {
-            // 1. Intentamos leer la memoria
+     
             const localTheme = localStorage.getItem('theme');
-            // 2. Si hay algo guardado lo usamos, si no, usamos 'light'
+  
             const themeToSet = localTheme || 'light';
-            // 3. Lo aplicamos INMEDIATAMENTE al HTML
+       
             document.documentElement.setAttribute('data-theme', themeToSet);
         })();
     </script>
@@ -2350,7 +2350,7 @@ body[data-theme="dark"] .card:hover {
            
         </main>
     </div>
-
+    <script src="script.js"></script>
     <script>
         // Inicializar Iconos
         lucide.createIcons();
@@ -2471,6 +2471,8 @@ function toggleSubmenu(element) {
     
 
     </script>
+
+    
 </body>
 <button class="mobile-theme-toggle" onclick="toggleTheme()" aria-label="Cambiar tema">
     <i data-lucide="sun" class="icon-sun"></i>
