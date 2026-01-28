@@ -1067,24 +1067,111 @@ function resolver() {
     const f = (n) => Number(n).toFixed(2); 
 
     // --- CASO ESPECIAL: PITÁGORAS ---
+  // --- CASO ESPECIAL: TRIÁNGULO RECTÁNGULO (SOH-CAH-TOA) ---
+    // Asumimos B=90°, b=Hipotenusa
     if (mode === 'rect') {
+        
+        // 1. SI TENEMOS DOS LADOS (Hallamos el 3ro y el Ángulo A)
+        
+        // A) Tenemos Hipotenusa (b) y Cateto Opuesto (a) -> Usamos SENO
         if (a && b && !c) {
             c = Math.sqrt(Math.abs(b*b - a*a));
-            pasos.push(`<b>Teorema de Pitágoras:</b><br>
+            pasos.push(`<b>Teorema de Pitágoras (Hallar lado c):</b><br>
             $$ c = \\sqrt{b^2 - a^2} = \\sqrt{${f(b)}^2 - ${f(a)}^2} = \\mathbf{${f(c)}} $$`);
+
+            if (!A) {
+                A = toDeg(Math.asin(a/b));
+                pasos.push(`<b>Trigonometría (Hallar ángulo α):</b><br>
+                Usamos la razón <b>Seno</b> (Opuesto / Hipotenusa):
+                $$ \\sin(\\alpha) = \\frac{a}{b} = \\frac{${f(a)}}{${f(b)}} $$
+                $$ \\alpha = \\arcsin(${f(a/b)}) = \\mathbf{${f(A)}^\\circ} $$`);
+            }
         }
-        if (c && b && !a) {
+        // B) Tenemos Hipotenusa (b) y Cateto Adyacente (c) -> Usamos COSENO
+        else if (c && b && !a) {
             a = Math.sqrt(Math.abs(b*b - c*c));
-            pasos.push(`<b>Teorema de Pitágoras:</b><br>
+            pasos.push(`<b>Teorema de Pitágoras (Hallar lado a):</b><br>
             $$ a = \\sqrt{b^2 - c^2} = \\sqrt{${f(b)}^2 - ${f(c)}^2} = \\mathbf{${f(a)}} $$`);
+
+            if (!A) {
+                A = toDeg(Math.acos(c/b));
+                pasos.push(`<b>Trigonometría (Hallar ángulo α):</b><br>
+                Usamos la razón <b>Coseno</b> (Adyacente / Hipotenusa):
+                $$ \\cos(\\alpha) = \\frac{c}{b} = \\frac{${f(c)}}{${f(b)}} $$
+                $$ \\alpha = \\arccos(${f(c/b)}) = \\mathbf{${f(A)}^\\circ} $$`);
+            }
         }
-        if (a && c && !b) {
+        // C) Tenemos los dos Catetos (a y c) -> Usamos TANGENTE
+        else if (a && c && !b) {
             b = Math.sqrt(a*a + c*c);
-            pasos.push(`<b>Teorema de Pitágoras:</b><br>
+            pasos.push(`<b>Teorema de Pitágoras (Hallar hipotenusa):</b><br>
             $$ b = \\sqrt{a^2 + c^2} = \\sqrt{${f(a)}^2 + ${f(c)}^2} = \\mathbf{${f(b)}} $$`);
+
+            if (!A) {
+                A = toDeg(Math.atan(a/c));
+                pasos.push(`<b>Trigonometría (Hallar ángulo α):</b><br>
+                Usamos la razón <b>Tangente</b> (Opuesto / Adyacente):
+                $$ \\tan(\\alpha) = \\frac{a}{c} = \\frac{${f(a)}}{${f(c)}} $$
+                $$ \\alpha = \\arctan(${f(a/c)}) = \\mathbf{${f(A)}^\\circ} $$`);
+            }
+        }
+
+        // 2. SI TENEMOS UN ÁNGULO Y UN LADO (Despejamos fórmulas básicas)
+        
+        // Convertir Gamma a Alpha si es necesario (para simplificar lógica)
+        if (!A && G) {
+            A = 90 - G;
+            pasos.push(`<b>Ángulos Complementarios:</b><br> $$ \\alpha = 90^\\circ - \\gamma = 90^\\circ - ${f(G)}^\\circ = ${f(A)}^\\circ $$`);
+        }
+
+        if (A) {
+            // D) Tenemos Ángulo A e Hipotenusa (b)
+            if (b && (!a || !c)) {
+                if (!a) {
+                    a = b * Math.sin(toRad(A));
+                    pasos.push(`<b>Despeje de Seno (Hallar 'a'):</b><br>
+                    $$ \\sin(\\alpha) = \\frac{a}{b} \\Rightarrow a = b \\cdot \\sin(\\alpha) $$
+                    $$ a = ${f(b)} \\cdot \\sin(${f(A)}^\\circ) = \\mathbf{${f(a)}} $$`);
+                }
+                if (!c) {
+                    c = b * Math.cos(toRad(A));
+                    pasos.push(`<b>Despeje de Coseno (Hallar 'c'):</b><br>
+                    $$ \\cos(\\alpha) = \\frac{c}{b} \\Rightarrow c = b \\cdot \\cos(\\alpha) $$
+                    $$ c = ${f(b)} \\cdot \\cos(${f(A)}^\\circ) = \\mathbf{${f(c)}} $$`);
+                }
+            }
+            // E) Tenemos Ángulo A y Cateto Opuesto (a)
+            else if (a && (!b || !c)) {
+                if (!b) {
+                    b = a / Math.sin(toRad(A));
+                    pasos.push(`<b>Despeje de Seno (Hallar Hipotenusa):</b><br>
+                    $$ \\sin(\\alpha) = \\frac{a}{b} \\Rightarrow b = \\frac{a}{\\sin(\\alpha)} $$
+                    $$ b = \\frac{${f(a)}}{\\sin(${f(A)}^\\circ)} = \\mathbf{${f(b)}} $$`);
+                }
+                if (!c) {
+                    c = a / Math.tan(toRad(A));
+                    pasos.push(`<b>Despeje de Tangente (Hallar 'c'):</b><br>
+                    $$ \\tan(\\alpha) = \\frac{a}{c} \\Rightarrow c = \\frac{a}{\\tan(\\alpha)} $$
+                    $$ c = \\frac{${f(a)}}{\\tan(${f(A)}^\\circ)} = \\mathbf{${f(c)}} $$`);
+                }
+            }
+            // F) Tenemos Ángulo A y Cateto Adyacente (c)
+            else if (c && (!b || !a)) {
+                if (!b) {
+                    b = c / Math.cos(toRad(A));
+                    pasos.push(`<b>Despeje de Coseno (Hallar Hipotenusa):</b><br>
+                    $$ \\cos(\\alpha) = \\frac{c}{b} \\Rightarrow b = \\frac{c}{\\cos(\\alpha)} $$
+                    $$ b = \\frac{${f(c)}}{\\cos(${f(A)}^\\circ)} = \\mathbf{${f(b)}} $$`);
+                }
+                if (!a) {
+                    a = c * Math.tan(toRad(A));
+                    pasos.push(`<b>Despeje de Tangente (Hallar 'a'):</b><br>
+                    $$ \\tan(\\alpha) = \\frac{a}{c} \\Rightarrow a = c \\cdot \\tan(\\alpha) $$
+                    $$ a = ${f(c)} \\cdot \\tan(${f(A)}^\\circ) = \\mathbf{${f(a)}} $$`);
+                }
+            }
         }
     }
-
     // --- MOTOR MATEMÁTICO ITERATIVO ---
     for (let i = 0; i < 6; i++) {
         // 1. Suma de Ángulos
