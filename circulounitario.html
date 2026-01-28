@@ -1,0 +1,1069 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>√(Raiz) Cuadrada² </title>
+
+    <script>
+        (function() {
+            // 1. Intentamos leer la memoria
+            const localTheme = localStorage.getItem('theme');
+            // 2. Si hay algo guardado lo usamos, si no, usamos 'light'
+            const themeToSet = localTheme || 'light';
+            // 3. Lo aplicamos INMEDIATAMENTE al HTML
+            document.documentElement.setAttribute('data-theme', themeToSet);
+        })();
+    </script>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600&family=Playfair+Display:ital,wght@0,700;0,900;1,700&display=swap" rel="stylesheet">
+    
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <link rel="stylesheet" href="styles.css">
+
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Open+Sans:wght@400;600;700&display=swap');
+
+    * { touch-action: manipulation; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+    
+    body { 
+        background: white; /* Fondo gris muy suave para resaltar la tarjeta */
+        margin: 0; 
+        padding: 20px; 
+        font-family: 'Open Sans', sans-serif; 
+        display: flex; 
+        justify-content: center; 
+        align-items: center; /* Centrado vertical */
+        min-height: 100vh; /* Asegura altura completa */
+        color: #333;
+        transition: background 0.3s ease;
+    }
+
+    /* --- CONTENEDOR PRINCIPAL --- */
+    .container { 
+        width: 100%; 
+        max-width: 1100px; 
+        background: #ffffff; 
+        padding: 40px; 
+        border-radius: 40px; 
+        box-shadow: 0 20px 40px rgba(0,0,0,0.08); /* Sombra estilo 'comentarios' */
+        text-align: center;
+        transition: all 0.3s ease;
+        position: relative;
+    }
+
+    /* --- ENCABEZADO --- */
+    .header { margin-bottom: 30px; }
+    .header h1 { 
+        font-family: 'Playfair Display', serif; 
+        font-size: clamp(24px, 5vw, 36px); 
+        margin: 0; 
+        color: #1a1a1a;
+        line-height: 1.1;
+    }
+    .header p { 
+        font-family: 'Open Sans', sans-serif; 
+        font-size: 13px; 
+        color: #999; 
+        margin-top: 10px; 
+        font-weight: 700; 
+        text-transform: uppercase; 
+        letter-spacing: 1.5px;
+    }
+
+    /* --- CONTROLES SUPERIORES (PILLS) --- */
+    .mode-selector {
+        display: inline-flex; 
+        flex-wrap: wrap; 
+        justify-content: center; 
+        background: #f9f9f9; 
+        padding: 8px; 
+        border-radius: 50px; /* Píldora completa */
+        margin-bottom: 30px; 
+        gap: 10px; 
+        align-items: center;
+        box-shadow: inset 0 1px 3px rgba(0,0,0,0.06);
+    }
+
+    .pill {
+        padding: 10px 20px; 
+        border-radius: 999px; 
+        cursor: pointer; 
+        font-size: 13px;
+        font-weight: 600; 
+        transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1); 
+        color: #666; 
+        text-transform: capitalize; 
+        font-family: 'Open Sans', sans-serif;
+    }
+
+    .pill.active { 
+        background: #1a1a1a; 
+        color: #fff !important; 
+        box-shadow: 0 4px 12px rgba(0,0,0,0.15); 
+        transform: scale(1.02);
+    }
+    .pill:hover:not(.active) { background: #e0e0e0; color: #333; }
+
+    /* --- SELECTOR DE COLOR --- */
+    .color-wrapper {
+        display: flex; 
+        align-items: center; 
+        gap: 8px; 
+        background: #ffffff; 
+        padding: 5px 12px; 
+        border-radius: 999px; 
+        border: 1px solid #eee;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+    }
+    .color-input-custom {
+        -webkit-appearance: none; border: none; width: 20px; height: 20px; cursor: pointer; border-radius: 50%; padding: 0;
+    }
+    .color-input-custom::-webkit-color-swatch-wrapper { padding: 0; }
+    .color-input-custom::-webkit-color-swatch { border: none; border-radius: 50%; border: 1px solid rgba(0,0,0,0.1); }
+
+/* --- REJILLA DE GRÁFICOS (CANVAS) --- */
+    .main-grid { 
+        display: grid;
+        /* Por defecto (Móvil): Una sola columna */
+        grid-template-columns: 1fr; 
+        justify-items: center;
+        background: #f9f9f9; 
+        padding: 20px;
+        border-radius: 30px;
+        gap: 20px; 
+        border: 2px solid transparent;
+    }
+    
+    /* MODO PC: Lado a lado (2 columnas iguales) cuando la pantalla es ancha */
+    @media (min-width: 850px) {
+        .main-grid { 
+            grid-template-columns: 1fr 1fr; /* 50% y 50% */
+            align-items: start; 
+        } 
+    }
+
+    .canvas-card {
+        background: white; 
+        padding: 10px; 
+        width: 100%; 
+        /* Quitamos el max-width fijo para que aproveche su mitad de la pantalla */
+        max-width: 100%; 
+        border-radius: 20px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.03);
+        /* Aseguramos que no se desborde */
+        overflow: hidden; 
+        min-height: 300px; /* Altura mínima para que se vean bien */
+    }
+
+    canvas {
+        width: 100% !important; 
+        height: auto !important; 
+        display: block;
+        max-height: 400px; /* Límite de altura para que no se hagan gigantes */
+        object-fit: contain;
+    }
+
+    /* --- PANELES DE DATOS --- */
+    .data-panel {
+        display: grid; 
+        grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+        gap: 15px; 
+        margin-top: 30px;
+    }
+
+    .data-item {
+        padding: 20px 15px; 
+        border-radius: 50px;
+        display: flex; 
+        flex-direction: column; 
+        justify-content: center; 
+        min-height: 110px;
+        box-shadow: 0 10px 25px rgba(0,0,0,0.04);
+        background: white; 
+        border: 1px solid #f0f0f0;
+        transition: transform 0.3s ease;
+    }
+    .data-item:hover { transform: translateY(-3px); }
+    .data-item.hidden { display: none; }
+
+    .data-label { font-size: 11px; font-weight: 700; color: #999; text-transform: uppercase; margin-bottom: 8px; letter-spacing: 0.5px; }
+    .data-value { font-size: 22px; font-weight: 700; color: #1a1a1a; }
+    .data-exact { font-size: 14px; font-weight: 600; color: #666; margin-top: 5px; }
+
+    /* --- INPUTS Y CONTROLES PEQUEÑOS --- */
+    .controls-group {
+        display: inline-flex; align-items: center; background: #ffffff; 
+        padding: 5px; border-radius: 999px; gap: 5px;
+        vertical-align: middle;    border: none;
+    }
+
+    .control-item {
+        display: flex; align-items: center; background: white; 
+        padding: 6px 12px; border-radius: 20px; 
+        cursor: pointer; transition: 0.2s; color: #555;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.05);    border: none;
+    }
+    .control-item:hover { transform: scale(1.05); color: #000; }
+
+    .angle-input {
+        border: none; outline: none; width: 40px; 
+        font-family: 'Open Sans', sans-serif; font-weight: 700; 
+        font-size: 13px; text-align: center; color: #333;
+        background: transparent;
+    }
+
+    .eye-btn {
+        margin-left: 8px;  margin-right: 8px; margin-top: 6px;cursor: pointer; color: #999; transition: 0.2s;
+    }
+    .eye-btn:hover { color: #333; }
+    .eye-btn.hidden { opacity: 0.5; }
+
+    /* --- BOTÓN DESCARGA --- */
+    .download-btn {
+        margin-top: 35px; 
+        padding: 16px 30px; 
+        border-radius: 999px; 
+        border: none;
+        background: #FFFFFF; 
+        color: black; 
+        font-weight: 700; 
+        cursor: pointer;
+        font-family: 'Open Sans', sans-serif; 
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        display: inline-flex; align-items: center; gap: 10px;
+        box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+    }
+    .download-btn:hover { 
+        transform: translateY(-3px); 
+        box-shadow: 0 12px 25px rgba(0,0,0,0.1);
+    }
+
+    /* =========================================
+       MODO OSCURO (DATA-THEME="DARK")
+       ========================================= */
+    [data-theme="dark"] body { background: #0a0a0a;  }
+    
+    [data-theme="dark"] .container { 
+        background: #transparent; 
+         box-shadow: none;
+        border: 1px solid rgba(255,255,255,0.1);
+    }
+
+    [data-theme="dark"] .header h1 { color: #ffffff; }
+    [data-theme="dark"] .header p { color: #888; }
+
+    [data-theme="dark"] .mode-selector, 
+    [data-theme="dark"] .main-grid,
+    [data-theme="dark"] .controls-group { 
+        background: #1a1a1a; border-color: #333;
+    }
+
+    [data-theme="dark"] .pill { color: #aaa; }
+    [data-theme="dark"] .pill:hover:not(.active) { background: #333; color: #fff; }
+    [data-theme="dark"] .pill.active { background: #ffffff; color: #000 !important; }
+
+    [data-theme="dark"] .color-wrapper { background: #222; border-color: #444; }
+    
+    [data-theme="dark"] .canvas-card { background: #ffffff; /* El canvas suele necesitar fondo blanco para ver líneas negras */ }
+
+    [data-theme="dark"] .data-item { 
+        background: #1a1a1a; 
+        border-color: #333; 
+        box-shadow: none;
+    }
+    [data-theme="dark"] .data-label { color: #777; }
+    [data-theme="dark"] .data-value { color: #ffffff; }
+    [data-theme="dark"] .data-exact { color: #aaa; }
+
+    [data-theme="dark"] .control-item { background: #2a2a2a; color: #ddd; }
+    [data-theme="dark"] .angle-input { color: #fff; }
+    
+    [data-theme="dark"] .download-btn { 
+        background: #ffffff; 
+        color: #000; 
+        box-shadow: 0 5px 15px rgba(255,255,255,0.1);
+    }
+    [data-theme="dark"] .download-btn:hover { background: #e0e0e0; }
+
+    /* --- RESPONSIVE MOBILE --- */
+    @media (max-width: 600px) {
+        body { display: block; padding: 15px; } /* Quitar flex en móvil para evitar recortes */
+        .container { padding: 25px 15px; margin-top: 20px; }
+        .data-panel { grid-template-columns: 1fr 1fr; } /* 2 columnas en móvil */
+        .header h1 { font-size: 28px; }
+
+        .download-btn { width: 100%; justify-content: center; }
+    }
+    
+    /* --- CORRECCIÓN PARA CELULAR AL FINAL DEL STYLE --- */
+    @media (max-width: 600px) {
+        .mode-selector { 
+            flex-direction: row !important; /* Los obliga a ir de lado, no en lista */
+            border-radius: 25px;
+            justify-content: center;
+        }
+        
+        .pill { 
+            width: auto !important; /* Quita el ancho completo */
+            padding: 8px 14px; /* Un poco más pequeños para que quepan más */
+            margin: 2px; /* Separación pequeña */
+            flex-grow: 1; /* Esto hace que se estiren un poco para llenar huecos elegantes */
+        }
+        
+        /* Opcional: Centrar el selector de color si se ve raro */
+        .color-wrapper {
+            width: auto;
+            margin: 2px;
+        }
+    }
+</style>
+    </head>
+<body>
+
+    
+    <header class="mobile-header">
+        <div class="nav-header">
+            <button class="icon-btn"><i data-lucide="search"></i></button>
+            <button class="icon-btn" onclick="toggleTheme()"><i data-lucide="moon"></i></button>
+        </div>
+        <button class="icon-btn" onclick="toggleMenu()"><i data-lucide="menu"></i></button>
+    </header>
+
+    <div class="wrapper">
+        <aside class="sidebar" id="sidebar">
+            <div class="nav-header">
+               <button class="icon-btn" title="Inicio"
+        onclick="window.location.href='index.html'">
+  <i data-lucide="home"></i>
+</button>
+
+<button class="icon-btn" title="Modo"
+        onclick="toggleTheme()">
+  <i id="theme-icon" data-lucide="moon"></i>
+</button>
+
+<button class="icon-btn" title="Recargar"
+        onclick="location.reload()"
+        id="close-menu">
+  <i data-lucide="x"></i>
+</button>
+
+            </div>
+
+            <nav>
+                <ul class="nav-links">
+                    <li><a href="index.html"><i data-lucide="square-radical"></i> Página Principal</a></li>
+
+                    
+                    <div class="nav-group">
+    <div class="nav-item has-submenu" onclick="toggleSubmenu(this)">
+        <div class="nav-text-container">
+            <i data-lucide="calculator"></i>
+            <span>CALCULADORA</span>
+        </div>
+        <i data-lucide="chevron-down" class="arrow-icon"></i>
+    </div>
+    
+    <div class="submenu">
+        <a href="ecuaciones.html"><i data-lucide="equal" class="sub-icon"></i> Ecuaciones</a>
+        <a href="sistemas.html"><i data-lucide="layers" class="sub-icon"></i> Sistemas Ecuaciones</a>
+        <a href="matrices.html"><i data-lucide="grid-3x3" class="sub-icon"></i> Matrices</a>
+        <a href="derivadas.html"><i data-lucide="trending-up" class="sub-icon"></i> Derivadas</a>
+        <a href="integrales.html"><i data-lucide="sigma" class="sub-icon"></i> Integrales</a>
+        <a href="laplace.html"><i data-lucide="waves" class="sub-icon"></i> Transf. Laplace</a>
+    </div>
+</div>
+
+<div class="nav-group">
+    <div class="nav-item has-submenu" onclick="toggleSubmenu(this)">
+        <div class="nav-text-container">
+            <i data-lucide="ruler"></i>
+            <span>HERRAMIENTAS</span>
+        </div>
+        <i data-lucide="chevron-down" class="arrow-icon"></i>
+    </div>
+    
+    <div class="submenu">
+        <a href="simbolos.html"><i data-lucide="omega" class="sub-icon"></i> Símbolos</a>
+        <a href="factorizar.html"><i data-lucide="divide" class="sub-icon"></i> Factorizadora</a>
+        <a href="fraccionesparciales.html"><i data-lucide="percent" class="sub-icon"></i> Fracciones Parciales</a>
+        <a href="triangulos.html"><i data-lucide="triangle" class="sub-icon"></i> Calc. Triángulos</a>
+        <a href="vectores.html"><i data-lucide="move-diagonal" class="sub-icon"></i> Vectores</a>
+        <a href="circulounitario.html"><i data-lucide="circle" class="sub-icon"></i> Círculo Unitario</a>
+        <a href="editor.html"><i data-lucide="edit-3" class="sub-icon"></i> Editor Expresiones</a>
+    </div>
+</div>
+
+<div class="nav-group">
+    <div class="nav-item has-submenu" onclick="toggleSubmenu(this)">
+        <div class="nav-text-container">
+            <i data-lucide="activity"></i>
+            <span>GRAFICADORAS</span>
+        </div>
+        <i data-lucide="chevron-down" class="arrow-icon"></i>
+    </div>
+    
+    <div class="submenu">
+        <a href="graficadora2d.html"><i data-lucide="line-chart" class="sub-icon"></i> Funciones 2D</a>
+        <a href="graficadora3d.html"><i data-lucide="box" class="sub-icon"></i> Graficadora 3D</a>
+        <a href="conicas.html"><i data-lucide="orbit" class="sub-icon"></i> Cónicas</a>
+        <a href="campos.html"><i data-lucide="wind" class="sub-icon"></i> Campos Vectoriales</a>
+    </div>
+</div>
+
+                    
+                    <li><a href="cursos.html"><i data-lucide="book-open"></i> CURSOS</a></li>
+                    <li><a href="formularios.html"><i data-lucide="file-text"></i> FORMULARIOS</a></li>
+                    <li><a href="youtube.html"><i data-lucide="youtube"></i> Canal de YouTube</a></li>
+                    <li><a href="autor.html"><i data-lucide="user"></i> Sobre el autor</a></li>
+                </ul>
+            </nav>
+        </aside>
+
+        <main class="content">
+            
+            
+            
+<div class="container">
+    <div class="header">
+        <h1>Circulo unitario</h1>
+        <p>√(Raíz) Cuadrada²</p>
+    </div>
+
+    <div class="mode-selector" id="pills-container"></div>
+
+    <div class="main-grid">
+        <div class="canvas-card">
+            <canvas id="circleCanvas" width="500" height="500"></canvas>
+        </div>
+        <div class="canvas-card">
+            <canvas id="graphCanvas" width="500" height="500"></canvas>
+        </div>
+    </div>
+
+    <div class="data-panel">
+        <div class="data-item" id="card-angle">
+            <div class="data-label" style="color: #aaa;">Ángulo</div>
+            <div class="data-value" id="val-angle" style="color: #000;">0.0°</div>
+            <div class="data-exact" id="exact-angle" style="color: #555;">0 rad</div>
+        </div>
+        <div class="data-item" id="card-sin"><div class="data-label">Seno</div><div class="data-value" id="val-sin">0.000</div><div class="data-exact" id="exact-sin"></div></div>
+        <div class="data-item" id="card-cos"><div class="data-label">Coseno</div><div class="data-value" id="val-cos">1.000</div><div class="data-exact" id="exact-cos"></div></div>
+        <div class="data-item" id="card-tan"><div class="data-label">Tangente</div><div class="data-value" id="val-tan">0.000</div><div class="data-exact" id="exact-tan"></div></div>
+        <div class="data-item" id="card-csc"><div class="data-label">Cosecante</div><div class="data-value" id="val-csc">∞</div><div class="data-exact" id="exact-csc"></div></div>
+        <div class="data-item" id="card-sec"><div class="data-label">Secante</div><div class="data-value" id="val-sec">1.000</div><div class="data-exact" id="exact-sec"></div></div>
+        <div class="data-item" id="card-cot"><div class="data-label">Cotangente</div><div class="data-value" id="val-cot">∞</div><div class="data-exact" id="exact-cot"></div></div>
+    </div>
+
+    <button class="download-btn" onclick="downloadAll()">
+    <i data-lucide="download" size="18"></i>
+    Descargar  PNG
+</button>
+</div>
+
+
+            
+
+<footer class="footer-global">
+    <div class="footer-wrapper">
+        
+        <div class="footer-section">
+            <h4 class="footer-h4">Contacto</h4>
+            <a href="mailto:s.rodriguezrojas939@gmail.com" class="footer-email">
+                s.rodriguezrojas939@gmail.com
+            </a>
+            <div class="footer-socials">
+                <a href="https://wa.me/573196510401" target="_blank" title="WhatsApp">
+                    <i data-lucide="message-circle"></i>
+                </a>
+                <a href="https://www.youtube.com/@ElRaizCuadrada" target="_blank" title="YouTube">
+                    <i data-lucide="youtube"></i>
+                </a>
+                <a href="mailto:s.rodriguezrojas939@gmail.com" title="Correo">
+                    <i data-lucide="mail"></i>
+                </a>
+                <a href="https://github.com" target="_blank" title="GitHub">
+                    <i data-lucide="github"></i>
+                </a>
+            </div>
+        </div>
+
+        <div class="footer-section">
+            <a href="https://www.youtube.com/@ElRaizCuadrada" target="_blank" class="footer-logo-link">
+                <h1 class="footer-title">√(Raiz) Cuadrada²</h1>
+            </a>
+        </div>
+
+        <div class="footer-section">
+            <h4 class="footer-h4">Visitas al sitio</h4>
+            <div class="visitor-counter">
+                <img src="https://hitwebcounter.com/counter/counter.php?page=21465053&style=0024&nbdigits=5&type=page&initCount=0" alt="Visitas">
+            </div>
+        </div>
+
+    </div>
+</footer>
+           
+        </main>
+        
+     <script src="script.js"></script>
+      
+<script>
+    
+    
+    const circleCanvas = document.getElementById('circleCanvas');
+    const circleCtx = circleCanvas.getContext('2d');
+    const graphCanvas = document.getElementById('graphCanvas');
+    const graphCtx = graphCanvas.getContext('2d');
+
+    let currentAngle = 0; 
+    let isDragging = false;
+    let mode = 'sin';
+    const allFuncs = ['sin', 'cos', 'tan', 'csc', 'sec', 'cot'];
+    
+    // Estado de visibilidad (por defecto solo sin y cos activos para no saturar)
+const visibility = { 
+    sin: true, cos: true, tan: true, 
+    csc: true, sec: true, cot: true 
+};
+
+function toggleVisibility(f, event) {
+    event.stopPropagation(); // Evita que se cambie el modo principal al hacer clic en el ojo
+    visibility[f] = !visibility[f];
+    renderPills();
+    drawAll();
+}
+    // Colores iniciales
+    const colors = { 
+        sin:'#FF2D55', cos:'#007AFF', tan:'#FF9500', 
+        csc:'#28CD41', sec:'#FF69B4', cot:'#5AC8FA' 
+    };
+
+   const exactValues = {
+    // --- CUADRANTE I ---
+    0:   { sin:'0', cos:'1', tan:'0', csc:'∞', sec:'1', cot:'∞' },
+    30:  { sin:'1/2', cos:'√3/2', tan:'√3/3', csc:'2', sec:'2√3/3', cot:'√3' },
+    45:  { sin:'√2/2', cos:'√2/2', tan:'1', csc:'√2', sec:'√2', cot:'1' },
+    60:  { sin:'√3/2', cos:'1/2', tan:'√3', csc:'2√3/3', sec:'2', cot:'√3/3' },
+    90:  { sin:'1', cos:'0', tan:'∞', csc:'1', sec:'∞', cot:'0' },
+
+    // --- CUADRANTE II ---
+    120: { sin:'√3/2', cos:'-1/2', tan:'-√3', csc:'2√3/3', sec:'-2', cot:'-√3/3' },
+    135: { sin:'√2/2', cos:'-√2/2', tan:'-1', csc:'√2', sec:'-√2', cot:'-1' },
+    150: { sin:'1/2', cos:'-√3/2', tan:'-√3/3', csc:'2', sec:'-2√3/3', cot:'-√3' },
+    180: { sin:'0', cos:'-1', tan:'0', csc:'∞', sec:'-1', cot:'∞' },
+
+    // --- CUADRANTE III ---
+    210: { sin:'-1/2', cos:'-√3/2', tan:'√3/3', csc:'-2', sec:'-2√3/3', cot:'√3' },
+    225: { sin:'-√2/2', cos:'-√2/2', tan:'1', csc:'-√2', sec:'-√2', cot:'1' },
+    240: { sin:'-√3/2', cos:'-1/2', tan:'√3', csc:'-2√3/3', sec:'-2', cot:'√3/3' },
+    270: { sin:'-1', cos:'0', tan:'∞', csc:'-1', sec:'∞', cot:'0' },
+
+    // --- CUADRANTE IV ---
+    300: { sin:'-√3/2', cos:'1/2', tan:'-√3', csc:'-2√3/3', sec:'2', cot:'-√3/3' },
+    315: { sin:'-√2/2', cos:'1/2', tan:'-1', csc:'-√2', sec:'√2', cot:'-1' },
+    330: { sin:'-1/2', cos:'√3/2', tan:'-√3/3', csc:'-2', sec:'2√3/3', cot:'-√3' },
+    360: { sin:'0', cos:'1', tan:'0', csc:'∞', sec:'1', cot:'∞' }
+};
+
+    function renderPills() {
+        const container = document.getElementById('pills-container');
+        container.innerHTML = '';
+        allFuncs.forEach(f => {
+            const wrapper = document.createElement('div');
+            wrapper.className = 'color-wrapper';
+            
+            // Selector de color (Estética imagen)
+            const colorInp = document.createElement('input');
+            colorInp.type = 'color';
+            colorInp.className = 'color-input-custom';
+            colorInp.value = colors[f];
+            colorInp.oninput = (e) => {
+                colors[f] = e.target.value;
+                drawAll();
+                renderPills();
+            };
+
+            const p = document.createElement('div');
+            p.className = `pill ${mode === f ? 'active' : ''}`;
+            if(mode === f) p.style.backgroundColor = colors[f];
+            p.innerText = f.toUpperCase();
+            p.onclick = () => { mode = f; renderPills(); drawAll(); };
+            
+            wrapper.appendChild(colorInp);
+            wrapper.appendChild(p);
+            container.appendChild(wrapper);
+        });
+    }
+
+    function drawAll() { drawCircle(); drawGraph(); updateText(); }
+
+   function drawCircle() {
+    const cx = 250, cy = 250, r = 160;
+    circleCtx.clearRect(0, 0, 500, 500);
+
+    // Fondo y Ejes (Se mantienen siempre visibles)
+    circleCtx.strokeStyle = '#f0f0f0'; circleCtx.lineWidth = 2;
+    circleCtx.beginPath(); circleCtx.moveTo(0, cy); circleCtx.lineTo(500, cy); circleCtx.moveTo(cx, 0); circleCtx.lineTo(cx, 500); circleCtx.stroke();
+    
+    // Fondo y Ejes - Etiquetas de unidad con más margen
+circleCtx.font = '700 12px "Open Sans"'; circleCtx.fillStyle = '#999';
+
+// Eje X
+circleCtx.textAlign = 'left'; circleCtx.fillText('1', cx + r + 60, cy + 0);    // Antes +5
+circleCtx.textAlign = 'right'; circleCtx.fillText('-1', cx - r - 60, cy +0); // Antes -5
+
+// Eje Y
+circleCtx.textAlign = 'center'; 
+circleCtx.fillText('1', cx, cy - r - 60);   // Antes -5
+circleCtx.fillText('-1', cx, cy + r + 60);  // Antes +15 (ajustado para mantener equilibrio)
+
+    const notablesDeg = [0, 30, 45, 60, 90, 120, 135, 150, 180, 210, 225, 240, 270, 300, 315, 330];
+    notablesDeg.forEach(deg => {
+        const rad = deg * Math.PI / 180;
+        const lx = cx + (r + 25) * Math.cos(rad);
+        const ly = cy - (r + 25) * Math.sin(rad);
+        circleCtx.font = '600 11px "Open Sans"';
+        circleCtx.fillStyle = '#999';
+        circleCtx.textAlign = 'center';
+        circleCtx.textBaseline = 'middle';
+        circleCtx.fillText(deg + '°', lx, ly);
+    });
+
+    circleCtx.strokeStyle = '#333'; circleCtx.lineWidth = 2;
+    circleCtx.beginPath(); circleCtx.arc(cx, cy, r, 0, Math.PI * 2); circleCtx.stroke();
+
+    const x = cx + r * Math.cos(currentAngle);
+    const y = cy - r * Math.sin(currentAngle);
+    const sinV = Math.sin(currentAngle), cosV = Math.cos(currentAngle);
+
+    if (Math.abs(sinV) > 0.001 && Math.abs(cosV) > 0.001) {
+        const tanV = Math.tan(currentAngle), cotV = 1/tanV, secV = 1/cosV, cscV = 1/sinV;
+        const tanX = cx + r, tanY = cy - r * tanV;
+        const cotX = cx + r * cotV, cotY = cy - (sinV >= 0 ? r : -r);
+        const secX = cx + r * secV, cscY = cy - r * cscV;
+
+        // --- LINEAS PUNTEADAS (PROYECCIONES) ---
+        circleCtx.setLineDash([5, 5]); circleCtx.lineWidth = 2;
+        
+        if(visibility.sin) {
+            circleCtx.strokeStyle = colors.sin; circleCtx.beginPath(); circleCtx.moveTo(x, y); circleCtx.lineTo(cx, y); circleCtx.stroke();
+        }
+        if(visibility.cos) {
+            circleCtx.strokeStyle = colors.cos; circleCtx.beginPath(); circleCtx.moveTo(x, y); circleCtx.lineTo(x, cy); circleCtx.stroke();
+        }
+        if(visibility.tan) {
+            circleCtx.strokeStyle = colors.tan; circleCtx.beginPath(); circleCtx.moveTo(cx, cy); circleCtx.lineTo(tanX, tanY); circleCtx.stroke();
+        }
+        if(visibility.cot) {
+            circleCtx.strokeStyle = colors.cot; circleCtx.beginPath(); circleCtx.moveTo(cx, cy); circleCtx.lineTo(cotX, cotY); circleCtx.stroke();
+        }
+        if(visibility.sec) {
+            circleCtx.strokeStyle = colors.sec; circleCtx.beginPath(); circleCtx.moveTo(x, y); circleCtx.lineTo(secX, cy); circleCtx.stroke();
+        }
+        if(visibility.csc) {
+            circleCtx.strokeStyle = colors.csc; circleCtx.beginPath(); circleCtx.moveTo(x, y); circleCtx.lineTo(cx, cscY); circleCtx.stroke();
+        }
+        
+        circleCtx.setLineDash([]);
+
+        // --- LINEAS GRUESAS (REPRESENTACIONES EXTERNAS) ---
+        circleCtx.lineWidth = 4;
+        if(visibility.sec) {
+            circleCtx.strokeStyle = colors.sec; circleCtx.beginPath(); circleCtx.moveTo(cx, cy); circleCtx.lineTo(secX, cy); circleCtx.stroke();
+        }
+        if(visibility.csc) {
+            circleCtx.strokeStyle = colors.csc; circleCtx.beginPath(); circleCtx.moveTo(cx, cy); circleCtx.lineTo(cx, cscY); circleCtx.stroke();
+        }
+        if(visibility.tan) {
+            circleCtx.strokeStyle = colors.tan; circleCtx.beginPath(); circleCtx.moveTo(tanX, cy); circleCtx.lineTo(tanX, tanY); circleCtx.stroke();
+        }
+        if(visibility.cot) {
+            circleCtx.strokeStyle = colors.cot; circleCtx.beginPath(); circleCtx.moveTo(cx, cotY); circleCtx.lineTo(cotX, cotY); circleCtx.stroke();
+        }
+    }
+
+    // --- LINEAS PRINCIPALES (SEN / COS DENTRO DEL CÍRCULO) ---
+    circleCtx.lineWidth = 7;
+    if(visibility.cos) {
+        circleCtx.strokeStyle = colors.cos; circleCtx.beginPath(); circleCtx.moveTo(cx, cy); circleCtx.lineTo(x, cy); circleCtx.stroke();
+    }
+    if(visibility.sin) {
+        circleCtx.strokeStyle = colors.sin; circleCtx.beginPath(); circleCtx.moveTo(x, cy); circleCtx.lineTo(x, y); circleCtx.stroke();
+    }
+
+    // Radio y Punto de arrastre (Se mantienen siempre para poder interactuar)
+    circleCtx.strokeStyle = '#333'; circleCtx.lineWidth = 2;
+    circleCtx.beginPath(); circleCtx.moveTo(cx, cy); circleCtx.lineTo(x, y); circleCtx.stroke();
+    circleCtx.fillStyle = '#fff'; circleCtx.beginPath(); circleCtx.arc(x, y, 8, 0, Math.PI * 2); circleCtx.fill();
+    circleCtx.strokeStyle = '#333'; circleCtx.lineWidth = 3; circleCtx.stroke();
+    
+    // --- LÍNEA PUENTE HACIA LA GRÁFICA ---
+circleCtx.setLineDash([5, 5]);
+circleCtx.strokeStyle = 'rgba(0,0,0,0.2)'; // Gris tenue
+circleCtx.lineWidth = 1;
+circleCtx.beginPath();
+
+// --- LÍNEA DE GUÍA VERTICAL EN EL CÍRCULO ---
+circleCtx.setLineDash([5, 5]);
+circleCtx.strokeStyle = 'rgba(0,0,0,0.1)'; // Estilo tenue igual al de la gráfica
+circleCtx.lineWidth = 1;
+circleCtx.beginPath();
+
+// Dibujamos la línea que cruza todo el canvas verticalmente pasando por 'x'
+circleCtx.moveTo(x, 0);
+circleCtx.lineTo(x, 500);
+circleCtx.stroke();
+
+if (visibility[mode]) { // Solo si la función actual es visible
+    circleCtx.setLineDash([5, 5]);
+    circleCtx.strokeStyle = colors[mode] + '66'; // Mismo color con transparencia
+    circleCtx.lineWidth = 1;
+    circleCtx.beginPath();
+
+    let anchorX, anchorY;
+
+    // Lógica de anclaje según la naturaleza de la función
+    switch(mode) {
+        case 'sin': anchorX = x; anchorY = y; break;
+        case 'cos': anchorX = x; anchorY = cy; break; // Nace desde el eje X
+        case 'tan': anchorX = cx + r; anchorY = cy - r * Math.tan(currentAngle); break;
+        case 'sec': anchorX = cx + r * (1/Math.cos(currentAngle)); anchorY = cy; break;
+        case 'csc': anchorX = cx; anchorY = cy - r * (1/Math.sin(currentAngle)); break;
+        case 'cot': anchorX = cx + r * (1/Math.tan(currentAngle)); anchorY = cy - (Math.sin(currentAngle) >= 0 ? r : -r); break;
+    }
+
+    // Solo dibujamos si el valor es razonable (evita saltos al infinito)
+    const val = Math.abs(Math.sin(currentAngle)); // Referencia para funciones infinitas
+    if (Math.abs(anchorY - cy) < 1000) {
+        circleCtx.moveTo(anchorX, anchorY);
+        circleCtx.lineTo(500, anchorY); // Viaja al borde del canvas
+        circleCtx.stroke();
+    }
+    circleCtx.setLineDash([]);
+}
+}
+function drawGraph() {
+    const w = 500, h = 500, midY = h / 2, amp = 160; // Sincronizado con el radio r=160
+    graphCtx.clearRect(0, 0, 500, 500);
+
+    const fns = { 
+        sin: Math.sin, 
+        cos: Math.cos, 
+        tan: Math.tan, 
+        csc: a => 1/Math.sin(a), 
+        sec: a => 1/Math.cos(a), 
+        cot: a => 1/Math.tan(a) 
+    };
+
+    // 1. Cálculos de posición actual (Se calculan una sola vez)
+    let n = currentAngle % (Math.PI * 2); 
+    if(n < 0) n += Math.PI * 2;
+    let vm = fns[mode](n);
+    const gx = 50 + (n / (Math.PI * 2)) * 400; // Mapeo de 0-2π al ancho del gráfico
+    const my = midY - vm * amp;
+
+    // 2. Dibujo de Ejes (Al fondo)
+    graphCtx.strokeStyle = '#eee'; 
+    graphCtx.lineWidth = 2;
+    graphCtx.beginPath(); 
+    graphCtx.moveTo(50, 0); graphCtx.lineTo(50, h);   // Eje Y
+    graphCtx.moveTo(0, midY); graphCtx.lineTo(w, midY); // Eje X
+    graphCtx.stroke();
+
+    // 3. Líneas de Guía (Vínculo visual)
+    graphCtx.setLineDash([5, 5]);
+    
+    // --- LÍNEA PUENTE HORIZONTAL (Viene del círculo) ---
+    graphCtx.strokeStyle = 'rgba(0,0,0,0.15)'; // Gris tenue para no distraer
+    graphCtx.beginPath();
+    graphCtx.moveTo(0, my); 
+    graphCtx.lineTo(gx, my);
+    graphCtx.stroke();
+
+    // --- LÍNEA DE GUÍA VERTICAL (Posición del ángulo) ---
+    graphCtx.strokeStyle = 'rgba(0,0,0,0.1)'; 
+    graphCtx.beginPath();
+    graphCtx.moveTo(gx, 0); 
+    graphCtx.lineTo(gx, h);
+    graphCtx.stroke();
+    
+    graphCtx.setLineDash([]); // Resetear estilo de línea
+
+    // 4. Etiquetas de escala y radianes
+    graphCtx.fillStyle = '#999'; 
+    graphCtx.font = '700 11px "Open Sans"';
+    graphCtx.textAlign = 'right'; 
+    graphCtx.fillText('1', 45, midY - amp + 4); 
+    graphCtx.fillText('-1', 45, midY + amp + 4);
+    
+    const labelsPi = [
+        { x: 50, t: '0' }, 
+        { x: 150, t: 'π/2' }, 
+        { x: 250, t: 'π' }, 
+        { x: 350, t: '3π/2' }, 
+        { x: 450, t: '2π' }
+    ];
+    graphCtx.textAlign = 'center';
+    labelsPi.forEach(l => {
+        graphCtx.fillText(l.t, l.x, midY + 25);
+        graphCtx.beginPath(); 
+        graphCtx.moveTo(l.x, midY - 5); 
+        graphCtx.lineTo(l.x, midY + 5); 
+        graphCtx.stroke();
+    });
+
+    // 5. Dibujo de la curva de la función
+    graphCtx.strokeStyle = colors[mode]; 
+    graphCtx.lineWidth = 3;
+    graphCtx.beginPath();
+    for(let i = 0; i <= 400; i++) {
+        const a = (i / 400) * Math.PI * 2;
+        let v = fns[mode](a);
+        
+        // Evitar que las funciones infinitas (tan, csc...) ensucien el canvas
+        if(Math.abs(v) > 15) v = v > 0 ? 15 : -15; 
+        const py = midY - v * amp;
+
+        if (['tan','csc','sec','cot'].includes(mode) && Math.abs(fns[mode](a)) > 10 && i > 0) { 
+            graphCtx.stroke(); 
+            graphCtx.beginPath(); 
+        } else { 
+            if(i === 0) graphCtx.moveTo(50+i, py); 
+            else graphCtx.lineTo(50+i, py); 
+        }
+    }
+    graphCtx.stroke();
+
+    // 6. Punto indicador (La "bola" que recorre la curva)
+    if(Math.abs(vm) < 10) { // Solo dibujar si no está en el infinito
+        graphCtx.fillStyle = colors[mode]; 
+        graphCtx.beginPath(); 
+        graphCtx.arc(gx, my, 7, 0, Math.PI * 2); 
+        graphCtx.fill();
+        graphCtx.strokeStyle = '#fff'; 
+        graphCtx.lineWidth = 2; 
+        graphCtx.stroke();
+    }
+}
+
+    
+    function updateText() {
+        let n = currentAngle % (Math.PI * 2); if(n < 0) n += Math.PI * 2;
+        let deg = Math.round(n * 180 / Math.PI);
+        document.getElementById('val-angle').innerText = (n * 180 / Math.PI).toFixed(1) + '°';
+        document.getElementById('exact-angle').innerText = (n / Math.PI).toFixed(2) + 'π rad';
+        
+        const vs = { sin: Math.sin(n), cos: Math.cos(n), tan: Math.tan(n), csc: 1/Math.sin(n), sec: 1/Math.cos(n), cot: 1/Math.tan(n) };
+        
+        allFuncs.forEach(f => {
+            const card = document.getElementById(`card-${f}`);
+            const valEl = document.getElementById(`val-${f}`);
+            const exEl = document.getElementById(`exact-${f}`);
+            const labelEl = card.querySelector('.data-label');
+
+            labelEl.style.color = colors[f];
+            valEl.style.color = colors[f];
+            exEl.style.color = colors[f];
+            exEl.style.opacity = "0.8";
+
+            valEl.innerText = Math.abs(vs[f]) > 50 ? '∞' : vs[f].toFixed(3);
+            const ex = exactValues[deg % 360] || exactValues[360 - (deg % 360)];
+            exEl.innerText = ex ? ex[f] : '';
+        });
+    }
+
+    function downloadAll() {
+        const timestamp = new Date().getTime();
+        saveCanvas(circleCanvas, `Circulo_Unitario_${timestamp}.png`);
+        saveCanvas(graphCanvas, `Grafica_${mode.toUpperCase()}_${timestamp}.png`);
+    }
+
+    function saveCanvas(canvas, filename) {
+        // Crear canvas temporal para añadir marca de agua
+        const tempCanvas = document.createElement('canvas');
+        tempCanvas.width = canvas.width;
+        tempCanvas.height = canvas.height;
+        const ctx = tempCanvas.getContext('2d');
+
+        // Dibujar original
+        ctx.fillStyle = "white";
+        ctx.fillRect(0,0,tempCanvas.width, tempCanvas.height);
+        ctx.drawImage(canvas, 0, 0);
+
+        // Marca de agua
+        ctx.font = "bold 16px 'Playfair Display'";
+        ctx.fillStyle = "rgba(0,0,0,0.5)";
+        ctx.textAlign = "right";
+        ctx.fillText("√(Raiz) Cuadrada²", tempCanvas.width - 20, tempCanvas.height - 20);
+
+        const link = document.createElement('a');
+        link.download = filename;
+        link.href = tempCanvas.toDataURL('image/png', 1.0);
+        link.click();
+    }
+
+    function handle(e) {
+        const rect = circleCanvas.getBoundingClientRect();
+        const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+        const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+        let x = (clientX - rect.left) * (500 / rect.width) - 250;
+        let y = 250 - (clientY - rect.top) * (500 / rect.height);
+        let ang = Math.atan2(y, x);
+        let deg = ang * 180 / Math.PI; if(deg < 0) deg += 360;
+        const notables = [0, 30, 45, 60, 90, 120, 135, 150, 180, 210, 225, 240, 270, 300, 315, 330, 360];
+        for(let nt of notables) {
+            if(Math.abs(deg - nt) < 2.5) { ang = nt * Math.PI / 180; break; }
+        }
+        currentAngle = ang; drawAll();
+    }
+
+let isPlaying = false;
+let animationId = null;
+
+function renderPills() {
+    const container = document.getElementById('pills-container');
+    container.innerHTML = '';
+
+    // --- 1. GRUPO DE CONTROLES (Píldora Gris unificada) ---
+    const controlsGroup = document.createElement('div');
+    controlsGroup.className = 'controls-group';
+
+    // Sub-píldora: Botón Play/Pause (Icono gris)
+    const playBtn = document.createElement('div');
+    playBtn.className = 'control-item';
+    playBtn.innerHTML = isPlaying 
+        ? `<i data-lucide="pause" size="14"></i>` 
+        : `<i data-lucide="play" size="14"></i>`;
+    playBtn.onclick = togglePlay;
+    controlsGroup.appendChild(playBtn);
+
+    // Sub-píldora: Input de Ángulo con Brújula
+    const inputWrapper = document.createElement('div');
+    inputWrapper.className = 'control-item';
+    inputWrapper.style.cursor = 'default';
+    inputWrapper.innerHTML = `
+        <i data-lucide="drafting-compass" size="14" style="margin-right:5px;"></i>
+        <input type="number" class="angle-input" id="manual-angle" placeholder="0°" 
+               oninput="setManualAngle(this.value)">
+    `;
+    controlsGroup.appendChild(inputWrapper);
+    
+    // Añadimos el grupo gris al contenedor principal
+    container.appendChild(controlsGroup);
+
+    // --- 2. FUNCIONES TRIGONOMÉTRICAS (Tus píldoras de colores) ---
+    allFuncs.forEach(f => {
+        const wrapper = document.createElement('div');
+        wrapper.className = 'color-wrapper';
+        
+        const colorInp = document.createElement('input');
+        colorInp.type = 'color';
+        colorInp.className = 'color-input-custom';
+        colorInp.value = colors[f];
+        colorInp.oninput = (e) => {
+            colors[f] = e.target.value;
+            drawAll();
+            renderPills();
+        };
+
+        const p = document.createElement('div');
+        p.className = `pill ${mode === f ? 'active' : ''}`;
+        if(mode === f) p.style.backgroundColor = colors[f];
+        p.innerText = f.toUpperCase();
+        p.onclick = () => { mode = f; renderPills(); drawAll(); };
+        
+        const eyeBtn = document.createElement('div');
+    eyeBtn.className = `eye-btn ${!visibility[f] ? 'hidden' : ''}`;
+    // Si la visibilidad es falsa, muestra eye-off
+    eyeBtn.innerHTML = visibility[f] 
+        ? `<i data-lucide="eye" size="14"></i>` 
+        : `<i data-lucide="eye-off" size="14"></i>`;
+    eyeBtn.onclick = (e) => toggleVisibility(f, e);
+        
+        wrapper.appendChild(colorInp);
+        wrapper.appendChild(p);
+        wrapper.appendChild(eyeBtn);
+        container.appendChild(wrapper);
+        
+    });
+
+    // Inicializar iconos de Lucide para que se rendericen los nuevos cambios
+    lucide.createIcons();
+}
+
+// Lógica de Animación
+function togglePlay() {
+    isPlaying = !isPlaying;
+    if (isPlaying) animate();
+    else cancelAnimationFrame(animationId);
+    renderPills(); // Para actualizar el icono de play/pause
+}
+
+function animate() {
+    currentAngle += 0.015;
+    drawAll();
+    animationId = requestAnimationFrame(animate);
+}
+
+// Lógica de Input Manual
+function setManualAngle(val) {
+    if (val === "" || isNaN(val)) return;
+    currentAngle = (parseFloat(val) * Math.PI / 180);
+    drawAll();
+}
+
+function getExactRadians(rad) {
+    let n = (rad % (2 * Math.PI)) / Math.PI;
+    if (n < 0) n += 2;
+    if (Math.abs(n) < 0.01) return "0";
+    if (Math.abs(n - 1) < 0.01) return "π";
+
+    const fractions = [
+        {v: 1/6, t: "π/6"}, {v: 1/4, t: "π/4"}, {v: 1/3, t: "π/3"}, {v: 1/2, t: "π/2"},
+        {v: 2/3, t: "2π/3"}, {v: 3/4, t: "3π/4"}, {v: 5/6, t: "5π/6"},
+        {v: 7/6, t: "7π/6"}, {v: 5/4, t: "5π/4"}, {v: 4/3, t: "4π/3"}, {v: 3/2, t: "3π/2"},
+        {v: 5/3, t: "5π/3"}, {v: 7/4, t: "7π/4"}, {v: 11/6, t: "11π/6"}
+    ];
+
+    for (let f of fractions) {
+        if (Math.abs(n - f.v) < 0.02) return f.t;
+    }
+    return n.toFixed(2) + "π";
+}
+
+function fixDPI(canvas) {
+    const dpr = window.devicePixelRatio || 1;
+    const rect = canvas.getBoundingClientRect();
+    canvas.width = rect.width * dpr;
+    canvas.height = rect.height * dpr;
+    const ctx = canvas.getContext('2d');
+    ctx.scale(dpr * (rect.width/500), dpr * (rect.height/500)); // Ajuste proporcional
+}
+
+    circleCanvas.addEventListener('mousedown', () => isDragging = true);
+    window.addEventListener('mouseup', () => isDragging = false);
+    window.addEventListener('mousemove', (e) => isDragging && handle(e));
+    circleCanvas.addEventListener('touchstart', (e) => { isDragging = true; handle(e); });
+    circleCanvas.addEventListener('touchmove', (e) => { isDragging && handle(e); e.preventDefault(); }, {passive: false});
+
+    renderPills(); drawAll();
+    
+    
+</script>
+      
+</body>
+<button class="mobile-theme-toggle" onclick="toggleTheme()" aria-label="Cambiar tema">
+    <i data-lucide="sun" class="icon-sun"></i>
+    <i data-lucide="moon" class="icon-moon"></i>
+</button>
+
+
+</html>
