@@ -3,15 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gracias ♥ | √(Raiz) Cuadrada² </title>
+    <title>√(Raiz) Cuadrada² </title>
 
     <script>
         (function() {
-            
+            // 1. Intentamos leer la memoria
             const localTheme = localStorage.getItem('theme');
-           
+            // 2. Si hay algo guardado lo usamos, si no, usamos 'light'
             const themeToSet = localTheme || 'light';
-       
+            // 3. Lo aplicamos INMEDIATAMENTE al HTML
             document.documentElement.setAttribute('data-theme', themeToSet);
         })();
     </script>
@@ -36,9 +36,10 @@
         <button class="icon-btn" onclick="toggleMenu()"><i data-lucide="menu"></i></button>
     </header>
 
-  <div class="wrapper">
+    <div class="wrapper">
         <aside class="sidebar" id="sidebar">
-          <button class="icon-btn" title="Inicio"
+            <div class="nav-header">
+               <button class="icon-btn" title="Inicio"
         onclick="window.location.href='index.html'">
   <i data-lucide="home"></i>
 </button>
@@ -53,13 +54,13 @@
         id="close-menu">
   <i data-lucide="x"></i>
 </button>
-    </div>
+
+            </div>
 
             <nav>
                 <ul class="nav-links">
                     <li><a href="index.html"><i data-lucide="square-radical"></i> Página Principal</a></li>
 
-                    
                     
                     <div class="nav-group">
     <div class="nav-item has-submenu" onclick="toggleSubmenu(this)">
