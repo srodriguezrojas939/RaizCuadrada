@@ -2355,21 +2355,6 @@ body[data-theme="dark"] .card:hover {
         // Inicializar Iconos
         lucide.createIcons();
 
-        // Modo Noche/Día
-        function toggleTheme() {
-            const body = document.body;
-            const currentTheme = body.getAttribute('data-theme');
-            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
-            body.setAttribute('data-theme', newTheme);
-            
-            // Cambiar icono
-            const iconName = newTheme === 'dark' ? 'sun' : 'moon';
-            document.querySelectorAll('[data-lucide="moon"], [data-lucide="sun"]').forEach(el => {
-                el.setAttribute('data-lucide', iconName);
-            });
-            lucide.createIcons();
-        }
-
         // Menú Móvil
         function toggleMenu() {
             document.getElementById('sidebar').classList.toggle('active');
