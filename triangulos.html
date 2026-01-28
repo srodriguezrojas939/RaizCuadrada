@@ -563,18 +563,56 @@ svg text {
     position: relative; 
 }
 
-.watermark-overlay {
-    position: absolute;
-    bottom: 10px;        /* Ajusta la posición vertical */
-    right: 10px;         /* Ajusta la posición horizontal */
-    opacity: 0.3;        /* Transparencia para que parezca marca de agua */
-    font-size: 14px;
-    font-weight: bold;
-    color: var(--text-color);
-    pointer-events: none; /* Permite hacer clic a través de ella */
-    z-index: 20;          /* Que quede por encima del dibujo */
-    user-select: none;
+#pasos-lista div {
+    animation: fadeIn 0.5s ease forwards;
+    opacity: 0;
 }
+@keyframes fadeIn { from { opacity: 0; transform: translateX(-10px); } to { opacity: 1; transform: translateX(0); } }
+
+
+/* Estilo del botón "Ver más datos" */
+.toggle-datos {
+    display: block;
+    width: 100%;
+    text-align: center;
+    background: #f8f9fa;
+    border: 1px solid #e9ecef;
+    padding: 10px;
+    margin-top: 15px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    color: var(--primary);
+    font-weight: 600;
+    border-radius: 25px;
+    transition: all 0.2s;
+}
+.toggle-datos:hover {
+    background: #e2e6ea;
+}
+
+/* Contenedor de datos avanzados (Grid) */
+.datos-avanzados {
+    display: none; /* Oculto por defecto */
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 10px;
+    background: #fafafa;
+    padding: 15px;
+    border-radius: 25px;
+    margin-top: 10px;
+    border: 1px dashed #ccc;
+    font-size: 0.85rem;
+    color: #444;
+}
+
+.dato-fila {
+    display: flex;
+    justify-content: space-between;
+    padding: 4px 0;
+    border-bottom: 1px solid #eee;
+}
+.dato-label { font-weight: bold; color: #555; }
+.dato-valor { font-family: monospace; color: #000; }
+
 
 </style>
   
@@ -1188,14 +1226,60 @@ function resolver() {
 
 function mostrar(a, b, c, A, B, G, pasos) {
     document.getElementById('resultados').style.display = 'block';
-    
-    const s = (a + b + c) / 2;
+
+    // 1. Cálculos Básicos
+    const s = (a + b + c) / 2; // Semiperímetro
     const area = Math.sqrt(s * (s - a) * (s - b) * (s - c));
     const perimetro = a + b + c;
+
+    // 2. Cálculos Avanzados
+    // Alturas (h = 2 * Area / base)
+    const ha = (2 * area) / a;
+    const hb = (2 * area) / b;
+    const hc = (2 * area) / c;
+
+    // Medianas (Teorema de Apolonio)
+    const ma = 0.5 * Math.sqrt(2 * b * b + 2 * c * c - a * a);
+    const mb = 0.5 * Math.sqrt(2 * a * a + 2 * c * c - b * b);
+    const mc = 0.5 * Math.sqrt(2 * a * a + 2 * b * b - c * c);
+
+    // Radios
+    const r = area / s; // Inradio
+    const R_circ = (a * b * c) / (4 * area); // Circunradio
+
+    // 3. Geometría Analítica (Coordenadas)
+    // Asumimos A en (0,0), B en (c,0)
+    const Arad = toRad(A);
     
-    document.getElementById('res-content').innerHTML = `
+    // Coordenadas de los Vértices
+    const Ax = 0, Ay = 0;
+    const Bx = c, By = 0;
+    const Cx = b * Math.cos(Arad);
+    const Cy = b * Math.sin(Arad);
+
+    // Centroide (Baricentro) - Promedio de coordenadas
+    const Gx = (Ax + Bx + Cx) / 3;
+    const Gy = (Ay + By + Cy) / 3;
+
+    // Incentro (Centro circunferencia inscrita) - Ponderado por lados opuestos
+    // Formula: (a*Ax + b*Bx + c*Cx) / P
+    // Nota: El vértice A es opuesto al lado a, etc.
+    const Ix = (a * Ax + b * Bx + c * Cx) / perimetro;
+    const Iy = (a * Ay + b * By + c * Cy) / perimetro;
+
+    // Circuncentro (Centro circunferencia circunscrita)
+    // Fórmula simplificada dado que A=(0,0) y B=(c,0)
+    const D = 2 * (Ax * (By - Cy) + Bx * (Cy - Ay) + Cx * (Ay - By));
+    const Ox = ((Ax*Ax + Ay*Ay)*(By - Cy) + (Bx*Bx + By*By)*(Cy - Ay) + (Cx*Cx + Cy*Cy)*(Ay - By)) / D;
+    const Oy = ((Ax*Ax + Ay*Ay)*(Cx - Bx) + (Bx*Bx + By*By)*(Ax - Cx) + (Cx*Cx + Cy*Cy)*(Bx - Ax)) / D;
+
+
+    // --- RENDERING HTML ---
+
+    // Parte 1: Datos Principales
+    let html = `
         <div class="res-item"><span>Lado a:</span><span>${a.toFixed(2)}</span></div>
-        <div class="res-item"><span>Lado b ${mode==='rect'?'(Hipotenusa)':''}:</span><span>${b.toFixed(2)}</span></div>
+        <div class="res-item"><span>Lado b ${mode==='rect'?'(Hip)':''}:</span><span>${b.toFixed(2)}</span></div>
         <div class="res-item"><span>Lado c:</span><span>${c.toFixed(2)}</span></div>
         <div class="res-item"><span>Ángulo α:</span><span>${A.toFixed(2)}°</span></div>
         <div class="res-item"><span>Ángulo β:</span><span>${B.toFixed(2)}°</span></div>
@@ -1204,6 +1288,48 @@ function mostrar(a, b, c, A, B, G, pasos) {
         <div class="res-item"><span>Perímetro:</span><span>${perimetro.toFixed(2)}</span></div>
     `;
 
+    // Parte 2: Botón Ver Más
+    html += `
+        <div class="toggle-datos" onclick="toggleAdvanced()">
+            Ver más datos avanzados <span style="font-size:0.8em">▼</span>
+        </div>
+    `;
+
+    // Parte 3: Contenedor Oculto con Datos Técnicos
+    // Función auxiliar para formatear coordenadas
+    const fmt = (n) => n.toFixed(4);
+    const coord = (x, y) => `[${fmt(x)}, ${fmt(y)}]`;
+
+    html += `
+        <div id="advanced-data" class="datos-avanzados">
+            <div class="dato-fila"><span class="dato-label">Semiperímetro (s)</span><span class="dato-valor">${s.toFixed(4)}</span></div>
+            <div class="dato-fila"><span class="dato-label">Inradio (r)</span><span class="dato-valor">${r.toFixed(4)}</span></div>
+            <div class="dato-fila"><span class="dato-label">Circunradio (R)</span><span class="dato-valor">${R_circ.toFixed(4)}</span></div>
+            
+            <div class="dato-fila"><span class="dato-label">Altura h_a</span><span class="dato-valor">${ha.toFixed(4)}</span></div>
+            <div class="dato-fila"><span class="dato-label">Altura h_b</span><span class="dato-valor">${hb.toFixed(4)}</span></div>
+            <div class="dato-fila"><span class="dato-label">Altura h_c</span><span class="dato-valor">${hc.toFixed(4)}</span></div>
+            
+            <div class="dato-fila"><span class="dato-label">Mediana m_a</span><span class="dato-valor">${ma.toFixed(4)}</span></div>
+            <div class="dato-fila"><span class="dato-label">Mediana m_b</span><span class="dato-valor">${mb.toFixed(4)}</span></div>
+            <div class="dato-fila"><span class="dato-label">Mediana m_c</span><span class="dato-valor">${mc.toFixed(4)}</span></div>
+
+            <div style="grid-column: 1 / -1; margin-top:10px; font-weight:bold; border-bottom:2px solid #ddd;">Coordenadas (A en 0,0)</div>
+            
+            <div class="dato-fila"><span class="dato-label">Vértice A</span><span class="dato-valor">${coord(Ax, Ay)}</span></div>
+            <div class="dato-fila"><span class="dato-label">Vértice B</span><span class="dato-valor">${coord(Bx, By)}</span></div>
+            <div class="dato-fila"><span class="dato-label">Vértice C</span><span class="dato-valor">${coord(Cx, Cy)}</span></div>
+            
+            <div class="dato-fila"><span class="dato-label">Centroide (G)</span><span class="dato-valor">${coord(Gx, Gy)}</span></div>
+            <div class="dato-fila"><span class="dato-label">Incentro (I)</span><span class="dato-valor">${coord(Ix, Iy)}</span></div>
+            <div class="dato-fila"><span class="dato-label">Circuncentro (O)</span><span class="dato-valor">${coord(Ox, Oy)}</span></div>
+        </div>
+    `;
+
+    document.getElementById('res-content').innerHTML = html;
+
+
+    // --- RENDERIZADO DE PASOS Y FÓRMULAS ---
     const contenedorPasos = document.getElementById('procedimiento-contenedor');
     const listaPasos = document.getElementById('pasos-lista');
 
@@ -1213,11 +1339,10 @@ function mostrar(a, b, c, A, B, G, pasos) {
         
         pasosUnicos.forEach((textoPaso, index) => {
             const div = document.createElement('div');
-            // Un poco más de margen para dar espacio a las ecuaciones grandes
             div.style.padding = "15px 0"; 
             div.style.borderBottom = "1px solid rgba(0,0,0,0.06)";
             div.style.display = "flex";
-            div.style.gap = "15px"; // Separación entre número y fórmula
+            div.style.gap = "15px";
             div.style.alignItems = "flex-start";
             
             div.innerHTML = `
@@ -1230,20 +1355,15 @@ function mostrar(a, b, c, A, B, G, pasos) {
             `;
             listaPasos.appendChild(div);
         });
-
         contenedorPasos.style.display = 'block';
-
-        // --- IMPORTANTE: FORZAR EL RENDERIZADO DE MATHJAX ---
         if (window.MathJax) {
-            MathJax.typesetPromise([listaPasos]).then(() => {
-                console.log("Fórmulas renderizadas");
-            }).catch((err) => console.log(err));
+            MathJax.typesetPromise([listaPasos]).catch((err) => console.log(err));
         }
-
     } else if (contenedorPasos) {
         contenedorPasos.style.display = 'none';
     }
 }
+
 
 function exportarPNG() {
     const svg = document.getElementById('svg-draw');
@@ -1405,6 +1525,15 @@ function applyTransforms() {
             text.style.transform = `${textBaseStr} ${textFineStr}`;
         });
     });
+}
+
+function toggleAdvanced() {
+    const box = document.getElementById('advanced-data');
+    if (box.style.display === 'none' || box.style.display === '') {
+        box.style.display = 'grid'; // Usamos grid para que se vea bonito
+    } else {
+        box.style.display = 'none';
+    }
 }
 
 // Inicializar iconos
