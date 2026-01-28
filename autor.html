@@ -3,15 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>√(Raiz) Cuadrada² </title>
+    <title>Gracias ♥ | √(Raiz) Cuadrada² </title>
 
     <script>
         (function() {
-            // 1. Intentamos leer la memoria
+            
             const localTheme = localStorage.getItem('theme');
-            // 2. Si hay algo guardado lo usamos, si no, usamos 'light'
+           
             const themeToSet = localTheme || 'light';
-            // 3. Lo aplicamos INMEDIATAMENTE al HTML
+       
             document.documentElement.setAttribute('data-theme', themeToSet);
         })();
     </script>
@@ -24,51 +24,6 @@
 
     <link rel="stylesheet" href="styles.css">
 
-    
-    
-    <style>
-        
-        @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@800;900&display=swap');
-
-
-
-.raiz-btn {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  font-family: 'Playfair Display', serif;
-  font-weight: 900;
-}
-
-
-.raiz-texto {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  line-height: 1;
-}
-
-.raiz-arriba {
-  font-size: 16px;
-}
-
-.raiz-abajo {
-  font-size: 16px;
-}
-
-.raiz-abajo sup {
-  font-size: 10px;
-}
-
-.raiz-btn {
-  background: none;
-  border: none;
-  cursor: pointer;
-}
-
-    </style>
-
-    
     </head>
 <body>
 
@@ -83,20 +38,10 @@
 
     <div class="wrapper">
         <aside class="sidebar" id="sidebar">
-             <div class="nav-header">
-                <button class="icon-btn raiz-btn" title="Raíz cuadrada"  onclick="window.location.href='index.html'">
-                   
-  <span class="raiz-texto">
-    <span class="raiz-arriba">√Raiz</span>
-    <span class="raiz-abajo">Cuadrada<sup>2</sup></span>
-  </span>
-</button>
-
+            <div class="nav-header">
+                <button class="icon-btn" title="Inicio"> <onclick="window.location.href='index.html'"> <i data-lucide="home"></i>  </button>
                 <button class="icon-btn" title="Modo" onclick="toggleTheme()"><i id="theme-icon" data-lucide="moon"></i></button>
-                <button class="icon-btn" onclick="location.reload()" id="close-menu">
-  <i data-lucide="x"></i>
-</button>
-
+                <button class="icon-btn" onclick="onclick="location.reload()" id="close-menu"><i data-lucide="x"></i></button>
             </div>
 
             <nav>
