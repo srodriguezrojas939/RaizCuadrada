@@ -569,50 +569,143 @@ svg text {
 }
 @keyframes fadeIn { from { opacity: 0; transform: translateX(-10px); } to { opacity: 1; transform: translateX(0); } }
 
-
-/* Estilo del botón "Ver más datos" */
-.toggle-datos {
-    display: block;
+/* --- WRAPPER PRINCIPAL --- */
+.advanced-wrapper {
     width: 100%;
-    text-align: center;
-    background: #f8f9fa;
-    border: 1px solid #e9ecef;
-    padding: 10px;
-    margin-top: 15px;
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* Centra el botón y el panel */
+    margin-top: 25px;
+}
+
+/* --- ESTILO DEL BOTÓN --- */
+.toggle-datos {
+    background: transparent;
+    border: 1px solid #e0e0e0;
+    padding: 12px 25px;
+    border-radius: 999px; /* Forma de píldora */
     cursor: pointer;
     font-size: 0.9rem;
-    color: var(--primary);
+    color: #666;
     font-weight: 600;
-    border-radius: 25px;
-    transition: all 0.2s;
-}
-.toggle-datos:hover {
-    background: #e2e6ea;
+    font-family: 'Open Sans', sans-serif; /* Respetando NO Playfair */
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    transition: all 0.3s ease;
+    outline: none;
 }
 
-/* Contenedor de datos avanzados (Grid) */
+.toggle-datos:hover {
+    background: #f4f4f4;
+    border-color: #ccc;
+    color: #333;
+    transform: translateY(-2px);
+}
+
+/* Ícono Chevron */
+.chevron-icon {
+    transition: transform 0.3s ease;
+}
+
+/* Clase que rotará el ícono cuando esté activo */
+.toggle-datos.active .chevron-icon {
+    transform: rotate(180deg);
+}
+
+.toggle-datos.active {
+    background: #f0f0f0;
+    color: #1a1a1a;
+    border-color: #d0d0d0;
+}
+
+/* --- CONTENEDOR DE DATOS AVANZADOS --- */
 .datos-avanzados {
     display: none; /* Oculto por defecto */
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 10px;
-    background: #fafafa;
-    padding: 15px;
+    width: 100%; /* Ocupa el ancho disponible */
+    max-width: 100%;
+    margin-top: 15px;
+    background: #f9f9f9;
+    padding: 20px;
     border-radius: 25px;
-    margin-top: 10px;
-    border: 1px dashed #ccc;
-    font-size: 0.85rem;
-    color: #444;
+    border: 1px dashed #ddd; /* Borde sutil */
+    
+    /* Configuración Grid */
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 15px;
+    box-sizing: border-box;
+    
+    /* Animación de entrada suave */
+    animation: slideDown 0.3s ease forwards;
 }
 
+@keyframes slideDown {
+    from { opacity: 0; transform: translateY(-10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* Cuando se activa vía JS, usamos display: grid */
+.datos-avanzados.mostrar {
+    display: grid;
+}
+
+/* --- FILAS DE DATOS --- */
 .dato-fila {
     display: flex;
     justify-content: space-between;
-    padding: 4px 0;
+    align-items: center;
+    padding: 8px 0;
     border-bottom: 1px solid #eee;
+    font-size: 0.9rem;
 }
-.dato-label { font-weight: bold; color: #555; }
-.dato-valor { font-family: monospace; color: #000; }
 
+.dato-fila:last-child {
+    border-bottom: none;
+}
+
+.dato-label {
+    font-weight: 600;
+    color: #777;
+    font-family: 'Open Sans', sans-serif;
+}
+
+.dato-valor {
+    font-family: 'Open Sans', sans-serif; /* O 'Courier New' si prefieres mono */
+    font-weight: 700;
+    color: #333;
+}
+
+/* --- MODO OSCURO --- */
+[data-theme="dark"] .toggle-datos {
+    border-color: #444;
+    color: #aaa;
+}
+[data-theme="dark"] .toggle-datos:hover {
+    background: #1e1e1e;
+    color: #fff;
+    border-color: #666;
+}
+[data-theme="dark"] .toggle-datos.active {
+    background: #333;
+    color: #fff;
+}
+
+[data-theme="dark"] .datos-avanzados {
+    background: #151515;
+    border-color: #333;
+}
+
+[data-theme="dark"] .dato-fila {
+    border-bottom-color: #333;
+}
+
+[data-theme="dark"] .dato-label {
+    color: #888;
+}
+
+[data-theme="dark"] .dato-valor {
+    color: #eee;
+}
 
 </style>
   
@@ -782,6 +875,22 @@ svg text {
         <div id="resultados">
             <div class="res-grid" id="res-content"></div>
         </div>
+        
+        <div class="advanced-wrapper">
+    
+    <button class="toggle-datos" onclick="toggleAdvanced(this)">
+        <span>Ver más datos avanzados</span>
+        <svg class="chevron-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="m6 9 6 6 6-6"/>
+        </svg>
+    </button>
+
+    <div id="panel-avanzado" class="datos-avanzados">
+        </div>
+
+</div>
+
+
 
         <div class="visual-box" id="visualizacion" style="display:none;">
     <svg id="svg-draw" width="300" height="300" style="background: var(--bg-card); border-radius:8px;"></svg>
@@ -1364,7 +1473,7 @@ function mostrar(a, b, c, A, B, G, pasos) {
     // --- RENDERING HTML ---
 
     // Parte 1: Datos Principales
-    let html = `
+ let htmlNormal = `
         <div class="res-item"><span>Lado a:</span><span>${a.toFixed(2)}</span></div>
         <div class="res-item"><span>Lado b ${mode==='rect'?'(Hip)':''}:</span><span>${b.toFixed(2)}</span></div>
         <div class="res-item"><span>Lado c:</span><span>${c.toFixed(2)}</span></div>
@@ -1375,45 +1484,37 @@ function mostrar(a, b, c, A, B, G, pasos) {
         <div class="res-item"><span>Perímetro:</span><span>${perimetro.toFixed(2)}</span></div>
     `;
 
-    // Parte 2: Botón Ver Más
-    html += `
-        <div class="toggle-datos" onclick="toggleAdvanced()">
-            Ver más datos avanzados <span style="font-size:0.8em">▼</span>
-        </div>
-    `;
+   document.getElementById('res-content').innerHTML = htmlNormal;
 
     // Parte 3: Contenedor Oculto con Datos Técnicos
     // Función auxiliar para formatear coordenadas
     const fmt = (n) => n.toFixed(4);
     const coord = (x, y) => `[${fmt(x)}, ${fmt(y)}]`;
 
-    html += `
-        <div id="advanced-data" class="datos-avanzados">
-            <div class="dato-fila"><span class="dato-label">Semiperímetro (s)</span><span class="dato-valor">${s.toFixed(4)}</span></div>
-            <div class="dato-fila"><span class="dato-label">Inradio (r)</span><span class="dato-valor">${r.toFixed(4)}</span></div>
-            <div class="dato-fila"><span class="dato-label">Circunradio (R)</span><span class="dato-valor">${R_circ.toFixed(4)}</span></div>
-            
-            <div class="dato-fila"><span class="dato-label">Altura h_a</span><span class="dato-valor">${ha.toFixed(4)}</span></div>
-            <div class="dato-fila"><span class="dato-label">Altura h_b</span><span class="dato-valor">${hb.toFixed(4)}</span></div>
-            <div class="dato-fila"><span class="dato-label">Altura h_c</span><span class="dato-valor">${hc.toFixed(4)}</span></div>
-            
-            <div class="dato-fila"><span class="dato-label">Mediana m_a</span><span class="dato-valor">${ma.toFixed(4)}</span></div>
-            <div class="dato-fila"><span class="dato-label">Mediana m_b</span><span class="dato-valor">${mb.toFixed(4)}</span></div>
-            <div class="dato-fila"><span class="dato-label">Mediana m_c</span><span class="dato-valor">${mc.toFixed(4)}</span></div>
+ 
 
-            <div style="grid-column: 1 / -1; margin-top:10px; font-weight:bold; border-bottom:2px solid #ddd;">Coordenadas (A en 0,0)</div>
-            
-            <div class="dato-fila"><span class="dato-label">Vértice A</span><span class="dato-valor">${coord(Ax, Ay)}</span></div>
-            <div class="dato-fila"><span class="dato-label">Vértice B</span><span class="dato-valor">${coord(Bx, By)}</span></div>
-            <div class="dato-fila"><span class="dato-label">Vértice C</span><span class="dato-valor">${coord(Cx, Cy)}</span></div>
-            
-            <div class="dato-fila"><span class="dato-label">Centroide (G)</span><span class="dato-valor">${coord(Gx, Gy)}</span></div>
-            <div class="dato-fila"><span class="dato-label">Incentro (I)</span><span class="dato-valor">${coord(Ix, Iy)}</span></div>
-            <div class="dato-fila"><span class="dato-label">Circuncentro (O)</span><span class="dato-valor">${coord(Ox, Oy)}</span></div>
-        </div>
-    `;
+  document.getElementById('panel-avanzado').innerHTML = `
+    <div class="dato-fila"><span class="dato-label">Semiperímetro (s)</span><span class="dato-valor">${s.toFixed(4)}</span></div>
+    <div class="dato-fila"><span class="dato-label">Inradio (r)</span><span class="dato-valor">${r.toFixed(4)}</span></div>
+    <div class="dato-fila"><span class="dato-label">Circunradio (R)</span><span class="dato-valor">${R_circ.toFixed(4)}</span></div>
 
-    document.getElementById('res-content').innerHTML = html;
+    <div class="dato-fila"><span class="dato-label">Altura hₐ</span><span class="dato-valor">${ha.toFixed(4)}</span></div>
+    <div class="dato-fila"><span class="dato-label">Altura hᵦ</span><span class="dato-valor">${hb.toFixed(4)}</span></div>
+    <div class="dato-fila"><span class="dato-label">Altura h𝚌</span><span class="dato-valor">${hc.toFixed(4)}</span></div>
+
+    <div class="dato-fila"><span class="dato-label">Mediana mₐ</span><span class="dato-valor">${ma.toFixed(4)}</span></div>
+    <div class="dato-fila"><span class="dato-label">Mediana mᵦ</span><span class="dato-valor">${mb.toFixed(4)}</span></div>
+    <div class="dato-fila"><span class="dato-label">Mediana m𝚌</span><span class="dato-valor">${mc.toFixed(4)}</span></div>
+
+    <div class="dato-fila"><span class="dato-label">Vértice A</span><span class="dato-valor">[${Ax}, ${Ay}]</span></div>
+    <div class="dato-fila"><span class="dato-label">Vértice B</span><span class="dato-valor">[${Bx}, ${By}]</span></div>
+    <div class="dato-fila"><span class="dato-label">Vértice C</span><span class="dato-valor">[${Cx.toFixed(4)}, ${Cy.toFixed(4)}]</span></div>
+
+    <div class="dato-fila"><span class="dato-label">Centroide (G)</span><span class="dato-valor">[${Gx.toFixed(4)}, ${Gy.toFixed(4)}]</span></div>
+    <div class="dato-fila"><span class="dato-label">Incentro (I)</span><span class="dato-valor">[${Ix.toFixed(4)}, ${Iy.toFixed(4)}]</span></div>
+    <div class="dato-fila"><span class="dato-label">Circuncentro (O)</span><span class="dato-valor">[${Ox.toFixed(4)}, ${Oy.toFixed(4)}]</span></div>
+`;
+
 
 
     // --- RENDERIZADO DE PASOS Y FÓRMULAS ---
@@ -1614,12 +1715,18 @@ function applyTransforms() {
     });
 }
 
-function toggleAdvanced() {
-    const box = document.getElementById('advanced-data');
-    if (box.style.display === 'none' || box.style.display === '') {
-        box.style.display = 'grid'; // Usamos grid para que se vea bonito
+function toggleAdvanced(btn) {
+    const panel = document.getElementById('panel-avanzado');
+    
+    // Alternar la visibilidad del panel
+    if (panel.style.display === 'grid') {
+        panel.style.display = 'none';
+        btn.classList.remove('active'); // Quita rotación de flecha
+        // btn.querySelector('span').textContent = "Ver más datos avanzados"; // Opcional: Cambiar texto
     } else {
-        box.style.display = 'none';
+        panel.style.display = 'grid';
+        btn.classList.add('active'); // Rota la flecha
+        // btn.querySelector('span').textContent = "Ocultar datos avanzados"; // Opcional: Cambiar texto
     }
 }
 
