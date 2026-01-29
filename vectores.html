@@ -1,0 +1,1377 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>√(Raiz) Cuadrada² </title>
+
+    <script>
+        (function() {
+            // 1. Intentamos leer la memoria
+            const localTheme = localStorage.getItem('theme');
+            // 2. Si hay algo guardado lo usamos, si no, usamos 'light'
+            const themeToSet = localTheme || 'light';
+            // 3. Lo aplicamos INMEDIATAMENTE al HTML
+            document.documentElement.setAttribute('data-theme', themeToSet);
+        })();
+    </script>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600&family=Playfair+Display:ital,wght@0,700;0,900;1,700&display=swap" rel="stylesheet">
+    
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://cdn.plot.ly/plotly-2.27.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700;900&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700&display=swap');
+
+    /* --- ANIMACIONES DE ENTRADA --- */
+    .calculadora-moderna {
+        animation: fadeUp 0.8s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+        opacity: 0;
+    }
+
+    @keyframes fadeUp { 
+        from { opacity: 0; transform: translateY(30px); } 
+        to { opacity: 1; transform: translateY(0); } 
+    }
+
+    /* --- BODY & LAYOUT GENERAL --- */
+    body { 
+        font-family: 'Open Sans', sans-serif; 
+        background: #transparent; /* Fondo suave para resaltar la card */
+        display: flex; 
+        justify-content: center; 
+        padding: 20px; 
+        color: #333;
+        margin: 0;
+        min-height: 100vh;
+    }
+
+    /* --- CONTENEDOR PRINCIPAL (GEMELO DEL STYLE ANTERIOR) --- */
+    .calculadora-moderna {
+        background: #ffffff;
+        padding: 40px 35px;
+        border-radius: 40px;
+        width: 100%;
+        max-width: 800px; /* Un poco más ancho para vectores, pero misma estética */
+        box-shadow: 0 20px 40px rgba(0,0,0,0.08);
+        box-sizing: border-box;
+        margin: 0 auto;
+    }
+
+    /* --- HEADER --- */
+    .header-section { text-align: center; margin-bottom: 35px; }
+    
+    .header-section h1 { 
+        font-family: 'Playfair Display', serif; 
+        font-size: clamp(24px, 6vw, 32px);
+        margin: 0; 
+        font-weight: 700; 
+        color: #1a1a1a; 
+        line-height: 1.1;
+    }
+    
+    .header-section p { 
+        font-family: 'Open Sans', sans-serif; 
+        font-size: 13px; 
+        margin: 10px 0 0; 
+        font-weight: 700; 
+        color: #999; 
+        text-transform: uppercase; 
+        letter-spacing: 1.5px;
+    }
+
+    /* --- INPUTS & SELECTS (ESTILO PREMIUM UNIFICADO) --- */
+    input[type="text"], input[type="number"], .res-input, select {
+        background: #f9f9f9;
+        border: 2px solid transparent;
+        padding: 12px 15px;
+        border-radius: 20px;
+        font-family: 'Open Sans', sans-serif;
+        font-size: 14px;
+        color: #333;
+        transition: all 0.3s ease;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.02) inset;
+        outline: none;
+        width: 100%;
+        box-sizing: border-box;
+        text-align: center;
+    }
+
+    input:focus, .res-input:focus, select:focus {
+        background: white; 
+        border-color: #1a1a1a;
+        box-shadow: 0 10px 25px rgba(0,0,0,0.08); 
+        transform: translateY(-2px);
+    }
+
+    /* Ajuste específico para inputs dentro de tablas */
+    td input { width: 80px !important; margin: 0 auto; }
+
+    /* --- PÍLDORA SELECCIÓN (MODE SWITCHER) --- */
+    .pill-container { 
+        display: flex; 
+        background: #f9f9f9; 
+        padding: 5px; 
+        border-radius: 999px; 
+        margin-bottom: 30px; 
+        justify-content: center;
+        box-shadow: inset 0 1px 3px rgba(0,0,0,0.06);
+        max-width: 400px;
+        margin-left: auto; margin-right: auto;
+    }
+
+    .pill { 
+        background: transparent; border: none; padding: 0; display: flex; width: 100%; gap: 5px;
+    }
+
+    .pill-btn { 
+        flex: 1;
+        border: none; 
+        padding: 10px 20px; 
+        border-radius: 999px; 
+        font-size: 13px; 
+        font-weight: 700; 
+        cursor: pointer; 
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); 
+        background: transparent; 
+        color: #888; 
+        font-family: 'Open Sans', sans-serif;
+    }
+
+    .pill-btn.active { 
+        background: #ffffff; 
+        color: #1a1a1a; 
+        box-shadow: 0 4px 12px rgba(0,0,0,0.12); 
+        transform: scale(1.02);
+    }
+
+    /* --- CONTENEDORES DE DATOS (TABLAS Y CARDS) --- */
+    .content-section { display: none; animation: fadeUp 0.5s ease; }
+    .active-section { display: block; }
+
+    /* Contenedor tipo Card para la tabla */
+    .vector-container { 
+        background: #fff; 
+        border-radius: 25px; 
+        padding: 20px; 
+        border: 1px solid #f0f0f0; 
+        margin-bottom: 25px; 
+        overflow-x: auto; /* Scroll horizontal en móviles */
+        box-shadow: 0 10px 30px rgba(0,0,0,0.03);
+    }
+
+    table { width: 100%; border-collapse: separate; border-spacing: 0 10px; min-width: 300px; }
+    th { font-size: 11px; text-transform: uppercase; color: #999; padding: 10px; font-weight: 700; letter-spacing: 0.5px; }
+    td { padding: 5px; text-align: center; vertical-align: middle; }
+
+   .color-picker {
+    -webkit-appearance: none;
+    appearance: none;
+    border: none;
+    width: 32px;
+    height: 32px;
+    border-radius: 10%;
+    cursor: pointer;
+    padding: 0;
+    background: none;
+}
+
+.color-picker::-webkit-color-swatch {
+    border-radius: 10%;
+    border: 2px solid #ddd;
+}
+
+.color-picker::-webkit-color-swatch-wrapper {
+    padding: 0;
+}
+
+    /* --- BOTONES DE ACCIÓN (AÑADIR / ELIMINAR) --- */
+    .btn-black { 
+        background: #1a1a1a; color: white; border: none; width: 32px; height: 32px; 
+        border-radius: 50%; cursor: pointer; font-size: 16px; transition: all 0.3s ease;
+        display: inline-flex; align-items: center; justify-content: center;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    }
+    .btn-black:hover { transform: translateY(-2px); background: #000; box-shadow: 0 6px 15px rgba(0,0,0,0.2); }
+    
+    .btn-remove { background: #f4f4f4; color: #666; box-shadow: none; }
+    .btn-remove:hover { background: #e0e0e0; color: #333; }
+
+    /* --- CARDS DE PRODUCTOS (GRID) --- */
+    .prod-grid { 
+        display: grid; 
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); 
+        gap: 20px; 
+        margin-bottom: 25px; 
+    }
+
+    .vector-card { 
+        background: #ffffff; 
+        padding: 20px; 
+        border-radius: 25px; 
+        border: 1px solid #f0f0f0; 
+        position: relative;
+        transition: 0.3s;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.03);
+    }
+
+    .vector-card:hover { transform: translateY(-3px); box-shadow: 0 15px 30px rgba(0,0,0,0.08); border-color: #e0e0e0; }
+    
+    .vector-card h3 { 
+        font-size: 14px; margin: 0 0 15px 0; text-align: center; 
+        border-bottom: 1px solid #f0f0f0; padding-bottom: 10px; 
+        font-family: 'Playfair Display', serif; color: #333;
+    }
+    
+    .card-color { position: absolute; top: 15px; right: 15px; width: 12px; height: 12px; border-radius: 50%; }
+    .inputs-row { display: flex; justify-content: center; gap: 8px; }
+
+    /* --- BOTÓN CALCULAR (ESTILO PRINCIPAL) --- */
+    .btn-calc { 
+        width: 100%; 
+        background: #1a1a1a; 
+        color: white; 
+        border: none; 
+        border-radius: 999px; 
+        padding: 18px 35px; 
+        font-weight: 700; 
+        font-size: 16px; 
+        cursor: pointer; 
+        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1); 
+        margin-top: 15px;
+        font-family: 'Open Sans', sans-serif;
+        box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+    }
+
+    .btn-calc:hover { 
+        transform: translateY(-3px) scale(1.01); 
+        background: #000; 
+        box-shadow: 0 12px 25px rgba(0,0,0,0.2); 
+    }
+
+    /* --- GRÁFICA --- */
+    #graph-container { 
+        background: #f9f9f9; 
+        border-radius: 25px; 
+        border: 2px solid transparent; 
+        height: 450px; 
+        position: relative; 
+        overflow: hidden; 
+        box-shadow: 0 2px 5px rgba(0,0,0,0.02) inset;
+        margin-top: 30px;
+    }
+
+    /* --- BOTONES AUXILIARES (DESCARGAR / PASOS) --- */
+    .download-container { display: flex; justify-content: center; margin-top: 25px; gap: 15px; flex-wrap: wrap; }
+
+    .btn-download-pill, #toggleStepsBtn, .btn-3d {
+        background: white;
+        border: 1px solid #e0e0e0;
+        border-radius: 999px;
+        padding: 12px 25px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+        cursor: pointer;
+        transition: 0.3s ease;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.03);
+        font-family: 'Open Sans', sans-serif;
+        font-weight: 700;
+        font-size: 13px;
+        color: #666;
+        text-decoration: none;
+    }
+
+    .btn-download-pill:hover, #toggleStepsBtn:hover, .btn-3d:hover {
+        background: #fafafa;
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(0,0,0,0.08);
+        border-color: #ccc;
+        color: #333;
+    }
+
+    /* --- CAJA DE PASOS --- */
+    .steps-box {
+        background: #f9f9f9;
+        padding: 25px;
+        border-radius: 25px;
+        font-size: 0.95rem;
+        margin-top: 25px;
+        border: 1px solid #f0f0f0;
+        display: none; /* Controlado por JS */
+        animation: fadeUp 0.5s ease;
+    }
+
+    .step-title { font-weight: 700; margin-bottom: 10px; color: #1a1a1a; font-family: 'Playfair Display', serif; }
+    .step-line { margin-bottom: 8px; border-bottom: 1px dashed #e0e0e0; padding-bottom: 8px; }
+
+    /* =========================================
+       MODO OSCURO (DATA-THEME="DARK")
+       ========================================= */
+    
+    [data-theme="dark"] body { background: #0a0a0a; color: #eee; }
+
+    [data-theme="dark"] .calculadora-moderna {
+        background: #0a0a0a;
+        box-shadow: none;
+        border: 1px solid rgba(255,255,255,0.1);
+    }
+
+    [data-theme="dark"] .header-section h1 { color: #fff; }
+    [data-theme="dark"] .header-section p { color: #888; }
+
+    [data-theme="dark"] input, 
+    [data-theme="dark"] select, 
+    [data-theme="dark"] .res-input,
+    [data-theme="dark"] #graph-container,
+    [data-theme="dark"] .pill-container {
+        background: #1e1e1e;
+        color: #fff;
+        border-color: #333;
+        box-shadow: none;
+    }
+
+    [data-theme="dark"] input:focus, [data-theme="dark"] select:focus {
+        background: #252525;
+        border-color: #666;
+    }
+
+    [data-theme="dark"] .pill-btn { color: #666; }
+    [data-theme="dark"] .pill-btn.active {
+        background: #333;
+        color: #fff;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+    }
+
+    [data-theme="dark"] .vector-container,
+    [data-theme="dark"] .vector-card,
+    [data-theme="dark"] .steps-box {
+        background: #1a1a1a;
+        border-color: #333;
+        color: #eee;
+    }
+    
+    [data-theme="dark"] .vector-card h3 { border-color: #333; color: #fff; }
+
+    [data-theme="dark"] .btn-calc {
+        background: #fff;
+        color: #000;
+        box-shadow: 0 4px 15px rgba(255,255,255,0.1);
+    }
+    [data-theme="dark"] .btn-calc:hover { background: #e0e0e0; }
+
+    [data-theme="dark"] .btn-download-pill, 
+    [data-theme="dark"] #toggleStepsBtn, 
+    [data-theme="dark"] .btn-3d,
+    [data-theme="dark"] .btn-remove {
+        background: #1e1e1e;
+        border-color: #444;
+        color: #ccc;
+    }
+    [data-theme="dark"] .btn-download-pill:hover,
+    [data-theme="dark"] #toggleStepsBtn:hover {
+        background: #333;
+        color: #fff;
+    }
+
+    [data-theme="dark"] .step-line { border-bottom-color: #333; }
+    [data-theme="dark"] .step-title { color: #fff; }
+</style>
+  
+
+    </head>
+<body>
+
+    
+    <header class="mobile-header">
+        <div class="nav-header">
+            <button class="icon-btn"><i data-lucide="search"></i></button>
+            <button class="icon-btn" onclick="toggleTheme()"><i data-lucide="moon"></i></button>
+        </div>
+        <button class="icon-btn" onclick="toggleMenu()"><i data-lucide="menu"></i></button>
+    </header>
+
+    <div class="wrapper">
+        <aside class="sidebar" id="sidebar">
+            <div class="nav-header">
+               <button class="icon-btn" title="Inicio"
+        onclick="window.location.href='index.html'">
+  <i data-lucide="home"></i>
+</button>
+
+<button class="icon-btn" title="Modo"
+        onclick="toggleTheme()">
+  <i id="theme-icon" data-lucide="moon"></i>
+</button>
+
+<button class="icon-btn" title="Recargar"
+        onclick="location.reload()"
+        id="close-menu">
+  <i data-lucide="x"></i>
+</button>
+
+            </div>
+
+            <nav>
+                <ul class="nav-links">
+                    <li><a href="index.html"><i data-lucide="square-radical"></i> Página Principal</a></li>
+
+                    
+                    <div class="nav-group">
+    <div class="nav-item has-submenu" onclick="toggleSubmenu(this)">
+        <div class="nav-text-container">
+            <i data-lucide="calculator"></i>
+            <span>CALCULADORA</span>
+        </div>
+        <i data-lucide="chevron-down" class="arrow-icon"></i>
+    </div>
+    
+    <div class="submenu">
+        <a href="ecuaciones.html"><i data-lucide="equal" class="sub-icon"></i> Ecuaciones</a>
+        <a href="sistemas.html"><i data-lucide="layers" class="sub-icon"></i> Sistemas Ecuaciones</a>
+        <a href="matrices.html"><i data-lucide="grid-3x3" class="sub-icon"></i> Matrices</a>
+        <a href="derivadas.html"><i data-lucide="trending-up" class="sub-icon"></i> Derivadas</a>
+        <a href="integrales.html"><i data-lucide="sigma" class="sub-icon"></i> Integrales</a>
+        <a href="laplace.html"><i data-lucide="waves" class="sub-icon"></i> Transf. Laplace</a>
+    </div>
+</div>
+
+<div class="nav-group">
+    <div class="nav-item has-submenu" onclick="toggleSubmenu(this)">
+        <div class="nav-text-container">
+            <i data-lucide="ruler"></i>
+            <span>HERRAMIENTAS</span>
+        </div>
+        <i data-lucide="chevron-down" class="arrow-icon"></i>
+    </div>
+    
+    <div class="submenu">
+        <a href="simbolos.html"><i data-lucide="omega" class="sub-icon"></i> Símbolos</a>
+        <a href="factorizar.html"><i data-lucide="divide" class="sub-icon"></i> Factorizadora</a>
+        <a href="fraccionesparciales.html"><i data-lucide="percent" class="sub-icon"></i> Fracciones Parciales</a>
+        <a href="triangulos.html"><i data-lucide="triangle" class="sub-icon"></i> Calc. Triángulos</a>
+        <a href="vectores.html"><i data-lucide="move-diagonal" class="sub-icon"></i> Vectores</a>
+        <a href="circulounitario.html"><i data-lucide="circle" class="sub-icon"></i> Círculo Unitario</a>
+        <a href="editor.html"><i data-lucide="edit-3" class="sub-icon"></i> Editor Expresiones</a>
+    </div>
+</div>
+
+<div class="nav-group">
+    <div class="nav-item has-submenu" onclick="toggleSubmenu(this)">
+        <div class="nav-text-container">
+            <i data-lucide="activity"></i>
+            <span>GRAFICADORAS</span>
+        </div>
+        <i data-lucide="chevron-down" class="arrow-icon"></i>
+    </div>
+    
+    <div class="submenu">
+        <a href="graficadora2d.html"><i data-lucide="line-chart" class="sub-icon"></i> Funciones 2D</a>
+        <a href="graficadora3d.html"><i data-lucide="box" class="sub-icon"></i> Graficadora 3D</a>
+        <a href="conicas.html"><i data-lucide="orbit" class="sub-icon"></i> Cónicas</a>
+        <a href="campos.html"><i data-lucide="wind" class="sub-icon"></i> Campos Vectoriales</a>
+    </div>
+</div>
+
+                    
+                    <li><a href="cursos.html"><i data-lucide="book-open"></i> CURSOS</a></li>
+                    <li><a href="formularios.html"><i data-lucide="file-text"></i> FORMULARIOS</a></li>
+                    <li><a href="youtube.html"><i data-lucide="youtube"></i> Canal de YouTube</a></li>
+                    <li><a href="autor.html"><i data-lucide="user"></i> Sobre el autor</a></li>
+                </ul>
+            </nav>
+        </aside>
+
+        <main class="content">
+            
+            
+<div class="calculadora-moderna">
+    <div class="header-section">
+        <h1>Calculadora de Vectores</h1>
+        <p>√(Raiz) Cuadrada²</p>
+    </div>
+
+    <div class="pill-container">
+        <div class="pill">
+            <button id="btn-sum" class="pill-btn active" onclick="switchTab('sumas')">Sumas y Restas</button>
+            <button id="btn-prod" class="pill-btn" onclick="switchTab('productos')">Productos</button>
+        </div>
+    </div>
+
+    <div id="sec-sumas" class="content-section active-section">
+        <div class="vector-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Color</th>
+                        <th>Op.</th>
+                        <th>Magnitud</th>
+                        <th>Ángulo (°)</th>
+                        <th>Comp. X</th>
+                        <th>Comp. Y</th>
+                        <th>Comp. Z</th>
+
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody id="vector-body"></tbody>
+                <tfoot>
+                    <tr>
+                        <td style="font-weight: 700;">Σ</td>
+                        <td><input type="color" id="color-res" class="color-picker" value="#000000" oninput="updateSums()"></td>
+                        <td></td>
+                        <td><input id="total-mag" class="res-input" readonly></td>
+                        <td><input id="total-ang" class="res-input" readonly></td>
+                        <td><input id="total-x" class="res-input" readonly></td>
+                        <td><input id="total-y" class="res-input" readonly></td>
+                        <td><input id="total-z" class="res-input" readonly></td>
+
+                        <td><button class="btn-black" onclick="addVectorRow()">+</button></td>
+                    </tr>
+                </tfoot>
+            </table>
+            
+            <button id="toggleStepsBtn" onclick="toggleSteps()" style="display: block; margin: 10px auto;">
+    Ver paso a paso
+</button>
+
+            <div id="procedimiento-contenedor" style="display:none; margin-top:20px; border-top:1px solid #eee; padding-top:15px; text-align:center">
+    <h3 style="font-size:1.2rem; color:#333; margin-bottom:10px;">
+        <i data-lucide="book-open" style="width:18px; vertical-align:middle;"></i>
+        Paso a paso
+    </h3>
+
+    <div id="steps-box" class="steps-box"></div>
+</div>
+
+        </div>
+        <div style="text-align:center; margin-bottom:15px;">
+    <button class="btn-3d" onclick="toggleSumMode()">
+        Cambiar Suma 3D ⇌ 2D
+    </button>
+</div>
+
+        <div id="graph-container">
+            <div id="plot-sum" style="width:100%; height:100%;"></div>
+        </div>
+        
+      
+
+        <div class="download-container">
+            <button class="btn-download-pill" onclick="downloadPlot('plot-sum')">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+                Descargar PNG
+            </button>
+        </div>
+    </div>
+
+    <div id="sec-productos" class="content-section">
+        <div style="display: flex; justify-content: center; gap: 20px; margin-bottom: 25px;">
+            <select id="prod-type" style="padding: 12px 20px; border-radius: 15px; font-family: 'Open Sans'; font-weight: 600; border: 1px solid #ccc;" onchange="toggleVectorC()">
+                <option value="dot">Producto Punto (A · B)</option>
+                <option value="cross">Producto Cruz (A × B)</option>
+                <option value="triple_scalar">Triple Producto Escalar (A · (B × C))</option>
+                <option value="triple">Triple Producto Cruz (A × (B × C))</option>
+            </select>
+        </div>
+
+        <div class="prod-grid">
+            <div class="vector-card">
+                <h3>Vector A</h3>
+                <input type="color" id="color-a" class="color-picker card-color">
+                <div class="inputs-row">
+                    <input type="number" id="ax" placeholder="X" value="3">
+                    <input type="number" id="ay" placeholder="Y" value="2">
+                    <input type="number" id="az" placeholder="Z" value="0">
+                </div>
+            </div>
+            <div class="vector-card">
+                <h3>Vector B</h3>
+                <input type="color" id="color-b" class="color-picker card-color">
+                <div class="inputs-row">
+                    <input type="number" id="bx" placeholder="X" value="-1">
+                    <input type="number" id="by" placeholder="Y" value="4">
+                    <input type="number" id="bz" placeholder="Z" value="0">
+                </div>
+            </div>
+            <div class="vector-card" id="card-c" style="display:none;">
+                <h3>Vector C</h3>
+                <input type="color" id="color-c" class="color-picker card-color">
+                <div class="inputs-row">
+                    <input type="number" id="cx" placeholder="X" value="2">
+                    <input type="number" id="cy" placeholder="Y" value="0">
+                    <input type="number" id="cz" placeholder="Z" value="3">
+                </div>
+            </div>
+            <div class="vector-card" id="card-res-prod">
+                <h3>Resultado</h3>
+                <input type="color" id="color-r" class="color-picker card-color" value="#000000">
+                <div style="text-align: center; font-size: 11px; color: #888; font-weight: 600;">Color en Gráfica</div>
+            </div>
+        </div>
+
+        <button class="btn-calc" onclick="calculateProduct()">Calcular y Graficar</button>
+        <div id="res-prod-box" style="margin-top:20px; text-align:center; font-weight:700; font-size:18px; min-height: 25px;"></div>
+
+<button id="toggleProdStepsBtn" class="btn-3d" onclick="toggleProductSteps()" style="display: block; margin: 10px auto;">
+    Ver paso a paso
+</button>
+
+<div id="procedimiento-prod" class="steps-box" style="display: none; text-align: center;">
+    
+    <h3 style="font-size:1.2rem; margin-bottom:15px; display: flex; align-items: center; justify-content: center; gap: 8px;">
+        <i data-lucide="book-open" style="width:20px;"></i>
+        Paso a paso
+    </h3>
+
+    <div id="steps-prod-box"></div> 
+</div>
+
+        <div id="graph-container" style="margin-top:20px;">
+            <div id="plot-prod" style="width:100%; height:100%;"></div>
+        </div>
+        <div class="download-container">
+            <button class="btn-download-pill" onclick="downloadPlot('plot-prod')">
+                    <i data-lucide="download"></i>
+                Descargar PNG
+            </button>
+            
+            
+        </div>
+    </div>
+</div>
+            
+
+<footer class="footer-global">
+    <div class="footer-wrapper">
+        
+        <div class="footer-section">
+            <h4 class="footer-h4">Contacto</h4>
+            <a href="mailto:s.rodriguezrojas939@gmail.com" class="footer-email">
+                s.rodriguezrojas939@gmail.com
+            </a>
+            <div class="footer-socials">
+                <a href="https://wa.me/573196510401" target="_blank" title="WhatsApp">
+                    <i data-lucide="message-circle"></i>
+                </a>
+                <a href="https://www.youtube.com/@ElRaizCuadrada" target="_blank" title="YouTube">
+                    <i data-lucide="youtube"></i>
+                </a>
+                <a href="mailto:s.rodriguezrojas939@gmail.com" title="Correo">
+                    <i data-lucide="mail"></i>
+                </a>
+                <a href="https://github.com" target="_blank" title="GitHub">
+                    <i data-lucide="github"></i>
+                </a>
+            </div>
+        </div>
+
+        <div class="footer-section">
+            <a href="https://www.youtube.com/@ElRaizCuadrada" target="_blank" class="footer-logo-link">
+                <h1 class="footer-title">√(Raiz) Cuadrada²</h1>
+            </a>
+        </div>
+
+        <div class="footer-section">
+            <h4 class="footer-h4">Visitas al sitio</h4>
+            <div class="visitor-counter">
+                <img src="https://hitwebcounter.com/counter/counter.php?page=21465053&style=0024&nbdigits=5&type=page&initCount=0" alt="Visitas">
+            </div>
+        </div>
+
+    </div>
+</footer>
+           
+        </main>
+        
+     <script src="script.js"></script>
+      
+<script>
+    let sumMode = "2D"; // "2D" o "3D"
+let steps = [];
+let productSteps = [];
+
+
+    let vectorData = [];
+    const watermarkText = "√(Raiz) Cuadrada²";
+
+    function getRandomColor() {
+        const letters = '0123456789ABCDEF';
+        let color = '#';
+        for (let i = 0; i < 6; i++) color += letters[Math.floor(Math.random() * 16)];
+        return color;
+    }
+
+    function switchTab(mode) {
+        document.getElementById('sec-sumas').classList.toggle('active-section', mode === 'sumas');
+        document.getElementById('sec-productos').classList.toggle('active-section', mode === 'productos');
+        document.getElementById('btn-sum').classList.toggle('active', mode === 'sumas');
+        document.getElementById('btn-prod').classList.toggle('active', mode === 'productos');
+        setTimeout(() => { window.dispatchEvent(new Event('resize')); }, 100);
+    }
+
+function toggleSumMode() {
+    sumMode = sumMode === "2D" ? "3D" : "2D";
+    updateSums();
+}
+
+
+function addVectorRow() {
+    const id = Date.now();
+    vectorData.push({
+        id,
+        mag: 0,
+        ang: 0,
+        x: 0,
+        y: 0,
+        z: 0, // componente Z para 3D
+        op: '+',
+        color: getRandomColor()
+    });
+    renderTable();
+    updateSums();
+}
+
+    function removeVector(id) {
+        vectorData = vectorData.filter(v => v.id !== id);
+        renderTable();
+        updateSums();
+    }
+
+    function renderTable() {
+        const body = document.getElementById('vector-body');
+        body.innerHTML = '';
+        vectorData.forEach((v, index) => {
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+                <td style="font-weight:700; color:#888">${String.fromCharCode(65 + index)}</td>
+                <td><input type="color" class="color-picker" value="${v.color}" oninput="updateProp(${v.id}, 'color', this.value)"></td>
+                <td>
+                    <select class="op-select" onchange="updateProp(${v.id}, 'op', this.value)">
+                        <option value="+" ${v.op==='+'?'selected':''}>+</option>
+                        <option value="-" ${v.op==='-'?'selected':''}>-</option>
+                    </select>
+                </td>
+                <td><input type="number" id="m-${v.id}" value="${v.mag}" oninput="updateFromPolar(${v.id})"></td>
+                <td><input type="number" id="a-${v.id}" value="${v.ang}" oninput="updateFromPolar(${v.id})"></td>
+              <td><input type="number" id="x-${v.id}" value="${v.x}" oninput="updateFromCartesian(${v.id})"></td>
+<td><input type="number" id="y-${v.id}" value="${v.y}" oninput="updateFromCartesian(${v.id})"></td>
+<td><input type="number" id="z-${v.id}" value="${v.z || 0}" oninput="updateFromCartesian3D(${v.id})"></td>
+
+                <td><button class="btn-black btn-remove" onclick="removeVector(${v.id})">×</button></td>
+            `;
+            body.appendChild(tr);
+        });
+    }
+
+    function updateProp(id, prop, val) {
+        const v = vectorData.find(item => item.id === id);
+        v[prop] = val;
+        updateSums();
+    }
+
+    function updateFromPolar(id) {
+        const m = parseFloat(document.getElementById(`m-${id}`).value) || 0;
+        const a = parseFloat(document.getElementById(`a-${id}`).value) || 0;
+        const x = m * Math.cos(a * Math.PI / 180);
+        const y = m * Math.sin(a * Math.PI / 180);
+        document.getElementById(`x-${id}`).value = x.toFixed(2);
+        document.getElementById(`y-${id}`).value = y.toFixed(2);
+        saveAndSync(id, m, a, x, y);
+    }
+
+    function updateFromCartesian(id) {
+        const x = parseFloat(document.getElementById(`x-${id}`).value) || 0;
+        const y = parseFloat(document.getElementById(`y-${id}`).value) || 0;
+        const m = Math.sqrt(x*x + y*y);
+        let a = Math.atan2(y, x) * 180 / Math.PI;
+        if (a < 0) a += 360;
+        document.getElementById(`m-${id}`).value = m.toFixed(2);
+        document.getElementById(`a-${id}`).value = a.toFixed(2);
+        saveAndSync(id, m, a, x, y);
+    }
+
+    function saveAndSync(id, m, a, x, y) {
+        const v = vectorData.find(item => item.id === id);
+        v.mag = m; v.ang = a; v.x = x; v.y = y;
+        updateSums();
+    }
+
+function updateSums() {
+    let rx = 0, ry = 0, rz = 0;
+    steps = [];
+
+    steps.push({
+        label: "Inicio",
+        x: 0, y: 0, z: 0
+    });
+
+    vectorData.forEach((v, i) => {
+        const sign = v.op === '+' ? 1 : -1;
+
+        rx += sign * v.x;
+        ry += sign * v.y;
+        rz += sign * (v.z || 0);
+
+        steps.push({
+            label: `Paso ${i + 1}: ${v.op} Vec ${String.fromCharCode(65 + i)}`,
+            x: rx,
+            y: ry,
+            z: rz
+        });
+    });
+
+    document.getElementById('total-x').value = rx.toFixed(2);
+    document.getElementById('total-y').value = ry.toFixed(2);
+    document.getElementById('total-z').value = rz.toFixed(2);
+
+    document.getElementById('total-mag').value =
+        Math.sqrt(rx*rx + ry*ry + rz*rz).toFixed(2);
+
+    renderSteps(steps);
+
+    if (sumMode === "2D") {
+        drawSumGraph(rx, ry, steps);
+    } else {
+        drawSumGraph3D(rx, ry, rz, steps);
+    }
+}
+
+
+   function drawSumGraph(tx, ty, steps) {
+ 
+        const traces = [];
+        let cx = 0, cy = 0;
+        const rColor = document.getElementById('color-res').value;
+
+        vectorData.forEach((v, i) => {
+            const vx = v.op === '+' ? v.x : -v.x;
+            const vy = v.op === '+' ? v.y : -v.y;
+            traces.push({
+                x: [cx, cx + vx], y: [cy, cy + vy],
+                mode: 'lines+markers', type: 'scatter',
+                name: `${v.op} Vec ${String.fromCharCode(65 + i)}`,
+                line: { width: 4, color: v.color },
+                marker: { size: 6 }
+            });
+            cx += vx; cy += vy;
+        });
+
+        traces.push({
+            x: [0, tx], y: [0, ty],
+            mode: 'lines+markers', type: 'scatter',
+            name: 'Σ Resultante',
+            line: { width: 5, color: rColor, dash: 'dash' },
+            marker: { size: 10, symbol: 'arrow-bar-up' }
+        });
+
+        const layout = {
+            xaxis: { zeroline: true, gridcolor: '#eee', title: 'Componente X' },
+            yaxis: { zeroline: true, gridcolor: '#eee', title: 'Componente Y', scaleanchor: "x" },
+            margin: { l: 50, r: 30, t: 30, b: 50 },
+            showlegend: true,
+            annotations: [{
+                text: watermarkText, xref: "paper", yref: "paper", x: 1, y: 0,
+                showarrow: false, font: { family: "Playfair Display", size: 14, color: "#ccc", weight: "bold" },
+                xanchor: "right", yanchor: "bottom"
+            }]
+        };
+
+steps.forEach((s, i) => {
+    traces.push({
+        x: [0, s.x],
+        y: [0, s.y],
+        mode: 'lines',
+        line: { dash: 'dot', width: 2 },
+        name: s.label,
+        showlegend: false
+    });
+});
+
+
+        Plotly.newPlot('plot-sum', traces, layout, {responsive: true, displayModeBar: false});
+    }
+
+    function toggleVectorC() {
+        const type = document.getElementById('prod-type').value;
+        const needsC = type === 'triple' || type === 'triple_scalar';
+        document.getElementById('card-c').style.display = needsC ? 'block' : 'none';
+        document.getElementById('card-res-prod').style.display = type === 'triple_scalar' ? 'none' : 'block';
+    }
+
+    function calculateProduct() {
+        productSteps = [];
+
+        const type = document.getElementById('prod-type').value;
+        const A = { x: parseFloat(document.getElementById('ax').value)||0, y: parseFloat(document.getElementById('ay').value)||0, z: parseFloat(document.getElementById('az').value)||0, color: document.getElementById('color-a').value };
+        const B = { x: parseFloat(document.getElementById('bx').value)||0, y: parseFloat(document.getElementById('by').value)||0, z: parseFloat(document.getElementById('bz').value)||0, color: document.getElementById('color-b').value };
+        const rColor = document.getElementById('color-r').value;
+        
+        let resText = "";
+        let vecsToPlot = [A, B];
+
+        if (type === 'dot') {
+            resText = `Escalar Resultante (A · B): ${(A.x*B.x + A.y*B.y + A.z*B.z).toFixed(2)}`;
+            draw3D(vecsToPlot);
+
+
+            productSteps.push(`
+<strong>Definición</strong>
+$$\\vec A \\cdot \\vec B = A_x B_x + A_y B_y + A_z B_z$$
+
+<strong>Sustitución</strong>
+$$= (${A.x})(${B.x}) + (${A.y})(${B.y}) + (${A.z})(${B.z})$$
+
+<strong>Resultado</strong>
+$$= ${(A.x*B.x).toFixed(2)} + ${(A.y*B.y).toFixed(2)} + ${(A.z*B.z).toFixed(2)}$$
+`);
+
+
+
+        } else if (type === 'cross') {
+            const R = { x: A.y*B.z - A.z*B.y, y: A.z*B.x - A.x*B.z, z: A.x*B.y - A.y*B.x, color: rColor, isRes: true };
+            resText = `Vector Resultante (A × B): (${R.x.toFixed(2)}i, ${R.y.toFixed(2)}j, ${R.z.toFixed(2)}k)`;
+            draw3D([A, B, R]);
+            
+            productSteps.push(`
+<strong>Definición</strong>
+$$\\vec A \\times \\vec B =
+\\begin{vmatrix}
+\\hat i & \\hat j & \\hat k \\\\
+${A.x} & ${A.y} & ${A.z} \\\\
+${B.x} & ${B.y} & ${B.z}
+\\end{vmatrix}$$
+
+<strong>Componentes</strong>
+$$R_x = ${A.y}(${B.z}) - ${A.z}(${B.y})$$
+$$R_y = ${A.z}(${B.x}) - ${A.x}(${B.z})$$
+$$R_z = ${A.x}(${B.y}) - ${A.y}(${B.x})$$
+`);
+
+
+        } else if (type === 'triple_scalar') {
+
+    const C = {
+        x: parseFloat(document.getElementById('cx').value) || 0,
+        y: parseFloat(document.getElementById('cy').value) || 0,
+        z: parseFloat(document.getElementById('cz').value) || 0,
+        color: document.getElementById('color-c').value
+    };
+
+    const BCx = B.y * C.z - B.z * C.y;
+    const BCy = B.z * C.x - B.x * C.z;
+    const BCz = B.x * C.y - B.y * C.x;
+
+    const result = A.x * BCx + A.y * BCy + A.z * BCz;
+
+    resText = `Triple Producto Escalar: ${result.toFixed(2)}`;
+    draw3D([A, B, C]);
+
+    productSteps.push(`
+<strong>Paso 1: Escribir los vectores</strong>
+$$
+\\vec A = (${A.x}, ${A.y}, ${A.z}), \\quad
+\\vec B = (${B.x}, ${B.y}, ${B.z}), \\quad
+\\vec C = (${C.x}, ${C.y}, ${C.z})
+$$
+
+<strong>Paso 2: Producto cruz \\( \\vec B \\times \\vec C \\)</strong>
+
+$$
+\\vec B \\times \\vec C =
+\\begin{vmatrix}
+\\hat i & \\hat j & \\hat k \\\\
+${B.x} & ${B.y} & ${B.z} \\\\
+${C.x} & ${C.y} & ${C.z}
+\\end{vmatrix}
+$$
+
+$$
+= (${BCx.toFixed(2)})\\hat i
++ (${BCy.toFixed(2)})\\hat j
++ (${BCz.toFixed(2)})\\hat k
+$$
+
+<strong>Paso 3: Producto punto \\( \\vec A \\cdot (\\vec B \\times \\vec C) \\)</strong>
+
+$$
+= (${A.x})(${BCx.toFixed(2)})
++ (${A.y})(${BCy.toFixed(2)})
++ (${A.z})(${BCz.toFixed(2)})
+$$
+
+$$
+= ${result.toFixed(2)}
+$$
+
+<strong>Interpretación geométrica</strong>
+
+El valor absoluto representa el <strong>volumen del paralelepípedo</strong>:
+
+$$
+V = |\\vec A \\cdot (\\vec B \\times \\vec C)|
+$$
+`);
+}
+else if (type === 'triple') {
+            const C = { x: parseFloat(document.getElementById('cx').value)||0, y: parseFloat(document.getElementById('cy').value)||0, z: parseFloat(document.getElementById('cz').value)||0, color: document.getElementById('color-c').value };
+            const BCx = B.y*C.z - B.z*C.y, BCy = B.z*C.x - B.x*C.z, BCz = B.x*C.y - B.y*C.x;
+            const R = { x: A.y*BCz - A.z*BCy, y: A.z*BCx - A.x*BCz, z: A.x*BCy - A.y*BCx, color: rColor, isRes: true };
+            resText = `Triple Producto Cruz: (${R.x.toFixed(2)}i, ${R.y.toFixed(2)}j, ${R.z.toFixed(2)}k)`;
+            draw3D([A, B, C, R]);
+            
+            
+      productSteps.push(`
+<strong>Paso 1: Escribir los vectores</strong>
+$$
+\\vec A = (${A.x}, ${A.y}, ${A.z}), \\quad
+\\vec B = (${B.x}, ${B.y}, ${B.z}), \\quad
+\\vec C = (${C.x}, ${C.y}, ${C.z})
+$$
+
+<strong>Paso 2: Calcular el producto cruz \\( \\vec B \\times \\vec C \\)</strong>
+
+$$
+\\vec B \\times \\vec C =
+(${BCx.toFixed(2)})\\hat i +
+(${BCy.toFixed(2)})\\hat j +
+(${BCz.toFixed(2)})\\hat k
+$$
+
+<strong>Paso 3: Calcular el producto cruz \\( \\vec A \\times (\\vec B \\times \\vec C) \\)</strong>
+
+$$
+\\vec R =
+\\begin{vmatrix}
+\\hat i & \\hat j & \\hat k \\\\
+${A.x} & ${A.y} & ${A.z} \\\\
+${BCx.toFixed(2)} & ${BCy.toFixed(2)} & ${BCz.toFixed(2)}
+\\end{vmatrix}
+$$
+
+$$
+R_x = ${A.y}(${BCz.toFixed(2)}) - ${A.z}(${BCy.toFixed(2)}) = ${R.x.toFixed(2)}
+$$
+$$
+R_y = ${A.z}(${BCx.toFixed(2)}) - ${A.x}(${BCz.toFixed(2)}) = ${R.y.toFixed(2)}
+$$
+$$
+R_z = ${A.x}(${BCy.toFixed(2)}) - ${A.y}(${BCx.toFixed(2)}) = ${R.z.toFixed(2)}
+$$
+
+<strong>Resultado final</strong>
+$$
+\\vec R = ${R.x.toFixed(2)}\\hat i +
+${R.y.toFixed(2)}\\hat j +
+${R.z.toFixed(2)}\\hat k
+$$
+`);
+
+
+
+        }
+        document.getElementById('res-prod-box').innerText = resText;
+        renderProductSteps();
+
+    }
+
+    function draw3D(vecs) {
+        
+        const traces = vecs.map((v, i) => ({
+            type: 'scatter3d', mode: 'lines+markers',
+            x: [0, v.x], y: [0, v.y], z: [0, v.z],
+            line: { width: 8, color: v.color },
+            name: v.isRes ? 'Resultado' : `Vec ${String.fromCharCode(65+i)}`,
+            marker: { size: 4 }
+        }));
+
+        const layout = { 
+            margin: {l:0, r:0, b:0, t:0},
+            scene: { xaxis: {title:'X'}, yaxis: {title:'Y'}, zaxis: {title:'Z'} },
+            showlegend: true,
+            annotations: [{
+                text: watermarkText, xref: "paper", yref: "paper", x: 0.95, y: 0.05,
+                showarrow: false, font: { family: "Playfair Display", size: 16, color: "#ddd", weight: "bold" }
+            }]
+        };
+        Plotly.newPlot('plot-prod', traces, layout, {responsive: true, displayModeBar: false});
+    }
+
+    // FUNCIÓN DE DESCARGA MEJORADA CON MARCA DE AGUA GRANDE
+    async function downloadPlot(id) {
+        const plot = document.getElementById(id);
+        
+        // Guardamos el tamaño de fuente original para restaurarlo luego
+        const originalSize = (id === 'plot-sum') ? 14 : 16;
+        const originalColor = (id === 'plot-sum') ? "#ccc" : "#ddd";
+
+        // Aumentamos temporalmente el tamaño de la marca de agua para la captura
+        await Plotly.relayout(plot, {
+            'annotations[0].font.size': 45, // Mucho más grande
+            'annotations[0].font.color': 'rgba(0,0,0,0.15)' // Un poco más visible en el PNG
+        });
+
+        // Generamos la descarga
+        await Plotly.downloadImage(plot, {
+            format: 'png', width: 1200, height: 900,
+            filename: 'analisis_vectores_raiz_cuadrada'
+        });
+
+        // Restauramos el tamaño original para que en la web no se vea desproporcionado
+        Plotly.relayout(plot, {
+            'annotations[0].font.size': originalSize,
+            'annotations[0].font.color': originalColor
+        });
+    }
+    
+  function drawSumGraph3D(tx, ty, tz, steps) {
+
+ 
+    const traces = [];
+    const rColor = document.getElementById('color-res').value;
+
+    vectorData.forEach((v, i) => {
+        const sign = v.op === '+' ? 1 : -1;
+
+        traces.push({
+            type: 'scatter3d',
+            mode: 'lines+markers',
+            x: [0, sign * v.x],
+            y: [0, sign * v.y],
+            z: [0, sign * (v.z || 0)],
+            line: { width: 6, color: v.color },
+            marker: { size: 4 },
+            name: `${v.op} Vec ${String.fromCharCode(65+i)}`
+        });
+    });
+
+    traces.push({
+        type: 'scatter3d',
+        mode: 'lines+markers',
+        x: [0, tx],
+        y: [0, ty],
+        z: [0, tz],
+        line: { width: 8, color: rColor },
+        marker: { size: 6 },
+        name: 'Σ Resultante'
+    });
+
+steps.forEach(s => {
+    traces.push({
+        type: 'scatter3d',
+        mode: 'lines',
+        x: [0, s.x],
+        y: [0, s.y],
+        z: [0, s.z],
+        line: { dash: 'dot', width: 3 },
+        showlegend: false
+    });
+});
+
+
+    Plotly.newPlot('plot-sum', traces, {
+        margin: {l:0, r:0, b:0, t:0},
+        scene: {
+            xaxis:{title:'X'},
+            yaxis:{title:'Y'},
+            zaxis:{title:'Z'}
+        },
+        showlegend: true
+    }, {responsive:true, displayModeBar:false});
+    
+    steps.forEach((s, i) => {
+    traces.push({
+        type: 'scatter3d',
+        mode: 'lines',
+        x: [0, s.x],
+        y: [0, s.y],
+        z: [0, s.z],
+        line: { dash: 'dot', width: 3 },
+        name: s.label,
+        showlegend: false
+    });
+});
+
+}
+
+
+function updateFromCartesian3D(id) {
+    const x = parseFloat(document.getElementById(`x-${id}`).value) || 0;
+    const y = parseFloat(document.getElementById(`y-${id}`).value) || 0;
+    const z = parseFloat(document.getElementById(`z-${id}`).value) || 0;
+
+    const m = Math.sqrt(x*x + y*y + z*z);
+    document.getElementById(`m-${id}`).value = m.toFixed(2);
+
+    const v = vectorData.find(v => v.id === id);
+    v.x = x;
+    v.y = y;
+    v.z = z;
+    v.mag = m;
+
+    updateSums();
+}
+
+
+function renderSteps(steps) {
+    const box = document.getElementById("steps-box");
+    box.innerHTML = "";
+
+    steps.forEach((s, i) => {
+        if (i === 0) {
+            box.innerHTML += `
+                <div class="step-line">
+                    <h4 class="step-title">Estado inicial</h4>
+                    $$\\vec R_0 = 0\\hat i + 0\\hat j${sumMode==="3D" ? " + 0\\hat k" : ""}$$
+                </div>
+            `;
+            return;
+        }
+
+        const prev = steps[i - 1];
+
+        const dx = s.x - prev.x;
+        const dy = s.y - prev.y;
+        const dz = s.z - prev.z;
+
+        const magV = Math.sqrt(dx*dx + dy*dy + dz*dz);
+        const magR = Math.sqrt(s.x*s.x + s.y*s.y + s.z*s.z);
+        const ang = Math.atan2(s.y, s.x) * 180 / Math.PI;
+
+        const cosA = dx / magV;
+        const cosB = dy / magV;
+        const cosC = dz / magV;
+
+        box.innerHTML += `
+        <div class="step-line">
+
+            <h4 class="step-title">${s.label}</h4>
+
+            ${sumMode==="3D" ? `
+            <strong> De magnitud a componentes (3D)</strong>
+
+            $$\\cos\\alpha = \\frac{V_x}{|\\vec V|} = \\frac{${dx.toFixed(2)}}{${magV.toFixed(2)}} = ${cosA.toFixed(3)}$$
+            $$\\cos\\beta = \\frac{V_y}{|\\vec V|} = \\frac{${dy.toFixed(2)}}{${magV.toFixed(2)}} = ${cosB.toFixed(3)}$$
+            $$\\cos\\gamma = \\frac{V_z}{|\\vec V|} = \\frac{${dz.toFixed(2)}}{${magV.toFixed(2)}} = ${cosC.toFixed(3)}$$
+
+            $$V_x = |\\vec V|\\cos\\alpha = ${magV.toFixed(2)}(${cosA.toFixed(3)}) = ${dx.toFixed(2)}$$
+            $$V_y = |\\vec V|\\cos\\beta = ${magV.toFixed(2)}(${cosB.toFixed(3)}) = ${dy.toFixed(2)}$$
+            $$V_z = |\\vec V|\\cos\\gamma = ${magV.toFixed(2)}(${cosC.toFixed(3)}) = ${dz.toFixed(2)}$$
+
+            <strong>Comprobación</strong>
+            $$\\cos^2\\alpha + \\cos^2\\beta + \\cos^2\\gamma =
+            ${(cosA*cosA).toFixed(3)} + ${(cosB*cosB).toFixed(3)} + ${(cosC*cosC).toFixed(3)} = 1$$
+            ` : `
+            <strong> De magnitud a componentes (2D)</strong>
+            $$V_x = ${magV.toFixed(2)}\\cos(${(Math.atan2(dy,dx)*180/Math.PI).toFixed(2)}^\\circ) = ${dx.toFixed(2)}$$
+            $$V_y = ${magV.toFixed(2)}\\sin(${(Math.atan2(dy,dx)*180/Math.PI).toFixed(2)}^\\circ) = ${dy.toFixed(2)}$$
+            `}
+
+            <strong> Sumamos componentes</strong>
+            $$R_x = ${prev.x.toFixed(2)} ${dx>=0?'+':'-'} ${Math.abs(dx).toFixed(2)} = ${s.x.toFixed(2)}$$
+            $$R_y = ${prev.y.toFixed(2)} ${dy>=0?'+':'-'} ${Math.abs(dy).toFixed(2)} = ${s.y.toFixed(2)}$$
+            ${sumMode==="3D" ? 
+            `$$R_z = ${prev.z.toFixed(2)} ${dz>=0?'+':'-'} ${Math.abs(dz).toFixed(2)} = ${s.z.toFixed(2)}$$`
+            : ""}
+
+            <strong>Vector resultante</strong>
+            $$\\vec R = ${s.x.toFixed(2)}\\hat i + ${s.y.toFixed(2)}\\hat j${sumMode==="3D" ? ` + ${s.z.toFixed(2)}\\hat k` : ""}$$
+
+            <strong>Magnitud del vector</strong>
+            $$|\\vec R| = \\sqrt{${s.x.toFixed(2)}^2 + ${s.y.toFixed(2)}^2${sumMode==="3D" ? ` + ${s.z.toFixed(2)}^2` : ""}} = ${magR.toFixed(2)}$$
+
+            ${sumMode==="2D" ? `
+            <strong> Dirección del vector</strong>
+            $$\\theta = \\tan^{-1}\\left(\\frac{${s.y.toFixed(2)}}{${s.x.toFixed(2)}}\\right) = ${ang.toFixed(2)}^\\circ$$
+            ` : ""}
+
+        </div>
+        `;
+    });
+
+    MathJax.typesetPromise();
+}
+
+function toggleSteps() {
+    const container = document.getElementById("procedimiento-contenedor");
+    const box = document.getElementById("steps-box");
+    const btn = document.getElementById("toggleStepsBtn");
+
+    const isHidden = container.style.display === "none" || container.style.display === "";
+
+    if (isHidden) {
+        container.style.display = "block";
+        box.style.display = "block";
+        btn.textContent = "Ocultar paso a paso";
+        MathJax.typesetPromise();
+        lucide.createIcons();
+    } else {
+        container.style.display = "none";
+        btn.textContent = "Ver paso a paso";
+    }
+}
+
+
+
+function toggleProductSteps() {
+    const container = document.getElementById("procedimiento-prod");
+    const btn = document.getElementById("toggleProdStepsBtn");
+
+    const isHidden = container.style.display === "none" || container.style.display === "";
+
+    if (isHidden) {
+        container.style.display = "block";
+        btn.textContent = "Ocultar paso a paso";
+        MathJax.typesetPromise();
+        lucide.createIcons();
+    } else {
+        container.style.display = "none";
+        btn.textContent = "Ver paso a paso";
+    }
+}
+
+function renderProductSteps() {
+    const box = document.getElementById("steps-prod-box");
+    box.innerHTML = "";
+
+    productSteps.forEach((s, i) => {
+        box.innerHTML += `
+            <div class="step-line">
+                <h4 class="step-title">Paso ${i + 1}</h4>
+                ${s}
+            </div>
+        `;
+    });
+
+    MathJax.typesetPromise();
+}
+
+
+
+
+    window.onload = () => {
+        addVectorRow(); addVectorRow();
+        document.getElementById('color-a').value = getRandomColor();
+        document.getElementById('color-b').value = getRandomColor();
+        document.getElementById('color-c').value = getRandomColor();
+        calculateProduct();
+    };
+</script>
+      
+</body>
+<button class="mobile-theme-toggle" onclick="toggleTheme()" aria-label="Cambiar tema">
+    <i data-lucide="sun" class="icon-sun"></i>
+    <i data-lucide="moon" class="icon-moon"></i>
+</button>
+
+
+</html>
