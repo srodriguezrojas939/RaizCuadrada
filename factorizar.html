@@ -360,7 +360,7 @@
     }
 }
 
-
+.label{color:transparent};
 
 /* Clase para cambiar el Grid a Lista Vertical */
 .symbols-container .vertical-layout {
@@ -444,15 +444,15 @@
 
    .result-card {
             
-            padding: 30px;
-            border-radius: 35px;
+            padding: 1px;
+            border-radius: 25px;
             text-align: center;
             min-height: 120px;
             display: flex;
             flex-direction: column;
             justify-content: center;
             box-shadow: 0 10px 20px rgba(0,0,0,0.02);
-           
+           color: transparent;
         }
 
     
@@ -1101,12 +1101,12 @@ function generateSteps(inputExpr, outputExpr, mode) {
 /* --- FUNCIÓN AUXILIAR PARA LEER LOS NÚMEROS (a, b, c) --- */
 function getQuadraticCoeffs(expr) {
     // 1. Limpiamos espacios y estandarizamos
-    let clean = expr.replace(/\s+/g, '').replace(/\*/g, '');
+  let clean = normalizar(expr).replace(/\s+/g, '').replace(/\*/g, '');
     
-    // 2. Regex para capturar ax^2 + bx + c
-    // Busca grupos opcionales de signos y dígitos antes de x^2, x, y al final
+    // Ahora la regex funcionará siempre porque 'clean' tiene ^2
     const regex = /([+-]?\d*)x\^2([+-]?\d*)x([+-]?\d+)/;
     const match = clean.match(regex);
+    
 
     if (match) {
         // Función para convertir texto ("-", "+", "2", "") en número real
