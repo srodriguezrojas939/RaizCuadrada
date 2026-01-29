@@ -34,7 +34,8 @@ function toggleTheme() {
     // 3. Actualizar los iconos visualmente
     updateThemeIcons(newTheme);
 
-     updatePlotsTheme();
+     document.body.classList.toggle("dark");
+    updatePlotsTheme();
 }
 
 // Función: Menú Móvil (Hamburguesa)
