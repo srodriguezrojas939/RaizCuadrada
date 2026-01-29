@@ -24,14 +24,15 @@
 
     <link rel="stylesheet" href="styles.css">
 
+
+ 
     <script src="https://cdn.jsdelivr.net/npm/nerdamer@1.1.13/nerdamer.core.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/nerdamer@1.1.13/Algebra.js"></script>
-    <script>
-        window.MathJax = { tex: { inlineMath: [['$', '$']], displayMath: [['$$', '$$']] } };
+    <script src="https://cdn.jsdelivr.net/npm/nerdamer@1.1.13/Calculus.js"></script>
+    
+    <script type="text/javascript" id="MathJax-script" async
+      src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js">
     </script>
-    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js" async></script>
-
-
   
 <style>
     @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700;900&display=swap');
@@ -104,7 +105,7 @@
     }
 
     /* --- PREVIEW Y RESULTADOS --- */
-    #preview-container, #resultado {
+    #preview, #output {
         background: #f9f9f9; 
         margin-bottom: 25px; 
         padding: 20px;
@@ -121,7 +122,7 @@
         text-align: center;
     }
 
-    #resultado { margin-top: 30px; } /* Ajustado espacio visual */
+    #output { margin-top: 30px; } /* Ajustado espacio visual */
 
     /* --- LABELS --- */
     label { 
@@ -440,6 +441,27 @@
     color: #000000;
 }
 
+   .result-card {
+            
+            padding: 30px;
+            border-radius: 35px;
+            text-align: center;
+            min-height: 120px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.02);
+           
+        }
+
+        .label {
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: #aaa;
+            font-weight: 700;
+        }
+        
 
 </style>
 
@@ -560,20 +582,23 @@
     </div>
 
     <div id="preview-container">
-        <div id="latex-preview">$$ \dots $$</div>
+        <div id="preview">$$ \dots $$</div>
     </div>
 
-    <label>Expresión a factorizar</label>
-    <input id="funcion" placeholder="Ej: a*x^2+b*x+c" type="text" oninput="actualizarPreview()">
+    <label>Expresión a factorizar ó Expandir</label>
+    <input id="algebra-input" placeholder="Ej: a*x^2+b*x+c" type="text" oninput="actualizarPreview()">
 
-    <button onclick="resolver()" class="btn-principal" id="btn">Factorizar</button>
 
-    <div id="resultado">Esperando datos...</div>
+
+    <div class="result-card">
+        <div class="label">Factorización</div>
+        <div id="output">\( \dots \)</div>
+    </div>
+
 
     <div class="pills-nav" id="pillsNav">
         <button class="pill active" onclick="showCategory('plantillas', this)">Plantillas</button>
          <button class="pill" onclick="showCategory('principales', this)">Principales</button>
-        <button class="pill" onclick="showCategory('trig', this)">Trigonometricas</button>
               <button class="pill" onclick="showCategory('tabla', this)">Metodos</button>
         <div id="btn-pdf-container" style="display: none; justify-content: center; margin-top: 15px;">
     </div>
@@ -630,8 +655,10 @@
      <script src="script.js"></script>
 
       <script>
+ const input = document.getElementById('algebra-input');
+    const preview = document.getElementById('preview');
+    const output = document.getElementById('output');
 
-// Configuración de categorías
 const categorias = {
     plantillas: [
         // BÁSICAS Y TRINOMIOS
@@ -682,27 +709,8 @@ const categorias = {
   { s: '⁶',  t: 'POTENCIA (6)' },
   { s: '⁷',  t: 'POTENCIA (7)' },
   { s: '⁸',  t: 'POTENCIA (8)' },
-  { s: '⁹',  t: 'POTENCIA (9)' },
-  { s: '¹⁰', t: 'POTENCIA (10)' },
-  { s: 'ˣ',  t: 'POTENCIA (X)' },
-  { s: 'ʸ',  t: 'POTENCIA (Y)' }
-    ],
-    trig: [
-       { s: 'sin()', t: 'SENO' }, 
-        { s: 'cos()', t: 'COSENO' }, 
-        { s: 'tan()', t: 'TAN' }, 
-        { s: 'sec()', t: 'SEC' }, 
-        { s: 'csc()', t: 'CSC' }, 
-        { s: 'cot()', t: 'COT' },
-        { s: 'sinh()', t: 'SENH' }, 
-        { s: 'cosh()', t: 'COSH' }, 
-        { s: 'tanh()', t: 'TANH' },
-        { s: 'coth()', t: 'COTH' }, 
-        { s: 'sech()', t: 'SECH' }, 
-        { s: 'csch()', t: 'CSCH' }
+  { s: '⁹',  t: 'POTENCIA (9)' }
     ]
-    
-    
 };
 
 
@@ -710,21 +718,66 @@ const TransformadasComunes = [
 
 
 "Metodos de factorización",
-"$$ ax + ay = a(x + y) $$",  // Factor Común
 
-"$$ a^2 - b^2 = (a - b)(a + b) $$",  // Diferencia de Cuadrados
+`$$
+\\text{Factor común}  \\quad \\\\
+\\begin{aligned}
+ax + ay 
+&= a(x) + a(y) \\\\
+&= a(x + y)
+\\end{aligned}
+$$`,
 
-"$$ a^2 + 2ab + b^2 = (a + b)^2 $$",  // Trinomio Cuadrado Perfecto (Suma)
 
-"$$ a^2 - 2ab + b^2 = (a - b)^2 $$",  // Trinomio Cuadrado Perfecto (Resta)
+`$$
+\\text{Diferencia de cuadrados}  \\quad  \\\\
+a^2 - b^2 = (a - b)(a + b)
+$$`,
+  
+`$$
+\\text{Trinomio cuadrado perfecto (suma)} \\quad \\\\
+a^2 + 2ab + b^2 = (a + b)^2
+$$`,
+  
+  `$$
+\\text{Trinomio cuadrado perfecto (resta)}  \\quad  \\\\
+a^2 - 2ab + b^2 = (a - b)^2
+$$`,
 
-"$$ x^2 + (a + b)x + ab = (x + a)(x + b) $$",  // Trinomio de la forma x^2 + bx + c
+`$$
 
-"$$ ax^2 + bx + c = \\frac{(ax+m)(ax+n)}{a} $$",  // Trinomio de la forma ax^2 + bx + c
+\\begin{aligned}
 
-"$$ a^3 + b^3 = (a + b)(a^2 - ab + b^2) $$",  // Suma de Cubos
+\\text{Trinomio }x^2+bx+c:  \\quad & x^2 + (p+q)x + p\\cdot q \\\\
 
-"$$ a^3 - b^3 = (a - b)(a^2 + ab + b^2) $$",  // Diferencia de Cubos
+ & = x^2 + px + qx + pq \\\\
+
+ & = (x^2 + px) + (qx + pq) \\\\
+
+& = x(x + p) + q(x + p) \\\\
+
+& = (x + p)(x + q)
+
+\\end{aligned}
+
+$$`, 
+
+
+`$$
+\\begin{aligned}
+\\text{Trinomio: } & ax^2 + bx + c \\quad (a \\neq 1) \\\\
+\\text{1. Mult. y div. por } a: & = \\frac{a(ax^2 + bx + c)}{a} \\\\
+\\text{2. Reescribir: } & = \\frac{(ax)^2 + b(ax) + (a \\cdot c)}{a} \\\\
+\\text{3. Factorizar (buscar } m, n): & = \\frac{(ax + m)(ax + n)}{a} \\\\
+\\text{   Condición: } & m \\cdot n = a \\cdot c \\quad \\text{y} \\quad m + n = b \\\\
+\\text{4. Simplificar el } a: & = \\text{Resultado Final}
+\\end{aligned}
+$$`,
+
+
+"$$ \\text{Suma de cubos } \\quad  a^3 + b^3 = (a + b)(a^2 - ab + b^2) $$",  // Suma de Cubos
+
+"$$ \\text{Diferencia cubos } \\quad a^3 - b^3 = (a - b)(a^2 + ab + b^2) $$",  // Diferencia de Cubos
 
 ];
 
@@ -766,7 +819,8 @@ function showCategory(cat, btn = null) {
     }
 
     const grid = document.getElementById('grid-content');
-    const input = document.getElementById('funcion');
+   const input = document.getElementById('algebra-input');
+
 
     grid.innerHTML = '';
 
@@ -826,124 +880,82 @@ function insertarEnCursor(input, texto) {
     input.focus();
 }
 
+/* --- 3. FUNCIONES DE INTERFAZ (TABS Y PLANTILLAS) --- */
+function setMode(mode) {
+    // Manejo de las pestañas (Plantillas vs Tutorial)
+    document.querySelectorAll('.pill').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.category-content').forEach(c => c.style.display = 'none');
+    
+    // Activar el botón clickeado
+    event.target.classList.add('active'); // Nota: event.target funciona inline, pero idealmente se pasa 'this'
+    
+    // Mostrar el contenido
+    document.getElementById(mode).style.display = 'grid';
+}
 
 
+    function normalizar(expr) {
+    if (!expr) return '';
 
-    function normalizar(expr) { 
-        if (!expr) return '';
+    let s = expr;
 
-        // 1. Quitar espacios y pasar a minúsculas
-        let s = expr.toLowerCase().replace(/\s+/g, '');
-        
-        // CASO E: Valor absoluto |x| -> abs(x)
-        s = s.replace(/\|([^|]+)\|/g, 'abs($1)');
+    // Quitar espacios
+    s = s.replace(/\s+/g, '');
 
-        // CASO F: Superíndices
-        const superindices = { '⁰':'0', '¹':'1', '²':'2', '³':'3', '⁴':'4', '⁵':'5', '⁶':'6', '⁷':'7', '⁸':'8', '⁹':'9' };
-        s = s.replace(/[⁰¹²³⁴⁵⁶⁷⁸⁹]/g, match => `^${superindices[match]}`);
+    // Superíndices → ^
+    const sup = {
+        '⁰':'0','¹':'1','²':'2','³':'3','⁴':'4',
+        '⁵':'5','⁶':'6','⁷':'7','⁸':'8','⁹':'9'
+    };
 
-        // 2. Diccionario de Traducción
-        const reemplazos = [
-            { from: /arctan/g, to: 'atan' },
-            { from: /arctg/g, to: 'atan' },
-            { from: /arcsin/g, to: 'asin' },
-            { from: /arccos/g, to: 'acos' },
-            { from: /arcsec/g, to: 'asec' },
-            { from: /arccsc/g, to: 'acsc' },
-            { from: /arccot/g, to: 'acot' },
-            { from: /sen/g, 'to': 'sin' },
-            { from: /tg/g, 'to': 'tan' },
-            { from: /ln/g, 'to': 'log' }, 
-            { from: /√/g, 'to': 'sqrt' },
-            { from: /π/g, 'to': 'pi' },
-            { from: /·/g, 'to': '*' }
-        ];
+    s = s.replace(/[⁰¹²³⁴⁵⁶⁷⁸⁹]/g, m => '^' + sup[m]);
 
-        reemplazos.forEach(r => { s = s.replace(r.from, r.to); });
+    // √ → sqrt
+    s = s.replace(/√/g, 'sqrt');
 
-        // 3. Notación inversa
-        s = s.replace(/sin\^-1/g, 'asin').replace(/cos\^-1/g, 'acos').replace(/tan\^-1/g, 'atan');
+    // Multiplicación implícita
+    s = s.replace(/(\d)([a-zA-Z\(])/g, '$1*$2');   // 2x, 2(x)
+    s = s.replace(/([a-zA-Z\)])(\d)/g, '$1*$2');   // x2, )2
+    s = s.replace(/([a-zA-Z])([a-zA-Z])/g, '$1*$2'); // xy
+    s = s.replace(/\)\(/g, ')*(');                 // )(
 
-        const funcsTrig = 'sin|cos|tan|csc|sec|cot';
-        const reTrigPow = new RegExp(`(${funcsTrig})\\^(\\d+)\\(?([xyz])\\)?`, 'g');
-        s = s.replace(reTrigPow, '($1($3))^$2');
-        
-        // 4. Inteligencia: Funciones sin paréntesis
-        const funciones = ['asin', 'acos', 'atan', 'asec', 'acsc', 'acot', 'sin', 'cos', 'tan', 'sec', 'csc', 'cot', 'sqrt', 'log', 'abs', 'exp'];
-        
-        funciones.forEach(fn => {
-            const re = new RegExp(`${fn}([xyz\\d])`, 'g');
-            s = s.replace(re, `${fn}($1)`);
-        });
-
-        // 5. Multiplicación Implícita
-        // CASO A: Número seguido de Variable o Paréntesis (2x -> 2*x)
-        s = s.replace(/(\d)([a-z\(])/g, '$1*$2');
-
-        // CASO B: Variable explícita seguida de función
-        const funcionPattern = funciones.join('|');
-        const reMultFunc = new RegExp(`([xyz\\)])(${funcionPattern})`, 'g');
-        s = s.replace(reMultFunc, '$1*$2');
-
-        // CASO C: Variable seguida de variable (xx -> x*x)
-        s = s.replace(/([xytz])([xytz])/g, '$1*$2');
-
-        // CASO D: Corchetes
-        s = s.replace(/[\[\{]/g, '(').replace(/[\]\}]/g, ')');
-        
-        // NORMALIZAR INECUACIONES (Unicode → ASCII)
-s = s.replace(/≤/g, '<=').replace(/≥/g, '>=');
-
-        return s;
-    }
+    return s;
+}
 
 
-function actualizarPreview() {
-    const input = document.getElementById('funcion').value;
-    const preview = document.getElementById('latex-preview');
-
-    if (!input.trim()) {
-        preview.innerHTML = '$$ \\dots $$';
-        MathJax.typesetPromise([preview]);
+  input.addEventListener('input', () => {
+    const val = input.value.trim();
+    if (!val) {
+        preview.innerHTML = "\\( \\dots \\)";
+        output.innerHTML = "\\( \\dots \\)";
         return;
     }
+  try {
+        const expr = normalizar(val);
+        preview.innerHTML = `\\[ ${expr.replace(/sqrt/g, '\\sqrt')} \\]`;
 
-    try {
-        const normalizada = normalizar(input);
-        const expr = nerdamer(normalizada);
-        preview.innerHTML = `$$ ${expr.toTeX()} $$`;
-        MathJax.typesetPromise([preview]);
+        // 1. Calculamos ambas formas: Expandida y Factorizada
+        let core = nerdamer(expr);
+        let expanded = core.expand();
+        let factored = nerdamer.factor(expr);
+
+        // 2. Lógica de decisión:
+        // Si lo que escribió el usuario (core) es igual a la versión factorizada,
+        // significa que YA está factorizado, por lo tanto => EXPANDIMOS.
+        // Si no, por defecto => FACTORIZAMOS.
+        if (core.toString() === factored.toString() && core.toString() !== expanded.toString()) {
+            document.querySelector('.label').textContent = "Expansión (Producto Notable)";
+            output.innerHTML = `\\[ ${expanded.toTeX()} \\]`;
+        } else {
+            document.querySelector('.label').textContent = "Factorización";
+            output.innerHTML = `\\[ ${factored.toTeX()} \\]`;
+        }
+
     } catch (e) {
-        preview.innerHTML = '$$ \\text{Expresión inválida} $$';
-        MathJax.typesetPromise([preview]);
+        output.innerHTML = "<span style='color:#ff4757;font-size:14px;'>Esperando expresión válida...</span>";
     }
-}
-
-
-function resolver() {
-    const input = document.getElementById('funcion').value;
-    const resultadoDiv = document.getElementById('resultado');
-    const btn = document.getElementById('btn');
-
-    if (!input.trim()) {
-        resultadoDiv.innerHTML = 'Ingresa una expresión';
-        return;
-    }
-
-    btn.disabled = true;
-    resultadoDiv.innerHTML = 'Factorizando…';
-
-    try {
-        const normalizada = normalizar(input);
-        const factorizado = nerdamer(`factor(${normalizada})`);
-        resultadoDiv.innerHTML = `$$ ${factorizado.toTeX()} $$`;
-        MathJax.typesetPromise([resultadoDiv]);
-    } catch (err) {
-        resultadoDiv.innerHTML = 'No se pudo factorizar';
-    } finally {
-        btn.disabled = false;
-    }
-}
+    if (window.MathJax) MathJax.typesetPromise();
+});
 
 
 
@@ -951,7 +963,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const btnPlantillas = document.querySelector('.pill.active');
     showCategory('plantillas', btnPlantillas);
 });
-
 
 
 </script>
