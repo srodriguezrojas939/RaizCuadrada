@@ -24,7 +24,7 @@ function toggleTheme() {
     const html = document.documentElement;
     const currentTheme = html.getAttribute('data-theme');
     const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
-    
+      
     // 1. Cambiar atributo en HTML
     html.setAttribute('data-theme', newTheme);
     
@@ -33,6 +33,8 @@ function toggleTheme() {
     
     // 3. Actualizar los iconos visualmente
     updateThemeIcons(newTheme);
+
+     updatePlotsTheme();
 }
 
 // Función: Menú Móvil (Hamburguesa)
