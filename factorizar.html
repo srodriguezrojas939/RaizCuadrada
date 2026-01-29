@@ -24,7 +24,8 @@
 
     <link rel="stylesheet" href="styles.css">
 
-
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
  
     <script src="https://cdn.jsdelivr.net/npm/nerdamer@1.1.13/nerdamer.core.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/nerdamer@1.1.13/Algebra.js"></script>
@@ -454,15 +455,41 @@
            
         }
 
-        .label {
-            font-size: 12px;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            color: #aaa;
-            font-weight: 700;
-        }
+    
         
-
+.steps-container {
+   
+        border: 2px dashed #e0e0e0;
+        border-radius: 20px;
+        padding: 25px;
+        margin-bottom: 30px;
+        text-align: left;
+    }
+    .step-item {
+       
+        margin-bottom: 12px;
+        padding: 15px;
+      
+        font-size: 20px;
+        color: #black;
+    }
+    .step-formula {
+        color: #black;
+        font-weight: 700;
+        font-size: 0.85em;
+        display: block;
+        margin-bottom: 8px;
+        letter-spacing: 1px;
+    }
+    /* Soporte modo oscuro */
+    [data-theme="dark"] .steps-container {
+  
+    }
+    [data-theme="dark"] .step-item {  color: #white;
+      
+    }
+    [data-theme="dark"] .step-formula { color: #white; }
+    
 </style>
 
   
@@ -595,6 +622,14 @@
         <div id="output">\( \dots \)</div>
     </div>
 
+
+    
+    <div class="steps-container" id="steps-box" style="display:none; margin-top: 20px; border-top: 1px solid #eee; padding-top: 15px; text-align: center">
+    <h3 style=" font-size: 1.2rem; color: #333; margin-bottom: 10px;">
+        <i data-lucide="book-open" style="width:18px; vertical-align:middle;"></i> Paso a paso:
+    </h3>
+      <ul id="steps-list"></ul>
+</div>
 
     <div class="pills-nav" id="pillsNav">
         <button class="pill active" onclick="showCategory('plantillas', this)">Plantillas</button>
@@ -955,6 +990,349 @@ function setMode(mode) {
         output.innerHTML = "<span style='color:#ff4757;font-size:14px;'>Esperando expresión válida...</span>";
     }
     if (window.MathJax) MathJax.typesetPromise();
+});
+
+/* --- FUNCIÓN GENERADORA DE PASOS --- */
+function generateSteps(inputExpr, outputExpr, mode) {
+    const stepsList = document.getElementById('steps-list');
+    const stepsBox = document.getElementById('steps-box');
+    stepsList.innerHTML = ""; 
+    
+    let steps = [];
+    const cleanInput = inputExpr.replace(/\s/g, '');
+
+    // --- CASO 1: BINOMIO AL CUADRADO (Expansión) ---
+    if (mode === "EXPAND" && cleanInput.includes('^2') && cleanInput.includes('(')) {
+        steps.push({
+            title: "Producto Notable: Binomio al Cuadrado",
+            math: `$$ (a \\pm b)^2 = a^2 \\pm 2ab + b^2 $$`
+        });
+        steps.push({
+            title: "Procedimiento",
+            math: `\\text{Cuadrado del primero } (a^2) \\pm \\text{ Doble del primero por el segundo } (2ab) + \\text{ Cuadrado del segundo } (b^2)`
+        });
+        steps.push({ title: "Resultado", math: outputExpr });
+    }
+
+    // --- CASO 2: DIFERENCIA DE CUADRADOS ---
+    else if (mode === "FACTOR" && cleanInput.includes('-') && cleanInput.includes('^2') && !cleanInput.includes('(')) {
+        steps.push({
+            title: "Identificación: Diferencia de Cuadrados",
+            math: `$$ a^2 - b^2 = (a - b)(a + b) $$`
+        });
+        steps.push({
+            title: "Paso 1: Raíces",
+            math: `\\text{Extraemos la raíz cuadrada de cada término: } \\sqrt{a^2} = a, \\; \\sqrt{b^2} = b`
+        });
+        steps.push({ title: "Resultado Final", math: outputExpr });
+    }
+
+    // --- CASO 3: TRINOMIO DE LA FORMA x^2 + bx + c ---
+    // Detecta x^2 al inicio (sin número delante)
+    else if (mode === "FACTOR" && /^x\^2/.test(cleanInput)) {
+        steps.push({
+            title: "Trinomio de la forma x² + bx + c",
+            math: `$$
+            \\begin{aligned}
+            \\text{Objetivo: } & \\text{Buscar dos números } n, m \\text{ tal que:} \\\\
+            \\text{1. Multiplicados den c: } & n \\cdot m = c \\\\
+            \\text{2. Sumados den b: } & n + m = b \\\\
+            \\text{Fórmula: } & (x + n)(x + m)
+            \\end{aligned}
+            $$`
+        });
+        steps.push({ title: "Resultado encontrado", math: outputExpr });
+    }
+
+    // --- CASO 4: TRINOMIO DE LA FORMA ax^2 + bx + c ---
+    // Detecta número + x^2 al inicio (ej: 2x^2...)
+    else if (mode === "FACTOR" && /^[0-9]+x\^2/.test(cleanInput)) {
+        steps.push({
+            title: "Trinomio de la forma ax² + bx + c",
+            math: `$$
+            \\begin{aligned}
+            \\text{1. Multiplicar y dividir por } a: & \\quad \\frac{a(ax^2 + bx + c)}{a} \\\\
+            \\text{2. Buscar factores } m, n: & \\quad m \\cdot n = a \\cdot c, \\; m + n = b \\\\
+            \\text{3. Expresar: } & \\quad \\frac{(ax + m)(ax + n)}{a} \\\\
+            \\text{4. Simplificar el denominador.} & 
+            \\end{aligned}
+            $$`
+        });
+        steps.push({ title: "Resultado", math: outputExpr });
+    }
+
+    // --- CASO GENÉRICO ---
+    else {
+        steps.push({
+            title: mode === "EXPAND" ? "Expansión Algebraica" : "Factorización",
+            math: mode === "EXPAND" ? "\\text{Aplicamos propiedad distributiva para eliminar paréntesis.}" : "\\text{Simplificamos la expresión buscando factores comunes o identidades.}"
+        });
+        steps.push({ title: "Resultado", math: outputExpr });
+    }
+
+    // RENDERIZADO CON KATEX
+    if (steps.length > 0) {
+        stepsBox.style.display = "block";
+        steps.forEach(s => {
+            const li = document.createElement('li');
+            li.className = 'step-item';
+            
+            // Título
+            const titleSpan = document.createElement('span');
+            titleSpan.className = 'step-formula';
+            titleSpan.textContent = s.title;
+            li.appendChild(titleSpan);
+
+            // Matemáticas (Renderizado KaTeX)
+            const mathSpan = document.createElement('div'); // Usamos div para bloques
+            try {
+                // Limpiamos los $$ extra si vienen en el string para KaTeX
+                const cleanMath = s.math.replace(/^\$\$/, '').replace(/\$\$$/, '');
+                katex.render(cleanMath, mathSpan, { throwOnError: false, displayMode: s.math.includes('$$') || s.math.includes('aligned') });
+            } catch(e) { mathSpan.textContent = s.math; }
+            
+            li.appendChild(mathSpan);
+            stepsList.appendChild(li);
+        });
+    } else {
+        stepsBox.style.display = "none";
+    }
+}
+
+/* --- FUNCIÓN AUXILIAR PARA LEER LOS NÚMEROS (a, b, c) --- */
+function getQuadraticCoeffs(expr) {
+    // 1. Limpiamos espacios y estandarizamos
+    let clean = expr.replace(/\s+/g, '').replace(/\*/g, '');
+    
+    // 2. Regex para capturar ax^2 + bx + c
+    // Busca grupos opcionales de signos y dígitos antes de x^2, x, y al final
+    const regex = /([+-]?\d*)x\^2([+-]?\d*)x([+-]?\d+)/;
+    const match = clean.match(regex);
+
+    if (match) {
+        // Función para convertir texto ("-", "+", "2", "") en número real
+        const parsePart = (str) => {
+            if (!str || str === '+') return 1;
+            if (str === '-') return -1;
+            return parseInt(str);
+        };
+
+        return {
+            a: parsePart(match[1]),
+            b: parsePart(match[2]),
+            c: parsePart(match[3])
+        };
+    }
+    return null; // No se pudo leer (quizás faltan términos)
+}
+
+/* --- GENERADOR DE PASOS DINÁMICO --- */
+function generateSteps(inputExpr, outputExpr, mode) {
+    const stepsList = document.getElementById('steps-list');
+    const stepsBox = document.getElementById('steps-box');
+    stepsList.innerHTML = ""; 
+    
+    let steps = [];
+    const cleanInput = inputExpr.replace(/\s/g, '');
+    const coeffs = getQuadraticCoeffs(inputExpr); // Intentamos leer los números
+
+    // --- CASO 1: BINOMIO AL CUADRADO (Expansión) ---
+    // Ej: (x+3)^2
+    if (mode === "EXPAND" && cleanInput.includes('^2') && cleanInput.includes('(')) {
+        steps.push({
+            title: "Producto Notable: Binomio al Cuadrado",
+            math: `$$ (a \\pm b)^2 = a^2 \\pm 2ab + b^2 $$`
+        });
+        
+        // Intentamos extraer el número dentro del paréntesis para ser más explícitos
+        const parts = cleanInput.match(/\(([a-z])([+-]\d+)\)\^2/i);
+        if(parts) {
+            const vari = parts[1]; // x
+            const num = parts[2];  // +3 o -3
+            const nVal = parseInt(num);
+            const nCuad = nVal * nVal;
+            const nDoble = 2 * nVal;
+            
+            steps.push({
+                title: "Sustitución con tus valores",
+                math: `\\begin{aligned} 
+                &= (${vari})^2 + 2(${vari})(${nVal}) + (${nVal})^2 \\\\
+                &= ${vari}^2 ${nDoble > 0 ? '+' : ''}${nDoble}${vari} + ${nCuad}
+                \\end{aligned}`
+            });
+        }
+        
+        steps.push({ title: "Resultado", math: outputExpr });
+    }
+
+  
+
+    // --- CASO 3: TRINOMIO ax^2 + bx + c (TU PEDIDO PRINCIPAL) ---
+    // Detecta si empieza con número (a > 1)
+    else if (mode === "FACTOR" && coeffs && Math.abs(coeffs.a) > 1) {
+        const { a, b, c } = coeffs;
+        const ac = a * c;
+        
+        // Buscamos los "números mágicos" m y n
+        // Loop simple para encontrarlos (que multiplicados den ac y sumados den b)
+        let m = 0, n = 0;
+        let found = false;
+        // Búsqueda bruta rápida (suficiente para tareas escolares)
+        for (let i = -Math.abs(ac); i <= Math.abs(ac); i++) {
+            if (i === 0) continue;
+            if (ac % i === 0) {
+                let j = ac / i;
+                if (i + j === b) {
+                    m = i; n = j; found = true; break;
+                }
+            }
+        }
+
+        steps.push({
+            title: `Método del Trinomio ax² + bx + c (a=${a})`,
+            math: `$$ \\text{Multiplicamos y dividimos todo por } a = ${a} $$`
+        });
+
+        // Paso 1: Multiplicación visual
+        steps.push({
+            title: "1. Amplificar la expresión",
+            math: `$$ \\frac{${a}(${a}x^2 + ${b}x + ${c})}{${a}} = \\frac{${a} \\cdot  ${a}x^2 + ${a} \\cdot  ${b} x + ${ac}}{${a}} \\\\ = \\frac{(${a}x)^2 + ${b}(${a}x) + ${ac}}{${a}} $$`
+        });
+
+        if (found) {
+            steps.push({
+                title: "2. Buscar dos números",
+                math: `\\text{Que multiplicados den } ${ac} \\text{ y sumados den } ${b}. \\\\ \\text{Los números son: } \\mathbf{${m}} \\text{ y } \\mathbf{${n}}`
+            });
+
+            steps.push({
+                title: "3. Factorizar numerador",
+                math: `$$ \\frac{(${a}x + ${m})(${a}x + ${n})}{${a}} $$`
+            });
+            
+            steps.push({
+                title: "4. Simplificar fracción",
+                math: `\\text{Dividimos uno de los paréntesis por } ${a} \\\\ \\text{ para obtener el resultado final.}`
+            });
+        }
+
+        steps.push({ title: "Resultado Final", math: outputExpr });
+    }
+
+    // --- CASO 4: TRINOMIO SIMPLE x^2 + bx + c ---
+    else if (mode === "FACTOR" && coeffs && coeffs.a === 1) {
+        const { b, c } = coeffs;
+        
+        steps.push({
+            title: "Trinomio de la forma x² + bx + c",
+            math: `\\text{Buscamos dos números que multiplicados den } ${c} \\text{ y sumados den } ${b}.`
+        });
+        
+        // Encontrar los números para mostrarlos
+        let m = 0, n = 0;
+        let found = false;
+        for (let i = -Math.abs(c); i <= Math.abs(c); i++) {
+            if (i === 0) continue;
+            if (c % i === 0) {
+                let j = c / i;
+                if (i + j === b) { m = i; n = j; found = true; break; }
+            }
+        }
+
+        if (found) {
+             steps.push({
+                title: "Números Encontrados",
+                math: `\\begin{aligned} 
+                \\text{Producto: } & ${m} \\cdot ${n} = ${c} \\\\
+                \\text{Suma: } & ${m} + ${n} = ${b}
+                \\end{aligned}`
+            });
+             steps.push({
+                title: "Armado de Paréntesis",
+                math: `(x + ${m})(x + ${n})`.replace(/\+\ -/g, "- ") // Limpieza visual de signos
+            });
+        }
+        
+        steps.push({ title: "Resultado", math: outputExpr });
+    }
+
+    // --- CASO GENÉRICO (Si no detecta coeficientes claros) ---
+    else {
+        steps.push({
+            title: mode === "EXPAND" ? "Procedimiento" : "Factorización",
+            math: mode === "EXPAND" ? "\\text{Aplicamos propiedad distributiva.}" : "\\text{Simplificamos la expresión.}"
+        });
+        steps.push({ title: "Resultado", math: outputExpr });
+    }
+
+    // RENDERIZADO (Igual que antes)
+    if (steps.length > 0) {
+        stepsBox.style.display = "block";
+        steps.forEach(s => {
+            const li = document.createElement('li');
+            li.className = 'step-item';
+            
+            const titleSpan = document.createElement('span');
+            titleSpan.className = 'step-formula';
+            titleSpan.textContent = s.title;
+            li.appendChild(titleSpan);
+
+            const mathSpan = document.createElement('div');
+            try {
+                let cleanMath = s.math.replace(/^\$\$/, '').replace(/\$\$$/, '');
+                katex.render(cleanMath, mathSpan, { throwOnError: false, displayMode: true });
+            } catch(e) { mathSpan.textContent = s.math; }
+            
+            li.appendChild(mathSpan);
+            stepsList.appendChild(li);
+        });
+    } else {
+        stepsBox.style.display = "none";
+    }
+}
+
+/* --- LISTENER PRINCIPAL MODIFICADO --- */
+input.addEventListener('input', () => {
+    const val = input.value.trim();
+    if (!val) {
+        preview.innerHTML = "\\( \\dots \\)";
+        output.innerHTML = "\\( \\dots \\)";
+        document.getElementById('steps-box').style.display = "none";
+        return;
+    }
+    try {
+        const expr = normalizar(val);
+        preview.innerHTML = `\\[ ${expr.replace(/sqrt/g, '\\sqrt')} \\]`;
+
+        const core = nerdamer(expr);
+        const rawText = core.toString();
+        const expandedText = core.expand().toString();
+        const factoredObj = nerdamer.factor(expr);
+
+        let finalOutput = "";
+        let mode = "";
+
+        // Lógica de decisión Expandir vs Factorizar
+        if (rawText !== expandedText) {
+            document.querySelector('.label').textContent = "Expansión (Producto Notable)";
+            finalOutput = core.expand().toTeX();
+            output.innerHTML = `\\[ ${finalOutput} \\]`;
+            mode = "EXPAND";
+        } else {
+            document.querySelector('.label').textContent = "Factorización";
+            finalOutput = factoredObj.toTeX();
+            output.innerHTML = `\\[ ${finalOutput} \\]`;
+            mode = "FACTOR";
+        }
+
+        // LLAMADA AL PASO A PASO
+        generateSteps(val, finalOutput, mode);
+
+    } catch (e) {
+        console.log("Escribiendo...", e);
+        // No mostramos error en UI para no parpadear
+    }
+    if (window.MathJax) MathJax.typesetPromise([preview, output]).catch(()=>{});
 });
 
 
