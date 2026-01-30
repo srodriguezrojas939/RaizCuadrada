@@ -1,0 +1,1546 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Derivadas | √(Raiz) Cuadrada² </title>
+
+    <script>
+        (function() {
+            // 1. Intentamos leer la memoria
+            const localTheme = localStorage.getItem('theme');
+            // 2. Si hay algo guardado lo usamos, si no, usamos 'light'
+            const themeToSet = localTheme || 'light';
+            // 3. Lo aplicamos INMEDIATAMENTE al HTML
+            document.documentElement.setAttribute('data-theme', themeToSet);
+        })();
+    </script>
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600&family=Playfair+Display:ital,wght@0,700;0,900;1,700&display=swap" rel="stylesheet">
+    
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <link rel="stylesheet" href="styles.css">
+
+  
+    <script src="https://cdn.jsdelivr.net/npm/nerdamer@1.1.13/nerdamer.core.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/nerdamer@1.1.13/Algebra.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/nerdamer@1.1.13/Calculus.js"></script>
+    
+    <script>
+        window.MathJax = {
+            tex: { inlineMath: [['$', '$'], ['\\(', '\\)']], displayMath: [['$$', '$$']] },
+            options: { enableMenu: false }
+        };
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js" async></script>
+  
+  <script src="https://unpkg.com/function-plot/dist/function-plot.js"></script>
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <script src="https://cdn.plot.ly/plotly-2.27.0.min.js"></script>
+  
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700;900&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700&display=swap');
+
+    /* --- ANIMACIONES --- */
+    .calculadora {
+        animation: fadeUp 0.8s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+        opacity: 0;
+    }
+
+    @keyframes fadeUp { 
+        from { opacity: 0; transform: translateY(30px); } 
+        to { opacity: 1; transform: translateY(0); } 
+    }
+
+    /* --- CONTENEDOR PRINCIPAL (ESTILO CARD COMENTARIOS) --- */
+    .calculadora {
+        background: #ffffff;
+        padding: 40px 35px;
+        border-radius: 40px;
+        width: 100%;
+        max-width: 600px; /* Ancho idéntico al wrapper de comentarios */
+        box-shadow: 0 20px 40px rgba(0,0,0,0.08); /* Sombra exacta */
+        box-sizing: border-box;
+        font-family: 'Open Sans', sans-serif;
+        margin: 0 auto;
+    }
+
+    /* --- CABECERA --- */
+    .header-section { text-align: center; margin-bottom: 35px; }
+    
+     
+    .header-section h1 { 
+        font-family: 'Playfair Display', serif; 
+        font-size: clamp(24px, 6vw, 32px); /* Responsive como title-big */
+        margin: 0; 
+        font-weight: 700; 
+        color: #1a1a1a; 
+        line-height: 1.1;
+    }
+    
+    .header-section p { 
+        font-family: 'Open Sans', sans-serif; 
+        font-size: 13px; 
+        margin: 10px 0 0; 
+        font-weight: 700; 
+        color: #999; 
+        text-transform: uppercase; 
+        letter-spacing: 1.5px; /* Estilo 'pregunta-pro' */
+    }
+      
+
+    /* --- INPUTS, PREVIEW Y RESULTADO (ESTILO UNIFICADO) --- */
+    #preview-container, #resultado {
+        background: #f9f9f9; /* Fondo gris suave */
+        padding: 20px; 
+        border-radius: 25px; 
+        min-height: 70px; 
+        display: flex; 
+        margin-bottom: 20px;
+        align-items: center; 
+        justify-content: center; 
+        border: 2px solid transparent; 
+        overflow-x: auto;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.02) inset; /* Sombra interna */
+        color: #333;
+        font-size: 1.1rem;
+    }
+
+    /* Espaciado solicitado mantenido */
+    #resultado { margin-top: 30px; margin-bottom: 30px; }
+
+    /* --- LABELS --- */
+    label { 
+        display: block; 
+        font-size: 12px; 
+        font-weight: 700; 
+        margin-bottom: 10px;
+        margin-left: 15px; 
+        color: #555; 
+        text-transform: uppercase; 
+        letter-spacing: 0.5px;
+    }
+
+    /* --- CAMPOS DE TEXTO Y SELECTS --- */
+    input[type="text"], input[type="number"], select {
+        width: 100%; 
+        background: #f9f9f9; 
+        border: 2px solid transparent;
+        padding: 16px 22px; 
+        border-radius: 25px; 
+        font-family: inherit;
+        font-size: 15px; 
+        color: #333; 
+        transition: all 0.3s ease;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.02) inset;
+        margin-bottom: 25px;
+        box-sizing: border-box;
+        outline: none;
+    }
+
+    input:focus, select:focus {
+        background: white; 
+        border-color: #1a1a1a;
+        box-shadow: 0 10px 25px rgba(0,0,0,0.08); 
+        transform: translateY(-3px);
+    }
+
+    /* --- GRID PARA LÍMITES --- */
+    .row { 
+        display: grid; 
+        grid-template-columns: 1fr 1fr; 
+        gap: 15px; 
+    }
+
+    /* --- BOTONES (ESTILO PREMIUM) --- */
+    .btn-principal {
+        width: 100%; 
+        background: #1a1a1a; 
+        color: white; 
+        border: none; 
+        border-radius: 999px; /* Píldora */
+        padding: 18px 35px; 
+        font-weight: 700; 
+        font-size: 16px;
+        cursor: pointer; 
+        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        margin-bottom: 15px;
+        font-family: 'Open Sans', sans-serif;
+    }
+
+    .btn-principal:hover { 
+        transform: translateY(-3px) scale(1.02); 
+        background: #000; 
+        box-shadow: 0 8px 15px rgba(0,0,0,0.15);
+    }
+
+    .btn-secundario {
+        width: 100%; 
+        background: transparent; 
+        color: #666; 
+        border: 1px solid #e0e0e0;
+        padding: 14px; 
+        border-radius: 999px; 
+        font-size: 14px; 
+        cursor: pointer;
+        transition: 0.3s; 
+        display: flex; 
+        align-items: center; 
+        justify-content: center; 
+        gap: 10px;
+        font-weight: 600;
+    }
+    .btn-secundario:hover { background: #f4f4f4; border-color: #ccc; color: #333; }
+
+    /* --- PÍLDORAS / CHIPS (ESTILO SELECTOR) --- */
+    .pills-nav { display: flex; justify-content: center; gap: 10px; margin-top: 15px; flex-wrap: wrap; }
+    
+    .pill { 
+        background: #f4f4f4; 
+        border: 2px solid transparent; 
+        padding: 10px 18px; 
+        border-radius: 999px; 
+        font-size: 13px; 
+        cursor: pointer; 
+        transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+        font-weight: 600; 
+        color: #666; 
+        font-family: 'Open Sans', sans-serif;
+    }
+    
+    .pill.active { 
+        background: #1a1a1a; 
+        color: white; 
+        border-color: #1a1a1a;
+        box-shadow: 0 8px 15px rgba(0,0,0,0.15); 
+        transform: scale(1.05);
+    }
+    .pill:hover:not(.active) { background: #e0e0e0; }
+
+    /* --- PANEL DE SÍMBOLOS --- */
+    .symbols-container { 
+        background: #ffffff; 
+        border-radius: 30px; 
+        padding: 20px; 
+        margin-top: 20px; 
+        border: 1px solid #f0f0f0; 
+        display: none; /* Se mantiene oculto por defecto como pediste */
+        box-shadow: 0 10px 30px rgba(0,0,0,0.03);
+    }
+    
+    .symbols-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(70px, 1fr)); gap: 10px; }
+    
+    .sym-btn { 
+        background: #fff; 
+        border: 1px solid #eee; 
+        padding: 12px 5px; 
+        border-radius: 15px; 
+        text-align: center; 
+        cursor: pointer; 
+        transition: 0.2s; 
+        font-size: 14px; 
+        color: #333;
+        display: flex; 
+        flex-direction: column; 
+        align-items: center; 
+        justify-content: center;
+        font-family: 'Open Sans', sans-serif;
+    }
+    .sym-btn:hover { background: #f9f9f9; transform: translateY(-2px); border-color: #ddd; }
+    .sym-btn span { font-size: 16px; font-weight: 700; margin-bottom: 2px; }
+    .sym-btn small { font-size: 9px; text-transform: uppercase; color: #999; font-weight: 700; }
+
+    /* --- MODO OSCURO (COMPATIBILIDAD TOTAL) --- */
+    [data-theme="dark"] .calculadora {
+        background: transparent;
+        box-shadow: none;
+        border: 1px solid rgba(255,255,255,0.1);
+    }
+
+    [data-theme="dark"] .header-section h1 { color: #ffffff; }
+    [data-theme="dark"] label { color: #888; }
+
+    /* Inputs Dark Mode */
+    [data-theme="dark"] input, 
+    [data-theme="dark"] select,
+    [data-theme="dark"] #preview-container,
+    [data-theme="dark"] #resultado {
+        background: #1e1e1e; 
+        color: #ffffff; 
+        box-shadow: none;
+        border: 1px solid #333;
+    }
+    
+    [data-theme="dark"] input:focus, [data-theme="dark"] select:focus {
+        border-color: #666;
+        background: #252525;
+    }
+
+    /* Botones Dark Mode */
+    [data-theme="dark"] .btn-principal {
+        background: #ffffff;
+        color: #000000;
+        box-shadow: 0 4px 15px rgba(255,255,255,0.1);
+    }
+    [data-theme="dark"] .btn-principal:hover { background: #e0e0e0; }
+    
+    [data-theme="dark"] .btn-secundario {
+        border-color: #444;
+        color: #ccc;
+    }
+    [data-theme="dark"] .btn-secundario:hover { background: #333; color: white; }
+
+    /* Chips Dark Mode */
+    [data-theme="dark"] .pill { background: #1e1e1e; color: #ccc; border-color: transparent; }
+    [data-theme="dark"] .pill.active { background: #ffffff; color: #000; }
+
+    /* Symbols Dark Mode */
+    [data-theme="dark"] .symbols-container {
+        background: #1a1a1a;
+        border-color: #333;
+    }
+    [data-theme="dark"] .sym-btn {
+        background: #222;
+        border-color: #333;
+        color: #eee;
+    }
+    [data-theme="dark"] .sym-btn:hover { background: #333; }
+    
+    /* --- CONTENEDOR GRÁFICA --- */
+#grafica-wrapper {
+    width: 100%;
+    margin-top: 20px;
+    margin-bottom: 20px;
+    display: none; /* Oculto por defecto */
+    justify-content: center;
+    overflow: hidden;
+    background: #f9f9f9;
+    border-radius: 25px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.02) inset;
+    border: 2px solid transparent;
+}
+
+/* Ajustes para el texto dentro de la gráfica (ejes) */
+.function-plot text {
+    font-family: 'Open Sans', sans-serif !important;
+    font-size: 12px !important;
+    fill: #555 !important;
+}
+
+.function-plot path.domain { stroke: #ccc !important; }
+.function-plot .tick line { stroke: #eee !important; }
+
+/* MODO OSCURO PARA LA GRÁFICA */
+[data-theme="dark"] #grafica-wrapper {
+    background: #1e1e1e;
+    border: 1px solid #333;
+}
+[data-theme="dark"] .function-plot text { fill: #aaa !important; }
+[data-theme="dark"] .function-plot path.domain { stroke: #555 !important; }
+
+/* Clase para cambiar el Grid a Lista Vertical */
+.symbols-container .vertical-layout {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 0 !important;
+}
+
+/* Estilo de cada fila de fórmula */
+.formula-row {
+    padding: 15px 10px;
+    border-bottom: 1px solid #f0f0f0;
+    font-family: 'Times New Roman', serif; /* Serif para fórmulas se ve más académico */
+    font-size: 1.1rem;
+    color: #333;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    transition: background 0.2s;
+}
+
+/* Efecto hover suave */
+.formula-row:hover {
+    background-color: #fcfcfc;
+    padding-left: 15px; /* Pequeño desplazamiento a la derecha */
+}
+
+/* Modo Oscuro para la tabla */
+[data-theme="dark"] .formula-row {
+    border-color: #333;
+    color: #eee;
+}
+[data-theme="dark"] .formula-row:hover {
+    background-color: #252525;
+}
+
+.formula-row {
+    cursor: pointer;
+}
+
+.formula-row:active {
+    background-color: #eaeaea;
+}
+
+      /* --- TOAST --- */
+.toast {
+    position: fixed;
+    bottom: 30px;
+    left: 50%;
+    transform: translateX(-50%) translateY(20px);
+    background: #1a1a1a;
+    color: white;
+    padding: 14px 22px;
+    border-radius: 999px;
+    font-size: 14px;
+    font-weight: 600;
+    opacity: 0;
+    pointer-events: none;
+    transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 10px 25px rgba(0,0,0,0.25);
+    z-index: 9999;
+}
+
+/* Visible */
+.toast.show {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+}
+
+/* Dark mode */
+[data-theme="dark"] .toast {
+    background: #ffffff;
+    color: #000000;
+}
+
+
+
+/* --- ESTILOS PARA INTEGRALES MÚLTIPLES --- */
+
+/* Contenedor flexible para columnas (2 para doble, 3 para triple) */
+.integral-grid {
+    display: grid;
+    gap: 12px;
+    margin-top: 15px;
+     margin-bottom: 20px;
+    /* Esto hace la magia: crea columnas automáticas que no bajan de 100px */
+    grid-template-columns: repeat(auto-fit, minmax(110px, 1fr)); 
+}
+
+/* Tarjeta visual para cada variable (dx, dy, dz) */
+.integral-col {
+    background: #fff;
+    border: 1px solid #e5e5e5;
+    border-radius: 20px;
+    padding: 15px;
+    text-align: center;
+    transition: 0.2s;
+    margin-bottom: 18px;
+}
+
+.integral-col:hover {
+    border-color: #ccc;
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.03);
+}
+
+.integral-col label {
+    margin-left: 0;
+    margin-bottom: 8px;
+    font-size: 11px;
+    color: #888;
+}
+
+/* Inputs compactos para límites y selects */
+.compact-input, .integral-col select {
+    padding: 8px 10px !important; /* Más pequeños que el input principal */
+    font-size: 14px !important;
+    text-align: center;
+    margin-bottom: 8px !important;
+     margin-top: 8px ;
+    width: 100%;
+    height: auto;
+     border-radius: 20px;
+      border: 1px solid #e5e5e5;
+}
+
+/* Contenedor para los límites a/b en horizontal */
+.limits-row {
+    display: flex;
+    gap: 6px;
+    align-items: center;
+}
+
+/* Modo oscuro */
+[data-theme="dark"] .integral-col {
+    background: #252525;
+    border-color: #333;
+}
+[data-theme="dark"] .integral-col:hover {
+    border-color: #555;
+}
+
+</style>
+  
+    </head>
+<body>
+
+    
+    <header class="mobile-header">
+        <div class="nav-header">
+            <button class="icon-btn"><i data-lucide="search"></i></button>
+            <button class="icon-btn" onclick="toggleTheme()"><i data-lucide="moon"></i></button>
+        </div>
+        <button class="icon-btn" onclick="toggleMenu()"><i data-lucide="menu"></i></button>
+    </header>
+
+ 
+    <div class="wrapper">
+        <aside class="sidebar" id="sidebar">
+            <div class="nav-header">
+               <button class="icon-btn" title="Inicio"
+        onclick="window.location.href='index.html'">
+  <i data-lucide="home"></i>
+</button>
+
+<button class="icon-btn" title="Modo"
+        onclick="toggleTheme()">
+  <i id="theme-icon" data-lucide="moon"></i>
+</button>
+
+<button class="icon-btn" title="Recargar"
+        onclick="location.reload()"
+        id="close-menu">
+  <i data-lucide="x"></i>
+</button>
+
+            </div>
+
+            <nav>
+                <ul class="nav-links">
+                    <li><a href="index.html"><i data-lucide="square-radical"></i> Página Principal</a></li>
+
+                    <div class="nav-group">
+    <div class="nav-item has-submenu" onclick="toggleSubmenu(this)">
+        <div class="nav-text-container">
+            <i data-lucide="calculator"></i>
+            <span>CALCULADORA</span>
+        </div>
+        <i data-lucide="chevron-down" class="arrow-icon"></i>
+    </div>
+    
+    <div class="submenu">
+        <a href="ecuaciones.html"><i data-lucide="equal" class="sub-icon"></i> Ecuaciones</a>
+        <a href="sistemas.html"><i data-lucide="layers" class="sub-icon"></i> Sistemas Ecuaciones</a>
+        <a href="matrices.html"><i data-lucide="grid-3x3" class="sub-icon"></i> Matrices</a>
+        <a href="derivadas.html"><i data-lucide="trending-up" class="sub-icon"></i> Derivadas</a>
+        <a href="integrales.html"><i data-lucide="sigma" class="sub-icon"></i> Integrales</a>
+        <a href="laplace.html"><i data-lucide="waves" class="sub-icon"></i> Transf. Laplace</a>
+    </div>
+</div>
+
+<div class="nav-group">
+    <div class="nav-item has-submenu" onclick="toggleSubmenu(this)">
+        <div class="nav-text-container">
+            <i data-lucide="ruler"></i>
+            <span>HERRAMIENTAS</span>
+        </div>
+        <i data-lucide="chevron-down" class="arrow-icon"></i>
+    </div>
+    
+    <div class="submenu">
+        <a href="simbolos.html"><i data-lucide="omega" class="sub-icon"></i> Símbolos</a>
+        <a href="factorizar.html"><i data-lucide="divide" class="sub-icon"></i> Factorizadora</a>
+        <a href="fraccionesparciales.html"><i data-lucide="percent" class="sub-icon"></i> Fracciones Parciales</a>
+        <a href="triangulos.html"><i data-lucide="triangle" class="sub-icon"></i> Calc. Triángulos</a>
+        <a href="vectores.html"><i data-lucide="move-diagonal" class="sub-icon"></i> Vectores</a>
+        <a href="circulounitario.html"><i data-lucide="circle" class="sub-icon"></i> Círculo Unitario</a>
+        <a href="editor.html"><i data-lucide="edit-3" class="sub-icon"></i> Editor Expresiones</a>
+    </div>
+</div>
+
+<div class="nav-group">
+    <div class="nav-item has-submenu" onclick="toggleSubmenu(this)">
+        <div class="nav-text-container">
+            <i data-lucide="activity"></i>
+            <span>GRAFICADORAS</span>
+        </div>
+        <i data-lucide="chevron-down" class="arrow-icon"></i>
+    </div>
+    
+    <div class="submenu">
+        <a href="graficadora2d.html"><i data-lucide="line-chart" class="sub-icon"></i> Funciones 2D</a>
+        <a href="graficadora3d.html"><i data-lucide="box" class="sub-icon"></i> Graficadora 3D</a>
+        <a href="conicas.html"><i data-lucide="orbit" class="sub-icon"></i> Cónicas</a>
+        <a href="campos.html"><i data-lucide="wind" class="sub-icon"></i> Campos Vectoriales</a>
+    </div>
+</div>
+
+                    
+                    <li><a href="cursos.html"><i data-lucide="book-open"></i> CURSOS</a></li>
+                    <li><a href="formularios.html"><i data-lucide="file-text"></i> FORMULARIOS</a></li>
+                    <li><a href="youtube.html"><i data-lucide="youtube"></i> Canal de YouTube</a></li>
+                    <li><a href="autor.html"><i data-lucide="user"></i> Sobre el autor</a></li>
+                </ul>
+            </nav>
+        </aside>
+
+        <main class="content">
+            
+            
+
+          
+<div class="calculadora">
+    <div class="header-section">
+        <h1>Calculadora Derivadas</h1>
+        <p>√(Raiz) Cuadrada²</p>
+    </div>
+    
+   
+    
+     <div id="preview-container"><div id="latex-preview">$$ \int (\dots) \, dx $$</div></div>
+
+
+    <div id="inputs-single">
+
+   
+    <label>función a derivar</label>
+    <input id="funcion" placeholder="Ej: x^2 + cos(x)" type="text" oninput="actualizarVistaPrevia()">
+
+  <div class="row">
+    <div>
+        <label>Modo</label>
+        <select id="tipo" onchange="toggleEvaluar(); actualizarVistaPrevia();">
+            <option value="simple">Simple</option>
+            <option value="eval">Evaluar</option>
+        </select>
+    </div>
+
+    <div>
+        <label>Variable</label>
+        <select id="variable" onchange="actualizarVistaPrevia()">
+            <option value="x">dx</option>
+            <option value="y">dy</option>
+            <option value="t">dt</option>
+            <option value="z">dz</option>
+        </select>
+    </div>
+</div>
+
+<div id="evaluar-container" class="row" style="display: none;">
+    <div>
+        <label>Evaluar en</label>
+        <input id="valor-eval" placeholder="x = 1" type="text" oninput="actualizarVistaPrevia()">
+    </div>
+</div>
+
+
+      
+    
+    <button onclick="calcularDerivada()" class="btn-principal">Calcular Resultado</button>
+    <button onclick="irAPasoAPaso()" class="btn-secundario">Ver paso a paso</button>
+
+    <div id="resultado">Esperando función...</div>
+
+   <div id="grafica-wrapper">
+    <div id="grafica"></div>
+</div>
+
+
+
+    <button id="btn-descargar-grafica"
+            class="btn-secundario"
+            onclick="descargarGrafica()"
+            style= "display:none; margin-top:12px; margin-bottom:12px;">
+        <i data-lucide="download"></i>
+        Descargar PNG
+    </button>
+    
+
+    <div class="pills-nav" id="pillsNav">
+        <button class="pill active" onclick="showCategory('principales', this)">Principales</button>
+        <button class="pill" onclick="showCategory('trig', this)">Trigonométricas</button>
+        <button class="pill" onclick="showCategory('inv', this)">Inversas</button>
+        <button class="pill" onclick="showCategory('log', this)">Logarítmicas</button>
+        <button class="pill" onclick="showCategory('tabla', this)">Tabla Derivadas</button>
+        <div id="btn-pdf-container" style="display: none; justify-content: center; margin-top: 15px;">
+    </div>
+    
+    </div>
+
+    <div id="symbolsPanel" class="symbols-container" style="display: block;">
+     
+        <div id="grid-content" class="symbols-grid"></div>
+    </div>
+</div>
+
+          
+          </div>   
+
+<footer class="footer-global">
+    <div class="footer-wrapper">
+        
+        <div class="footer-section">
+            <h4 class="footer-h4">Contacto</h4>
+            <a href="mailto:s.rodriguezrojas939@gmail.com" class="footer-email">
+                s.rodriguezrojas939@gmail.com
+            </a>
+            <div class="footer-socials">
+                <a href="https://wa.me/573196510401" target="_blank" title="WhatsApp">
+                    <i data-lucide="message-circle"></i>
+                </a>
+                <a href="https://www.youtube.com/@ElRaizCuadrada" target="_blank" title="YouTube">
+                    <i data-lucide="youtube"></i>
+                </a>
+                <a href="mailto:s.rodriguezrojas939@gmail.com" title="Correo">
+                    <i data-lucide="mail"></i>
+                </a>
+                <a href="https://github.com" target="_blank" title="GitHub">
+                    <i data-lucide="github"></i>
+                </a>
+            </div>
+        </div>
+
+        <div class="footer-section">
+            <a href="https://www.youtube.com/@ElRaizCuadrada" target="_blank" class="footer-logo-link">
+                <h1 class="footer-title">√(Raiz) Cuadrada²</h1>
+            </a>
+        </div>
+
+        <div class="footer-section">
+            <h4 class="footer-h4">Visitas al sitio</h4>
+            <div class="visitor-counter">
+                <img src="https://hitwebcounter.com/counter/counter.php?page=21465053&style=0024&nbdigits=5&type=page&initCount=0" alt="Visitas">
+            </div>
+        </div>
+
+    </div>
+</footer>
+           
+        </main>
+        
+     <script src="script.js"></script>
+      <script>
+          
+          // Variable global para recordar el último input tocado
+let inputActualId = 'funcion'; // Por defecto será la función principal
+
+let modoActual = 'single'; // Puede ser 'single', 'double', 'triple'
+
+// 
+// Agregamos "escuchas" para detectar cuando tocas los inputs
+document.addEventListener('DOMContentLoaded', () => {
+    const inputs = ['funcion', 'limA', 'limB'];
+    inputs.forEach(id => {
+        const el = document.getElementById(id);
+        if (el) {
+            el.addEventListener('focus', () => {
+                inputActualId = id;
+            });
+        }
+    });
+});
+
+const categorias = {
+      principales: [
+        { s: '(', t: 'ABRIR (' }, 
+        { s: ')', t: 'CERRAR )' },
+        { s: '+', t: 'SUMA' }, 
+        { s: '-', t: 'RESTA' },
+        { s: '*', t: 'MULT.' }, 
+        { s: '/', t: 'DIV.' },
+        { s: '( )/( )', t: 'FRACCIÓN' }, 
+        { s: '^', t: 'POTENCIA' },
+        { s: '√', t: 'RAÍZ' }, 
+        { s: 'x', t: 'VAR X' }, 
+        { s: 'y', t: 'VAR Y' },
+        { s: 'π', t: 'PI' }, 
+        { s: 'e', t: 'EULER' },
+        { s: '∞', t: 'INFINITO' }, 
+        { s: '-∞', t: '- INFINITO' },
+        { s: ' |x| ', t: 'ABS.' }, 
+        { s: '!', t: 'FACT.' },
+  { s: '¹',  t: 'POTENCIA (1)' },
+  { s: '²',  t: 'POTENCIA (2)' },
+  { s: '³',  t: 'POTENCIA (3)' },
+  { s: '⁴',  t: 'POTENCIA (4)' },
+  { s: '⁵',  t: 'POTENCIA (5)' },
+  { s: '⁶',  t: 'POTENCIA (6)' },
+  { s: '⁷',  t: 'POTENCIA (7)' },
+  { s: '⁸',  t: 'POTENCIA (8)' },
+  { s: '⁹',  t: 'POTENCIA (9)' },
+  { s: '¹⁰', t: 'POTENCIA (10)' },
+  { s: 'ˣ',  t: 'POTENCIA (X)' },
+  { s: 'ʸ',  t: 'POTENCIA (Y)' }
+    ],
+    trig: [
+       { s: 'sin()', t: 'SENO' }, 
+        { s: 'cos()', t: 'COSENO' }, 
+        { s: 'tan()', t: 'TAN' }, 
+        { s: 'sec()', t: 'SEC' }, 
+        { s: 'csc()', t: 'CSC' }, 
+        { s: 'cot()', t: 'COT' },
+        { s: 'sinh()', t: 'SENH' }, 
+        { s: 'cosh()', t: 'COSH' }, 
+        { s: 'tanh()', t: 'TANH' },
+        { s: 'coth()', t: 'COTH' }, 
+        { s: 'sech()', t: 'SECH' }, 
+        { s: 'csch()', t: 'CSCH' }
+    ],
+    inv: [
+    { s: 'asin()', t: 'ARCSIN' }, 
+        { s: 'acos()', t: 'ARCCOS' }, 
+        { s: 'atan()', t: 'ARCTAN' },
+          { s: 'asec()', t: 'ARCSEC' }, 
+        { s: 'acsc()', t: 'ARCCSC' },
+        { s: 'asinh()', t: 'ARSINH' }, 
+        { s: 'acosh()', t: 'ARCOSH' }, 
+        { s: 'atanh()', t: 'ARTANH' },
+        { s: 'acoth()', t: 'ARCOTH' },
+        { s: 'asech()', t: 'ARSECH' }, 
+        { s: 'acsch()', t: 'ARCSCH' }
+    ],
+    log: [
+        { s: 'log()', t: 'LN' }, { s: 'ln()', t: 'LN' },  { s: 'e^x', t: 'E base' }
+    ]
+};
+
+function showCategory(cat, btn) {
+    document.querySelectorAll('.pill').forEach(p => p.classList.remove('active'));
+    btn.classList.add('active');
+    const grid = document.getElementById('grid-content');
+    grid.innerHTML = '';
+    categorias[cat].forEach(item => {
+        const div = document.createElement('div');
+        div.className = 'sym-btn';
+        div.innerHTML = `<span>${item.s}</span><small>${item.t}</small>`;
+        div.onclick = () => insertarSimbolo(item.s);
+        grid.appendChild(div);
+    });
+}
+
+// Asegúrate de que esta variable exista globalmente en tu script
+// let inputActualId = 'funcion'; 
+
+function insertarSimbolo(s) {
+    // 1. Obtener el input correcto con seguridad
+    let input = document.getElementById(inputActualId);
+    
+    // Si por alguna razón inputActualId está vacío o el elemento no existe, 
+    // hacemos fallback al input principal 'funcion'.
+    if (!input) {
+        input = document.getElementById('funcion');
+        // Si aun así no existe (caso extremo), salimos para evitar error.
+        if (!input) return; 
+    }
+
+    // 2. Capturar posiciones del cursor o selección de texto
+    const start = input.selectionStart;
+    const end = input.selectionEnd;
+    const texto = input.value;
+
+    // 3. Insertar el símbolo
+    // Nota: Usamos 'end' en el segundo slice para permitir reemplazar texto seleccionado
+    input.value = texto.slice(0, start) + s + texto.slice(end);
+
+    // 4. Devolver el foco inmediatamente (importante para que setSelectionRange funcione bien)
+    input.focus();
+
+    // 5. Calcular dónde queda el cursor
+    let nuevaPos;
+
+    if (s.includes('()')) {
+        // Lógica inteligente: Si es algo tipo "sin()", poner cursor DENTRO del paréntesis
+        // Buscamos el primer '(' y sumamos 1 para quedar justo después
+        nuevaPos = start + s.indexOf('(') + 1;
+    } else {
+        // Caso normal: Poner el cursor al final de lo que insertamos
+        nuevaPos = start + s.length;
+    }
+
+    // 6. Mover el cursor a la posición calculada
+    input.setSelectionRange(nuevaPos, nuevaPos);
+
+    // 7. Actualizar la vista (verificamos que la función exista para evitar errores)
+    if (typeof actualizarVistaPrevia === 'function') {
+        actualizarVistaPrevia();
+    }
+}
+
+// Lógica de cálculo (Nerdamer corregido)
+function normalizar(expr) { 
+    if (!expr) return '';
+
+    // 1. Quitar espacios y pasar a minúsculas
+    let s = expr.toLowerCase().replace(/\s+/g, '');
+    
+    // CASO E (PRIMERO): Valor absoluto |x| -> abs(x)
+s = s.replace(/\|([^|]+)\|/g, 'abs($1)');
+
+        // CASO F: Superíndices
+    const superindices = { '⁰':'0', '¹':'1', '²':'2', '³':'3', '⁴':'4', '⁵':'5', '⁶':'6', '⁷':'7', '⁸':'8', '⁹':'9' };
+    s = s.replace(/[⁰¹²³⁴⁵⁶⁷⁸⁹]/g, match => `^${superindices[match]}`);
+
+    // 2. Diccionario de Traducción (Orden importante: los más largos primero)
+    // Agregamos 'arctan' que faltaba y arreglamos notación inversa
+    const reemplazos = [
+        { from: /arctan/g, to: 'atan' }, // ESTO arregla tu error de arctan
+        { from: /arctg/g, to: 'atan' },
+        { from: /arcsin/g, to: 'asin' },
+        { from: /arccos/g, to: 'acos' },
+        { from: /arcsec/g, to: 'asec' },
+        { from: /arccsc/g, to: 'acsc' },
+        { from: /arccot/g, to: 'acot' },
+        { from: /sen/g, 'to': 'sin' },
+        { from: /tg/g, 'to': 'tan' },
+        { from: /ln/g, 'to': 'log' }, // Nerdamer usa log para log natural
+        { from: /√/g, 'to': 'sqrt' },
+        { from: /π/g, 'to': 'pi' },
+        { from: /·/g, 'to': '*' }
+    ];
+
+    reemplazos.forEach(r => { s = s.replace(r.from, r.to); });
+
+    // 3. Manejo de notación inversa de calculadora (sin^-1 => asin)
+    s = s.replace(/sin\^-1/g, 'asin').replace(/cos\^-1/g, 'acos').replace(/tan\^-1/g, 'atan');
+
+const funcsTrig = 'sin|cos|tan|csc|sec|cot';
+    // Regex: Función + ^ + Número + (opcional paréntesis) + variable x,y,z
+    const reTrigPow = new RegExp(`(${funcsTrig})\\^(\\d+)\\(?([xyz])\\)?`, 'g');
+    s = s.replace(reTrigPow, '($1($3))^$2');
+    
+    // 4. Inteligencia: Funciones sin paréntesis (cosx => cos(x))
+    // Lista completa de funciones soportadas
+    const funciones = ['asin', 'acos', 'atan', 'asec', 'acsc', 'acot', 'sin', 'cos', 'tan', 'sec', 'csc', 'cot', 'sqrt', 'log', 'abs', 'exp'];
+    
+    // Primero envolvemos variables sueltas: "cosx" -> "cos(x)"
+    // Buscamos la función seguida EXACTAMENTE de x, y, t, z o un número
+    funciones.forEach(fn => {
+        const re = new RegExp(`${fn}([xyz\\d])`, 'g');
+        s = s.replace(re, `${fn}($1)`);
+    });
+
+s = s.replace(/([a-z])([xyz])/g, '$1*$2');
+    // 5. Multiplicación Implícita (Corregida para NO romper funciones)
+    
+    // CASO A: Número seguido de Variable o Paréntesis (2x -> 2*x)
+    s = s.replace(/(\d)([a-z\(])/g, '$1*$2');
+
+    // CASO B: Variable explícita (x,y,t,z) seguida de función (xcos(x) -> x*cos(x))
+    // OJO: Solo permitimos x,y,t,z antes de la función. Esto evita que la 'a' de 'acos' se separe.
+    const funcionPattern = funciones.join('|');
+    // Regex: (x,y,t,z o paréntesis cerrado) seguido de (nombre de función)
+    const reMultFunc = new RegExp(`([xyz\\)])(${funcionPattern})`, 'g');
+    s = s.replace(reMultFunc, '$1*$2');
+
+
+    // CASO C: Variable seguida de variable (xx -> x*x, xy -> x*y)
+    // Previene duplicados como 'xx'
+    s = s.replace(/([xytz])([xytz])/g, '$1*$2');
+
+    // CASO D: Corchetes y llaves
+    s = s.replace(/[\[\{]/g, '(').replace(/[\]\}]/g, ')');
+    
+
+    return s;
+}
+
+
+function actualizarVistaPrevia() {
+    const preview = document.getElementById('latex-preview');
+
+    // --- 1. MAQUILLAJE (SE QUEDA IGUAL) ---
+    const procesarFuncion = (idInput) => {
+        const input = document.getElementById(idInput).value.trim();
+        if (!input) return "\\dots";
+
+        try {
+            let tex = nerdamer(normalizar(input)).toTeX();
+
+            // Maquillaje trigonométrico intacto
+            tex = tex.replace(
+                /\\(sin|cos|tan|csc|sec|cot|asin|acos|atan)\s*\\left\((.*?)\\right\)\^\{?(\d+)\}?/g,
+                "\\$1^{$3}\\left($2\\right)"
+            );
+
+            return tex;
+        } catch {
+            return input || "\\dots";
+        }
+    };
+
+    let latexFinal = "";
+
+    // --- 2. MODO SIMPLE → DERIVADA ---
+    if (modoActual === 'single') {
+        const v = document.getElementById('variable').value;
+        const fTex = procesarFuncion('funcion');
+        const tipo = document.getElementById('tipo')?.value;
+
+        if (tipo === 'eval') {
+            const val = document.getElementById('valor-eval')?.value || 'a';
+
+            latexFinal = `
+            $$
+            \\left. \\frac{d}{d${v}} \\left( ${fTex} \\right) \\right|_{${v} = ${val}}
+            $$
+            `;
+        } else {
+            latexFinal = `
+            $$
+            \\frac{d}{d${v}} \\left( ${fTex} \\right)
+            $$
+            `;
+        }
+    }
+
+    // --- 5. RENDER ---
+    preview.innerHTML = latexFinal;
+    if (window.MathJax) {
+        MathJax.typesetPromise([preview]).catch(err => console.log(err));
+    }
+}
+
+
+
+function calcularDerivada() {
+    const btnDescargar = document.getElementById('btn-descargar-grafica');
+    if (btnDescargar) btnDescargar.style.display = 'none';
+
+    const input = document.getElementById('funcion').value.trim();
+    const out = document.getElementById('resultado');
+
+    if (modoActual === 'double') {
+        resolverDoble();
+        return;
+    }
+    if (modoActual === 'triple') {
+        resolverTriple();
+        return;
+    }
+
+    if (!input) return;
+
+    try {
+        const f = normalizar(input);
+        const v = document.getElementById('variable').value;
+        const tipo = document.getElementById('tipo')?.value;
+
+        // Mostrar contenedor gráfico
+        const graphBox = document.getElementById('grafica-wrapper');
+        const graphDiv = document.getElementById('grafica');
+        if (graphBox) graphBox.style.display = 'flex';
+        if (graphDiv) graphDiv.innerHTML = '';
+
+        const derivada = nerdamer(`diff(${f}, ${v})`);
+
+        // --- MODO EVALUAR ---
+if (tipo === 'eval') {
+    const valRaw = document.getElementById('valor-eval')?.value;
+    if (!valRaw) {
+        out.innerHTML = "<small style='color:red'>Ingresa un valor para evaluar</small>";
+        return;
+    }
+
+    const a = normalizar(valRaw);
+
+    // f(a)
+    const fEnA = nerdamer(f).sub(v, a).evaluate();
+
+    // f'(a)
+    const pendiente = derivada.sub(v, a).evaluate();
+
+    // Mostrar resultado
+    out.innerHTML = `
+    $$
+    f'(${a}) = ${pendiente.toTeX()}
+    $$
+    `;
+    MathJax.typesetPromise([out]);
+
+    // --- GRÁFICA: FUNCIÓN + RECTA TANGENTE ---
+    try {
+        const fGraf = f.split(v).join('x');
+
+        renderizarRectaTangente(
+            fGraf,
+            pendiente.text(),
+            nerdamer(a).evaluate().text(),
+            fEnA.text()
+        );
+
+        if (btnDescargar) btnDescargar.style.display = 'inline-flex';
+    } catch (errGraph) {
+        console.log("No se pudo graficar la tangente:", errGraph);
+    }
+
+    return;
+}
+
+        // --- RESULTADO SIMBÓLICO ---
+        out.innerHTML = `
+        $$
+        \\frac{d}{d${v}} \\left( ${nerdamer(f).toTeX()} \\right)
+        = ${derivada.toTeX()}
+        $$
+        `;
+        MathJax.typesetPromise([out]);
+
+        // --- GRÁFICA ---
+        try {
+            const fGraf = f.split(v).join('x');
+            const dGraf = derivada.text().split(v).join('x');
+
+            renderizarGraficaDerivada(fGraf, dGraf);
+            if (btnDescargar) btnDescargar.style.display = 'inline-flex';
+        } catch (errGraph) {
+            console.log("No se pudo graficar:", errGraph);
+        }
+
+    } catch (e) {
+        console.error(e);
+        out.innerHTML = "<small style='color:red'>Error al calcular la derivada</small>";
+    }
+}
+
+
+
+// Función Renderizar actualizada para admitir título opcional en consola o tooltip si quisieras
+function renderizarGrafica(expresion, a, b, sombrear, etiqueta) {
+    const wrapper = document.getElementById('grafica-wrapper');
+    if(wrapper) wrapper.style.display = 'flex'; 
+
+    const width = wrapper ? Math.min(wrapper.offsetWidth - 40, 550) : 500;
+    
+    let xMin, xMax;
+    
+    if (sombrear) {
+        const padding = Math.abs(b - a) * 0.5 || 2; 
+        xMin = Math.min(a, b) - padding;
+        xMax = Math.max(a, b) + padding;
+    } else {
+        xMin = -10;
+        xMax = 10;
+    }
+
+    const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+    const lineColor = isDark ? '#fff' : '#1a1a1a'; // Blanco en dark, Negro en light
+    const gridColor = isDark ? '#444' : '#eee';
+
+    // Configuración base de datos
+    let datosGrafica = [
+        {
+            fn: expresion,
+            color: lineColor,
+            strokeWidth: 2,
+            range: [xMin, xMax], 
+            skipTip: true,
+            graphType: 'polyline'
+        }
+    ];
+
+    // Si es definida, agregamos el relleno
+    if (sombrear) {
+        datosGrafica.push({
+            fn: expresion,
+            range: [a, b], 
+            closed: true,
+            color: '#bfbfbf',
+            style: 'fill-opacity: 0.3; stroke: none;' 
+        });
+    }
+
+    try {
+        functionPlot({
+            target: '#grafica',
+            width: width,
+            height: 300,
+            grid: true,
+            xAxis: { domain: [xMin, xMax] },
+            yAxis: { domain: [-5, 5] }, 
+            data: datosGrafica
+        });
+    } catch (e) {
+        console.log("Error graficando:", e);
+        if(wrapper) wrapper.style.display = 'none';
+    }
+}
+
+
+// Listener para redimensionar la gráfica si giran la pantalla
+window.addEventListener('resize', () => {
+    if(document.getElementById('grafica-wrapper').style.display !== 'none'){
+        // Re-calcular si ya hay una integral definida mostrada
+        calcularIntegral(); 
+    }
+});
+
+
+function renderizarRectaTangente(funcion, pendiente, x0, y0) {
+    const wrapper = document.getElementById('grafica-wrapper');
+    if (!wrapper) return;
+
+    wrapper.style.display = 'flex';
+
+    const width = Math.min(wrapper.offsetWidth - 40, 550);
+    const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+
+    const colorF = isDark ? '#aaa' : '#1a1a1a';
+    const colorT = '#1976d2';
+    const colorP = '#d32f2f';
+
+    // y = m(x - x0) + y0
+    const recta = `${pendiente}*(x - (${x0})) + (${y0})`;
+
+    try {
+        functionPlot({
+            target: '#grafica',
+            width,
+            height: 300,
+            grid: true,
+            xAxis: { domain: [x0 - 5, x0 + 5] },
+            yAxis: { domain: [y0 - 5, y0 + 5] },
+            data: [
+                {
+                    fn: funcion,
+                    color: colorF,
+                    graphType: 'polyline'
+                },
+                {
+                    fn: recta,
+                    color: colorT,
+                    graphType: 'polyline'
+                },
+                {
+                    points: [[x0, y0]],
+                    fnType: 'points',
+                    graphType: 'scatter',
+                    color: colorP
+                }
+            ]
+        });
+    } catch (e) {
+        console.log("Error graficando recta tangente:", e);
+        wrapper.style.display = 'none';
+    }
+}
+
+
+function renderizarGraficaDerivada(fx, dfx) {
+    const wrapper = document.getElementById('grafica-wrapper');
+    if (!wrapper) return;
+
+    wrapper.style.display = 'flex';
+
+    const width = Math.min(wrapper.offsetWidth - 40, 550);
+    const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+
+    const colorF  = isDark ? '#aaa' : '#1a1a1a';
+    const colorDf = '#d32f2f';
+
+    try {
+        functionPlot({
+            target: '#grafica',
+            width: width,
+            height: 300,
+            grid: true,
+            xAxis: { domain: [-10, 10] },
+            yAxis: { domain: [-10, 10] },
+            data: [
+                {
+                    fn: fx,
+                    color: colorF,
+                    strokeWidth: 2,
+                    graphType: 'polyline'
+                },
+                {
+                    fn: dfx,
+                    color: colorDf,
+                    strokeWidth: 2,
+                    graphType: 'polyline'
+                }
+            ]
+        });
+    } catch (e) {
+        console.log("Error graficando derivada:", e);
+        wrapper.style.display = 'none';
+    }
+}
+
+
+
+/* --- DATOS DE LA TABLA DE INTEGRALES --- */
+const integralesComunes = [
+    
+  
+"Metodos", 
+
+"Regla de la Constante: $$ \\frac{d}{dx}(C) = 0 $$",
+
+"Regla de la Potencia: $$ \\frac{d}{dx}(x^n) = nx^{n-1} $$",
+
+"Multiplicación por Constante: $$ \\frac{d}{dx}(c \\cdot f(x)) = c \\cdot f'(x) $$",
+
+"Regla de la Suma y Resta: $$ \\frac{d}{dx}(u \\pm v) = u' \\pm v' $$",
+
+"Regla del Producto: $$ \\frac{d}{dx}(u \\cdot v) = u'v + uv' $$",
+
+"Regla del Cociente: $$ \\frac{d}{dx}\\left(\\frac{u}{v}\\right) = \\frac{u'v - uv'}{v^2} $$",
+
+"Regla de la Cadena (Leibniz): $$ \\frac{dy}{dx} = \\frac{dy}{du} \\cdot \\frac{du}{dx} $$",
+
+"Regla de la Cadena (Funcional): $$ \\frac{d}{dx}[f(g(x))] = f'(g(x)) \\cdot g'(x) $$",
+
+ 
+"Comunes",
+
+"$$ \\frac{d}{dx}(x) = 1 $$",
+
+"$$ \\frac{d}{dx}(kx) = k $$",
+
+"$$ \\frac{d}{dx}(x^n) = nx^{n-1} $$",
+
+"$$ \\frac{d}{dx}(e^x) = e^x $$",
+
+"$$ \\frac{d}{dx}(a^x) = a^x \\ln(a) $$",
+
+"$$ \\frac{d}{dx}(\\ln(x)) = \\frac{1}{x} $$",
+
+"$$ \\frac{d}{dx}(\\log_a(x)) = \\frac{1}{x \\ln(a)} $$",
+
+
+"Trigonometricas",
+
+
+"$$ \\frac{d}{dx}(\\sin(x)) = \\cos(x) $$",
+
+"$$ \\frac{d}{dx}(\\cos(x)) = -\\sin(x) $$",
+
+"$$ \\frac{d}{dx}(\\tan(x)) = \\sec^2(x) $$",
+
+"$$ \\frac{d}{dx}(\\csc(x)) = -\\csc(x)\\cot(x) $$",
+
+"$$ \\frac{d}{dx}(\\sec(x)) = \\sec(x)\\tan(x) $$",
+
+"$$ \\frac{d}{dx}(\\cot(x)) = -\\csc^2(x) $$",
+
+
+"Trigonometricas inversas",
+
+"$$ \\frac{d}{dx}(\\arcsin(x)) = \\frac{1}{\\sqrt{1-x^2}} $$",
+
+"$$ \\frac{d}{dx}(\\arccos(x)) = -\\frac{1}{\\sqrt{1-x^2}} $$",
+
+"$$ \\frac{d}{dx}(\\arctan(x)) = \\frac{1}{1+x^2} $$",
+
+"$$ \\frac{d}{dx}(\\text{arccot}(x)) = -\\frac{1}{1+x^2} $$",
+
+"$$ \\frac{d}{dx}(\\text{arcsec}(x)) = \\frac{1}{|x|\\sqrt{x^2-1}} $$",
+
+"$$ \\frac{d}{dx}(\\text{arccsc}(x)) = -\\frac{1}{|x|\\sqrt{x^2-1}} $$",
+
+
+"Hiperbolicas",
+
+
+"$$ \\frac{d}{dx}(\\sinh(x)) = \\cosh(x) $$",
+
+"$$ \\frac{d}{dx}(\\cosh(x)) = \\sinh(x) $$",
+
+"$$ \\frac{d}{dx}(\\tanh(x)) = \\text{sech}^2(x) $$",
+
+"$$ \\frac{d}{dx}(\\text{csch}(x)) = -\\text{csch}(x)\\coth(x) $$",
+
+"$$ \\frac{d}{dx}(\\text{sech}(x)) = -\\text{sech}(x)\\tanh(x) $$",
+
+"$$ \\frac{d}{dx}(\\coth(x)) = -\\text{csch}^2(x) $$",
+
+
+"Hiperbolicas inversas",
+
+"$$ \\frac{d}{dx}(\\text{arsinh}(x)) = \\frac{1}{\\sqrt{x^2+1}} $$",
+
+"$$ \\frac{d}{dx}(\\text{arcosh}(x)) = \\frac{1}{\\sqrt{x^2-1}} $$",
+
+"$$ \\frac{d}{dx}(\\text{artanh}(x)) = \\frac{1}{1-x^2} $$",
+
+"$$ \\frac{d}{dx}(\\text{arcoth}(x)) = \\frac{1}{1-x^2} $$",
+
+"$$ \\frac{d}{dx}(\\text{arsech}(x)) = -\\frac{1}{x\\sqrt{1-x^2}} $$",
+
+"$$ \\frac{d}{dx}(\\text{arcsch}(x)) = -\\frac{1}{|x|\\sqrt{1+x^2}} $$",
+
+];
+
+/* --- FUNCIÓN SHOWCATEGORY MEJORADA --- */
+function showCategory(cat, btn) {
+    // 1. Gestión de clases activas en botones
+    document.querySelectorAll('.pill').forEach(p => p.classList.remove('active'));
+    btn.classList.add('active');
+
+    const grid = document.getElementById('grid-content');
+    grid.innerHTML = ''; // Limpiar contenido anterior
+
+    // 2. Lógica: ¿Es la tabla o son botones?
+    if (cat === 'tabla') {
+        // --- MODO LISTA VERTICAL ---
+        grid.className = ''; // Borramos 'symbols-grid'
+        grid.classList.add('vertical-layout'); // Añadimos clase de lista
+
+        integralesComunes.forEach(formula => {
+            const div = document.createElement('div');
+            div.className = 'formula-row';
+            div.innerHTML = formula;
+            
+               div.addEventListener('click', () => {
+        copiarAlPortapapeles(formula);
+    });
+    
+            grid.appendChild(div);
+        });
+
+        // Importante: Decirle a MathJax que renderice las nuevas fórmulas
+        if (window.MathJax) {
+            MathJax.typesetPromise([grid]);
+        }
+
+    } else {
+        // --- MODO BOTONES (GRID) ---
+        grid.className = 'symbols-grid'; // Restauramos la cuadrícula
+        
+        // Usamos tu objeto 'categorias' existente
+        if (categorias[cat]) {
+            categorias[cat].forEach(item => {
+                const div = document.createElement('div');
+                div.className = 'sym-btn';
+                div.innerHTML = `<span>${item.s}</span><small>${item.t}</small>`;
+                div.onclick = () => insertarSimbolo(item.s);
+                grid.appendChild(div);
+            });
+        }
+    }
+}
+
+
+
+
+
+
+
+          function irAPasoAPaso() {
+    const f = document.getElementById('funcion').value.trim();
+    if (!f) return;
+
+    const url = `https://mathdf.com/der/es/?expr=${encodeURIComponent(f)}`;
+
+    const width = 900;
+    const height = 700;
+
+    const left = window.screenX + (window.outerWidth - width) / 2;
+    const top  = window.screenY + (window.outerHeight - height) / 2;
+
+    window.open(
+        url,
+        'mathdfPasoAPaso',
+        `
+        width=${width},
+        height=${height},
+        left=${left},
+        top=${top},
+        resizable=yes,
+        scrollbars=yes,
+        toolbar=no,
+        menubar=no,
+        location=no,
+        status=no
+        `
+    );
+}
+
+
+
+
+showCategory('principales', document.querySelector('.pill'));
+actualizarVistaPrevia();
+
+function copiarAlPortapapeles(texto) {
+    const limpio = texto.replace(/^\$\$\s*/, '').replace(/\s*\$\$$/, '');
+
+    navigator.clipboard.writeText(limpio).then(() => {
+        mostrarToast('Fórmula copiada');
+    }).catch(() => {
+        mostrarToast('Copiado');
+    });
+}
+
+
+
+          let toastTimeout;
+
+function mostrarToast(mensaje = 'Copiado') {
+    const toast = document.getElementById('toast-copiado');
+    if (!toast) return;
+
+    toast.textContent = mensaje;
+    toast.classList.add('show');
+
+    clearTimeout(toastTimeout);
+    toastTimeout = setTimeout(() => {
+        toast.classList.remove('show');
+    }, 1600);
+}
+
+          
+function descargarGrafica() {
+    const grafica = document.getElementById('grafica');
+    if (!grafica) return;
+
+    html2canvas(grafica, {
+        backgroundColor: null, // respeta light / dark
+        scale: 2               // PNG nítido
+    }).then(canvas => {
+        const link = document.createElement('a');
+        link.download = 'grafica.png';
+        link.href = canvas.toDataURL('image/png');
+        link.click();
+    });
+}
+
+
+function toggleEvaluar() {
+    const tipo = document.getElementById('tipo').value;
+    const evalBox = document.getElementById('evaluar-container');
+
+    if (tipo === 'eval') {
+        evalBox.style.display = 'flex';
+    } else {
+        evalBox.style.display = 'none';
+    }
+}
+
+
+document.addEventListener('focusin', (e) => {
+    if (e.target.tagName === 'INPUT' && e.target.type === 'text') {
+        inputActualId = e.target.id;
+    }
+});
+
+</script>
+
+        <div id="toast-copiado" class="toast">Copiado</div>
+
+</body>
+<button class="mobile-theme-toggle" onclick="toggleTheme()" aria-label="Cambiar tema">
+    <i data-lucide="sun" class="icon-sun"></i>
+    <i data-lucide="moon" class="icon-moon"></i>
+</button>
+
+
+</html>
