@@ -51,7 +51,7 @@
 
     [data-theme="dark"] {
         /* Mapeo exacto de tu modo oscuro */
-        --bg-body: #121212; /* Fondo general oscuro */
+        --bg-body: #0a0a0a; /* Fondo general oscuro */
         --bg-card: transparent; /* O #1a1a1a si prefieres solido */
         --bg-input: #1e1e1e; /* Fondo de inputs dark */
         --text-main: #ffffff;
@@ -110,52 +110,60 @@
         letter-spacing: 1.5px; /* Estilo 'pregunta-pro' */
     }
   
-
-
-   .pill-container {
-        display: flex;
-        flex-direction: row; /* <--- IMPORTANTE: Fuerza la horizontalidad */
-       flex-wrap: nowrap;
-        background:  #f9f9f9; /* Fondo gris suave contenedor */
-        padding: 5px;
-        border-radius: 999px;
-        position: relative;
-        justify-content: space-between;
-        box-shadow: inset 0 1px 3px rgba(0,0,0,0.06);
-        margin: auto;
-         margin-bottom: 25px;
-         align-items: center;
-         width:65%;
-    }
-
-    .pill-btn {
-       
-        border: none;
-        background: transparent;
-         padding: 10px 20px; 
-        border-radius: 999px;
-        cursor: pointer;
-        font-family: 'Open Sans', sans-serif;
-        font-weight: 700;
-        font-size: 14px;
-        color: #888;
-        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        min-width:100px;
-        gap: 6px;
-    }
-
-    .pill-btn:hover:not(.active) {
-        color: #555;
-    }
-    .pill {
+.pill-container {
     display: flex;
-    justify-content: center; /* centra horizontalmente los botones */
-    align-items: center;     /* centra verticalmente si hay altura */
-    gap: 10px;
-    margin: auto;/* separa los botones un poco */
+    flex-direction: row;       /* horizontal */
+    flex-wrap: nowrap;         
+    background: #f9f9f9;       /* fondo gris */
+    padding: 5px;              /* padding interno */
+    border-radius: 999px;      
+    box-shadow: inset 0 1px 3px rgba(0,0,0,0.06);
+    
+    margin: 0 auto 25px auto;  /* centrado horizontal + margen inferior */
+    align-items: center;       /* centra verticalmente los botones */
+    justify-content: center;   /* centra los botones horizontalmente */
+    width: 65%;                /* ancho deseado del contenedor */
+    gap: 5px;                  /* espacio entre las píldoras */
+    box-sizing: border-box;    /* incluye padding en el ancho */
+}
+
+.pill {
+    display: flex;
+    justify-content: center;   /* centra las píldoras dentro del contenedor */
+    align-items: center;       
+    gap: 5px;                  /* separación entre botones */
+    width: 100%;               /* ocupa todo el ancho del container */
+}
+
+.pill-btn {
+    flex: 1;                   /* cada píldora ocupa el mismo ancho */
+    min-width: 100px;          /* ancho mínimo para no romper el diseño */
+    border: none;
+    background: transparent;
+    padding: 10px 0;           /* altura de la píldora */
+    border-radius: 999px;
+    cursor: pointer;
+    font-family: 'Open Sans', sans-serif;
+    font-weight: 700;
+    font-size: 14px;
+    color: #888;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;                  /* espacio interno entre icono/texto */
+    box-sizing: border-box;    /* padding incluido en el ancho */
+}
+
+.pill-btn:hover:not(.active) {
+    color: #555;
+}
+
+.pill-btn.active {
+    background: #ffffff;
+    color: #1a1a1a;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.12);
+    transform: scale(1.02);
 }
 
 
@@ -812,10 +820,25 @@
 }
 
  function updatePlot() {
+     const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+const plotBg = isDark ? '#1e1e1e' : '#ffffff';
+const paperBg = isDark ? '#1e1e1e' : '#ffffff';
+
+const axisColor = isDark ? '#aaaaaa' : '#333333';
+const gridColor = isDark ? 'rgba(255,255,255,0.08)' : '#eeeeee';
+const zeroLineColor = isDark ? '#666666' : '#cccccc';
+
+const mainLineColor = isDark ? '#ffffff' : '#000000';
+
     const { h, k, a, b, r, p, orient, type } = state;
     let traces = [];
 
-    const mainStyle = { color: '#000', width: 4, name: 'Cónica' };
+ const mainStyle = {
+    color: mainLineColor,
+    width: 4,
+    name: 'Cónica'
+};
+
     const auxStyle = { color: '#007AFF', width: 1.5, dash: 'dash', name: 'Auxiliares' };
     const pointStyle = (color, name) => ({
         mode: 'markers',
@@ -899,30 +922,34 @@
     // Asegurar un mínimo de visualización para no colapsar si los valores son 0
     maxDim = Math.max(maxDim, 5);
 
-    const layout = {
-        xaxis: { 
-            range: [h - maxDim, h + maxDim], // Centrado en h
-            gridcolor: '#eee', 
-            zeroline: true, 
-            zerolinecolor: '#ccc', 
-            title: 'Eje X',
-            fixedrange: false // Permite que el usuario también use el scroll si desea
-        },
-        yaxis: { 
-            range: [k - maxDim, k + maxDim], // Centrado en k
-            gridcolor: '#eee', 
-            zeroline: true, 
-            zerolinecolor: '#ccc', 
-            scaleanchor: "x", // Mantiene la proporción 1:1 para que el círculo no parezca óvalo
-            title: 'Eje Y',
-            fixedrange: false
-        },
-        margin: { l: 40, r: 20, t: 20, b: 40 },
-        showlegend: false,
-        hovermode: 'closest',
-        plot_bgcolor: "white",
-        dragmode: 'pan' // Permite arrastrar la gráfica con el mouse
-    };
+const layout = {
+    xaxis: { 
+        range: [h - maxDim, h + maxDim],
+        gridcolor: gridColor,
+        zeroline: true,
+        zerolinecolor: zeroLineColor,
+        title: { text: 'Eje X', font: { color: axisColor } },
+        tickfont: { color: axisColor }
+    },
+    yaxis: { 
+        range: [k - maxDim, k + maxDim],
+        gridcolor: gridColor,
+        zeroline: true,
+        zerolinecolor: zeroLineColor,
+        scaleanchor: "x",
+        title: { text: 'Eje Y', font: { color: axisColor } },
+        tickfont: { color: axisColor }
+    },
+    margin: { l: 40, r: 20, t: 20, b: 40 },
+    showlegend: false,
+    hovermode: 'closest',
+    plot_bgcolor: plotBg,
+    paper_bgcolor: paperBg,
+    font: {
+        color: axisColor
+    },
+    dragmode: 'pan'
+};
 
     Plotly.newPlot('plot', traces, layout, {
         responsive: true, 
