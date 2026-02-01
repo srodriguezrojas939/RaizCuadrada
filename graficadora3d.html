@@ -1897,9 +1897,17 @@ function normalizeInput(str) {
 
     // 2. Reemplazar símbolos visuales por operadores
     s = s.replace(/²/g, '^2');       // Superíndice 2
-    s = s.replace(/³/g, '^3');       // Superíndice 3
+    s = s.replace(/³/g, '^3'); 
+     s = s.replace(/⁴/g, '^4');// Superíndice 3
+      s = s.replace(/⁵/g, '^5');
+       s = s.replace(/⁶/g, '^6');
+        s = s.replace(/⁷/g, '^7')
+           s = s.replace(/⁸/g, '^8');
+             s = s.replace(/⁹/g, '^9');
+               s = s.replace(/ˣ/g, '^x');
     s = s.replace(/√/g, 'sqrt');     // Raíz cuadrada
     s = s.replace(/π/g, 'pi');       // Pi
+   
 
     // 3. Traducir Español -> Inglés
     s = s.replace(/sen/g, 'sin');
