@@ -62,7 +62,7 @@
     [data-theme="dark"] {
         /* MODO OSCURO (Gemelo Dark) */
         --bg-body: #0a0a0a;
-        --bg-sidebar: #0a0a0a;      /* O un gris muy oscuro si prefieres */
+        --bg-sidebarsegunda: #0a0a0a;      /* O un gris muy oscuro si prefieres */
         --bg-input: #1e1e1e;
         --bg-card-inner: #252525;
         --text-main: #ffffff;
@@ -71,7 +71,7 @@
         --accent-hover: #e0e0e0;
         --text-inverse: #000000;
         --border-color: #333333;
-        --shadow-sidebar: none;     /* Sin sombra en dark mode */
+        --shadow-sidebarsegunda: none;     /* Sin sombra en dark mode */
     }
 
     /* --- 2. ESTRUCTURA BASE --- */
@@ -91,12 +91,12 @@
     /* --- 3. SIDEBAR (Transformado a Estética Card) --- */
     #sidebarsegunda {
         width: 340px; /* Un poco más ancho para que respiren los inputs redondos */
-        background: var(--bg-sidebar);
+        background: var(--bg-sidebarsegunda);
         border-right: 1px solid var(--border-color);
         display: flex;
         flex-direction: column;
         padding: 30px 25px; /* Más padding para elegancia */
-        box-shadow: var(--shadow-sidebar);
+        box-shadow: var(--shadow-sidebarsegunda);
         z-index: 10;
         height: 100vh;
         overflow-y: auto;
@@ -280,7 +280,7 @@
     
     /* Selector de esquema pequeño */
     .scheme-select {
-        background: var(--bg-sidebar);
+        background: var(--bg-sidebarsegunda);
         color: var(--text-main);
         border: 1px solid var(--border-color);
         border-radius: 15px;
@@ -377,7 +377,7 @@
         text-align: center;
     }
     .symbol-content button {
-        background: var(--bg-sidebar);
+        background: var(--bg-sidebarsegunda);
         border: 1px solid var(--border-color);
         color: var(--text-main);
         border-radius: 10px;
@@ -398,7 +398,7 @@
     top: 110%;
     left: 0;
     width: 100%;
-    background: var(--bg-sidebar);
+    background: var(--bg-sidebarsegunda);
     border: 1px solid var(--border-color);
     border-radius: 15px;
     padding: 8px;
@@ -669,7 +669,7 @@ input[type="color"].eq-color:hover {
 }
 
 /* sidebar izquierda */
-#sidebar {
+#sidebarsegunda {
   width: 340px;
   flex-shrink: 0;
 }
