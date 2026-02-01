@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Visualizador Matemático 3D Pro</title>
+    <title>Graficadora 3D | √(Raiz) Cuadrada²</title>
     
     <script src="https://cdn.plot.ly/plotly-2.24.1.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/11.8.0/math.js"></script>
@@ -13,6 +13,21 @@
 <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
 <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
 <script src="https://unpkg.com/lucide@latest"></script>
+
+
+    <script>
+        (function() {
+            // 1. Intentamos leer la memoria
+            const localTheme = localStorage.getItem('theme');
+            // 2. Si hay algo guardado lo usamos, si no, usamos 'light'
+            const themeToSet = localTheme || 'light';
+            // 3. Lo aplicamos INMEDIATAMENTE al HTML
+            document.documentElement.setAttribute('data-theme', themeToSet);
+        })();
+    </script>
+    
+     <link rel="stylesheet" href="styles.css">
+     
 <style>
     /* --- 1. FUENTES Y VARIABLES (EL ADN DEL GEMELO) --- */
     @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700;900&display=swap');
@@ -560,34 +575,49 @@ input[type="color"].eq-color:hover {
         margin-bottom: 30px;
     }
     
-    
-    .top-bar {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  position: relative;
-  margin-bottom: 20px;
+ 
+ /* --- BARRA SUPERIOR DE ICONOS --- */
+.top-bar {
+    display: flex;
+    justify-content: space-between; /* Empuja un grupo a la izq y otro a la der */
+    align-items: center;
+    width: 100%;
+    margin-bottom: 20px;
+    padding: 0 5px; /* Un pequeño respiro a los lados */
+    box-sizing: border-box;
 }
 
-.top-icons {
-  position: absolute;
-  top: 0;
-  right: 0;
-  display: flex;
-  gap: 8px;
+/* Grupos de iconos (Izquierda y Derecha) */
+.icon-group {
+    display: flex;
+    align-items: center;
+    gap: 8px; /* Espacio entre iconos vecinos */
 }
 
-.top-icons button {
-  background: none;
-  border: none;
-  cursor: pointer;
-  padding: 4px;
+/* Estilo unificado para TODOS los botones de arriba */
+.top-btn {
+    background: transparent;
+    border: none;
+    color: var(--text-main); /* IMPORTANTE: Usa la variable para que se vea en modo oscuro */
+    cursor: pointer;
+    padding: 5px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 8px;
+    transition: background 0.2s, transform 0.2s;
 }
 
-.top-icons svg {
-  width: 20px;
-  height: 20px;
+.top-btn:hover {
+    background: rgba(0,0,0,0.05); /* Sutil fondo al pasar el mouse */
+    transform: scale(1.1);
 }
+
+/* Ajuste para modo oscuro en el hover */
+[data-theme="dark"] .top-btn:hover {
+    background: rgba(255,255,255,0.1);
+}
+
 
 .modal {
   position: fixed;
@@ -649,30 +679,35 @@ input[type="color"].eq-color:hover {
 <body>
 
     <div id="sidebar">
-        
-          <button id="home" title="Página principal" 
-        onclick="window.location.href='index.html'"
-        style="background: transparent; border: none; color: black; cursor: pointer; margin-right: 15px; display: flex; align-items: left;">
-    <i data-lucide="home"></i>
-</button>
-
-        <div class="top-bar">
-             <div class="top-icons">
-   
-    <button id="fullscreenBtn" title="Pantalla completa">
-      <i data-lucide="maximize"></i>
-    </button>
-
-    <button id="resetBtn" title="Reiniciar">
-      <i data-lucide="rotate-ccw"></i>
-    </button>
-
-    <button id="lightsBtn" title="Luces">
-      <i data-lucide="lightbulb"></i>
-    </button>
-  </div>
-    </div>
+       
+<div class="top-bar">
     
+    <div class="icon-group">
+        <button id="home" class="top-btn" title="Página principal" onclick="window.location.href='index.html'">
+            <i data-lucide="home" style="width: 20px; height: 20px;"></i>
+        </button>
+
+        <button id="themeBtn" class="top-btn" title="Cambiar Tema" onclick="toggleTheme()">
+            <i data-lucide="moon" style="width: 20px; height: 20px;"></i>
+        </button>
+    </div>
+
+    <div class="icon-group">
+        <button id="fullscreenBtn" class="top-btn" title="Pantalla completa">
+            <i data-lucide="maximize" style="width: 20px; height: 20px;"></i>
+        </button>
+
+        <button id="resetBtn" class="top-btn" title="Reiniciar Cámara">
+            <i data-lucide="rotate-ccw" style="width: 20px; height: 20px;"></i>
+        </button>
+
+        <button id="lightsBtn" class="top-btn" title="Configurar Luces">
+            <i data-lucide="lightbulb" style="width: 20px; height: 20px;"></i>
+        </button>
+    </div>
+
+</div>
+
         <h1>
             Graficadora 3D
         </h1>
@@ -879,6 +914,7 @@ input[type="color"].eq-color:hover {
   </div>
 </div>
 
+<script src="script.js"></script>
 
 <script>
     document.getElementById('showMesh').addEventListener('change', function(e) {
