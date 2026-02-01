@@ -1,0 +1,1995 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title> Graficadora 3D | √(Raiz) Cuadrada² </title>
+
+    <script>
+        (function() {
+            // 1. Intentamos leer la memoria
+            const localTheme = localStorage.getItem('theme');
+            // 2. Si hay algo guardado lo usamos, si no, usamos 'light'
+            const themeToSet = localTheme || 'light';
+            // 3. Lo aplicamos INMEDIATAMENTE al HTML
+            document.documentElement.setAttribute('data-theme', themeToSet);
+        })();
+    </script>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600&family=Playfair+Display:ital,wght@0,700;0,900;1,700&display=swap" rel="stylesheet">
+    
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <link rel="stylesheet" href="styles.css">
+ <script src="https://cdn.plot.ly/plotly-2.24.1.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/11.8.0/math.js"></script>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+
+<script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+<script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+<script src="https://unpkg.com/lucide@latest"></script>
+
+
+  <style>
+    /* --- 1. FUENTES Y VARIABLES (EL ADN DEL GEMELO) --- */
+    @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700;900&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700&display=swap');
+
+    :root {
+        /* MODO CLARO (Por defecto) */
+        --bg-body: #ffffff;         /* Fondo general */
+        --bg-sidebar: #ffffff;      /* Fondo sidebar */
+        --bg-input: #f9f9f9;        /* Ese gris suave exacto */
+        --bg-card-inner: #f4f4f4;   /* Para items dentro del sidebar */
+        --text-main: #333333;
+        --text-muted: #999999;
+        --accent: #1a1a1a;          /* Negro elegante como acento */
+        --accent-hover: #000000;
+        --text-inverse: #ffffff;
+        --border-color: #eeeeee;
+        
+        /* Sombras y Bordes del gemelo */
+        --shadow-sidebar: 5px 0 30px rgba(0,0,0,0.05);
+        --shadow-inset: 0 2px 5px rgba(0,0,0,0.02) inset;
+        --radius-lg: 40px;          /* Bordes muy redondos */
+        --radius-md: 25px;          /* Bordes inputs */
+        --radius-pill: 999px;       /* Botones píldora */
+    }
+
+    [data-theme="dark"] {
+        /* MODO OSCURO (Gemelo Dark) */
+        --bg-body: #0a0a0a;
+        --bg-sidebar: #0a0a0a;      /* O un gris muy oscuro si prefieres */
+        --bg-input: #1e1e1e;
+        --bg-card-inner: #252525;
+        --text-main: #ffffff;
+        --text-muted: #888888;
+        --accent: #ffffff;          /* Acento blanco en dark mode */
+        --accent-hover: #e0e0e0;
+        --text-inverse: #000000;
+        --border-color: #333333;
+        --shadow-sidebar: none;     /* Sin sombra en dark mode */
+    }
+
+    /* --- 2. ESTRUCTURA BASE --- */
+    body {
+        margin: 0;
+        padding: 0;
+        font-family: 'Open Sans', sans-serif; /* Fuente del gemelo */
+        background-color: var(--bg-body);
+        color: var(--text-main);
+        overflow: hidden;
+        display: flex;
+        height: 100vh;
+        transition: background 0.3s ease, color 0.3s ease;
+    }
+
+    /* --- 3. SIDEBAR (Transformado a Estética Card) --- */
+    #sidebar {
+        width: 340px; /* Un poco más ancho para que respiren los inputs redondos */
+        background: var(--bg-sidebar);
+        border-right: 1px solid var(--border-color);
+        display: flex;
+        flex-direction: column;
+        padding: 30px 25px; /* Más padding para elegancia */
+        box-shadow: var(--shadow-sidebar);
+        z-index: 10;
+        height: 100vh;
+        overflow-y: auto;
+        overflow-x: hidden;
+        box-sizing: border-box;
+        transition: 0.3s;
+    }
+
+    /* Scrollbar minimalista */
+    #sidebar::-webkit-scrollbar { width: 4px; }
+    #sidebar::-webkit-scrollbar-thumb { background: var(--text-muted); border-radius: 4px; }
+
+    /* --- 4. TIPOGRAFÍA Y TÍTULOS --- */
+    h1 {
+        font-family: 'Playfair Display', serif; /* La fuente elegante */
+        font-size: 1.6rem;
+        font-weight: 700;
+        color: var(--accent); /* Negro o Blanco */
+        letter-spacing: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center; /* Centrado como pediste */
+        gap: 10px;
+        text-align: center;
+        line-height: 1.1;
+        margin-bottom: 2px;
+    }
+
+  
+
+    
+    .control-group { margin-bottom: 25px; }
+
+    label {
+        display: block;
+        font-size: 11px;
+        color: var(--text-muted); /* Gris suave */
+        margin-bottom: 10px;
+        margin-left: 15px; /* Alineado con la curva del input */
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 1px; /* Estilo 'pregunta-pro' */
+    }
+
+      input[type="text"], input[type="number"], select {
+        width: 100%; 
+        background: #f9f9f9; 
+        border: 2px solid transparent;
+        padding: 16px 22px; 
+        border-radius: 25px; 
+        font-family: inherit;
+        font-size: 15px; 
+        color: #333; 
+        transition: all 0.3s ease;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.02) inset;
+        margin-bottom: 25px;
+        box-sizing: border-box;
+        outline: none;
+    }
+
+    input:focus, select:focus {
+        background: white; 
+        border-color: #1a1a1a;
+        box-shadow: 0 10px 25px rgba(0,0,0,0.08); 
+        transform: translateY(-3px);
+    }
+    
+    
+       .btn-principal {
+        width: 100%; 
+        background: #1a1a1a; 
+        color: white; 
+        border: none; 
+        border-radius: 999px; /* Píldora */
+        padding: 18px 35px; 
+        font-weight: 700; 
+        font-size: 16px;
+        cursor: pointer; 
+        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        margin-bottom: 15px;
+        font-family: 'Open Sans', sans-serif;
+    }
+
+    .btn-principal:hover { 
+        transform: translateY(-3px) scale(1.02); 
+        background: #000; 
+        box-shadow: 0 8px 15px rgba(0,0,0,0.15);
+    }
+
+    /* --- 6. BOTONES (ESTILO PÍLDORA PREMIUM) --- */
+    button {
+        background: #f4f4f4; 
+        border: 2px solid transparent; 
+        padding: 10px 18px; 
+        border-radius: 999px; 
+        font-size: 13px; 
+        cursor: pointer; 
+        transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+        font-weight: 600; 
+        color: #666; 
+        font-family: 'Open Sans', sans-serif;
+    }
+
+    button:hover {
+        transform: translateY(-3px) scale(1.02);
+        opacity: 1; /* Quitamos opacidad, usamos transform */
+        box-shadow: 0 15px 30px rgba(0,0,0,0.15);
+    }
+    
+    button:active { 
+        background: #1a1a1a; 
+        color: white; 
+        border-color: #1a1a1a;
+        box-shadow: 0 8px 15px rgba(0,0,0,0.15); 
+        transform: scale(1.05);
+    }
+    
+    /* Botones pequeños (Delete, etc) */
+    .btn-delete {
+        background: #ff4d4d; /* Un rojo más estético */
+        width: 30px; 
+        height: 30px;
+        padding: 0;
+        border-radius: 50%;
+        margin-top: 0;
+        box-shadow: none;
+    }
+
+    /* --- 7. SLIDERS (RANGE) --- */
+    input[type="range"] {
+        width: 100%;
+        cursor: pointer;
+        accent-color: var(--accent);
+        margin: 10px 0;
+    }
+    
+    .range-values {
+        display: flex;
+        justify-content: space-between;
+        font-size: 10px;
+        font-weight: 700;
+        color: var(--text-muted);
+        text-transform: uppercase;
+        padding: 0 10px;
+    }
+
+    /* --- 8. ELEMENTOS INTERNOS DEL SIDEBAR (Funciones) --- */
+    .func-row {
+        background: white; /* Gris muy suave */
+        border: 1px solid transparent;
+        padding: 15px;
+        border-radius: var(--radius-md); /* 25px */
+        position: relative;
+        margin-bottom: 8px;
+        transition: 0.3s;
+    }
+    
+    .func-row:hover {
+        border-color: var(--border-color);
+        transform: translateY(-2px);
+    }
+
+    .func-label {
+        font-size: 10px;
+        font-weight: 800;
+        text-transform: uppercase;
+        color: var(--text-muted);
+        margin-bottom: 8px;
+        display: block;
+        letter-spacing: 0.5px;
+        text-align: center; /* Centrado */
+    }
+
+    .row-controls {
+        display: flex;
+        gap: 8px;
+        align-items: center;
+        justify-content: center; /* Centrado */
+        margin-top: 10px;
+    }
+    
+    /* Selector de esquema pequeño */
+    .scheme-select {
+        background: var(--bg-sidebar);
+        color: var(--text-main);
+        border: 1px solid var(--border-color);
+        border-radius: 15px;
+        font-size: 11px;
+        padding: 4px 10px;
+        max-width: 100px;
+        cursor: pointer;
+        box-shadow: none;
+        margin-bottom: 0;
+    }
+
+    /* --- 9. ÁREA DE GRÁFICA (PLOT) --- */
+    #plot-container {
+        flex-grow: 1;
+        height: 100%;
+        position: relative;
+        /* Fondo limpio para que parezca papel técnico */
+        background: var(--bg-body); 
+    }
+
+    /* --- 10. PANELES Y EXTRAS --- */
+    #latex-panel {
+        width: 100%;
+        margin: 15px 0;
+        padding: 15px;
+        box-sizing: border-box;
+         background: #f9f9f9; /* Fondo gris suave */
+        padding: 20px; 
+        border-radius: 25px; 
+        min-height: 70px; 
+        display: flex; 
+        align-items: center; 
+        justify-content: center; 
+        border: 2px solid transparent; 
+        overflow-x: auto;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.02) inset; /* Sombra interna */
+        color: #333;
+        font-size: 1.1rem;
+    }
+
+    #latex-content {
+        width: 100%;
+        color: var(--text-main);
+        font-family: 'STIX Two Text', serif; /* Fuente matemática */
+        font-size: 1rem;
+        display: flex;
+        flex-direction: column;
+        align-items: center; /* Centrado */
+        justify-content: center;
+    }
+
+    .latex-item {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 8px;
+        background: transparent;
+        padding: 5px 15px;
+        border-radius: 20px;
+    }
+
+    .color-dot {
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+        flex-shrink: 0;
+        border: 2px solid rgba(0,0,0,0.1);
+    }
+
+    /* Footer */
+    .footer {
+        margin-top: auto;
+        font-size: 10px;
+        color: var(--text-muted);
+        text-align: center;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        padding-top: 20px;
+    }
+    
+    /* Ocultar elementos auxiliares */
+    .hidden { display: none !important; }
+    
+    /* Symbol Panel (Botones pequeños) */
+    .symbol-toggle {
+        background: var(--bg-card-inner);
+        border: none;
+        color: var(--text-main);
+        padding: 10px;
+        font-size: 12px;
+        font-weight: 600;
+        border-radius: 15px;
+        text-align: center;
+    }
+    .symbol-content button {
+        background: var(--bg-sidebar);
+        border: 1px solid var(--border-color);
+        color: var(--text-main);
+        border-radius: 10px;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+    }
+    .symbol-content button:hover {
+        background: var(--bg-input);
+    }
+    
+    .symbol-group {
+    position: relative;
+    flex: 1;
+}
+
+.symbol-content {
+    display: none;
+    position: absolute;
+    top: 110%;
+    left: 0;
+    width: 100%;
+    background: var(--bg-sidebar);
+    border: 1px solid var(--border-color);
+    border-radius: 15px;
+    padding: 8px;
+    z-index: 50;
+
+    grid-template-columns: repeat(2, 1fr);
+    gap: 6px;
+}
+
+
+/* Mostrar cuando está abierto */
+.symbol-group.open .symbol-content {
+    display: grid;
+}
+
+.category-bar {
+    display: flex;
+    gap: 6px;
+    width: 100%;
+    margin-bottom: 10px;
+}
+
+.category-bar .symbol-toggle {
+    width: 100%;
+    padding: 8px;
+    font-size: 0.75rem;
+}
+
+  .mode-switcher {
+        display: flex;
+        background:  #f9f9f9; /* Fondo gris suave contenedor */
+        border-radius: 999px;
+        margin-bottom: 15px; /* Separación con el visor Latex */
+        position: relative;
+        padding:5px;
+        justify-content: space-between;
+        box-shadow: inset 0 1px 3px rgba(0,0,0,0.06);
+    }
+    
+    .mode-btn {
+        flex: 1;
+        border: none;
+          background: #ffffff;
+        color: #1a1a1a;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.12);
+        border-radius: 999px;
+        cursor: pointer;
+        font-family: 'Open Sans', sans-serif;
+        font-weight: 700;
+        font-size: 14px;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 6px;
+        padding:5px;
+        margin-top: 5px;
+         margin-bottom: 5px;
+          margin-left: 5px;
+           margin-right: 5px;
+    }
+    
+    /* --- ESTILIZADO DE LOS CONTROLES DE FILA (Más limpio) --- */
+
+.row-controls {
+    display: flex;
+    align-items: center;
+    gap: 8px; /* Espacio entre elementos */
+    background: #ffffff;
+    border-radius: 30px; /* Contenedor en forma de píldora */
+    padding: 4px; /* Un poco de padding interno */
+    border: 1px solid #f1f1f1; /* Borde muy sutil */
+    box-shadow: 0 2px 5px rgba(0,0,0,0.03); /* Sombra flotante suave */
+    justify-content: space-between;
+}
+
+/* 1. Selector de Esquema (La píldora de texto) */
+.scheme-select {
+    appearance: none; /* Quita la flecha fea por defecto */
+    background-color: transparent;
+    border: none;
+    font-family: 'Open Sans', sans-serif;
+    font-size: 11px;
+    font-weight: 600;
+    color: #555;
+    padding: 6px 12px;
+    cursor: pointer;
+    text-align: center;
+    border-radius: 999px;
+    transition: background 0.2s;
+}
+
+.scheme-select:hover {
+    background-color: #f4f4f4;
+    color: #000;
+}
+
+.scheme-select:focus {
+    outline: none;
+}
+
+/* 2. Input de Color (El punto redondo) */
+input[type="color"].eq-color {
+    -webkit-appearance: none;
+    border: none;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    cursor: pointer;
+    padding: 0;
+    background: none;
+    transition: transform 0.2s;
+    overflow: hidden; /* Asegura que sea redondo */
+}
+
+input[type="color"].eq-color::-webkit-color-swatch-wrapper {
+    padding: 0;
+}
+
+input[type="color"].eq-color::-webkit-color-swatch {
+    border: none;
+    border-radius: 50%;
+    border: 1px solid rgba(0,0,0,0.1); /* Borde sutil para colores blancos */
+}
+
+input[type="color"].eq-color:hover {
+    transform: scale(1.1);
+}
+
+
+
+.opacity-slider::-webkit-slider-thumb {
+    appearance: none;
+    width: 12px;
+    height: 12px;
+    background: #333;
+    border-radius: 50%;
+    cursor: pointer;
+    transition: transform 0.1s;
+}
+
+.opacity-slider::-webkit-slider-thumb:hover {
+    transform: scale(1.3);
+}
+
+/* 4. Botón Eliminar (Icono sutil) */
+.btn-delete {
+    background: transparent !important; /* Quitamos el fondo rojo */
+    color: #cbd5e1 !important; /* Gris muy claro por defecto */
+    width: 28px !important;
+    height: 28px !important;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+    border: none;
+    box-shadow: none !important;
+}
+
+.btn-delete:hover {
+    background: #fee2e2 !important; /* Fondo rojo muy suave al hover */
+    color: #ef4444 !important; /* Icono rojo vivo */
+    transform: rotate(90deg); /* Pequeña animación */
+}
+
+/* Ocultar elementos */
+.hidden {
+    display: none !important;
+}
+
+
+  p { 
+        font-family: 'Open Sans', sans-serif; 
+        font-size: 9px; 
+        font-weight: 700; 
+        color: #999; 
+        text-transform: uppercase; 
+        letter-spacing: 1.5px; /* Estilo 'pregunta-pro' */
+        text-align: center;
+        margin-bottom: 30px;
+    }
+    
+    
+    .top-bar {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+  margin-bottom: 20px;
+}
+
+.top-icons {
+  position: absolute;
+  top: 0;
+  right: 0;
+  display: flex;
+  gap: 8px;
+}
+
+.top-icons button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 4px;
+}
+
+.top-icons svg {
+  width: 20px;
+  height: 20px;
+}
+
+.modal {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.modal.hidden {
+  display: none;
+}
+
+.modal-content {
+  background: #fff;
+  width: 320px;
+  border-radius: 8px;
+  padding: 12px;
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.modal-header button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 16px;
+}
+
+.modal-body {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.modal-body label {
+  display: flex;
+  flex-direction: column;
+  font-size: 13px;
+}
+
+.modal-footer {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 12px;
+}
+
+
+
+</style>
+
+  
+    </head>
+<body>
+
+    
+    <header class="mobile-header">
+        <div class="nav-header">
+            <button class="icon-btn"><i data-lucide="search"></i></button>
+            <button class="icon-btn" onclick="toggleTheme()"><i data-lucide="moon"></i></button>
+        </div>
+        <button class="icon-btn" onclick="toggleMenu()"><i data-lucide="menu"></i></button>
+    </header>
+
+    <div class="wrapper">
+        <aside class="sidebar" id="sidebar">
+            <div class="nav-header">
+               <button class="icon-btn" title="Inicio"
+        onclick="window.location.href='index.html'">
+  <i data-lucide="home"></i>
+</button>
+
+<button class="icon-btn" title="Modo"
+        onclick="toggleTheme()">
+  <i id="theme-icon" data-lucide="moon"></i>
+</button>
+
+<button class="icon-btn" title="Recargar"
+        onclick="location.reload()"
+        id="close-menu">
+  <i data-lucide="x"></i>
+</button>
+
+            </div>
+
+            <nav>
+                <ul class="nav-links">
+                    <li><a href="index.html"><i data-lucide="square-radical"></i> Página Principal</a></li>
+
+                    
+                    <div class="nav-group">
+    <div class="nav-item has-submenu" onclick="toggleSubmenu(this)">
+        <div class="nav-text-container">
+            <i data-lucide="calculator"></i>
+            <span>CALCULADORA</span>
+        </div>
+        <i data-lucide="chevron-down" class="arrow-icon"></i>
+    </div>
+    
+    <div class="submenu">
+        <a href="ecuaciones.html"><i data-lucide="equal" class="sub-icon"></i> Ecuaciones</a>
+        <a href="sistemas.html"><i data-lucide="layers" class="sub-icon"></i> Sistemas Ecuaciones</a>
+        <a href="matrices.html"><i data-lucide="grid-3x3" class="sub-icon"></i> Matrices</a>
+        <a href="derivadas.html"><i data-lucide="trending-up" class="sub-icon"></i> Derivadas</a>
+        <a href="integrales.html"><i data-lucide="sigma" class="sub-icon"></i> Integrales</a>
+        <a href="laplace.html"><i data-lucide="waves" class="sub-icon"></i> Transf. Laplace</a>
+    </div>
+</div>
+
+<div class="nav-group">
+    <div class="nav-item has-submenu" onclick="toggleSubmenu(this)">
+        <div class="nav-text-container">
+            <i data-lucide="ruler"></i>
+            <span>HERRAMIENTAS</span>
+        </div>
+        <i data-lucide="chevron-down" class="arrow-icon"></i>
+    </div>
+    
+    <div class="submenu">
+        <a href="simbolos.html"><i data-lucide="omega" class="sub-icon"></i> Símbolos</a>
+        <a href="factorizar.html"><i data-lucide="divide" class="sub-icon"></i> Factorizadora</a>
+        <a href="fraccionesparciales.html"><i data-lucide="percent" class="sub-icon"></i> Fracciones Parciales</a>
+        <a href="triangulos.html"><i data-lucide="triangle" class="sub-icon"></i> Calc. Triángulos</a>
+        <a href="vectores.html"><i data-lucide="move-diagonal" class="sub-icon"></i> Vectores</a>
+        <a href="circulounitario.html"><i data-lucide="circle" class="sub-icon"></i> Círculo Unitario</a>
+        <a href="editor.html"><i data-lucide="edit-3" class="sub-icon"></i> Editor Expresiones</a>
+    </div>
+</div>
+
+<div class="nav-group">
+    <div class="nav-item has-submenu" onclick="toggleSubmenu(this)">
+        <div class="nav-text-container">
+            <i data-lucide="activity"></i>
+            <span>GRAFICADORAS</span>
+        </div>
+        <i data-lucide="chevron-down" class="arrow-icon"></i>
+    </div>
+    
+    <div class="submenu">
+        <a href="graficadora2d.html"><i data-lucide="line-chart" class="sub-icon"></i> Funciones 2D</a>
+        <a href="graficadora3d.html"><i data-lucide="box" class="sub-icon"></i> Graficadora 3D</a>
+        <a href="conicas.html"><i data-lucide="orbit" class="sub-icon"></i> Cónicas</a>
+        <a href="campos.html"><i data-lucide="wind" class="sub-icon"></i> Campos Vectoriales</a>
+    </div>
+</div>
+
+                    
+                    <li><a href="cursos.html"><i data-lucide="book-open"></i> CURSOS</a></li>
+                    <li><a href="formularios.html"><i data-lucide="file-text"></i> FORMULARIOS</a></li>
+                    <li><a href="youtube.html"><i data-lucide="youtube"></i> Canal de YouTube</a></li>
+                    <li><a href="autor.html"><i data-lucide="user"></i> Sobre el autor</a></li>
+                </ul>
+            </nav>
+        </aside>
+
+        <main class="content">
+            
+            
+          <div id="sidebar">
+        
+        <div class="top-bar">
+  <div class="top-icons">
+    <button id="fullscreenBtn" title="Pantalla completa">
+      <i data-lucide="maximize"></i>
+    </button>
+
+    <button id="resetBtn" title="Reiniciar">
+      <i data-lucide="rotate-ccw"></i>
+    </button>
+
+    <button id="lightsBtn" title="Luces">
+      <i data-lucide="lightbulb"></i>
+    </button>
+  </div>
+    </div>
+    
+        <h1>
+            Graficadora 3D
+        </h1>
+  <p>√(Raiz) Cuadrada²</p>
+    
+
+<div class="control-group">
+   
+   
+    <div class="mode-switcher">
+   <div style="display: flex; gap: 10px; width: 100%;">
+    <button  class="mode-btn"  onclick="addFunction('explicit')" 
+            style="flex: 1; padding: 8px; font-size: 0.75rem; display: flex; align-items: center; justify-content: center; gap: 6px;">
+        <i data-lucide="circle-plus" style="width: 14px; height: 14px;"></i> 
+        Explícita
+    </button>
+
+    <button  class="mode-btn" onclick="addFunction('implicit')" 
+            style="flex: 1; padding: 8px; font-size: 0.75rem; display: flex; align-items: center; justify-content: center; gap: 6px;">
+        <i data-lucide="circle-plus" style="width: 14px; height: 14px;"></i>
+        Implícita
+    </button>
+</div>
+
+</div>
+
+<div class="category-bar">
+
+  <div class="symbol-group">
+    <button class="symbol-toggle">Simbolos</button>
+    <div class="symbol-content">
+           <button onclick="insertSymbol('*')">*</button>
+      <button onclick="insertSymbol('√()')">√</button>
+      <button onclick="insertSymbol('¹')">x¹</button>
+      <button onclick="insertSymbol('²')">x²</button>
+      <button onclick="insertSymbol('³')">x³</button>
+      <button onclick="insertSymbol('sen(')">sen</button>
+      <button onclick="insertSymbol('cos(')">cos</button>
+      <button onclick="insertSymbol('tan(')">tan</button>
+         <button onclick="insertSymbol('asen(')">arcsen</button>
+      <button onclick="insertSymbol('acos(')">arccos</button>
+      <button onclick="insertSymbol('atan(')">arctan</button>
+       <button onclick="insertSymbol('abs()')">|x|</button>
+         <button onclick="insertSymbol('e^x')">eˣ</button>
+           <button onclick="insertSymbol('pi')">π</button>
+             <button onclick="insertSymbol('()/()')">ˣ/ᵧ</button>
+    </div>
+  </div>
+
+<div class="symbol-group">
+    <button class="symbol-toggle">Cuádricas</button>
+    <div class="symbol-content quadricas-list"></div>
+</div>
+<div class="symbol-group">
+    <button class="symbol-toggle">Funciones</button>
+    <div class="symbol-content funciones-list"></div>
+</div>
+
+</div>
+
+<div id="latex-panel">
+    <div id="latex-content"></div>
+</div>
+
+
+
+
+<div id="functionsContainer" style="display: flex; flex-direction: column; gap: 10px;">
+    </div>
+    
+    <input type="hidden" id="funcType" value="explicit">
+</div>
+
+        <div class="control-group">
+            <label>Rango de Ejes (-r a r)</label>
+            <input type="range" id="rangeInput" min="2" max="20" value="10" step="1" oninput="updateRangeLabel(this.value)">
+            <div class="range-values">
+                <span>2</span>
+                <span id="rangeVal">10</span>
+                <span>20</span>
+            </div>
+        </div>
+        
+      <div class="control-group" style="display: none;">
+<div style="position: relative; display: flex; align-items: center;">
+            <select class="scheme-select" onchange="toggleColorInput(this)" style="appearance: none; -webkit-appearance: none; padding-right: 25px; background: transparent; position: relative; z-index: 2;">
+                <option value="solid">Sólido</option>
+                <option value="Viridis">Viridis</option>
+                <option value="Plasma">Plasma</option>
+                <option value="Jet">Jet</option>
+                <option value="Hot">Hot</option>
+                <option value="Electric">Electric</option>
+                <option value="Earth">Earth</option>
+            </select>
+            <i data-lucide="chevron-down" style="position: absolute; right: 0; width: 14px; height: 14px; pointer-events: none; z-index: 1;"></i>
+        </div>
+
+        <div style="position: relative; width: 20px; height: 20px; display: flex; align-items: center;">
+            <i data-lucide="square" style="width: 100%; height: 100%; fill: ${color}; color: ${color};"></i>
+            
+            <input type="color" class="eq-color" value="${color}" 
+                   style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; opacity: 0; cursor: pointer;"
+                   oninput="this.previousElementSibling.style.fill = this.value; this.previousElementSibling.style.color = this.value;">
+        </div>
+ </div>
+
+        <div class="control-group">
+            <label>Resolución (Calidad vs Velocidad)</label>
+            <input type="range" id="resInput" min="20" max="100" value="50" step="5">
+            <div class="range-values">
+                <span>Baja</span>
+                <span>Alta</span>
+            </div>
+        </div>
+
+<div class="control-group" style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px;">
+    
+<div style="display: flex; align-items: center; gap: 8px; cursor: pointer;" 
+     onclick="
+        const chk = document.getElementById('showMesh'); 
+        chk.checked = !chk.checked; 
+        
+        // Lógica para alternar visibilidad de los iconos
+        document.getElementById('iconMeshOn').style.display = chk.checked ? 'block' : 'none';
+        document.getElementById('iconMeshOff').style.display = chk.checked ? 'none' : 'block';
+        
+        renderGraph();
+     ">
+    
+    <input type="checkbox" id="showMesh" checked style="display: none;">
+    
+    <i id="iconMeshOn" data-lucide="square-check-big" style="width: 18px; height: 18px; color: #333; display: block;"></i>
+    
+    <i id="iconMeshOff" data-lucide="square-dashed" style="width: 18px; height: 18px; color: #999; display: none;"></i>
+    
+    <label style="margin: 0; cursor: pointer; font-size: 0.85rem; color: #333; font-weight: 600;">
+        Mostrar Malla
+    </label>
+</div>
+
+    <div style="position: relative; width: 22px; height: 22px; display: flex; align-items: center;">
+        <i data-lucide="square" id="meshIconVisual" style="width: 100%; height: 100%; color: #333; fill: #000000;"></i>
+        
+        <input type="color" id="meshColor" value="#000000" title="Color de la Malla" 
+               style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; opacity: 0; cursor: pointer;"
+               oninput="document.getElementById('meshIconVisual').style.fill = this.value; renderGraph();">
+    </div>
+</div>
+
+<div class="control-group">
+    <div style="display: flex; align-items: center; gap: 8px;">
+        <label> "Densidad de Malla"  </label>
+    </div>
+    
+    <input type="range" id="meshDensity" min="5" max="50" value="15" step="1" 
+           oninput="document.getElementById('meshVal').innerText = this.value; renderGraph();"> <div class="range-values">
+        <span>Baja</span>
+        <span id="meshVal">15</span>
+        <span>Alta</span>
+    </div>
+</div>
+
+
+
+        <button onclick="renderGraph()" class="btn-principal">Actualizar Grafica</button>
+
+    </div>
+
+    <div id="plot-container"></div>
+
+
+<div id="lightsModal" class="modal hidden">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h3>Configuración de luces</h3>
+      <button id="closeLightsModal">✕</button>
+    </div>
+
+    <div class="modal-body">
+      <label>
+        Ambiente
+       <input id="lightAmbient" type="range" min="0" max="1" step="0.05" value="0.4">
+      </label>
+
+      <label>
+        Difusa
+       <input id="lightDiffuse" type="range" min="0" max="1" step="0.05" value="0.7">
+      </label>
+
+      <label>
+        Especular
+        <input id="lightSpecular" type="range" min="0" max="1" step="0.05" value="0.5">
+      </label>
+
+      <label>
+        Rugosidad
+        <input id="lightRoughness" type="range" min="0" max="1" step="0.05" value="0.2">
+      </label>
+    </div>
+
+    <div class="modal-footer">
+      <button id="applyLights">Aplicar</button>
+    </div>
+  </div>
+</div>
+            
+
+<footer class="footer-global">
+    <div class="footer-wrapper">
+        
+        <div class="footer-section">
+            <h4 class="footer-h4">Contacto</h4>
+            <a href="mailto:s.rodriguezrojas939@gmail.com" class="footer-email">
+                s.rodriguezrojas939@gmail.com
+            </a>
+            <div class="footer-socials">
+                <a href="https://wa.me/573196510401" target="_blank" title="WhatsApp">
+                    <i data-lucide="message-circle"></i>
+                </a>
+                <a href="https://www.youtube.com/@ElRaizCuadrada" target="_blank" title="YouTube">
+                    <i data-lucide="youtube"></i>
+                </a>
+                <a href="mailto:s.rodriguezrojas939@gmail.com" title="Correo">
+                    <i data-lucide="mail"></i>
+                </a>
+                <a href="https://github.com" target="_blank" title="GitHub">
+                    <i data-lucide="github"></i>
+                </a>
+            </div>
+        </div>
+
+        <div class="footer-section">
+            <a href="https://www.youtube.com/@ElRaizCuadrada" target="_blank" class="footer-logo-link">
+                <h1 class="footer-title">√(Raiz) Cuadrada²</h1>
+            </a>
+        </div>
+
+        <div class="footer-section">
+            <h4 class="footer-h4">Visitas al sitio</h4>
+            <div class="visitor-counter">
+                <img src="https://hitwebcounter.com/counter/counter.php?page=21465053&style=0024&nbdigits=5&type=page&initCount=0" alt="Visitas">
+            </div>
+        </div>
+
+    </div>
+</footer>
+           
+        </main>
+        
+     <script src="script.js"></script>
+      
+<script>
+    document.getElementById('showMesh').addEventListener('change', function(e) {
+        const densitySlider = document.getElementById('meshDensity');
+        densitySlider.disabled = !e.target.checked;
+        densitySlider.parentElement.style.opacity = e.target.checked ? "1" : "0.5";
+    });
+</script>
+
+<script>
+    function toggleColorPicker() {
+        const select = document.getElementById('colorScheme');
+        const container = document.getElementById('customColorContainer');
+        // Mostrar picker solo si es 'custom'
+        container.style.display = (select.value === 'custom') ? 'block' : 'none';
+    }
+    
+    document.getElementById('lightAmbient').addEventListener('input', e => {
+    lightingConfig.ambient = parseFloat(e.target.value);
+    renderGraph();
+});
+
+document.getElementById('lightDiffuse').addEventListener('input', e => {
+    lightingConfig.diffuse = parseFloat(e.target.value);
+    renderGraph();
+});
+
+document.getElementById('lightSpecular').addEventListener('input', e => {
+    lightingConfig.specular = parseFloat(e.target.value);
+    renderGraph();
+});
+
+document.getElementById('lightRoughness').addEventListener('input', e => {
+    lightingConfig.roughness = parseFloat(e.target.value);
+    renderGraph();
+});
+
+
+</script>
+
+
+<script>
+    
+    const fullscreenBtn = document.getElementById('fullscreenBtn');
+
+fullscreenBtn.addEventListener('click', () => {
+  if (!document.fullscreenElement) {
+    document.documentElement.requestFullscreen();
+  } else {
+    document.exitFullscreen();
+  }
+});
+
+const resetBtn = document.getElementById('resetBtn');
+
+resetBtn.addEventListener('click', () => {
+  location.reload();
+});
+
+   
+   const lightsBtn = document.getElementById('lightsBtn');
+const lightsModal = document.getElementById('lightsModal');
+const closeLightsModal = document.getElementById('closeLightsModal');
+
+lightsBtn.addEventListener('click', () => {
+  lightsModal.classList.remove('hidden');
+});
+
+closeLightsModal.addEventListener('click', () => {
+  lightsModal.classList.add('hidden');
+});
+
+// Cerrar al hacer click fuera
+lightsModal.addEventListener('click', e => {
+  if (e.target === lightsModal) {
+    lightsModal.classList.add('hidden');
+  }
+});
+
+ 
+    document.addEventListener('click', (e) => {
+    if (!e.target.classList.contains('symbol-toggle')) return;
+
+    const group = e.target.closest('.symbol-group');
+    const isOpen = group.classList.contains('open');
+
+    // Cerrar todos
+    document.querySelectorAll('.symbol-group').forEach(g => {
+        g.classList.remove('open');
+        g.querySelector('.symbol-toggle').innerText =
+            g.querySelector('.symbol-toggle').innerText.replace('▾', '▸');
+    });
+
+    // Abrir el seleccionado
+    if (!isOpen) {
+        group.classList.add('open');
+        e.target.innerText = e.target.innerText.replace('▸', '▾');
+    }
+});
+
+
+    function insertSymbol(sym) {
+        // Busca el input activo o el último añadido
+        const inputs = document.querySelectorAll('.eq-input');
+        if (inputs.length > 0) {
+            // Insertamos en el último input por defecto (o podrías hacer lógica de foco)
+            const input = inputs[inputs.length - 1]; 
+              input.value += sym;
+    input.focus();
+    requestRender();
+        }
+    }
+</script>
+
+    <script>
+        
+       
+       const lightingConfig = {
+    ambient: 0.8,
+    diffuse: 0.7,
+    specular: 0.1,
+    roughness: 0.5,
+    fresnel: 2
+};
+
+
+       const QUADRICAS = [
+    {
+        name: "Esfera",
+        type: "implicit",
+        eq: "x^2 + y^2 + z^2 - 9"
+    },
+    {
+        name: "Elipsoide",
+        type: "implicit",
+        eq: "x^2/4 + y^2/9 + z^2 - 1"
+    },
+    {
+        name: "Paraboloide elíptico",
+        type: "explicit",
+        eq: "x^2 + y^2"
+    },
+    {
+        name: "Paraboloide hiperbólico",
+        type: "explicit",
+        eq: "x^2 - y^2"
+    },
+    {
+        name: "Cono",
+        type: "implicit",
+        eq: "x^2 + y^2 - z^2"
+    },
+    {
+        name: "Cilindro",
+        type: "implicit",
+        eq: "x^2 + y^2 - 4"
+    },
+    {
+    name: "Hiperboloide de una hoja",
+    type: "implicit",
+    eq: "x^2 + y^2 - z^2 - 1"
+},
+{
+    name: "Hiperboloide de dos hojas",
+    type: "implicit",
+    eq: "z^2 - x^2 - y^2 - 1"
+},
+{
+    name: "Paraboloide elíptico (desplazado)",
+    type: "explicit",
+    eq: "x^2/4 + y^2/9"
+},
+{
+    name: "Paraboloide hiperbólico (silla)",
+    type: "explicit",
+    eq: "x^2/4 - y^2/9"
+},
+{
+    name: "Cilindro elíptico",
+    type: "implicit",
+    eq: "x^2/4 + y^2/9 - 1"
+},
+{
+    name: "Cilindro hiperbólico",
+    type: "implicit",
+    eq: "x^2 - y^2 - 1"
+},
+{
+    name: "Cilindro parabólico",
+    type: "explicit",
+    eq: "x^2"
+}
+
+];
+
+const FUNCIONES = [
+    {
+        name: "Toroide",
+        type: "implicit",
+        eq: "(sqrt(x^2 + y^2) - 3)^2 + z^2 - 1"
+    },
+    {
+        name: "Onda radial",
+        type: "explicit",
+        eq: "sin(sqrt(x^2 + y^2))"
+    },
+    {
+        name: "Superficie ondulada",
+        type: "explicit",
+        eq: "sin(x) * cos(y)"
+    },
+    {
+        name: "Ripple",
+        type: "explicit",
+        eq: "sin(x^2 + y^2)"
+    },
+    {
+    name: "Montañas fractales",
+    type: "explicit",
+    eq: "sin(x) * sin(y) + 0.5*sin(2*x) * cos(2*y)"
+},
+{
+    name: "Ondas interferentes",
+    type: "explicit",
+    eq: "sin(x + y) + sin(x - y)"
+},
+{
+    name: "Cúpula ondulada",
+    type: "explicit",
+    eq: "sqrt(abs(9 - x^2 - y^2)) * cos(x) * cos(y)"
+},
+{
+    name: "Flor radial",
+    type: "explicit",
+    eq: "cos(5*atan(2x*y)) * exp(-0.1*(x^2 + y^2))"
+},
+{
+    name: "Volcán",
+    type: "explicit",
+    eq: "exp(-0.2*(x^2 + y^2)) * (x^2 + y^2)"
+},
+{
+    name: "Superficie Moiré",
+    type: "explicit",
+    eq: "sin(x) + sin(y) + sin(x + y)"
+},
+{
+    name: "Olas cruzadas",
+    type: "explicit",
+    eq: "sin(x) * sin(y) * cos(sqrt(x^2 + y^2))"
+},
+{
+    name: "Campana gaussiana",
+    type: "explicit",
+    eq: "exp(-0.1*(x^2 + y^2))"
+},
+{
+    name: "Anillos concéntricos",
+    type: "explicit",
+    eq: "sin(3*sqrt(x^2 + y^2))"
+},
+{
+    name: "Duna retorcida",
+    type: "explicit",
+    eq: "sin(x + 0.5*y) * exp(-0.05*(x^2 + y^2))"
+},
+
+{
+    name: "Red neuronal ",
+    type: "explicit",
+    eq: "tanh(sin(x) + cos(y))"
+}
+
+];
+
+
+
+       const colors = ['#38bdf8', '#fbbf24', '#a3e635', '#f472b6', '#c084fc'];
+
+function addFunction(type) {
+    const container = document.getElementById('functionsContainer');
+    const index = container.children.length;
+   // Configuración inicial personalizada
+    let initColor = colors[index % colors.length]; 
+    let initScheme = 'solid';
+
+    if (type === 'implicit') {
+        initColor = '#a855f7'; // Morado para implícitas
+        initScheme = 'solid';
+    } else {
+        initScheme = 'Jet';    // Jet para explícitas
+    }
+    
+    // El color del texto del título inicia según el tipo
+    const labelColor = type === 'explicit' ? '#38bdf8' : initColor;
+    const labelText = type === 'explicit' ? "Explícita (z = ...)" : "Implícita (... = 0)";
+    const defaultEq = type === 'explicit' ? "sin(sqrt(x^2 + y^2))" : "x^2 + y^2 + z^2 - 16";
+    const div = document.createElement('div');
+    div.className = 'func-row';
+    
+div.innerHTML = `
+    <span class="func-label" style="color:${labelColor}; transition: color 0.2s;">
+        ${labelText}
+    </span>
+
+    <input 
+        type="text" 
+        class="eq-input"
+        value="${defaultEq}"
+        style="width:100%; margin:6px 0;"
+    >
+
+  <div class="row-controls" style="flex-direction: column; align-items: stretch; gap: 8px; padding: 12px; height: auto;">
+        
+        <div>
+            <span style="font-size: 9px; text-transform: uppercase; color: #999; font-weight: 700; display: block; margin-bottom: 4px;">Esquema de Color</span>
+            
+            <div style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
+                <div style="position: relative; display: flex; align-items: center;">
+                    <select class="scheme-select" onchange="toggleColorInput(this)" style="appearance: none; -webkit-appearance: none; padding-right: 25px; background: transparent; position: relative; z-index: 2;">
+                        <option value="solid" ${initScheme === 'solid' ? 'selected' : ''}>Sólido</option>
+                        <option value="Viridis">Viridis</option>
+                        <option value="Plasma">Plasma</option>
+                        <option value="Jet" ${initScheme === 'Jet' ? 'selected' : ''}>Jet</option>
+                        <option value="Hot">Hot</option>
+                        <option value="Electric">Electric</option>
+                        <option value="Earth">Earth</option>
+                    </select>
+                    <i data-lucide="chevron-down" style="position: absolute; right: 0; width: 14px; height: 14px; pointer-events: none; z-index: 1;"></i>
+                </div>
+
+                <div style="position: relative; width: 20px; height: 20px; display: flex; align-items: center;">
+                    <i data-lucide="square" style="width: 100%; height: 100%; fill: ${initColor}; color: ${initColor};"></i>
+                    <input type="color" class="eq-color" value="${initColor}" 
+                           style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; opacity: 0; cursor: pointer;"
+                           oninput="
+                               this.previousElementSibling.style.fill = this.value; 
+                               this.previousElementSibling.style.color = this.value;
+                               this.closest('.func-row').querySelector('.func-label').style.color = this.value;
+                           ">
+                </div>
+            </div>
+        </div>
+
+        <div style="border-top: 1px solid #f0f0f0; padding-top: 8px;">
+            <div style="display: flex; gap: 10px; align-items: flex-end;">
+                
+                <div style="flex-grow: 1;">
+                    <span style="font-size: 9px; text-transform: uppercase; color: #999; font-weight: 700; display: block; margin-bottom: 4px;">Opacidad</span>
+                    <input
+                        type="range"
+                        class="opacity-slider"
+                        min="0.1" max="1" step="0.05" value="1"
+                        style="width: 100%; margin: 0;"
+                    >
+                </div>
+
+                <button class="btn-delete"
+                        onclick="this.closest('.func-row').remove(); renderGraph();"
+                        title="Eliminar función"
+                        style="margin-bottom: -2px;"> <i data-lucide="trash-2" style="width: 16px; height: 16px;"></i>
+                </button>
+            </div>
+        </div>
+        
+    </div>
+        
+    </div>
+
+    <input type="hidden" class="eq-type" value="${type}">
+    `;
+
+    
+    container.appendChild(div);
+    renderGraph();
+    lucide.createIcons();
+}
+
+
+// Pequeña función auxiliar para ocultar el color si eliges un gradiente
+function toggleColorInput(selectElement) {
+    // Buscamos el input de color que está justo al lado
+    const colorInput = selectElement.parentElement.querySelector('.eq-color');
+    if (selectElement.value === 'solid') {
+        colorInput.classList.remove('hidden');
+    } else {
+        colorInput.classList.add('hidden');
+    }
+    renderGraph(); // Redibujar al cambiar
+}
+
+       function setMode(mode) {
+    // 1. Actualizar el valor oculto que lee tu script original
+    document.getElementById('funcType').value = mode;
+
+    // 2. Actualizar el texto pequeño arriba del input
+    const label = document.getElementById('modeLabel');
+    if (mode === 'explicit') {
+        label.innerText = "Explícita (z = ...)";
+        label.style.color = "#38bdf8"; // Azulito para diferenciar
+    } else {
+        label.innerText = "Implícita ( ... = 0)";
+        label.style.color = "#fbbf24"; // Amarillo para diferenciar
+    }
+
+    // 3. Llamar a tu función existente para poner el ejemplo y colores correctos
+    toggleExamples();
+    
+    // 4. (Opcional) Generar la gráfica automáticamente al cambiar
+    renderGraph();
+}
+
+        function getColorScale() {
+    const scheme = document.getElementById('colorScheme').value;
+    
+    if (scheme === 'custom') {
+        const hex = document.getElementById('solidColor').value;
+        // Truco Plotly: Una escala donde 0 y 1 son el mismo color
+        return [ [0, hex], [1, hex] ];
+    }
+    
+    // Si no es custom, devuelve el nombre del string (ej: 'Viridis')
+    return scheme;
+}
+
+        // --- LÓGICA DEL SISTEMA ---
+
+        function updateRangeLabel(val) {
+            document.getElementById('rangeVal').textContent = val;
+        }
+
+function toggleExamples() {
+    
+    const type = document.getElementById('funcType').value;
+    const input = document.getElementById('equationInput');
+    const colorSelect = document.getElementById('colorScheme');
+
+    if (type === 'explicit') {
+        // Configuración para Explícita
+        input.value = "sin(sqrt(x^2 + y^2))";
+        // En explícita solemos querer ver degradados para notar la altura
+        colorSelect.value = "Viridis"; 
+    } else {
+        // Configuración para Implícita
+        input.value = "x^2 + y^2 + z^2 - 16"; 
+        
+        // --- AQUÍ ESTÁ EL CAMBIO SOLICITADO ---
+        // Forzamos "Color Sólido" por defecto en Implicitas
+        colorSelect.value = "custom";
+    }
+    
+    // Actualizamos la visibilidad de los selectores de color
+    toggleColorPicker();
+}
+        function useExample() {
+            toggleExamples(); // Resetea al ejemplo por defecto
+        }
+
+// REEMPLAZA LA FUNCIÓN drawExplicit COMPLETA CON ESTA:
+
+function renderGraph() {
+    
+    const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+
+    // 2. DEFINICIÓN DE COLORES SEGÚN EL MODO
+    const bgHex = isDark ? '#0a0a0a' : '#ffffff';     // Fondo negro o blanco
+    const textHex = isDark ? '#e2e8f0' : '#475569';   // Texto claro u oscuro
+    const gridHex = isDark ? '#334155' : '#e2e8f0';   // Rejilla gris oscuro o claro
+    const zeroLine = isDark ? '#64748b' : '#38bdf8';  // Línea cero
+    
+    // --- Configuración de Escena 3D ---
+    const range = parseFloat(document.getElementById('rangeInput').value);
+const layout = {
+                // Fondo del lienzo completo
+                paper_bgcolor: bgHex, 
+                plot_bgcolor: bgHex,
+                
+                // Color de la fuente global
+                font: {
+                    family: 'Inter, sans-serif',
+                    color: textHex 
+                },
+                
+                margin: { l: 0, r: 0, b: 0, t: 0 },
+                showlegend: false,
+                
+                scene: {
+                    // EJE X
+                    xaxis: {
+                        range: [-range, range],
+                        title: 'X',
+                        color: textHex,          // <--- Variable
+                        gridcolor: gridHex,      // <--- Variable
+                        zerolinecolor: zeroLine, // <--- Variable
+                        backgroundcolor: bgHex,  // Fondo de la pared del cubo
+                        showbackground: true     // Mostrar fondo opaco (opcional)
+                    },
+                    // EJE Y
+                    yaxis: {
+                        range: [-range, range],
+                        title: 'Y',
+                        color: textHex,
+                        gridcolor: gridHex,
+                        zerolinecolor: zeroLine,
+                        backgroundcolor: bgHex,
+                        showbackground: true
+                    },
+                    // EJE Z
+                    zaxis: {
+                        range: [-range, range],
+                        title: 'Z',
+                        color: textHex,
+                        gridcolor: gridHex,
+                        zerolinecolor: zeroLine,
+                        backgroundcolor: bgHex,
+                        showbackground: true
+                    },
+                    camera: {
+                        eye: {x: 1.5, y: 1.5, z: 1.2}
+                    },
+                    aspectratio: {x: 1, y: 1, z: 1}
+                }
+            };
+
+    // --- Recolectar Datos ---
+    const rows = document.querySelectorAll('.func-row');
+    const allTraces = [];
+    const res = parseInt(document.getElementById('resInput').value);
+    
+    // 1. LEEMOS LOS CONTROLES DE MALLA AQUÍ
+    const showMesh = document.getElementById('showMesh').checked;
+    const meshColor = document.getElementById('meshColor').value;     // <--- Nuevo
+    const meshDensity = parseInt(document.getElementById('meshDensity').value); // <--- Nuevo
+
+    rows.forEach(row => {
+        const eqStr = row.querySelector('.eq-input').value;
+        const type = row.querySelector('.eq-type').value;
+        const scheme = row.querySelector('.scheme-select').value;
+        const colorHex = row.querySelector('.eq-color').value;
+const opacity = parseFloat(
+    row.querySelector('.opacity-slider')?.value ?? 1
+);
+
+        let activeScale;
+        if (scheme === 'solid') {
+            activeScale = [[0, colorHex], [1, colorHex]];
+        } else {
+            activeScale = scheme;
+        }
+
+        try {
+            let trace = null;
+            if (type === 'explicit') {
+                // 2. PASAMOS LOS VALORES DE MALLA A LA FUNCIÓN
+                trace = calculateExplicit(eqStr, range, res, showMesh, activeScale, meshColor, meshDensity, opacity);
+            } else {
+                trace = calculateImplicit(eqStr, range, res, showMesh, activeScale, opacity);
+            }
+            if (trace) allTraces.push(trace);
+        } catch (error) { console.error(error); }
+    });
+
+    Plotly.newPlot('plot-container', allTraces, layout, {responsive: true, displaylogo: false});
+    updateLatexPanel();
+}
+// --- CALCULA DATOS EXPLÍCITOS (Retorna Objeto 3D Surface) ---
+// AÑADIMOS meshColor y meshDensity A LOS ARGUMENTOS
+function calculateExplicit(eqStr, r, steps, showMesh, finalScale, meshColor, meshDensity, opacity) {
+    const cleanEq = normalizeInput(eqStr); 
+    
+    // Usamos cleanEq en lugar de eqStr para compilar
+    const expr = math.compile(cleanEq);
+    const x = [], y = [], z = [];
+    const stepSize = (2 * r) / steps;
+    
+    // Generación de Datos
+    for (let j = 0; j <= steps; j++) {
+        const yVal = -r + j * stepSize;
+        const currentRow = [];
+        for (let i = 0; i <= steps; i++) {
+            const xVal = -r + i * stepSize;
+            if (j === 0) x.push(xVal);
+            try {
+                let zVal = expr.evaluate({x: xVal, y: yVal});
+                if (Math.abs(zVal) > 1000) zVal = null; 
+                currentRow.push(zVal);
+            } catch (e) { currentRow.push(null); }
+        }
+        y.push(yVal);
+        z.push(currentRow);
+    }
+
+    // --- LÓGICA DE MALLA ACTUALIZADA ---
+    // Calculamos el intervalo basado en la densidad (Más densidad = número más pequeño)
+    const contourInterval = (2 * r) / meshDensity; 
+    
+    const meshConfig = showMesh ? {
+        show: true, 
+        color: meshColor, // <--- Usamos el color elegido
+        width: 1.5,
+        start: -r, end: r, 
+        size: contourInterval, // <--- Usamos la densidad calculada
+        project: { z: false }
+    } : { show: false };
+
+    return {
+        type: 'surface',
+        z: z, x: x, y: y,
+        showscale: false,
+        contours: {
+            z: { show: true, usecolormap: true, project: { z: true } },
+            x: meshConfig, // Aplicar malla en X
+            y: meshConfig  // Aplicar malla en Y
+        },
+        colorscale: finalScale,
+        opacity: opacity, 
+       lighting: {
+    ambient: lightingConfig.ambient,
+    diffuse: lightingConfig.diffuse,
+    specular: lightingConfig.specular,
+    roughness: lightingConfig.roughness,
+    fresnel: lightingConfig.fresnel
+}
+
+    };
+}
+// --- CALCULA DATOS IMPLÍCITOS (Retorna Objeto 3D Isosurface) ---
+// Cambiamos 'colorHex' por 'finalScale' en los argumentos
+function calculateImplicit(eqStr, r, steps, showMesh, finalScale,  opacity) {
+    // APLICAMOS LA NORMALIZACIÓN AQUÍ
+    const cleanEq = normalizeInput(eqStr);
+    
+    const expr = math.compile(cleanEq);
+    const safeSteps = Math.min(steps, 50); // Límite de seguridad
+    const x = [], y = [], z = [], values = [];
+    const stepSize = (2 * r) / (safeSteps - 1);
+
+    for (let k = 0; k < safeSteps; k++) {
+        const zVal = -r + k * stepSize;
+        for (let j = 0; j < safeSteps; j++) {
+            const yVal = -r + j * stepSize;
+            for (let i = 0; i < safeSteps; i++) {
+                const xVal = -r + i * stepSize;
+                x.push(xVal); y.push(yVal); z.push(zVal);
+                try {
+                    values.push(expr.evaluate({x: xVal, y: yVal, z: zVal}));
+                } catch (e) { values.push(NaN); }
+            }
+        }
+    }
+
+    // --- BORRAMOS LA LÍNEA 'const customScale = ...' PORQUE YA TENEMOS finalScale ---
+
+return {
+    type: 'isosurface',
+    x: x, y: y, z: z,
+    value: values,
+
+    isomin: -0.15,
+    isomax:  0.15,
+
+    opacity: opacity,
+    colorscale: finalScale,
+    showscale: false,
+
+    surface: { count: 1 },
+    
+    lighting: {
+        ambient: lightingConfig.ambient,
+        diffuse: lightingConfig.diffuse,
+        specular: lightingConfig.specular,
+        roughness: lightingConfig.roughness,
+        fresnel: lightingConfig.fresnel
+    },
+
+    caps: {
+        x: { show: false },
+        y: { show: false },
+        z: { show: false }
+    }
+};
+
+    
+}
+       
+document.addEventListener('input', e => {
+    if (e.target.classList.contains('opacity-slider')) {
+        renderGraph(); // en vez de requestRender si no está debounced
+    }
+});
+
+
+
+function updateLatexPanel() {
+    const container = document.getElementById('latex-content');
+    const rows = document.querySelectorAll('.func-row');
+    let htmlContent = '';
+
+    rows.forEach(row => {
+        const rawEq = row.querySelector('.eq-input').value;
+        const type = row.querySelector('.eq-type').value;
+        const color = row.querySelector('.eq-color').value; 
+        
+        // NORMALIZAMOS ANTES DE PASAR A MATHJAX
+        // (Math.js convertirá cleanEq a LaTeX mucho mejor)
+        const cleanEq = normalizeInput(rawEq);
+
+        try {
+            const node = math.parse(cleanEq);
+            let latex = node.toTex();
+
+            // 2. Formatear según tipo (añadir z= o =0)
+            let displayEq = '';
+            if (type === 'explicit') {
+                displayEq = `z = ${latex}`;
+            } else {
+                displayEq = `${latex} = 0`;
+            }
+
+            // 3. Crear el HTML
+            htmlContent += `
+                <div class="latex-item">
+                    <span class="color-dot" style="background:${color}"></span>
+                    <div>$$ ${displayEq} $$</div>
+                </div>
+            `;
+        } catch (e) {
+            // Si hay error de sintaxis mientras escribes, mostramos ...
+            htmlContent += `
+                <div class="latex-item">
+                    <span class="color-dot" style="background:transparent"></span>
+                 <span style="color:#ef4444; font-size:0.75em">
+    Sintaxis incompleta…
+</span>
+
+                </div>`;
+        }
+    });
+
+    // 4. Inyectar y Renderizar
+    container.innerHTML = htmlContent;
+    
+    // Le pedimos a MathJax que procese el nuevo contenido
+    if (window.MathJax) {
+        MathJax.typesetPromise([container]).catch((err) => console.log(err));
+    }
+}
+
+
+document.addEventListener('input', e => {
+    if (e.target.classList.contains('eq-input')) {
+        updateLatexPanel();
+    }
+});
+
+function normalizeInput(str) {
+    // 1. Convertir todo a minúsculas y quitar espacios extra
+    let s = str.toLowerCase().trim();
+
+    // 2. Reemplazar símbolos visuales por operadores
+    s = s.replace(/²/g, '^2');       // Superíndice 2
+    s = s.replace(/³/g, '^3');       // Superíndice 3
+    s = s.replace(/√/g, 'sqrt');     // Raíz cuadrada
+    s = s.replace(/π/g, 'pi');       // Pi
+
+    // 3. Traducir Español -> Inglés
+    s = s.replace(/sen/g, 'sin');
+
+    // 4. Paréntesis automáticos para funciones trigonométricas simples
+    // Convierte: sinx -> sin(x), cosy -> cos(y), sqrtz -> sqrt(z)
+    const funcs = ['sin', 'cos', 'tan', 'sqrt', 'log', 'exp', 'abs'];
+    funcs.forEach(fn => {
+        // Busca la función seguida inmediatamente de x, y o z
+        const re = new RegExp(`${fn}([xyz])`, 'g'); 
+        s = s.replace(re, `${fn}($1)`);
+    });
+
+    // 5. Multiplicación Implícita (La parte más importante)
+    
+    // Caso A: Número seguido de variable o paréntesis (2x -> 2*x, 3(x) -> 3*(x))
+    s = s.replace(/(\d)([a-z\(])/g, '$1*$2');
+    
+    // Caso B: Cierre de paréntesis seguido de variable, número o apertura ( )x -> )*x )
+    s = s.replace(/(\))([a-z\d\(])/g, '$1*$2');
+
+    // Caso C: Variable (x,y,z) seguida de una función (xsin -> x*sin)
+    funcs.forEach(fn => {
+        const re = new RegExp(`([xyz])${fn}`, 'g');
+        s = s.replace(re, `$1*${fn}`);
+    });
+    
+    // Caso D: Variable seguida de variable (xy -> x*y)
+    // PRECAUCIÓN: Esto es agresivo. Solo lo aplicamos a pares específicos xy, yz, zx, xz...
+    // Si math.js soporta variables de 2 letras, esto podría interferir, pero para graficadora xyz es útil.
+    s = s.replace(/([xyz])([xyz])/g, '$1*$2');
+
+    return s;
+}
+
+function loadQuadricas() {
+    const container = document.querySelector('.quadricas-list');
+    container.innerHTML = '';
+
+    QUADRICAS.forEach(q => {
+        const btn = document.createElement('button');
+        btn.textContent = q.name;
+        btn.style.gridColumn = 'span 2';
+        btn.onclick = () => insertQuadrica(q);
+        container.appendChild(btn);
+    });
+}
+
+loadQuadricas();
+
+
+function insertQuadrica(q) {
+    // Buscar inputs por tipo
+    const rows = document.querySelectorAll('.func-row');
+
+    let targetRow = null;
+
+    // Buscar una fila existente del tipo correcto
+    rows.forEach(row => {
+        const type = row.querySelector('.eq-type').value;
+        if (type === q.type && !targetRow) {
+            targetRow = row;
+        }
+    });
+
+    // Si no existe, crear una nueva
+    if (!targetRow) {
+        addFunction(q.type);
+        targetRow = document.querySelectorAll('.func-row');
+        targetRow = targetRow[targetRow.length - 1];
+    }
+
+    // Insertar ecuación
+    const input = targetRow.querySelector('.eq-input');
+    input.value = q.eq;
+    input.focus();
+
+    renderGraph();
+
+}
+
+function loadFunciones() {
+    const container = document.querySelector('.funciones-list');
+    container.innerHTML = '';
+
+    FUNCIONES.forEach(f => {
+        const btn = document.createElement('button');
+        btn.textContent = f.name;
+        btn.style.gridColumn = 'span 2';
+        btn.onclick = () => insertQuadrica(f); 
+        // reutilizamos la MISMA lógica
+        container.appendChild(btn);
+    });
+}
+
+loadFunciones();
+
+
+        // CONFIGURACIÓN DE ESCENA Y RENDER
+        function updatePlot(data, range) {
+            const layout = {
+                paper_bgcolor: 'rgba(0,0,0,0)', // Transparente
+                plot_bgcolor: 'rgba(0,0,0,0)',
+                margin: {l: 0, r: 0, b: 0, t: 0}, // Pantalla completa real
+                scene: {
+                    xaxis: {
+                        range: [-range, range],
+                        title: 'X',
+                        color: '#94a3b8',
+                        gridcolor: '#334155',
+                        zerolinecolor: '#38bdf8',
+                    },
+                    yaxis: {
+                        range: [-range, range],
+                        title: 'Y',
+                        color: '#94a3b8',
+                        gridcolor: '#334155',
+                        zerolinecolor: '#38bdf8',
+                    },
+                    zaxis: {
+                        range: [-range, range],
+                        title: 'Z',
+                        color: '#94a3b8',
+                        gridcolor: '#334155',
+                        zerolinecolor: '#38bdf8',
+                    },
+                    camera: {
+                        eye: {x: 1.5, y: 1.5, z: 1.2} // Ángulo de cámara inicial
+                    },
+                    aspectratio: {x: 1, y: 1, z: 1} // Cubo perfecto
+                }
+            };
+
+            const config = {
+                responsive: true,
+                displayModeBar: true, // Mostrar herramientas (zoom, pan, rotar)
+                displaylogo: false,
+                modeBarButtonsToRemove: ['resetCameraLastSave3d']
+            };
+
+            Plotly.newPlot('plot-container', data, layout, config);
+        }
+
+
+
+document.addEventListener('input', e => {
+    // Cambio de color sólido
+    if (e.target.classList.contains('eq-color')) {
+        renderGraph();
+    }
+
+    // Cambio de opacidad (ya lo tenías, lo dejo junto)
+    if (e.target.classList.contains('opacity-slider')) {
+        renderGraph();
+    }
+});
+
+document.addEventListener('change', e => {
+    // Cambio de esquema de color (Viridis, Jet, etc)
+    if (e.target.classList.contains('scheme-select')) {
+        renderGraph();
+    }
+});
+
+document.getElementById('applyLights').addEventListener('click', () => {
+  lightsModal.classList.add('hidden');
+});
+
+document.getElementById('applyLights').addEventListener('click', () => {
+    lightsModal.classList.add('hidden');
+});
+
+
+        // Render inicial al cargar
+        window.onload = renderGraph;
+
+lucide.createIcons();
+
+    </script>
+      
+</body>
+<button class="mobile-theme-toggle" onclick="toggleTheme()" aria-label="Cambiar tema">
+    <i data-lucide="sun" class="icon-sun"></i>
+    <i data-lucide="moon" class="icon-moon"></i>
+</button>
+
+
+</html>
