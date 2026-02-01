@@ -1,17 +1,18 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
+    <link rel="icon" href="icono.png" type="image/png">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>√(Raiz) Cuadrada² </title>
 
     <script>
         (function() {
-            // 1. Intentamos leer la memoria
+            
             const localTheme = localStorage.getItem('theme');
-            // 2. Si hay algo guardado lo usamos, si no, usamos 'light'
+            
             const themeToSet = localTheme || 'light';
-            // 3. Lo aplicamos INMEDIATAMENTE al HTML
+            
             document.documentElement.setAttribute('data-theme', themeToSet);
         })();
     </script>
@@ -30,7 +31,11 @@
     @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700;900&display=swap');
     @import url('https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700&display=swap');
 
-    /* --- ANIMACIONES DE ENTRADA --- */
+    html, body {
+    max-width: 100%;
+    overflow-x: hidden;
+}
+
     .calculadora-moderna {
         animation: fadeUp 0.8s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
         opacity: 0;
@@ -41,10 +46,31 @@
         to { opacity: 1; transform: translateY(0); } 
     }
 
-    /* --- BODY & LAYOUT GENERAL --- */
+      @media (max-width: 768px) {
+
+    .calculadora-moderna {
+        padding: 25px 18px; 
+        border-radius: 25px;
+    }
+
+    .vector-container {
+        padding: 15px;
+    }
+
+    table {
+        min-width: 0;         
+    }
+
+    .pill-container {
+        max-width: 100%;
+    }
+}
+
+      
+    
     body { 
         font-family: 'Open Sans', sans-serif; 
-        background: #transparent; /* Fondo suave para resaltar la card */
+        background: #transparent; 
         display: flex; 
         justify-content: center; 
         padding: 20px; 
@@ -53,19 +79,19 @@
         min-height: 100vh;
     }
 
-    /* --- CONTENEDOR PRINCIPAL (GEMELO DEL STYLE ANTERIOR) --- */
+    
     .calculadora-moderna {
         background: #ffffff;
         padding: 40px 35px;
         border-radius: 40px;
         width: 100%;
-        max-width: 800px; /* Un poco más ancho para vectores, pero misma estética */
+        max-width: 800px; 
         box-shadow: 0 20px 40px rgba(0,0,0,0.08);
         box-sizing: border-box;
         margin: 0 auto;
     }
 
-    /* --- HEADER --- */
+    
     .header-section { text-align: center; margin-bottom: 35px; }
     
     .header-section h1 { 
@@ -87,7 +113,7 @@
         letter-spacing: 1.5px;
     }
 
-    /* --- INPUTS & SELECTS (ESTILO PREMIUM UNIFICADO) --- */
+    
     input[type="text"], input[type="number"], .res-input, select {
         background: #f9f9f9;
         border: 2px solid transparent;
@@ -111,10 +137,10 @@
         transform: translateY(-2px);
     }
 
-    /* Ajuste específico para inputs dentro de tablas */
+    
     td input { width: 80px !important; margin: 0 auto; }
 
-    /* --- PÍLDORA SELECCIÓN (MODE SWITCHER) --- */
+    
     .pill-container { 
         display: flex; 
         background: #f9f9f9; 
@@ -152,18 +178,18 @@
         transform: scale(1.02);
     }
 
-    /* --- CONTENEDORES DE DATOS (TABLAS Y CARDS) --- */
+    
     .content-section { display: none; animation: fadeUp 0.5s ease; }
     .active-section { display: block; }
 
-    /* Contenedor tipo Card para la tabla */
+    
     .vector-container { 
         background: #fff; 
         border-radius: 25px; 
         padding: 20px; 
         border: 1px solid #f0f0f0; 
         margin-bottom: 25px; 
-        overflow-x: auto; /* Scroll horizontal en móviles */
+        overflow-x: auto; 
         box-shadow: 0 10px 30px rgba(0,0,0,0.03);
     }
 
@@ -192,7 +218,7 @@
     padding: 0;
 }
 
-    /* --- BOTONES DE ACCIÓN (AÑADIR / ELIMINAR) --- */
+    
     .btn-black { 
         background: #1a1a1a; color: white; border: none; width: 32px; height: 32px; 
         border-radius: 50%; cursor: pointer; font-size: 16px; transition: all 0.3s ease;
@@ -204,7 +230,7 @@
     .btn-remove { background: #f4f4f4; color: #666; box-shadow: none; }
     .btn-remove:hover { background: #e0e0e0; color: #333; }
 
-    /* --- CARDS DE PRODUCTOS (GRID) --- */
+    
     .prod-grid { 
         display: grid; 
         grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); 
@@ -233,7 +259,7 @@
     .card-color { position: absolute; top: 15px; right: 15px; width: 12px; height: 12px; border-radius: 50%; }
     .inputs-row { display: flex; justify-content: center; gap: 8px; }
 
-    /* --- BOTÓN CALCULAR (ESTILO PRINCIPAL) --- */
+    
     .btn-calc { 
         width: 100%; 
         background: #1a1a1a; 
@@ -256,7 +282,7 @@
         box-shadow: 0 12px 25px rgba(0,0,0,0.2); 
     }
 
-    /* --- GRÁFICA --- */
+    
     #graph-container { 
         background: #f9f9f9; 
         border-radius: 25px; 
@@ -268,7 +294,7 @@
         margin-top: 30px;
     }
 
-    /* --- BOTONES AUXILIARES (DESCARGAR / PASOS) --- */
+    
     .download-container { display: flex; justify-content: center; margin-top: 25px; gap: 15px; flex-wrap: wrap; }
 
     .btn-download-pill, #toggleStepsBtn, .btn-3d {
@@ -298,7 +324,7 @@
         color: #333;
     }
 
-    /* --- CAJA DE PASOS --- */
+    
     .steps-box {
         background: #f9f9f9;
         padding: 25px;
@@ -306,16 +332,14 @@
         font-size: 0.95rem;
         margin-top: 25px;
         border: 1px solid #f0f0f0;
-        display: none; /* Controlado por JS */
+        display: none; 
         animation: fadeUp 0.5s ease;
     }
 
     .step-title { font-weight: 700; margin-bottom: 10px; color: #1a1a1a; font-family: 'Playfair Display', serif; }
     .step-line { margin-bottom: 8px; border-bottom: 1px dashed #e0e0e0; padding-bottom: 8px; }
 
-    /* =========================================
-       MODO OSCURO (DATA-THEME="DARK")
-       ========================================= */
+    
     
     [data-theme="dark"] body { background: #0a0a0a; color: #eee; }
 
@@ -696,7 +720,7 @@
      <script src="script.js"></script>
       
 <script>
-    let sumMode = "2D"; // "2D" o "3D"
+    let sumMode = "2D"; 
 let steps = [];
 let productSteps = [];
 
@@ -733,7 +757,7 @@ function addVectorRow() {
         ang: 0,
         x: 0,
         y: 0,
-        z: 0, // componente Z para 3D
+        z: 0, 
         op: '+',
         color: getRandomColor()
     });
@@ -1119,27 +1143,27 @@ $$
 
     }
 
-    // FUNCIÓN DE DESCARGA MEJORADA CON MARCA DE AGUA GRANDE
+    
     async function downloadPlot(id) {
         const plot = document.getElementById(id);
         
-        // Guardamos el tamaño de fuente original para restaurarlo luego
+        
         const originalSize = (id === 'plot-sum') ? 14 : 16;
         const originalColor = (id === 'plot-sum') ? "#ccc" : "#ddd";
 
-        // Aumentamos temporalmente el tamaño de la marca de agua para la captura
+        
         await Plotly.relayout(plot, {
-            'annotations[0].font.size': 45, // Mucho más grande
-            'annotations[0].font.color': 'rgba(0,0,0,0.15)' // Un poco más visible en el PNG
+            'annotations[0].font.size': 45, 
+            'annotations[0].font.color': 'rgba(0,0,0,0.15)' 
         });
 
-        // Generamos la descarga
+        
         await Plotly.downloadImage(plot, {
             format: 'png', width: 1200, height: 900,
             filename: 'analisis_vectores_raiz_cuadrada'
         });
 
-        // Restauramos el tamaño original para que en la web no se vea desproporcionado
+        
         Plotly.relayout(plot, {
             'annotations[0].font.size': originalSize,
             'annotations[0].font.color': originalColor
@@ -1394,7 +1418,7 @@ function getPlotLayout(title, is3D = false) {
     };
 
     if (!is3D) {
-        //  2D
+        
         return {
             ...baseLayout,
             xaxis: {
@@ -1413,7 +1437,7 @@ function getPlotLayout(title, is3D = false) {
         };
     }
 
-    //  3D
+    
     return {
         ...baseLayout,
         scene: {
