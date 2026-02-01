@@ -286,6 +286,59 @@
         margin-bottom: 0;
     }
 
+/* --- MODO OSCURO PARA LAS TARJETAS DE FUNCIONES --- */
+
+/* 1. La tarjeta principal */
+[data-theme="dark"] .func-row {
+    background: #1e1e1e;       /* Gris oscuro "elevado" */
+    border: 1px solid #333;    /* Borde sutil para separar del fondo negro */
+    box-shadow: none;          /* En dark mode las sombras ensucian, mejor bordes */
+}
+
+[data-theme="dark"] .func-row:hover {
+    background: #252525;       /* Un poco más claro al pasar el mouse */
+    border-color: #555;        /* El borde brilla un poco */
+}
+
+/* 2. El contenedor de controles (la cápsula interna) */
+[data-theme="dark"] .row-controls {
+    background: #121212;       /* Fondo casi negro para "hundir" los controles */
+    border-color: #333;        /* Borde oscuro */
+}
+
+/* 3. El Select (Dropdown) */
+[data-theme="dark"] .scheme-select {
+    color: #e5e5e5;            /* Texto blanco hueso */
+}
+
+/* IMPORTANTE: Fondo de las opciones del select para que no sean blancas */
+[data-theme="dark"] .scheme-select option {
+    background: #1e1e1e;
+    color: #fff;
+}
+
+/* 4. Textos pequeños y etiquetas */
+[data-theme="dark"] .func-label {
+    /* El color principal lo maneja el JS, pero por si acaso: */
+    text-shadow: 0 0 10px rgba(0,0,0,0.5); /* Le da legibilidad sobre oscuro */
+}
+
+[data-theme="dark"] .func-subtitle {
+    color: #888; /* Gris medio para los subtítulos "Opacidad", "Esquema" */
+}
+
+/* 5. Inputs de texto (La ecuación) */
+[data-theme="dark"] input[type="text"].eq-input {
+    background: #121212;
+    color: #fff;
+    border: 1px solid #333;
+}
+
+[data-theme="dark"] input[type="text"].eq-input:focus {
+    border-color: #fff;
+    background: #000;
+}
+
     /* --- 9. ÁREA DE GRÁFICA (PLOT) --- */
     #plot-container {
         flex-grow: 1;
