@@ -1,17 +1,18 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
+    <link rel="icon" href="icono.png" type="image/png">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title> Factorizar| √(Raiz) Cuadrada² </title>
 
     <script>
         (function() {
-            // 1. Intentamos leer la memoria
+            
             const localTheme = localStorage.getItem('theme');
-            // 2. Si hay algo guardado lo usamos, si no, usamos 'light'
+            
             const themeToSet = localTheme || 'light';
-            // 3. Lo aplicamos INMEDIATAMENTE al HTML
+            
             document.documentElement.setAttribute('data-theme', themeToSet);
         })();
     </script>
@@ -39,10 +40,10 @@
     @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700;900&display=swap');
     @import url('https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700&display=swap');
 
-    /* --- RESET GLOBAL (CRÍTICO) --- */
+    
     * { box-sizing: border-box; }
 
-    /* --- BASE --- */
+    
     body { 
         background: #ffffff; 
         font-family: 'Open Sans', sans-serif; 
@@ -54,9 +55,9 @@
         transition: background 0.3s ease;
     }
 
-    /* --- ANIMACIONES --- */
+    
     .calculadora {
-        /* Aplicamos la animación directamente al contenedor principal */
+        
         opacity: 0; 
         transform: translateY(20px); 
         animation: fadeUp 0.8s cubic-bezier(0.2, 0.8, 0.2, 1) forwards; 
@@ -72,7 +73,7 @@
         to { opacity: 1; transform: translateY(0); } 
     }
 
-    /* --- CONTENEDOR PRINCIPAL --- */
+    
     .calculadora {
         background: #ffffff; 
         padding: 40px 35px; 
@@ -83,7 +84,7 @@
         position: relative;
     }
 
-    /* --- HEADER --- */
+    
     .header-section { text-align: center; margin-bottom: 35px; }
     
     .header-section h1 { 
@@ -105,13 +106,13 @@
         letter-spacing: 1.5px; 
     }
 
-    /* --- PREVIEW Y RESULTADOS --- */
+    
     #preview, #output {
         background: #f9f9f9; 
         margin-bottom: 25px; 
         padding: 20px;
         border-radius: 25px; 
-        min-height: 95px; /* Altura original mantenida */
+        min-height: 95px; 
         display: flex;
         align-items: center; 
         justify-content: center; 
@@ -123,9 +124,9 @@
         text-align: center;
     }
 
-    #output { margin-top: 30px; } /* Ajustado espacio visual */
+    #output { margin-top: 30px; } 
 
-    /* --- LABELS --- */
+    
     label { 
         display: block; 
         font-size: 12px; 
@@ -139,7 +140,7 @@
         
     }
     
-    /* --- INPUTS Y SELECTS --- */
+    
     input, select {
         width: 100%; 
         background: #f9f9f9; 
@@ -151,7 +152,7 @@
         color: #333; 
         transition: all 0.3s ease;
         box-shadow: 0 2px 5px rgba(0,0,0,0.02) inset;
-        margin-bottom: 0; /* El margen lo maneja el row o el padre */
+        margin-bottom: 0; 
         outline: none;
         box-sizing: border-box;
       
@@ -164,7 +165,7 @@
         transform: translateY(-3px);
     }
 
-    /* --- GRID DE INPUTS (CLASE .ROW) --- */
+    
     .row { 
         display: grid; 
         grid-template-columns: 1fr 1fr; 
@@ -172,7 +173,7 @@
         margin-bottom: 25px; 
     }
 
-    /* --- BOTONES --- */
+    
     .btn-principal {
         width: 100%; 
         background: #1a1a1a; 
@@ -201,7 +202,7 @@
         transform: none;
     }
 
-    /* --- PÍLDORAS (PILLS-NAV) --- */
+    
     .pills-nav { 
         display: flex; 
         justify-content: center; 
@@ -233,7 +234,7 @@
     
     .pill:hover:not(.active) { background: #e0e0e0; }
 
-    /* --- PANEL DE SÍMBOLOS --- */
+    
     .symbols-container { 
         background: #ffffff; 
         border-radius: 30px; 
@@ -243,18 +244,18 @@
         box-shadow: 0 10px 30px rgba(0,0,0,0.03);
     }
     
-/* --- CAMBIO PRINCIPAL: DE GRID A FLEX --- */
+
     .symbols-grid { 
-        display: flex;           /* Usamos Flexbox en lugar de Grid */
-        flex-wrap: wrap;         /* Permite que los elementos bajen de línea si no caben */
-        gap: 12px;               /* Espacio entre elementos */
-        justify-content: center; /* Centra los elementos horizontalmente */
+        display: flex;           
+        flex-wrap: wrap;         
+        gap: 12px;               
+        justify-content: center; 
     }
     
     .sym-btn { 
         background: #fff; 
         border: 1px solid #eee; 
-        /* Aumentamos padding lateral para que el texto respire */
+        
         padding: 12px 18px;  
         border-radius: 15px; 
         text-align: center; 
@@ -268,17 +269,17 @@
         justify-content: center;
         font-family: 'Open Sans', sans-serif;
         
-        /* --- ESTO HACE LA MAGIA --- */
-        flex: 0 1 auto; /* El ancho se adapta automáticamente al contenido */
-        min-width: 60px; /* Un ancho mínimo para que los símbolos cortos no se vean ridículos */
-        max-width: 100%; /* Asegura que no se salga de la pantalla en móviles */
+        
+        flex: 0 1 auto; 
+        min-width: 60px; 
+        max-width: 100%; 
     }
     
     .sym-btn:hover { background: #f9f9f9; transform: translateY(-2px); border-color: #ddd; }
     .sym-btn span { font-size: 16px; font-weight: 700; margin-bottom: 2px; }
     .sym-btn small { font-size: 9px; text-transform: uppercase; color: #999; font-weight: 700; }
 
-    /* --- MODO OSCURO GLOBAL --- */
+    
     [data-theme="dark"] body { 
         background: #0a0a0a; 
     }
@@ -293,7 +294,7 @@
     [data-theme="dark"] .header-section p { color: #888; }
     [data-theme="dark"] label { color: #888; }
 
-    /* Inputs y Elementos en Modo Oscuro */
+    
     [data-theme="dark"] input, 
     [data-theme="dark"] select,
     [data-theme="dark"] #preview,
@@ -309,7 +310,7 @@
         background: #252525;
     }
 
-    /* Botón Principal Modo Oscuro */
+    
     [data-theme="dark"] .btn-principal {
         background: #ffffff;
         color: #000000;
@@ -318,7 +319,7 @@
     [data-theme="dark"] .btn-principal:hover:not(:disabled) { background: #e0e0e0; }
     [data-theme="dark"] .btn-principal:disabled { background: #333; color: #666; }
 
-    /* Pills y Simbolos Modo Oscuro */
+    
     [data-theme="dark"] .pill { background: #1e1e1e; color: #ccc; border-color: transparent; }
     [data-theme="dark"] .pill.active { background: #ffffff; color: #000; }
 
@@ -333,7 +334,7 @@
     }
     [data-theme="dark"] .sym-btn:hover { background: #333; }
 
-    /* --- RESPONSIVE --- */
+    
     @media (max-width: 480px) {
         body { padding: 10px; display: block; }
         .calculadora { padding: 30px 20px; margin: 20px auto; }
@@ -343,18 +344,18 @@
     
     
      @media (max-width: 480px) {
-    /* En celular quitamos flex para evitar que centre recortando bordes */
+    
     body {
         display: block; 
-        padding: 10px; /* Menos espacio en los bordes de la pantalla */
+        padding: 10px; 
     }
 
-    /* Ajustamos el margen para que se centre con block */
+    
     .fade-in {
         margin: 20px auto; 
     }
 
-    /* Reducimos el relleno interno de la tarjeta para ganar espacio útil */
+    
     .calculadora {
         padding: 30px 20px; 
     }
@@ -362,7 +363,7 @@
 
 .label{color:transparent};
 
-/* Clase para cambiar el Grid a Lista Vertical */
+
 .symbols-container .vertical-layout {
     display: flex !important;
     flex-direction: column !important;
@@ -370,31 +371,31 @@
     
 }
 
-/* Estilo de cada fila de fórmula */
+
 .formula-row {
     padding: 15px 10px;
     border-bottom: 1px solid #f0f0f0;
-    font-family: 'Times New Roman', serif; /* Serif para fórmulas se ve más académico */
+    font-family: 'Times New Roman', serif; 
     font-size: 1.1rem;
     color: #333;
     display: flex;
     align-items: center;
     justify-content: flex-start;
     transition: background 0.2s;
-    overflow-x: auto;      /* Activa el scroll horizontal si no cabe */
-    white-space: nowrap;   /* Obliga a la fórmula a quedarse en una sola línea */
-    max-width: 100%;       /* Asegura que la fila no sea más ancha que su contenedor */
-    overflow-y: hidden;    /* Oculta scroll vertical innecesario */
-    box-sizing: border-box; /* Asegura que el padding no rompa el 100% width */
+    overflow-x: auto;      
+    white-space: nowrap;   
+    max-width: 100%;       
+    overflow-y: hidden;    
+    box-sizing: border-box; 
 }
 
-/* Efecto hover suave */
+
 .formula-row:hover {
     background-color: #fcfcfc;
-    padding-left: 15px; /* Pequeño desplazamiento a la derecha */
+    padding-left: 15px; 
 }
 
-/* Modo Oscuro para la tabla */
+
 [data-theme="dark"] .formula-row {
     border-color: #333;
     color: #eee;
@@ -411,7 +412,7 @@
     background-color: #eaeaea;
 }
 
-      /* --- TOAST --- */
+      
 .toast {
     position: fixed;
     bottom: 30px;
@@ -430,13 +431,13 @@
     z-index: 9999;
 }
 
-/* Visible */
+
 .toast.show {
     opacity: 1;
     transform: translateX(-50%) translateY(0);
 }
 
-/* Dark mode */
+
 [data-theme="dark"] .toast {
     background: #ffffff;
     color: #000000;
@@ -479,7 +480,7 @@
         margin-bottom: 8px;
         letter-spacing: 1px;
     }
-    /* Soporte modo oscuro */
+    
     [data-theme="dark"] .steps-container {
   
     }
@@ -695,23 +696,23 @@
 
 const categorias = {
     plantillas: [
-        // BÁSICAS Y TRINOMIOS
+        
     { s: 'a*x+a*y', t: 'Factor Común' },
     { s: 'x^2+b*x+c', t: 'Trinomio Simple' },
     { s: 'a*x^2+b*x+c', t: 'Trinomio Gral.' },
     { s: 'x^2+2*a*x+a^2', t: 'Trinomio C.P.' },
     
-    // DIFERENCIAS Y SUMAS
+    
     { s: 'x^2-a^2', t: 'Dif. Cuadrados' },
     { s: 'x^3-a^3', t: 'Dif. Cubos' },
     { s: 'x^3+a^3', t: 'Suma Cubos' },
     { s: 'x^n-a^n', t: 'Dif. Potencias' },
 
-    // CUBOS Y AGRUPACIÓN
+    
     { s: 'x^3+3*a*x^2+3*a^2*x+a^3', t: 'Cubo Perfecto' },
     { s: 'a*x+b*x+a*y+b*y', t: 'Agrupación' },
     
-    // FORMAS AVANZADAS
+    
     { s: 'x^4+a*x^2+b', t: 'Bicuadrada' },
     { s: '(x+a)*(x+b)*(x+c)', t: 'Prod. Notables' },
     { s: 'x^2+y^2+z^2+2*x*y+2*x*z+2*y*z', t: 'Trinomio^2' }
@@ -809,9 +810,9 @@ $$`,
 $$`,
 
 
-"$$ \\text{Suma de cubos } \\quad  a^3 + b^3 = (a + b)(a^2 - ab + b^2) $$",  // Suma de Cubos
+"$$ \\text{Suma de cubos } \\quad  a^3 + b^3 = (a + b)(a^2 - ab + b^2) $$",  
 
-"$$ \\text{Diferencia cubos } \\quad a^3 - b^3 = (a - b)(a^2 + ab + b^2) $$",  // Diferencia de Cubos
+"$$ \\text{Diferencia cubos } \\quad a^3 - b^3 = (a - b)(a^2 + ab + b^2) $$",  
 
 ];
 
@@ -846,7 +847,7 @@ function mostrarToast(mensaje = 'Copiado') {
 
 
 function showCategory(cat, btn = null) {
-    // Activar pill
+    
     if (btn) {
         document.querySelectorAll('.pill').forEach(p => p.classList.remove('active'));
         btn.classList.add('active');
@@ -858,9 +859,7 @@ function showCategory(cat, btn = null) {
 
     grid.innerHTML = '';
 
-    /* ===============================
-       CASO ESPECIAL: MÉTODOS
-       =============================== */
+    
     if (cat === 'tabla') {
         grid.classList.add('vertical-layout');
 
@@ -878,9 +877,7 @@ function showCategory(cat, btn = null) {
         return;
     }
 
-    /* ===============================
-       CATEGORÍAS NORMALES
-       =============================== */
+    
     grid.classList.remove('vertical-layout');
 
     if (!categorias[cat]) return;
@@ -914,16 +911,16 @@ function insertarEnCursor(input, texto) {
     input.focus();
 }
 
-/* --- 3. FUNCIONES DE INTERFAZ (TABS Y PLANTILLAS) --- */
+
 function setMode(mode) {
-    // Manejo de las pestañas (Plantillas vs Tutorial)
+    
     document.querySelectorAll('.pill').forEach(b => b.classList.remove('active'));
     document.querySelectorAll('.category-content').forEach(c => c.style.display = 'none');
     
-    // Activar el botón clickeado
-    event.target.classList.add('active'); // Nota: event.target funciona inline, pero idealmente se pasa 'this'
     
-    // Mostrar el contenido
+    event.target.classList.add('active'); 
+    
+    
     document.getElementById(mode).style.display = 'grid';
 }
 
@@ -933,10 +930,10 @@ function setMode(mode) {
 
     let s = expr;
 
-    // Quitar espacios
+    
     s = s.replace(/\s+/g, '');
 
-    // Superíndices → ^
+    
     const sup = {
         '⁰':'0','¹':'1','²':'2','³':'3','⁴':'4',
         '⁵':'5','⁶':'6','⁷':'7','⁸':'8','⁹':'9'
@@ -944,14 +941,14 @@ function setMode(mode) {
 
     s = s.replace(/[⁰¹²³⁴⁵⁶⁷⁸⁹]/g, m => '^' + sup[m]);
 
-    // √ → sqrt
+    
     s = s.replace(/√/g, 'sqrt');
 
-    // Multiplicación implícita
-    s = s.replace(/(\d)([a-zA-Z\(])/g, '$1*$2');   // 2x, 2(x)
-    s = s.replace(/([a-zA-Z\)])(\d)/g, '$1*$2');   // x2, )2
-    s = s.replace(/([a-zA-Z])([a-zA-Z])/g, '$1*$2'); // xy
-    s = s.replace(/\)\(/g, ')*(');                 // )(
+    
+    s = s.replace(/(\d)([a-zA-Z\(])/g, '$1*$2');   
+    s = s.replace(/([a-zA-Z\)])(\d)/g, '$1*$2');   
+    s = s.replace(/([a-zA-Z])([a-zA-Z])/g, '$1*$2'); 
+    s = s.replace(/\)\(/g, ')*(');                 
 
     return s;
 }
@@ -968,15 +965,15 @@ function setMode(mode) {
         const expr = normalizar(val);
         preview.innerHTML = `\\[ ${expr.replace(/sqrt/g, '\\sqrt')} \\]`;
 
-        // 1. Calculamos ambas formas: Expandida y Factorizada
+        
         let core = nerdamer(expr);
         let expanded = core.expand();
         let factored = nerdamer.factor(expr);
 
-        // 2. Lógica de decisión:
-        // Si lo que escribió el usuario (core) es igual a la versión factorizada,
-        // significa que YA está factorizado, por lo tanto => EXPANDIMOS.
-        // Si no, por defecto => FACTORIZAMOS.
+        
+        
+        
+        
         if (core.toString() === factored.toString() && core.toString() !== expanded.toString()) {
             document.querySelector('.label').textContent = "Expansión (Producto Notable)";
             output.innerHTML = `\\[ ${expanded.toTeX()} \\]`;
@@ -991,7 +988,7 @@ function setMode(mode) {
     if (window.MathJax) MathJax.typesetPromise();
 });
 
-/* --- FUNCIÓN GENERADORA DE PASOS --- */
+
 function generateSteps(inputExpr, outputExpr, mode) {
     const stepsList = document.getElementById('steps-list');
     const stepsBox = document.getElementById('steps-box');
@@ -1000,7 +997,7 @@ function generateSteps(inputExpr, outputExpr, mode) {
     let steps = [];
     const cleanInput = inputExpr.replace(/\s/g, '');
 
-    // --- CASO 1: BINOMIO AL CUADRADO (Expansión) ---
+    
     if (mode === "EXPAND" && cleanInput.includes('^2') && cleanInput.includes('(')) {
         steps.push({
             title: "Producto Notable: Binomio al Cuadrado",
@@ -1013,7 +1010,7 @@ function generateSteps(inputExpr, outputExpr, mode) {
         steps.push({ title: "Resultado", math: outputExpr });
     }
 
-    // --- CASO 2: DIFERENCIA DE CUADRADOS ---
+    
     else if (mode === "FACTOR" && cleanInput.includes('-') && cleanInput.includes('^2') && !cleanInput.includes('(')) {
         steps.push({
             title: "Identificación: Diferencia de Cuadrados",
@@ -1026,8 +1023,8 @@ function generateSteps(inputExpr, outputExpr, mode) {
         steps.push({ title: "Resultado Final", math: outputExpr });
     }
 
-    // --- CASO 3: TRINOMIO DE LA FORMA x^2 + bx + c ---
-    // Detecta x^2 al inicio (sin número delante)
+    
+    
     else if (mode === "FACTOR" && /^x\^2/.test(cleanInput)) {
         steps.push({
             title: "Trinomio de la forma x² + bx + c",
@@ -1043,8 +1040,8 @@ function generateSteps(inputExpr, outputExpr, mode) {
         steps.push({ title: "Resultado encontrado", math: outputExpr });
     }
 
-    // --- CASO 4: TRINOMIO DE LA FORMA ax^2 + bx + c ---
-    // Detecta número + x^2 al inicio (ej: 2x^2...)
+    
+    
     else if (mode === "FACTOR" && /^[0-9]+x\^2/.test(cleanInput)) {
         steps.push({
             title: "Trinomio de la forma ax² + bx + c",
@@ -1060,7 +1057,7 @@ function generateSteps(inputExpr, outputExpr, mode) {
         steps.push({ title: "Resultado", math: outputExpr });
     }
 
-    // --- CASO GENÉRICO ---
+    
     else {
         steps.push({
             title: mode === "EXPAND" ? "Expansión Algebraica" : "Factorización",
@@ -1069,23 +1066,23 @@ function generateSteps(inputExpr, outputExpr, mode) {
         steps.push({ title: "Resultado", math: outputExpr });
     }
 
-    // RENDERIZADO CON KATEX
+    
     if (steps.length > 0) {
         stepsBox.style.display = "block";
         steps.forEach(s => {
             const li = document.createElement('li');
             li.className = 'step-item';
             
-            // Título
+            
             const titleSpan = document.createElement('span');
             titleSpan.className = 'step-formula';
             titleSpan.textContent = s.title;
             li.appendChild(titleSpan);
 
-            // Matemáticas (Renderizado KaTeX)
-            const mathSpan = document.createElement('div'); // Usamos div para bloques
+            
+            const mathSpan = document.createElement('div'); 
             try {
-                // Limpiamos los $$ extra si vienen en el string para KaTeX
+                
                 const cleanMath = s.math.replace(/^\$\$/, '').replace(/\$\$$/, '');
                 katex.render(cleanMath, mathSpan, { throwOnError: false, displayMode: s.math.includes('$$') || s.math.includes('aligned') });
             } catch(e) { mathSpan.textContent = s.math; }
@@ -1098,18 +1095,18 @@ function generateSteps(inputExpr, outputExpr, mode) {
     }
 }
 
-/* --- FUNCIÓN AUXILIAR PARA LEER LOS NÚMEROS (a, b, c) --- */
+
 function getQuadraticCoeffs(expr) {
-    // 1. Limpiamos espacios y estandarizamos
+    
   let clean = normalizar(expr).replace(/\s+/g, '').replace(/\*/g, '');
     
-    // Ahora la regex funcionará siempre porque 'clean' tiene ^2
+    
     const regex = /([+-]?\d*)x\^2([+-]?\d*)x([+-]?\d+)/;
     const match = clean.match(regex);
     
 
     if (match) {
-        // Función para convertir texto ("-", "+", "2", "") en número real
+        
         const parsePart = (str) => {
             if (!str || str === '+') return 1;
             if (str === '-') return -1;
@@ -1122,10 +1119,10 @@ function getQuadraticCoeffs(expr) {
             c: parsePart(match[3])
         };
     }
-    return null; // No se pudo leer (quizás faltan términos)
+    return null; 
 }
 
-/* --- GENERADOR DE PASOS DINÁMICO --- */
+
 function generateSteps(inputExpr, outputExpr, mode) {
     const stepsList = document.getElementById('steps-list');
     const stepsBox = document.getElementById('steps-box');
@@ -1133,21 +1130,21 @@ function generateSteps(inputExpr, outputExpr, mode) {
     
     let steps = [];
     const cleanInput = inputExpr.replace(/\s/g, '');
-    const coeffs = getQuadraticCoeffs(inputExpr); // Intentamos leer los números
+    const coeffs = getQuadraticCoeffs(inputExpr); 
 
-    // --- CASO 1: BINOMIO AL CUADRADO (Expansión) ---
-    // Ej: (x+3)^2
+    
+    
     if (mode === "EXPAND" && cleanInput.includes('^2') && cleanInput.includes('(')) {
         steps.push({
             title: "Producto Notable: Binomio al Cuadrado",
             math: `$$ (a \\pm b)^2 = a^2 \\pm 2ab + b^2 $$`
         });
         
-        // Intentamos extraer el número dentro del paréntesis para ser más explícitos
+        
         const parts = cleanInput.match(/\(([a-z])([+-]\d+)\)\^2/i);
         if(parts) {
-            const vari = parts[1]; // x
-            const num = parts[2];  // +3 o -3
+            const vari = parts[1]; 
+            const num = parts[2];  
             const nVal = parseInt(num);
             const nCuad = nVal * nVal;
             const nDoble = 2 * nVal;
@@ -1166,17 +1163,17 @@ function generateSteps(inputExpr, outputExpr, mode) {
 
   
 
-    // --- CASO 3: TRINOMIO ax^2 + bx + c (TU PEDIDO PRINCIPAL) ---
-    // Detecta si empieza con número (a > 1)
+    
+    
     else if (mode === "FACTOR" && coeffs && Math.abs(coeffs.a) > 1) {
         const { a, b, c } = coeffs;
         const ac = a * c;
         
-        // Buscamos los "números mágicos" m y n
-        // Loop simple para encontrarlos (que multiplicados den ac y sumados den b)
+        
+        
         let m = 0, n = 0;
         let found = false;
-        // Búsqueda bruta rápida (suficiente para tareas escolares)
+        
         for (let i = -Math.abs(ac); i <= Math.abs(ac); i++) {
             if (i === 0) continue;
             if (ac % i === 0) {
@@ -1192,7 +1189,7 @@ function generateSteps(inputExpr, outputExpr, mode) {
             math: `$$ \\text{Multiplicamos y dividimos todo por } a = ${a} $$`
         });
 
-        // Paso 1: Multiplicación visual
+        
         steps.push({
             title: "1. Amplificar la expresión",
             math: `$$ \\frac{${a}(${a}x^2 + ${b}x + ${c})}{${a}} = \\frac{${a} \\cdot  ${a}x^2 + ${a} \\cdot  ${b} x + ${ac}}{${a}} \\\\ = \\frac{(${a}x)^2 + ${b}(${a}x) + ${ac}}{${a}} $$`
@@ -1218,7 +1215,7 @@ function generateSteps(inputExpr, outputExpr, mode) {
         steps.push({ title: "Resultado Final", math: outputExpr });
     }
 
-    // --- CASO 4: TRINOMIO SIMPLE x^2 + bx + c ---
+    
     else if (mode === "FACTOR" && coeffs && coeffs.a === 1) {
         const { b, c } = coeffs;
         
@@ -1227,7 +1224,7 @@ function generateSteps(inputExpr, outputExpr, mode) {
             math: `\\text{Buscamos dos números que multiplicados den } ${c} \\text{ y sumados den } ${b}.`
         });
         
-        // Encontrar los números para mostrarlos
+        
         let m = 0, n = 0;
         let found = false;
         for (let i = -Math.abs(c); i <= Math.abs(c); i++) {
@@ -1248,14 +1245,14 @@ function generateSteps(inputExpr, outputExpr, mode) {
             });
              steps.push({
                 title: "Armado de Paréntesis",
-                math: `(x + ${m})(x + ${n})`.replace(/\+\ -/g, "- ") // Limpieza visual de signos
+                math: `(x + ${m})(x + ${n})`.replace(/\+\ -/g, "- ") 
             });
         }
         
         steps.push({ title: "Resultado", math: outputExpr });
     }
 
-    // --- CASO GENÉRICO (Si no detecta coeficientes claros) ---
+    
     else {
         steps.push({
             title: mode === "EXPAND" ? "Procedimiento" : "Factorización",
@@ -1264,7 +1261,7 @@ function generateSteps(inputExpr, outputExpr, mode) {
         steps.push({ title: "Resultado", math: outputExpr });
     }
 
-    // RENDERIZADO (Igual que antes)
+    
     if (steps.length > 0) {
         stepsBox.style.display = "block";
         steps.forEach(s => {
@@ -1290,7 +1287,7 @@ function generateSteps(inputExpr, outputExpr, mode) {
     }
 }
 
-/* --- LISTENER PRINCIPAL MODIFICADO --- */
+
 input.addEventListener('input', () => {
     const val = input.value.trim();
     if (!val) {
@@ -1311,7 +1308,7 @@ input.addEventListener('input', () => {
         let finalOutput = "";
         let mode = "";
 
-        // Lógica de decisión Expandir vs Factorizar
+        
         if (rawText !== expandedText) {
             document.querySelector('.label').textContent = "Expansión (Producto Notable)";
             finalOutput = core.expand().toTeX();
@@ -1324,12 +1321,12 @@ input.addEventListener('input', () => {
             mode = "FACTOR";
         }
 
-        // LLAMADA AL PASO A PASO
+        
         generateSteps(val, finalOutput, mode);
 
     } catch (e) {
         console.log("Escribiendo...", e);
-        // No mostramos error en UI para no parpadear
+        
     }
     if (window.MathJax) MathJax.typesetPromise([preview, output]).catch(()=>{});
 });
