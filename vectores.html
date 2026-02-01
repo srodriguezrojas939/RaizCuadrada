@@ -3,8 +3,8 @@
 <head>
     <link rel="icon" href="icono.png" type="image/png">
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>√(Raiz) Cuadrada² </title>
+   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
+    <title> Vectores | √(Raiz) Cuadrada² </title>
 
     <script>
         (function() {
@@ -415,6 +415,24 @@
 
     [data-theme="dark"] .step-line { border-bottom-color: #333; }
     [data-theme="dark"] .step-title { color: #fff; }
+
+      @media screen and (max-width: 768px) {
+ 
+    body {
+        flex-direction: column; 
+        overflow: auto; 
+        height: auto;
+    }
+
+ 
+
+
+    #plot-container {
+        width: 100%;
+        height: 50vh; 
+        min-height: 400px; 
+    }
+}
 </style>
   
 
