@@ -1,17 +1,18 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
+    <link rel="icon" href="icono.png" type="image/png">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title> Simbolos | √(Raiz) Cuadrada² </title>
 
     <script>
         (function() {
-            // 1. Intentamos leer la memoria
+            
             const localTheme = localStorage.getItem('theme');
-            // 2. Si hay algo guardado lo usamos, si no, usamos 'light'
+            
             const themeToSet = localTheme || 'light';
-            // 3. Lo aplicamos INMEDIATAMENTE al HTML
+            
             document.documentElement.setAttribute('data-theme', themeToSet);
         })();
     </script>
@@ -27,39 +28,39 @@
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Open+Sans:wght@400;600;700&display=swap" rel="stylesheet">
 
     <style>
-    /* --- PALETA DE COLORES (Monocromática Estricta) --- */
+    
     :root {
-        /* MODO CLARO */
-        --bg-body: #ffffff;          /* Fondo blanco puro */
-        --text-main: #1a1a1a;        /* Negro suave */
-        --text-sec: #666666;         /* Gris textos */
         
-        /* ESTILO "ZEN PRO" (El gris con sombrita interna) */
+        --bg-body: #ffffff;          
+        --text-main: #1a1a1a;        
+        --text-sec: #666666;         
+        
+        
         --card-bg: #f9f9f9;           
         --card-shadow: inset 0 2px 5px rgba(0,0,0,0.06); 
         
-        /* HOVER */
-        --card-hover-bg: #1a1a1a;    /* Se pone negro */
-        --card-hover-text: #ffffff;  /* Texto se pone blanco */
         
-        /* OTROS */
+        --card-hover-bg: #1a1a1a;    
+        --card-hover-text: #ffffff;  
+        
+        
         --border: #e0e0e0;
         --tooltip-bg: #1a1a1a;
         --tooltip-text: #ffffff;
     }
 
-    /* MODO OSCURO */
+    
     [data-theme="dark"] {
         --bg-body: #0a0a0a;
         --text-main: #e0e0e0;
         --text-sec: #a0a0a0;
         
-        --card-bg: #1e1e1e;          /* Gris oscuro de base */
-        --card-shadow: inset 0 2px 5px rgba(0,0,0,0.3); /* Sombra interna más fuerte */
+        --card-bg: #1e1e1e;          
+        --card-shadow: inset 0 2px 5px rgba(0,0,0,0.3); 
         
-        /* HOVER DARK MODE (Invertido) */
-        --card-hover-bg: #ffffff;    /* Se pone blanco */
-        --card-hover-text: #000000;  /* Texto se pone negro */
+        
+        --card-hover-bg: #ffffff;    
+        --card-hover-text: #000000;  
         
         --border: #333333;
         --tooltip-bg: #ffffff;
@@ -80,7 +81,7 @@
         margin: 0 auto;
     }
 
-    /* Títulos Elegantes */
+    
     .section-title {
         font-family: 'Playfair Display', serif;
         font-size: 32px;
@@ -99,29 +100,29 @@
         gap: 18px;
     }
 
-    /* --- TARJETA ESTILO INPUT (ZEN) --- */
+    
     .card {
         background: var(--card-bg);
-        box-shadow: var(--card-shadow); /* La profundidad interna */
-        border-radius: 20px;            /* Bordes redondeados */
+        box-shadow: var(--card-shadow); 
+        border-radius: 20px;            
         padding: 25px 10px;
         text-align: center;
         cursor: pointer;
         position: relative;
         transition: all 0.2s cubic-bezier(0.25, 0.8, 0.25, 1);
-        border: 2px solid transparent; /* Para evitar saltos al cambiar borde */
+        border: 2px solid transparent; 
         user-select: none;
     }
 
-    /* EFECTO HOVER (El cambio de color radical) */
+    
     .card:hover {
         background: var(--card-hover-bg);
         color: var(--card-hover-text);
-        transform: translateY(-4px); /* Pequeño salto */
-        box-shadow: 0 10px 25px rgba(0,0,0,0.15); /* Sombra externa al flotar */
+        transform: translateY(-4px); 
+        box-shadow: 0 10px 25px rgba(0,0,0,0.15); 
     }
 
-    /* El símbolo hereda el color del padre (negro -> blanco) */
+    
     .symbol {
         font-family: 'Times New Roman', serif;
         font-size: 38px;
@@ -129,42 +130,42 @@
         transition: color 0.2s;
     }
 
-    /* El nombre pequeño */
+    
     .name {
         font-size: 12px;
         font-weight: 600;
         text-transform: uppercase;
         letter-spacing: 0.5px;
-        color: var(--text-sec); /* Gris por defecto */
+        color: var(--text-sec); 
         transition: color 0.2s;
     }
 
-    /* Al hacer hover, el nombre también cambia de color para leerse */
+    
     .card:hover .name {
         color: var(--card-hover-text);
         opacity: 0.8;
     }
 
-    /* FEEDBACK "COPIADO" (Gris, no verde) */
+    
     .feedback {
         position: absolute;
         top: 8px;
         right: 10px;
         font-size: 10px;
         font-weight: 700;
-        color: var(--text-sec); /* Gris */
+        color: var(--text-sec); 
         opacity: 0;
         transition: opacity 0.2s;
         pointer-events: none;
     }
     
-    /* Cuando se activa la clase .copied */
+    
     .card.copied .feedback {
         opacity: 1;
-        color: var(--card-hover-text); /* Se adapta al color del fondo hover */
+        color: var(--card-hover-text); 
     }
 
-    /* --- TOOLTIP (INFORMACIÓN) --- */
+    
     .tooltip {
         visibility: hidden;
         opacity: 0;
@@ -176,7 +177,7 @@
         padding: 15px;
         position: absolute;
         z-index: 100;
-        bottom: 115%; /* Bien separado arriba */
+        bottom: 115%; 
         left: 50%;
         transform: translateX(-50%) translateY(10px);
         transition: all 0.2s ease;
@@ -192,7 +193,7 @@
         transform: translateX(-50%) translateY(0);
     }
     
-    /* Flechita del tooltip */
+    
     .tooltip::after {
         content: "";
         position: absolute;
@@ -222,43 +223,43 @@
     }
     
     
-    /* --- ADAPTACIÓN A MOVILES (RESPONSIVE) --- */
+    
     @media (max-width: 768px) {
         
-        /* 1. Aprovechar más espacio en los bordes */
+        
         body {
-            padding: 20px 15px; /* Menos relleno alrededor */
+            padding: 20px 15px; 
         }
 
-        /* 2. Títulos más pequeños y con menos margen */
+        
         .section-title {
             font-size: 24px;
             margin-top: 30px;
             margin-bottom: 20px;
         }
 
-        /* 3. Ajuste de la cuadrícula (Grid) */
+        
         .grid {
-            /* Permitimos columnas más angostas (110px) para que quepan 2 o 3 por fila */
+            
             grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); 
-            gap: 12px; /* Menos espacio entre tarjetas */
+            gap: 12px; 
         }
 
-        /* 4. Tarjetas más compactas */
+        
         .card {
-            padding: 15px 5px; /* Menos "aire" dentro de la tarjeta */
+            padding: 15px 5px; 
             border-radius: 16px;
         }
 
         .symbol {
-            font-size: 32px; /* Símbolo un poco más chico */
+            font-size: 32px; 
         }
         
         .name {
-            font-size: 11px; /* Texto un poco más chico */
+            font-size: 11px; 
         }
 
-        /* 5. Ajuste del botón de tema (Sol/Luna) */
+        
         .theme-btn {
             width: 38px;
             height: 38px;
@@ -266,11 +267,11 @@
             right: 15px;
         }
         
-        /* 6. Tooltip (Cuadro de info) en móviles */
-        /* En celular no hay "hover", así que al tocar saldrá el tooltip un momento */
+        
+        
         .tooltip {
-            width: 160px; /* Más angosto para que no se salga de la pantalla */
-            bottom: 105%; /* Un poco más pegado a la tarjeta */
+            width: 160px; 
+            bottom: 105%; 
             padding: 10px;
             font-size: 11px;
         }
@@ -280,7 +281,7 @@
      
     .header-section h1 { 
         font-family: 'Playfair Display', serif; 
-        font-size: clamp(24px, 6vw, 32px); /* Responsive como title-big */
+        font-size: clamp(24px, 6vw, 32px); 
         margin: 0; 
         font-weight: 700; 
         color: #1a1a1a; 
@@ -294,13 +295,13 @@
         font-weight: 700; 
         color: #999; 
         text-transform: uppercase; 
-        letter-spacing: 1.5px; /* Estilo 'pregunta-pro' */
+        letter-spacing: 1.5px; 
     }
     
-    /* --- BARRA DE BÚSQUEDA --- */
+    
 .search-wrapper {
     max-width: 600px;
-    margin: 0 auto 40px auto; /* Centrado y separado del contenido */
+    margin: 0 auto 40px auto; 
     padding: 0 20px;
 }
 
@@ -314,19 +315,19 @@
     position: absolute;
     left: 20px;
     color: var(--text-sec);
-    pointer-events: none; /* Para que el click pase al input */
+    pointer-events: none; 
 }
 
 #searchInput {
     width: 100%;
-    background: var(--card-bg); /* Mismo gris que las tarjetas */
+    background: var(--card-bg); 
     border: none;
-    border-radius: 999px; /* Forma de píldora */
-    padding: 16px 20px 16px 50px; /* Padding izquierdo para el icono */
+    border-radius: 999px; 
+    padding: 16px 20px 16px 50px; 
     font-family: 'Open Sans', sans-serif;
     font-size: 16px;
     color: var(--text-main);
-    box-shadow: var(--card-shadow); /* Sombra interna sutil */
+    box-shadow: var(--card-shadow); 
     transition: all 0.3s ease;
     outline: none;
 }
@@ -336,53 +337,53 @@
     opacity: 0.7;
 }
 
-/* Efecto al escribir (Focus) */
+
 #searchInput:focus {
-    background: var(--bg-body); /* Se vuelve del color del fondo */
-    box-shadow: 0 5px 20px rgba(0,0,0,0.1); /* Sombra externa flotante */
+    background: var(--bg-body); 
+    box-shadow: 0 5px 20px rgba(0,0,0,0.1); 
     transform: scale(1.02);
     border: 1px solid var(--border);
 }
 
-/* Modo oscuro ajuste */
+
 [data-theme="dark"] #searchInput:focus {
     box-shadow: 0 5px 20px rgba(0,0,0,0.5);
 }
 
-/* Clase para ocultar elementos al filtrar */
+
 .hidden {
     display: none !important;
 }
 
-    /* --- PÍLDORA DE NAVEGACIÓN (SEGMENTED CONTROL) --- */
+    
 .scroll-wrapper {
     max-width: 800px;
     margin: 0 auto;
-    /* ELIMINADO: overflow-x: auto; -> Ya no queremos scroll */
-    /* ELIMINADO: white-space: nowrap; */
+    
+    
 }
 
 .mode-switcher {
     display: flex;
-    flex-wrap: wrap;       /* AGREGADO: Permite que bajen de línea */
-    justify-content: center; /* AGREGADO: Centra los botones */
-    gap: 5px;              /* AGREGADO: Espacio entre botones */
+    flex-wrap: wrap;       
+    justify-content: center; 
+    gap: 5px;              
     
     background: var(--card-bg); 
-    padding: 12px;          /* Un poco más de padding contenedor */
-    border-radius: 35px;   /* CAMBIO: Menos redondeado para que se vea bien en bloques */
+    padding: 12px;          
+    border-radius: 35px;   
     margin-bottom: 25px;
     position: relative;
     box-shadow: inset 0 1px 3px rgba(0,0,0,0.06);
 }
 
 .mode-btn {
-    flex: 1 1 auto;        /* AGREGADO: Crecen para llenar huecos, pero respetan su tamaño */
-    min-width: 80px;       /* Mínimo ancho para que no se aplasten mucho */
+    flex: 1 1 auto;        
+    min-width: 80px;       
     padding: 8px 16px;
     border: none;
     background: transparent;
-    border-radius: 999px;   /* CAMBIO: Radio más pequeño para encajar en filas */
+    border-radius: 999px;   
     cursor: pointer;
     font-family: 'Open Sans', sans-serif;
     font-weight: 700;
@@ -392,31 +393,31 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    text-align: center;    /* Asegura texto centrado */
+    text-align: center;    
 }
 
-/* Hover suave */
+
 .mode-btn:hover:not(.active) {
     color: var(--text-main);
     background: rgba(0,0,0,0.05);
 }
 
-/* ESTADO ACTIVO (La píldora seleccionada) */
+
 .mode-btn.active {
-    background: #ffffff;   /* CAMBIO: Blanco puro forzado */
-    color: #1a1a1a;        /* CAMBIO: Negro forzado (para contraste con el blanco) */
-    box-shadow: 0 2px 8px rgba(0,0,0,0.15); /* Sombra un poco más marcada */
+    background: #ffffff;   
+    color: #1a1a1a;        
+    box-shadow: 0 2px 8px rgba(0,0,0,0.15); 
     transform: scale(1.02);
-    font-weight: 800;      /* Un poco más negrita */
+    font-weight: 800;      
 }
 
-/* --- AJUSTES MODO OSCURO --- */
+
 [data-theme="dark"] .mode-switcher { 
     background: #151515; 
    box-shadow: inset 0 1px 3px rgba(255,255,255,0.05);
 }
 
-/* En modo oscuro, el botón activo NO debe ser blanco, sino gris claro */
+
 [data-theme="dark"] .mode-btn.active { 
     background: #666; 
     color: #ffffff; 
@@ -449,7 +450,7 @@
     transition: transform 0.3s ease;
 }
 
-/* Estado colapsado */
+
 .section-wrapper.collapsed .grid {
     display: none;
 }
@@ -530,7 +531,7 @@
 }
 
 [data-theme="dark"] .favorite-toast {
-    background: #1e1e1e;              /* mismo gris oscuro que tus cards */
+    background: #1e1e1e;              
     color: #e0e0e0;
     box-shadow: inset 0 1px 3px rgba(255,255,255,0.05),
                 0 8px 20px rgba(0,0,0,0.6);
@@ -554,7 +555,7 @@
 }
 
 
-/* --- BOTÓN FAVORITOS: MODO OSCURO --- */
+
 [data-theme="dark"] .add-favorite {
     border-color: var(--border);
     background: var(--card-bg);
@@ -567,16 +568,16 @@
     transform: scale(1.05);
 }
 
-/* Icono del botón en modo oscuro */
+
 [data-theme="dark"] .add-favorite .fav-icon {
-    stroke: var(--text-main); /* Lucide usa stroke por defecto */
+    stroke: var(--text-main); 
 }
 
 [data-theme="dark"] .add-favorite:hover .fav-icon {
     stroke: var(--card-hover-text);
 }
 
-/* Si estás en modo selección (guardar cambios) */
+
 [data-theme="dark"] .selecting-favorites .add-favorite {
     border-style: solid;
     border-color: var(--text-sec);
@@ -587,81 +588,81 @@
 }
 
 .section-header {
-    display: flex;              /* Activamos flex */
-    justify-content: center;    /* Centrado horizontal */
-    align-items: center;        /* Centrado vertical */
-    gap: 10px;                  /* Opcional: espacio entre icono y texto si hay iconos */
+    display: flex;              
+    justify-content: center;    
+    align-items: center;        
+    gap: 10px;                  
 }
 
     [data-theme="dark"] .header-section h1 { color: #ffffff; }
     [data-theme="dark"] label { color: #888; }
     
  
- /* --- BARRA DE PORTAPAPELES (Estilo idéntico a SearchBar) --- */
+ 
 
-/* 1. El contenedor principal (La Píldora) */
+
 .clipboard-bar {
-    /* Dimensiones y posición igual al search-wrapper + input */
+    
     max-width: 600px;
     margin: 0 auto 40px auto; 
     
-    /* Estética Zen (Variables del Search) */
+    
     background: var(--card-bg);
     box-shadow: var(--card-shadow);
     border-radius: 999px;
     
-    /* Flexbox para alinear ítems a la izq y botones a la der */
+    
     display: flex;
     align-items: center;
     justify-content: space-between;
     
-    /* Padding calculado para igualar el grosor de la barra de búsqueda */
-    padding: 10px 20px; 
-    min-height: 55px; /* Altura forzada para que sea igual de gruesa */
     
-    /* Transiciones y bordes */
+    padding: 10px 20px; 
+    min-height: 55px; 
+    
+    
     transition: all 0.3s ease;
     border: 2px solid transparent;
     box-sizing: border-box;
 }
 
-/* Estado oculto */
+
 .clipboard-bar.hidden {
     display: none !important;
 }
 
-/* 2. Área de texto/símbolos (Simula el input de texto) */
+
 .clipboard-items {
-    flex: 1; /* Ocupa todo el espacio sobrante */
+    flex: 1; 
     display: flex;
     flex-wrap: wrap;
     align-items: center;
     gap: 2px;
     
-    /* Tipografía matemática elegante */
+    
     font-family: 'Times New Roman', serif;
     font-size: 22px; 
     color: var(--text-main);
     
-    /* Para que no se desborde */
+    
     overflow: hidden;
-    margin-right: 15px; /* Separación con los botones */
+    margin-right: 15px; 
 }
 
-/* Los símbolos individuales */
+
 .clipboard-item {
     padding: 0 2px;
     border-radius: 4px;
     cursor: default;
 }
 
-/* 3. Estilo unificado para TODOS los botones (Copiar, Borrar, Trash) */
-/* Los hacemos transparentes y limpios como iconos */
+
+
 .clipboard-bar button {
     background: transparent;
     border: none;
     cursor: pointer;
-    color: var(--text-sec); /* Gris suave por defecto */
+    color: var(--text-sec); 
     padding: 8px;
     display: flex;
     align-items: center;
@@ -670,19 +671,19 @@
     transition: all 0.2s ease;
 }
 
-/* Hover de los botones: Efecto lupa o cambio de color */
+
 .clipboard-bar button:hover {
     color: var(--text-main);
-    background-color: rgba(128, 128, 128, 0.1); /* Fondo sutil al pasar mouse */
+    background-color: rgba(128, 128, 128, 0.1); 
     transform: scale(1.1);
 }
 
-/* Ajuste específico para el botón de Copiar si quieres que destaque un poco más */
+
 .clipboard-copy-btn {
-    color: var(--text-main) !important; /* Un poco más oscuro que los de borrar */
+    color: var(--text-main) !important; 
 }
 
-/* Ajuste específico para iconos Lucide dentro de los botones */
+
 .clipboard-bar button i, 
 .clipboard-bar button svg {
     width: 20px;
@@ -690,15 +691,14 @@
     stroke-width: 2px;
 }
 
-/* MODO OSCURO (Ajustes automáticos) */
-/* Al usar tus variables var(--card-bg), etc., ya se adapta solo, 
-   pero aseguramos que al hacer hover en el contenedor no haga cosas raras */
+
+
 [data-theme="dark"] .clipboard-bar {
     box-shadow: var(--card-shadow);
 }
 
 
-/* --- AVISO DE USO (Instrucciones - Estilo Monocromático) --- */
+
 .usage-toast {
     position: fixed;
     bottom: 30px;
@@ -706,12 +706,12 @@
     transform: translateX(-50%);
     z-index: 10000;
     
-    /* Fondo blanco puro con borde gris sutil */
+    
     background-color: #ffffff;
-    color: #1a1a1a; /* Texto negro suave */
+    color: #1a1a1a; 
     border: 1px solid #e0e0e0;
     
-    /* Sombra elegante */
+    
     box-shadow: 0 5px 25px rgba(0,0,0,0.1); 
     
     padding: 10px 12px 10px 20px;
@@ -735,16 +735,16 @@
     to   { opacity: 1; transform: translateX(-50%) translateY(0); }
 }
 
-/* EL BOTÓN CIRCULAR "ACEPTAR" (Gris/Negro) */
+
 .usage-accept-btn {
     width: 28px;
     height: 28px;
     border-radius: 50%;
     
-    /* CAMBIO: Gris muy suave en lugar de verde */
+    
     background-color: #f2f2f2; 
-    color: #666666; /* Icono gris */
-    border: 1px solid transparent; /* Para evitar saltos */
+    color: #666666; 
+    border: 1px solid transparent; 
     
     cursor: pointer;
     display: flex;
@@ -754,9 +754,9 @@
 }
 
 .usage-accept-btn:hover {
-    /* CAMBIO: Se vuelve negro al pasar el mouse */
+    
     background-color: #1a1a1a; 
-    color: #ffffff; /* Icono blanco */
+    color: #ffffff; 
     transform: scale(1.1);
     box-shadow: 0 2px 5px rgba(0,0,0,0.1);
 }
@@ -962,7 +962,7 @@
 
       <script>
     
-    // --- BASE DE DATOS DE SÍMBOLOS ---
+    
     const mathData = [
         {
             category: "Álgebra",
@@ -1064,7 +1064,7 @@
         {
             category: "Letras Griegas",
             items: [
-              // --- LETRAS GRIEGAS MINÚSCULAS ---
+              
     { s: "α", name: "Alpha", latex: "\\alpha", def: "Ángulos, coeficientes, partículas alfa, aceleración angular." },
     { s: "β", name: "Beta", latex: "\\beta", def: "Ángulos, función beta, partículas beta, flujo magnético." },
     { s: "γ", name: "Gamma", latex: "\\gamma", def: "Factor de Lorentz, fotones, rayos gamma, tensión superficial." },
@@ -1095,7 +1095,7 @@
     { s: "ϱ", name: "Rho (var)", latex: "\\varrho", def: "Variante cursiva de Rho." },
     { s: "ς", name: "Sigma (final)", latex: "\\varsigma", def: "Sigma minúscula usada solo al final de una palabra griega." },
     { s: "φ", name: "Phi (var)", latex: "\\varphi", def: "Variante cursiva de Phi (muy común para ángulos o razón áurea)." },
-    // --- LETRAS GRIEGAS MAYÚSCULAS (Solo las distintas a latinas) ---
+    
     { s: "Γ", name: "Gamma", latex: "\\Gamma", def: "Función Gamma, símbolos de Christoffel, flujo circulatorio." },
     { s: "Δ", name: "Delta", latex: "\\Delta", def: "Cambio o incremento (diferencia), discriminante, operador Laplaciano." },
     { s: "Θ", name: "Theta", latex: "\\Theta", def: "Notación asintótica (cota ajustada), dimensión de temperatura." },
@@ -1153,7 +1153,7 @@
          {
             category: "Logica",
             items: [
-         // --- LÓGICA (Pura) ---
+         
     { s: "¬", name: "Negación", latex: "\\neg", def: "Invierte el valor de verdad. 'No es el caso que...'." },
     { s: "∧", name: "Conjunción (Y)", latex: "\\land", def: "Verdadero solo si ambas proposiciones son verdaderas." },
     { s: "∨", name: "Disyunción (O)", latex: "\\lor", def: "Verdadero si al menos una de las proposiciones es verdadera." },
@@ -1174,7 +1174,7 @@
     { s: "∵", name: "Porque", latex: "\\because", def: "Indicador de razón o premisa anterior." },
     { s: "□", name: "Necesidad (Modal)", latex: "\\Box", def: "Es necesariamente verdadero (Lógica Modal)." },
     { s: "◇", name: "Posibilidad (Modal)", latex: "\\Diamond", def: "Es posiblemente verdadero (Lógica Modal)." },
-    // --- LÓGICA (Avanzada y Booleanos) ---
+    
     { s: "↑", name: "NAND / Sheffer", latex: "\\uparrow", def: "Barra de Sheffer. Falso solo si ambos son verdaderos." },
     { s: "↓", name: "NOR / Peirce", latex: "\\downarrow", def: "Flecha de Peirce. Verdadero solo si ambos son falsos." },
     { s: "⊕", name: "XOR (Suma)", latex: "\\oplus", def: "O exclusivo (notación booleana). Verdadero si son diferentes." },
@@ -1193,9 +1193,9 @@
      {
             category: "Relaciones",
             items: [
-               // --- RELACIONES Y COMPARACIÓN ---
+               
 
-    // 1. Igualdad e Identidad
+    
     { s: "=", name: "Igual", latex: "=", def: "Igualdad matemática estricta." },
     { s: "≠", name: "Diferente", latex: "\\neq", def: "No es igual a." },
     { s: "≡", name: "Equivalente", latex: "\\equiv", def: "Identidad, congruencia modular (a ≡ b mod n) o equivalencia lógica." },
@@ -1203,7 +1203,7 @@
     { s: "≝", name: "Igual por def.", latex: "\\overset{\\underset{\\mathrm{def}}{}}{=}", def: "Se define como igual a (notación explícita)." },
     { s: "≐", name: "Igual Punteado", latex: "\\doteq", def: "Se aproxima al límite o es igual bajo ciertas condiciones." },
 
-    // 2. Desigualdad Estricta
+    
     { s: "<", name: "Menor que", latex: "<", def: "Estrictamente menor que." },
     { s: ">", name: "Mayor que", latex: ">", def: "Estrictamente mayor que." },
     { s: "≮", name: "No Menor", latex: "\\nless", def: "No es menor que (por tanto, es mayor o igual)." },
@@ -1212,7 +1212,7 @@
     { s: "≫", name: "Mucho Mayor", latex: "\\gg", def: "Órdenes de magnitud mayor." },
     { s: "≷", name: "Mayor o Menor", latex: "\\gtrless", def: "Puede ser mayor o menor (excluye la igualdad)." },
 
-    // 3. Desigualdad No Estricta (Inclusiva)
+    
     { s: "≤", name: "Menor o Igual", latex: "\\leq", def: "El valor es menor o es igual." },
     { s: "≥", name: "Mayor o Igual", latex: "\\geq", def: "El valor es mayor o es igual." },
     { s: "⩽", name: "Menor o Igual (ISO)", latex: "\\leqslant", def: "Variante tipográfica europea/ISO de menor o igual." },
@@ -1222,13 +1222,13 @@
     { s: "≰", name: "No Menor/Igual (Var)", latex: "\\nleqslant", def: "Negación de la variante ISO." },
     { s: "≱", name: "No Mayor/Igual (Var)", latex: "\\ngeqslant", def: "Negación de la variante ISO." },
 
-    // 4. Teoría de Orden (Abstracto)
+    
     { s: "≺", name: "Precede", latex: "\\prec", def: "Menor que en un orden abstracto o parcial." },
     { s: "≻", name: "Sucede", latex: "\\succ", def: "Mayor que en un orden abstracto." },
     { s: "⪯", name: "Precede o Igual", latex: "\\preceq", def: "Menor o igual en orden abstracto." },
     { s: "⪰", name: "Sucede o Igual", latex: "\\succeq", def: "Mayor o igual en orden abstracto." },
 
-    // 5. Aproximación y Similitud
+    
     { s: "≈", name: "Aprox. Igual", latex: "\\approx", def: "Aproximación numérica (ej: π ≈ 3.14)." },
     { s: "∼", name: "Similar / Rel.", latex: "\\sim", def: "Relación de equivalencia, semejanza geométrica o 'distribuido como' (estadística)." },
     { s: "≃", name: "Semejante-Igual", latex: "\\simeq", def: "Isomorfismo, homotopía o similitud fuerte." },
@@ -1240,7 +1240,7 @@
         {
             category: "Superíndices",
             items: [
-              // --- SUPERÍNDICES NUMÉRICOS ---
+              
     { s: "⁰", name: "Sup. Cero ^0", latex: "^0", def: "Potencia cero. Cualquier número (no nulo) elevado a 0 es 1." },
     { s: "¹", name: "Sup. Uno ^1", latex: "^1", def: "Potencia uno. Representa el mismo valor base." },
     { s: "²", name: "Cuadrado ^2", latex: "^2", def: "Potencia al cuadrado (x·x)." },
@@ -1252,7 +1252,7 @@
     { s: "⁸", name: "Sup. Ocho", latex: "^8", def: "Potencia a la octava." },
     { s: "⁹", name: "Sup. Nueve", latex: "^9", def: "Potencia a la novena." },
 
-    // --- SUPERÍNDICES VARIABLES (Muy usados en Álgebra) ---
+    
     { s: "ⁿ", name: "Sup. n", latex: "^n", def: "Enésima potencia. Representa un exponente entero general." },
     { s: "ⁱ", name: "Sup. i", latex: "^i", def: "Índice variable o unidad imaginaria en exponente." },
     { s: "ˣ", name: "Sup. x", latex: "^x", def: "Variable desconocida como exponente." },
@@ -1262,7 +1262,7 @@
     { s: "ᵐ", name: "Sup. m", latex: "^m", def: "Variable m, común en pendientes o índices." },
     { s: "ᵗ", name: "Sup. t", latex: "^t", def: "Variable t, común para tiempo o transpuesta." },
 
-    // --- SUPERÍNDICES ALFABÉTICOS (Resto del alfabeto) ---
+    
     { s: "ᵃ", name: "Sup. a", latex: "^a", def: "Letra 'a' en superíndice." },
     { s: "ᵇ", name: "Sup. b", latex: "^b", def: "Letra 'b' en superíndice." },
     { s: "ᶜ", name: "Sup. c", latex: "^c", def: "Letra 'c' en superíndice." },
@@ -1281,7 +1281,7 @@
     { s: "ᵛ", name: "Sup. v", latex: "^v", def: "Letra 'v' en superíndice." },
     { s: "ʷ", name: "Sup. w", latex: "^w", def: "Letra 'w' en superíndice." },
 
-    // --- FRACCIONES (Caracteres únicos) ---
+    
     { s: "½", name: "Un Medio ^1/2", latex: "\\frac{1}{2}", def: "Fracción 0.5 (Mitad)." },
     { s: "⅓", name: "Un Tercio ^1/3", latex: "\\frac{1}{3}", def: "Fracción periódica ≈ 0.333." },
     { s: "⅔", name: "Dos Tercios ^2/3", latex: "\\frac{2}{3}", def: "Fracción periódica ≈ 0.666." },
@@ -1296,7 +1296,7 @@
     { s: "⅜", name: "Tres Octavos ^3/8", latex: "\\frac{3}{8}", def: "Fracción 0.375." },
     { s: "⅝", name: "Cinco Octavos ^5/8", latex: "\\frac{5}{8}", def: "Fracción 0.625." },
     { s: "⅞", name: "Siete Octavos ^7/8", latex: "\\frac{7}{8}", def: "Fracción 0.875." },
-    // --- SUPERÍNDICES DE OPERACIONES ---
+    
     { s: "⁺", name: "Sup. Más", latex: "^+", def: "Límite por la derecha, ión positivo o números positivos." },
     { s: "⁻", name: "Sup. Menos", latex: "^-", def: "Límite por la izquierda, ión negativo o inversa de función." },
     { s: "⁼", name: "Sup. Igual", latex: "^=", def: "Igualdad en el exponente (poco común, pero existe)." },
@@ -1311,7 +1311,7 @@
          {
             category: "Subíndices",
             items: [
-              // --- SUBÍNDICES NUMÉRICOS ---
+              
     { s: "₀", name: "Sub. Cero 0", latex: "_0", def: "Valor inicial (t₀) o índice cero." },
     { s: "₁", name: "Sub. Uno 1", latex: "_1", def: "Primer término de una sucesión." },
     { s: "₂", name: "Sub. Dos 2", latex: "_2", def: "Segundo término o base binaria (log₂)." },
@@ -1323,7 +1323,7 @@
     { s: "₈", name: "Sub. Ocho 8", latex: "_8", def: "Octavo término." },
     { s: "₉", name: "Sub. Nueve 9", latex: "_9", def: "Noveno término." },
 
-    // --- SUBÍNDICES DE VARIABLES (Muy usados en sucesiones/álgebra) ---
+    
     { s: "ᵢ", name: "Sub. i", latex: "_i", def: "Índice genérico (sumatorias, vectores)." },
     { s: "ⱼ", name: "Sub. j", latex: "_j", def: "Segundo índice genérico (matrices)." },
     { s: "ₖ", name: "Sub. k", latex: "_k", def: "Constante o índice k." },
@@ -1334,7 +1334,7 @@
     { s: "ₓ", name: "Sub. x", latex: "_x", def: "Variable x (ej. derivada parcial fₓ)." },
     { s: "ᵧ", name: "Sub. y", latex: "_y", def: "Variable y (ej. derivada parcial fᵧ)." },
 
-    // --- OTROS SUBÍNDICES ALFABÉTICOS (Los que existen en Unicode) ---
+    
     { s: "ₐ", name: "Sub. a", latex: "_a", def: "Letra 'a' en subíndice." },
     { s: "ₑ", name: "Sub. e", latex: "_e", def: "Letra 'e' en subíndice." },
     { s: "ₕ", name: "Sub. h", latex: "_h", def: "Letra 'h' en subíndice." },
@@ -1345,7 +1345,7 @@
     { s: "ᵤ", name: "Sub. u", latex: "_u", def: "Letra 'u' en subíndice." },
     { s: "ᵥ", name: "Sub. v", latex: "_v", def: "Letra 'v' en subíndice." },
 
-    // --- SUBÍNDICES OPERADORES ---
+    
     { s: "₊", name: "Sub. Más", latex: "_+", def: "Indica límite por la derecha o ion positivo." },
     { s: "₋", name: "Sub. Menos", latex: "_-", def: "Indica límite por la izquierda o ion negativo." },
     { s: "₌", name: "Sub. Igual", latex: "_=", def: "Signo igual en posición inferior." },
@@ -1357,7 +1357,7 @@
          {
             category: "Flechas",
             items: [
-               // --- FLECHAS SIMPLES (Dirección y Límites) ---
+               
     { s: "→", name: "Derecha", latex: "\\to", def: "Aproximación (límites), mapeo de funciones f:A→B." },
     { s: "←", name: "Izquierda", latex: "\\gets", def: "Asignación de valor o dirección opuesta." },
     { s: "↑", name: "Arriba", latex: "\\uparrow", def: "Divergencia al infinito, espín up, o exponenciación (Knuth)." },
@@ -1365,7 +1365,7 @@
     { s: "↔", name: "Bidireccional", latex: "\\leftrightarrow", def: "Relación recíproca o conexión conmutativa." },
     { s: "↕", name: "Vertical", latex: "\\updownarrow", def: "Relación vertical bidireccional." },
 
-    // --- FLECHAS DOBLES (Lógica e Implicación) ---
+    
     { s: "⇒", name: "Implica", latex: "\\Rightarrow", def: "Implicación lógica (Entonces). Suficiente." },
     { s: "⇐", name: "Es Implicado", latex: "\\Leftarrow", def: "Condición necesaria (Si...)." },
     { s: "⇔", name: "Si y solo si", latex: "\\Leftrightarrow", def: "Equivalencia lógica (IFF), bicondicional." },
@@ -1373,13 +1373,13 @@
     { s: "⇓", name: "Doble Abajo", latex: "\\Downarrow", def: "Implicación descendente." },
     { s: "⇕", name: "Doble Vertical", latex: "\\Updownarrow", def: "Relación doble vertical." },
 
-    // --- FLECHAS DE FUNCIONES Y MAPEO ---
+    
     { s: "↦", name: "Mapea a", latex: "\\mapsto", def: "Mapeo de elementos: x ↦ f(x)." },
     { s: "↤", name: "Mapea desde", latex: "\\mapsfrom", def: "Mapeo inverso." },
     { s: "↠", name: "Sobreyectiva", latex: "\\twoheadrightarrow", def: "Función Sobreyectiva (Epi), cubre todo el codominio." },
     { s: "↞", name: "Sobrey. Izq", latex: "\\twoheadleftarrow", def: "Sobreyectiva inversa." },
 
-    // --- FLECHAS LARGAS (Para fórmulas extensas) ---
+    
     { s: "⟶", name: "Larga Der.", latex: "\\longrightarrow", def: "Flecha derecha extendida (común en límites y reacciones)." },
     { s: "⟵", name: "Larga Izq.", latex: "\\longleftarrow", def: "Flecha izquierda extendida." },
     { s: "⟷", name: "Larga Bi.", latex: "\\longleftrightarrow", def: "Flecha bidireccional extendida." },
@@ -1388,13 +1388,13 @@
     { s: "⟺", name: "Larga Iff", latex: "\\Longleftrightarrow", def: "Equivalencia enfática." },
     { s: "⟼", name: "Largo Mapeo", latex: "\\longmapsto", def: "Mapeo largo." },
 
-    // --- FLECHAS DIAGONALES ---
+    
     { s: "↗", name: "Noreste", latex: "\\nearrow", def: "Crecimiento, tendencia a más infinito." },
     { s: "↘", name: "Sureste", latex: "\\searrow", def: "Decrecimiento, tendencia a menos infinito." },
     { s: "↙", name: "Suroeste", latex: "\\swarrow", def: "Dirección Suroeste." },
     { s: "↖", name: "Noroeste", latex: "\\nwarrow", def: "Dirección Noroeste." },
 
-    // --- FLECHAS ESPECIALES Y ARPONES ---
+    
     { s: "⇀", name: "Arpón Der.", latex: "\\rightharpoonup", def: "Vector (notación alternativa), convergencia débil." },
     { s: "↽", name: "Arpón Izq.", latex: "\\leftharpoonup", def: "Arpón superior izquierdo." },
     { s: "⇁", name: "Arpón Inf. D", latex: "\\rightharpoondown", def: "Arpón inferior derecho." },
@@ -1407,7 +1407,7 @@
     { s: "↻", name: "Horario", latex: "\\circlearrowright", def: "Rotación a favor del reloj." },
     { s: "↯", name: "Rayo", latex: "\\lightning", def: "Contradicción (choque) o descarga." },
     
-    // --- FLECHAS NEGADAS (Lógica y Relaciones) ---
+    
     { s: "⇎", name: "No Equiv.", latex: "\\nLeftrightarrow", def: "No es lógicamente equivalente a." },
     { s: "⇍", name: "No es Imp.", latex: "\\nLeftarrow", def: "No es implicado por (negación de condicional inversa)." },
     { s: "⇏", name: "No Implica", latex: "\\nRightarrow", def: "La proposición antecedente no implica la consecuente." },
@@ -1415,7 +1415,7 @@
     { s: "↚", name: "No viene", latex: "\\nleftarrow", def: "No proviene de / No asignado desde." },
     { s: "↮", name: "No Relac.", latex: "\\nleftrightarrow", def: "No hay relación bidireccional." },
 
-    // --- FLECHAS PARALELAS Y MÚLTIPLES ---
+    
     { s: "⇉", name: "Doble Der.", latex: "\\rightrightarrows", def: "Convergencia uniforme o dos funciones paralelas." },
     { s: "⇇", name: "Doble Izq.", latex: "\\leftleftarrows", def: "Dos funciones o relaciones hacia la izquierda." },
     { s: "⇈", name: "Doble Arriba", latex: "\\upuparrows", def: "Doble ascenso o tendencia fuerte positiva." },
@@ -1425,7 +1425,7 @@
     { s: "⇚", name: "Triple/Doble I", latex: "\\Lleftarrow", def: "Flecha izquierda muy enfática." },
     { s: "⇛", name: "Triple/Doble D", latex: "\\Rrightarrow", def: "Flecha derecha muy enfática." },
 
-    // --- CURVAS Y BUCLES ---
+    
     { s: "↶", name: "Curva Izq.", latex: "\\curvearrowleft", def: "Salto o rotación curva hacia la izquierda." },
     { s: "↷", name: "Curva Der.", latex: "\\curvearrowright", def: "Salto o rotación curva hacia la derecha." },
     { s: "↫", name: "Bucle Izq.", latex: "\\looparrowleft", def: "Bucle de retroalimentación o auto-referencia." },
@@ -1433,7 +1433,7 @@
     { s: "↰", name: "Lsh", latex: "\\Lsh", def: "Salto de línea lógico o restricción superior izquierda." },
     { s: "↱", name: "Rsh", latex: "\\Rsh", def: "Salto o puntero a nueva dirección." },
 
-    // --- ARPONES VERTICALES Y MIXTOS ---
+    
     { s: "↾", name: "Arpón Arriba-Der", latex: "\\upharpoonright", def: "Restricción de una función (símbolo estándar)." },
     { s: "↿", name: "Arpón Arriba-Izq", latex: "\\upharpoonleft", def: "Variante de proyección o restricción." },
     { s: "⇂", name: "Arpón Abajo-Der", latex: "\\downharpoonright", def: "Deposición o bajada vectorial derecha." },
@@ -1441,7 +1441,7 @@
     { s: "⇋", name: "Equilibrio Quím.", latex: "\\leftrightharpoons", def: "Equilibrio (arpón arriba-derecha, abajo-izquierda)." },
     { s: "↭", name: "Ondulada Bi.", latex: "\\leftrightsquigarrow", def: "Interacción bidireccional o equivalencia aproximada." },
 
-    // --- TEORÍA DE CATEGORÍAS (Colas y Mapas) ---
+    
     { s: "↣", name: "Monomorfismo", latex: "\\rightarrowtail", def: "Inyección (flecha con cola). Preserva estructura." },
     { s: "↢", name: "Monom. Inv.", latex: "\\leftarrowtail", def: "Monomorfismo inverso." },
     { s: "⊸", name: "Multimapeo", latex: "\\multimap", def: "Multimap o implicación en lógica lineal." },
@@ -1451,7 +1451,7 @@
          {
             category: "Parentesis",
             items: [
-              // --- ESTÁNDAR Y CONJUNTOS ---
+              
     { s: "(", name: "Paréntesis A.", latex: "(", def: "Agrupación estándar, argumentos de funciones, coordenadas." },
     { s: ")", name: "Paréntesis C.", latex: ")", def: "Cierre de agrupación estándar." },
     { s: "[", name: "Corchete A.", latex: "[", def: "Intervalos cerrados, matrices, listas, índice." },
@@ -1459,7 +1459,7 @@
     { s: "{", name: "Llave A.", latex: "\\{", def: "Definición de conjuntos, cuerpos de funciones." },
     { s: "}", name: "Llave C.", latex: "\\}", def: "Cierre de conjunto." },
 
-    // --- BARRAS, NORMAS Y VALOR ABSOLUTO ---
+    
     { s: "|", name: "Barra Vert.", latex: "|", def: "Valor absoluto, divisibilidad, 'tal que' en conjuntos." },
     { s: "‖", name: "Norma / Doble", latex: "\\|", def: "Norma de un vector (longitud), operador de norma." },
     { s: "│", name: "Vert. Simple", latex: "\\lvert", def: "Delimitador izquierdo explícito para valor absoluto." },
@@ -1468,7 +1468,7 @@
     { s: "║", name: "Norma Der.", latex: "\\rVert", def: "Delimitador derecho explícito para norma." },
     { s: "╎", name: "Bracevert", latex: "\\bracevert", def: "Doble barra vertical usada para construir delimitadores grandes." },
 
-    // --- PISOS, TECHOS Y ÁNGULOS ---
+    
     { s: "⌊", name: "Piso Izq.", latex: "\\lfloor", def: "Función suelo: redondea al entero inferior." },
     { s: "⌋", name: "Piso Der.", latex: "\\rfloor", def: "Cierre de función suelo." },
     { s: "⌈", name: "Techo Izq.", latex: "\\lceil", def: "Función techo: redondea al entero superior." },
@@ -1476,14 +1476,14 @@
     { s: "⟨", name: "Ángulo Izq.", latex: "\\langle", def: "Producto interno, media, bra (física), tuplas." },
     { s: "⟩", name: "Ángulo Der.", latex: "\\rangle", def: "Cierre de producto interno o ket." },
 
-    // --- GRUPOS Y MOUSTACHES (Avanzados) ---
+    
     { s: "⟮", name: "Grupo Izq.", latex: "\\lgroup", def: "Paréntesis especial para grupos o matrices grandes." },
     { s: "⟯", name: "Grupo Der.", latex: "\\rgroup", def: "Cierre de grupo especial." },
     { s: "⎰", name: "Moustache I.", latex: "\\lmoustache", def: "Corchete superior de combinatoria o 'bigote' izquierdo." },
     { s: "⎱", name: "Moustache D.", latex: "\\rmoustache", def: "Corchete inferior de combinatoria o 'bigote' derecho." },
 
-    // --- HORIZONTALES (Constructores) ---
-    // Nota: Estos comandos requieren contenido, ej: \underbrace{x}
+    
+    
     { s: "⏟", name: "Llave Abajo", latex: "\\underbrace", def: "Agrupa términos por debajo (generalmente con una nota)." },
     { s: "⏞", name: "Llave Arriba", latex: "\\overbrace", def: "Agrupa términos por encima." },
     { s: "⎯", name: "Línea Arriba", latex: "\\overline", def: "Línea superior (promedio, conjugado, negación)." },
@@ -1499,12 +1499,12 @@
         {
             category: "Otros",
             items: [
-              // --- PUNTOS Y MATRICES ---
+              
     { s: "⋯", name: "Puntos Horiz.", latex: "\\cdots", def: "Continuación horizontal (usado en el centro de una línea)." },
     { s: "⋮", name: "Puntos Vert.", latex: "\\vdots", def: "Continuación vertical (usado en columnas de matrices)." },
     { s: "⋱", name: "Puntos Diag.", latex: "\\ddots", def: "Continuación diagonal (usado en matrices)." },
 
-    // --- SÍMBOLOS TIPO LETRA (Matemáticos) ---
+    
     { s: "ℜ", name: "Parte Real", latex: "\\Re", def: "Parte real de un número complejo." },
     { s: "ℑ", name: "Parte Imag.", latex: "\\Im", def: "Parte imaginaria de un número complejo." },
     { s: "℘", name: "Weierstrass", latex: "\\wp", def: "Función elíptica de Weierstrass." },
@@ -1513,26 +1513,26 @@
     { s: "℧", name: "Mho", latex: "\\mho", def: "Conductancia eléctrica (Siemens). Inverso de Ohm." },
     { s: "ℵ", name: "Aleph", latex: "\\aleph", def: "Cardinalidad de números infinitos (Teoría de Conjuntos)." },
 
-    // --- OPERADORES CIRCULARES Y PRODUCTOS ---
+    
     { s: "≀", name: "Producto Corona", latex: "\\wr", def: "Producto Wreath (corona) en teoría de grupos." },
     { s: "⊘", name: "Circulo Barra", latex: "\\oslash", def: "División modular o conjuntos cociente." },
     { s: "⊛", name: "Circulo Ast.", latex: "\\circledast", def: "Operador convolución o producto especial." },
     { s: "⊚", name: "Circulo Circ.", latex: "\\circledcirc", def: "Operador anidado o composición especial." },
     { s: "⊝", name: "Circulo Guion", latex: "\\circleddash", def: "Operador de sustracción circular." },
 
-    // --- MARCADORES DE TEXTO Y SECCIÓN ---
+    
     { s: "¶", name: "Párrafo", latex: "\\P", def: "Signo de Pilcrow (calderón). Fin de párrafo." },
     { s: "§", name: "Sección", latex: "\\S", def: "Signo de sección o parágrafo legal." },
     { s: "†", name: "Daga", latex: "\\dagger", def: "Operador adjunto (Hermítico) o nota al pie." },
     { s: "‡", name: "Doble Daga", latex: "\\ddagger", def: "Nota al pie secundaria." },
 
-    // --- MONEDAS ---
+    
     { s: "$", name: "Dólar", latex: "\\$", def: "Símbolo de moneda estándar." },
     { s: "£", name: "Libra", latex: "\\pounds", def: "Libra esterlina." },
     { s: "€", name: "Euro", latex: "\\euro", def: "Moneda de la Eurozona." },
     { s: "¢", name: "Centavo", latex: "\\cent", def: "Centavo." },
 
-    // --- LIGADURAS Y LETRAS LATINAS ESPECIALES ---
+    
     { s: "Å", name: "Angstrom", latex: "\\AA", def: "Unidad de longitud (10^-10 m), distancias atómicas." },
     { s: "æ", name: "ae minúscula", latex: "\\ae", def: "Ligadura latina ae o vocal del IPA." },
     { s: "Æ", name: "AE mayúscula", latex: "\\AE", def: "Ligadura latina AE." },
@@ -1549,12 +1549,12 @@
         
     ];
 
-    // --- REFERENCIAS GLOBALES ---
+    
     const container = document.getElementById("main-container");
     const navContainer = document.getElementById("category-nav");
     const searchInput = document.getElementById('searchInput');
 
-// --- CATEGORÍA FAVORITOS ---
+
 const favWrapper = document.createElement("div");
 favWrapper.className = "section-wrapper";
 favWrapper.setAttribute("data-category", "Favoritos");
@@ -1577,7 +1577,7 @@ favWrapper.innerHTML = `
 container.appendChild(favWrapper);
 
 
-    // --- FUNCIÓN DE COPIADO ---
+    
     function copyToClipboard(text, element, msg = "Copiado ✓") {
         const textArea = document.createElement("textarea");
         textArea.value = text;
@@ -1588,7 +1588,7 @@ container.appendChild(favWrapper);
         try {
             document.execCommand('copy');
             
-            // Feedback Visual
+            
             const feedback = element.querySelector('.feedback');
             if (feedback) {
                 feedback.innerText = msg;
@@ -1603,7 +1603,7 @@ container.appendChild(favWrapper);
         document.body.removeChild(textArea);
     }
     
-    // 1. Referencias DOM
+    
 const clipboardBar = document.getElementById("clipboard-bar");
 const clipboardItemsContainer = document.getElementById("clipboard-items");
 const copyClipboardBtn = document.getElementById("copy-clipboard-btn");
@@ -1611,10 +1611,10 @@ const copyClipboardBtn = document.getElementById("copy-clipboard-btn");
 const removeLastBtn = document.getElementById("remove-last-btn");
 const clearAllBtn = document.getElementById("clear-all-btn");
 
-// 2. Estado
+
 let clipboardSymbols = [];
 
-// 3. Eventos de los botones
+
 removeLastBtn.addEventListener("click", () => {
     if (clipboardSymbols.length === 0) return;
     clipboardSymbols.pop();
@@ -1626,7 +1626,7 @@ clearAllBtn.addEventListener("click", () => {
     renderClipboard();
 });
 
-// Función para actualizar la barra
+
 function renderClipboard() {
     clipboardItemsContainer.innerHTML = "";
     if (clipboardSymbols.length === 0) {
@@ -1650,7 +1650,7 @@ function renderClipboard() {
 
 
 
-// Botón copiar todo
+
 copyClipboardBtn.addEventListener("click", () => {
     if (clipboardSymbols.length === 0) return;
     copyToClipboard(clipboardSymbols.join(" "), copyClipboardBtn, "Todos copiados ✓");
@@ -1658,16 +1658,16 @@ copyClipboardBtn.addEventListener("click", () => {
 
 
 
-    // --- 1. GENERAR BOTONES DE NAVEGACIÓN (Píldora) ---
+    
     if (navContainer) {
-        // Botón "Todas"
+        
         const allBtn = document.createElement("button");
         allBtn.className = "mode-btn active";
         allBtn.innerText = "Todas";
         allBtn.onclick = () => filterSections("Todas", allBtn);
         navContainer.appendChild(allBtn);
 
-        // Botones de Categorías
+        
         mathData.forEach(section => {
             const btn = document.createElement("button");
             btn.className = "mode-btn";
@@ -1677,14 +1677,14 @@ copyClipboardBtn.addEventListener("click", () => {
         });
     }
 
-    // --- 2. GENERAR EL CONTENIDO (Tarjetas) ---
+    
     mathData.forEach(section => {
-        // Wrapper para filtrar la sección completa
+        
         const sectionWrapper = document.createElement("div");
         sectionWrapper.className = "section-wrapper";
         sectionWrapper.setAttribute("data-category", section.category);
 
-        // Título
+        
      const header = document.createElement("div");
 header.className = "section-header";
 
@@ -1700,11 +1700,11 @@ sectionWrapper.setAttribute("draggable", "true");
 
 
 
-        // Grid
+        
         const grid = document.createElement("div");
         grid.className = "grid";
 
-        // Tarjetas
+        
         section.items.forEach(item => {
             const card = document.createElement("div");
             card.className = "card";
@@ -1721,11 +1721,11 @@ sectionWrapper.setAttribute("draggable", "true");
                 </div>
             `;
 
-            // Click: Copiar Símbolo
+            
    card.addEventListener('click', () => {
     copyToClipboard(item.s, card, "Copiado ✓");
 
-    // --- AÑADIR A LA BARRA DE CLIPBOARD ---
+    
     if (!clipboardSymbols.includes(item.s)) {
         clipboardSymbols.push(item.s);
         renderClipboard();
@@ -1737,7 +1737,7 @@ sectionWrapper.setAttribute("draggable", "true");
     e.stopPropagation();
     copyToClipboard(item.latex, card, "LaTeX Copiado ✓");
 
-    // --- AÑADIR TAMBIÉN AL CLIPBOARD VISUAL ---
+    
     if (!clipboardSymbols.includes(item.latex)) {
         clipboardSymbols.push(item.latex);
         renderClipboard();
@@ -1764,14 +1764,14 @@ card.addEventListener("click", () => {
         container.appendChild(sectionWrapper);
     });
 
-    // --- 3. FUNCIÓN DE FILTRADO POR CATEGORÍA ---
+    
     function filterSections(category, clickedBtn) {
-        // Actualizar botones
+        
         const allButtons = document.querySelectorAll('.mode-btn');
         allButtons.forEach(btn => btn.classList.remove('active'));
         if(clickedBtn) clickedBtn.classList.add('active');
 
-        // Filtrar secciones
+        
         const sections = document.querySelectorAll('.section-wrapper');
         sections.forEach(sec => {
             if (category === "Todas" || sec.getAttribute("data-category") === category) {
@@ -1784,10 +1784,10 @@ card.addEventListener("click", () => {
         });
     }
 
-    // --- 4. LÓGICA DE BÚSQUEDA (Search Bar) ---
+    
 if (searchInput) {
     searchInput.addEventListener('input', (e) => {
-        // Convertimos a minúsculas y normalizamos para quitar tildes
+        
         const term = e.target.value.toLowerCase().trim().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
 
         const sections = document.querySelectorAll('.section-wrapper');
@@ -1797,10 +1797,10 @@ if (searchInput) {
             let visibleCount = 0;
 
             cards.forEach(card => {
-                // Ignorar el botón de añadir favoritos
+                
                 if (card.id === "add-favorite") return;
 
-                // Tomamos nombre y símbolo, normalizando tildes
+                
                 const name = card.querySelector('.name').innerText.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
                 const symbol = card.querySelector('.symbol').innerText.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
 
@@ -1812,7 +1812,7 @@ if (searchInput) {
                 }
             });
 
-            // Mostrar u ocultar la sección completa
+            
             if (visibleCount === 0) {
                 wrapper.classList.add('hidden');
             } else {
@@ -1830,10 +1830,10 @@ document.querySelectorAll('.section-wrapper').forEach(section => {
 const header = section.querySelector('.section-header');
     if (header) {
         header.addEventListener('click', (e) => {
-            // Si el click fue en el icono de arrastrar (grip), no colapsamos
+            
             if (e.target.closest('.drag-handle')) return;
             
-            // Alternamos la clase que oculta el grid
+            
             section.classList.toggle('collapsed');
         });
     }
@@ -1893,14 +1893,14 @@ if (savedOrder) {
 
 const favGrid = document.getElementById("favorites-grid");
 
-// --- 1. Inicializar favoritos ---
+
 let favorites = JSON.parse(localStorage.getItem("favorites")) || [];
 let selectingFavorites = false;
 
-// --- 2. Referencia al botón ---
+
 const addFavoriteBtn = document.getElementById("add-favorite");
 
-// --- 3. Evento de toggle modo favoritos ---
+
 addFavoriteBtn.addEventListener("click", () => {
     selectingFavorites = !selectingFavorites;
     document.body.classList.toggle("selecting-favorites", selectingFavorites);
@@ -1921,12 +1921,12 @@ addFavoriteBtn.addEventListener("click", () => {
         `;
     }
 
-    lucide.createIcons(); // Reactiva los iconos lucide
+    lucide.createIcons(); 
 });
 
-// --- 4. Función para renderizar favoritos ---
+
 function renderFavorites() {
-    // Borra todo excepto el "+"
+    
     favGrid.querySelectorAll(".favorite-card").forEach(el => el.remove());
 
     favorites.forEach((item, index) => {
@@ -1946,10 +1946,10 @@ function renderFavorites() {
             </div>
         `;
 
-        // --- CLICK SIMPLE: copiar símbolo ---
+        
         card.addEventListener("click", (e) => {
             if (selectingFavorites) {
-                // Si estamos en modo selección, quitar favorito
+                
                 favorites.splice(index, 1);
                 localStorage.setItem("favorites", JSON.stringify(favorites));
                 renderFavorites();
@@ -1964,7 +1964,7 @@ if (!clipboardSymbols.includes(item.s)) {
             }
         });
 
-        // --- DOBLE CLICK: copiar LaTeX ---
+        
         card.addEventListener("dblclick", (e) => {
             e.stopPropagation();
             copyToClipboard(item.latex, card, "LaTeX Copiado ✓");
@@ -1976,7 +1976,7 @@ if (!clipboardSymbols.includes(item.latex)) {
 
         });
 
-        // --- CLICK DERECHO: quitar favorito (alternativo) ---
+        
         card.addEventListener("contextmenu", e => {
             e.preventDefault();
             favorites.splice(index, 1);
@@ -1988,7 +1988,7 @@ if (!clipboardSymbols.includes(item.latex)) {
     });
 }
 
-// --- 5. Renderizar al cargar la página ---
+
 renderFavorites();
 
 
@@ -2014,11 +2014,11 @@ renderFavorites();
 </div>
 
 <script>
-    // Script simple para cerrar el aviso
+    
     function closeUsageToast() {
         const toast = document.getElementById('usage-toast');
         toast.style.opacity = '0';
-        toast.style.transform = 'translateX(-50%) translateY(20px)'; // Se va hacia abajo
+        toast.style.transform = 'translateX(-50%) translateY(20px)'; 
         setTimeout(() => {
             toast.style.display = 'none';
         }, 300);
