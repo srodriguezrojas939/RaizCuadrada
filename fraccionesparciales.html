@@ -1,17 +1,18 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
+    <link rel="icon" href="icono.png" type="image/png">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title> Fracciones parciales| √(Raiz) Cuadrada² </title>
 
     <script>
         (function() {
-            // 1. Intentamos leer la memoria
+            
             const localTheme = localStorage.getItem('theme');
-            // 2. Si hay algo guardado lo usamos, si no, usamos 'light'
+            
             const themeToSet = localTheme || 'light';
-            // 3. Lo aplicamos INMEDIATAMENTE al HTML
+            
             document.documentElement.setAttribute('data-theme', themeToSet);
         })();
     </script>
@@ -39,10 +40,10 @@
     @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700;900&display=swap');
     @import url('https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700&display=swap');
 
-    /* --- RESET GLOBAL (CRÍTICO) --- */
+    
     * { box-sizing: border-box; }
 
-    /* --- BASE --- */
+    
     body { 
         background: #ffffff; 
         font-family: 'Open Sans', sans-serif; 
@@ -54,9 +55,9 @@
         transition: background 0.3s ease;
     }
 
-    /* --- ANIMACIONES --- */
+    
     .calculadora {
-        /* Aplicamos la animación directamente al contenedor principal */
+        
         opacity: 0; 
         transform: translateY(20px); 
         animation: fadeUp 0.8s cubic-bezier(0.2, 0.8, 0.2, 1) forwards; 
@@ -72,7 +73,7 @@
         to { opacity: 1; transform: translateY(0); } 
     }
 
-    /* --- CONTENEDOR PRINCIPAL --- */
+    
     .calculadora {
         background: #ffffff; 
         padding: 40px 35px; 
@@ -83,7 +84,7 @@
         position: relative;
     }
 
-    /* --- HEADER --- */
+    
     .header-section { text-align: center; margin-bottom: 35px; }
     
     .header-section h1 { 
@@ -105,13 +106,13 @@
         letter-spacing: 1.5px; 
     }
 
-    /* --- PREVIEW Y RESULTADOS --- */
+    
     #preview, #output {
         background: #f9f9f9; 
         margin-bottom: 25px; 
         padding: 20px;
         border-radius: 25px; 
-        min-height: 95px; /* Altura original mantenida */
+        min-height: 95px; 
         display: flex;
         align-items: center; 
         justify-content: center; 
@@ -123,9 +124,9 @@
         text-align: center;
     }
 
-    #output { margin-top: 30px; } /* Ajustado espacio visual */
+    #output { margin-top: 30px; } 
 
-    /* --- LABELS --- */
+    
     label { 
         display: block; 
         font-size: 12px; 
@@ -139,7 +140,7 @@
         
     }
     
-    /* --- INPUTS Y SELECTS --- */
+    
     input, select {
         width: 100%; 
         background: #f9f9f9; 
@@ -151,7 +152,7 @@
         color: #333; 
         transition: all 0.3s ease;
         box-shadow: 0 2px 5px rgba(0,0,0,0.02) inset;
-        margin-bottom: 0; /* El margen lo maneja el row o el padre */
+        margin-bottom: 0; 
         outline: none;
         box-sizing: border-box;
       
@@ -164,7 +165,7 @@
         transform: translateY(-3px);
     }
 
-    /* --- GRID DE INPUTS (CLASE .ROW) --- */
+    
     .row { 
         display: grid; 
         grid-template-columns: 1fr 1fr; 
@@ -172,7 +173,7 @@
         margin-bottom: 25px; 
     }
 
-    /* --- BOTONES --- */
+    
     .btn-principal {
         width: 100%; 
         background: #1a1a1a; 
@@ -201,7 +202,7 @@
         transform: none;
     }
 
-    /* --- PÍLDORAS (PILLS-NAV) --- */
+    
     .pills-nav { 
         display: flex; 
         justify-content: center; 
@@ -233,7 +234,7 @@
     
     .pill:hover:not(.active) { background: #e0e0e0; }
 
-    /* --- PANEL DE SÍMBOLOS --- */
+    
     .symbols-container { 
         background: #ffffff; 
         border-radius: 30px; 
@@ -243,18 +244,18 @@
         box-shadow: 0 10px 30px rgba(0,0,0,0.03);
     }
     
-/* --- CAMBIO PRINCIPAL: DE GRID A FLEX --- */
+
     .symbols-grid { 
-        display: flex;           /* Usamos Flexbox en lugar de Grid */
-        flex-wrap: wrap;         /* Permite que los elementos bajen de línea si no caben */
-        gap: 12px;               /* Espacio entre elementos */
-        justify-content: center; /* Centra los elementos horizontalmente */
+        display: flex;           
+        flex-wrap: wrap;         
+        gap: 12px;               
+        justify-content: center; 
     }
     
     .sym-btn { 
         background: #fff; 
         border: 1px solid #eee; 
-        /* Aumentamos padding lateral para que el texto respire */
+        
         padding: 12px 18px;  
         border-radius: 15px; 
         text-align: center; 
@@ -268,17 +269,17 @@
         justify-content: center;
         font-family: 'Open Sans', sans-serif;
         
-        /* --- ESTO HACE LA MAGIA --- */
-        flex: 0 1 auto; /* El ancho se adapta automáticamente al contenido */
-        min-width: 60px; /* Un ancho mínimo para que los símbolos cortos no se vean ridículos */
-        max-width: 100%; /* Asegura que no se salga de la pantalla en móviles */
+        
+        flex: 0 1 auto; 
+        min-width: 60px; 
+        max-width: 100%; 
     }
     
     .sym-btn:hover { background: #f9f9f9; transform: translateY(-2px); border-color: #ddd; }
     .sym-btn span { font-size: 16px; font-weight: 700; margin-bottom: 2px; }
     .sym-btn small { font-size: 9px; text-transform: uppercase; color: #999; font-weight: 700; }
 
-    /* --- MODO OSCURO GLOBAL --- */
+    
     [data-theme="dark"] body { 
         background: #0a0a0a; 
     }
@@ -293,7 +294,7 @@
     [data-theme="dark"] .header-section p { color: #888; }
     [data-theme="dark"] label { color: #888; }
 
-    /* Inputs y Elementos en Modo Oscuro */
+    
     [data-theme="dark"] input, 
     [data-theme="dark"] select,
     [data-theme="dark"] #preview,
@@ -309,7 +310,7 @@
         background: #252525;
     }
 
-    /* Botón Principal Modo Oscuro */
+    
     [data-theme="dark"] .btn-principal {
         background: #ffffff;
         color: #000000;
@@ -318,7 +319,7 @@
     [data-theme="dark"] .btn-principal:hover:not(:disabled) { background: #e0e0e0; }
     [data-theme="dark"] .btn-principal:disabled { background: #333; color: #666; }
 
-    /* Pills y Simbolos Modo Oscuro */
+    
     [data-theme="dark"] .pill { background: #1e1e1e; color: #ccc; border-color: transparent; }
     [data-theme="dark"] .pill.active { background: #ffffff; color: #000; }
 
@@ -333,7 +334,7 @@
     }
     [data-theme="dark"] .sym-btn:hover { background: #333; }
 
-    /* --- RESPONSIVE --- */
+    
     @media (max-width: 480px) {
         body { padding: 10px; display: block; }
         .calculadora { padding: 30px 20px; margin: 20px auto; }
@@ -343,18 +344,18 @@
     
     
      @media (max-width: 480px) {
-    /* En celular quitamos flex para evitar que centre recortando bordes */
+    
     body {
         display: block; 
-        padding: 10px; /* Menos espacio en los bordes de la pantalla */
+        padding: 10px; 
     }
 
-    /* Ajustamos el margen para que se centre con block */
+    
     .fade-in {
         margin: 20px auto; 
     }
 
-    /* Reducimos el relleno interno de la tarjeta para ganar espacio útil */
+    
     .calculadora {
         padding: 30px 20px; 
     }
@@ -362,7 +363,7 @@
 
 .label{color:transparent};
 
-/* Clase para cambiar el Grid a Lista Vertical */
+
 .symbols-container .vertical-layout {
     display: flex !important;
     flex-direction: column !important;
@@ -370,31 +371,31 @@
     
 }
 
-/* Estilo de cada fila de fórmula */
+
 .formula-row {
     padding: 15px 10px;
     border-bottom: 1px solid #f0f0f0;
-    font-family: 'Times New Roman', serif; /* Serif para fórmulas se ve más académico */
+    font-family: 'Times New Roman', serif; 
     font-size: 1.1rem;
     color: #333;
     display: flex;
     align-items: center;
     justify-content: flex-start;
     transition: background 0.2s;
-    overflow-x: auto;      /* Activa el scroll horizontal si no cabe */
-    white-space: nowrap;   /* Obliga a la fórmula a quedarse en una sola línea */
-    max-width: 100%;       /* Asegura que la fila no sea más ancha que su contenedor */
-    overflow-y: hidden;    /* Oculta scroll vertical innecesario */
-    box-sizing: border-box; /* Asegura que el padding no rompa el 100% width */
+    overflow-x: auto;      
+    white-space: nowrap;   
+    max-width: 100%;       
+    overflow-y: hidden;    
+    box-sizing: border-box; 
 }
 
-/* Efecto hover suave */
+
 .formula-row:hover {
     background-color: #fcfcfc;
-    padding-left: 15px; /* Pequeño desplazamiento a la derecha */
+    padding-left: 15px; 
 }
 
-/* Modo Oscuro para la tabla */
+
 [data-theme="dark"] .formula-row {
     border-color: #333;
     color: #eee;
@@ -411,7 +412,7 @@
     background-color: #eaeaea;
 }
 
-      /* --- TOAST --- */
+      
 .toast {
     position: fixed;
     bottom: 30px;
@@ -430,13 +431,13 @@
     z-index: 9999;
 }
 
-/* Visible */
+
 .toast.show {
     opacity: 1;
     transform: translateX(-50%) translateY(0);
 }
 
-/* Dark mode */
+
 [data-theme="dark"] .toast {
     background: #ffffff;
     color: #000000;
@@ -479,7 +480,7 @@
         margin-bottom: 8px;
         letter-spacing: 1px;
     }
-    /* Soporte modo oscuro */
+    
     [data-theme="dark"] .steps-container {
   
     }
@@ -703,17 +704,17 @@ const categorias = {
     { s: 'x^2-a^2', t: 'Dif. Cuadrados (x-a)(x+a)' },
     { s: 'x*(x-a)', t: 'Factor Común x' },
     
-    // CASO 2: FACTORES LINEALES REPETIDOS
+    
     { s: '(x-a)^2', t: 'Binomio al Cuadrado' },
     { s: 'x^2+2*a*x+a^2', t: 'Trinomio Cuadrado Perf.' },
     { s: '(x-a)^3', t: 'Binomio al Cubo' },
 
-    // CASO 3: CUADRÁTICOS IRREDUCIBLES
+    
     { s: 'x^2+a^2', t: 'Suma Cuadrados (Irred.)' },
     { s: '(x^2+1)*(x-a)', t: 'Cuadrático y Lineal' },
     { s: 'x^3+a^3', t: 'Suma Cubos (Inc. Cuad.)' },
     
-    // CASO 4 Y TRINOMIOS GENERALES
+    
     { s: '(x^2+a^2)^2', t: 'Cuadrático Repetido' },
     { s: 'a*x^2+b*x+c', t: 'Trinomio General' },
     { s: 'x^4-a^4', t: 'Dif. Cuarta (Mezcla)' }
@@ -774,11 +775,11 @@ document.addEventListener('DOMContentLoaded', () => {
     showCategory('plantillas', btnPlantillas);
 });
 
-// Variable para recordar qué input se tocó por última vez
-// Por defecto, empezamos con el numerador
+
+
 let inputActivo = numInput; 
 
-// Agregamos "escuchadores" para actualizar esta variable cuando el usuario toque un campo
+
 numInput.addEventListener('focus', () => { inputActivo = numInput; });
 denInput.addEventListener('focus', () => { inputActivo = denInput; });
 
@@ -814,7 +815,7 @@ function mostrarToast(mensaje = 'Copiado') {
 
 
 function showCategory(cat, btn = null) {
-    // Activar pill
+    
     if (btn) {
         document.querySelectorAll('.pill').forEach(p => p.classList.remove('active'));
         btn.classList.add('active');
@@ -822,15 +823,13 @@ function showCategory(cat, btn = null) {
 
     const grid = document.getElementById('grid-content');
     
-    // --- BORRA ESTA LÍNEA ANTIGUA ---
-    // const input = document.activeElement === denInput ? denInput : numInput; 
-    // --------------------------------
+    
+    
+    
 
     grid.innerHTML = '';
 
-    /* ===============================
-       CASO ESPECIAL: MÉTODOS
-       =============================== */
+    
     if (cat === 'tabla') {
         grid.classList.add('vertical-layout');
 
@@ -846,9 +845,7 @@ function showCategory(cat, btn = null) {
         return;
     }
 
-    /* ===============================
-       CATEGORÍAS NORMALES
-       =============================== */
+    
     grid.classList.remove('vertical-layout');
 
     if (!categorias[cat]) return;
@@ -861,8 +858,8 @@ function showCategory(cat, btn = null) {
             <small>${item.t}</small>
         `;
 
-        // AQUÍ ESTÁ EL CAMBIO CLAVE:
-        // Usamos 'inputActivo' en lugar de la variable local 'input'
+        
+        
         div.onclick = () => {
             insertarEnCursor(inputActivo, item.s); 
             actualizarPreview();
@@ -884,16 +881,16 @@ function insertarEnCursor(input, texto) {
     input.focus();
 }
 
-/* --- 3. FUNCIONES DE INTERFAZ (TABS Y PLANTILLAS) --- */
+
 function setMode(mode) {
-    // Manejo de las pestañas (Plantillas vs Tutorial)
+    
     document.querySelectorAll('.pill').forEach(b => b.classList.remove('active'));
     document.querySelectorAll('.category-content').forEach(c => c.style.display = 'none');
     
-    // Activar el botón clickeado
-    event.target.classList.add('active'); // Nota: event.target funciona inline, pero idealmente se pasa 'this'
     
-    // Mostrar el contenido
+    event.target.classList.add('active'); 
+    
+    
     document.getElementById(mode).style.display = 'grid';
 }
 
@@ -903,10 +900,10 @@ function setMode(mode) {
 
     let s = expr;
 
-    // Quitar espacios
+    
     s = s.replace(/\s+/g, '');
 
-    // Superíndices → ^
+    
     const sup = {
         '⁰':'0','¹':'1','²':'2','³':'3','⁴':'4',
         '⁵':'5','⁶':'6','⁷':'7','⁸':'8','⁹':'9'
@@ -914,14 +911,14 @@ function setMode(mode) {
 
     s = s.replace(/[⁰¹²³⁴⁵⁶⁷⁸⁹]/g, m => '^' + sup[m]);
 
-    // √ → sqrt
+    
     s = s.replace(/√/g, 'sqrt');
 
-    // Multiplicación implícita
-    s = s.replace(/(\d)([a-zA-Z\(])/g, '$1*$2');   // 2x, 2(x)
-    s = s.replace(/([a-zA-Z\)])(\d)/g, '$1*$2');   // x2, )2
-    s = s.replace(/([a-zA-Z])([a-zA-Z])/g, '$1*$2'); // xy
-    s = s.replace(/\)\(/g, ')*(');                 // )(
+    
+    s = s.replace(/(\d)([a-zA-Z\(])/g, '$1*$2');   
+    s = s.replace(/([a-zA-Z\)])(\d)/g, '$1*$2');   
+    s = s.replace(/([a-zA-Z])([a-zA-Z])/g, '$1*$2'); 
+    s = s.replace(/\)\(/g, ')*(');                 
 
     return s;
 }
@@ -929,18 +926,18 @@ function setMode(mode) {
 
 
 
-/* --- FUNCIÓN AUXILIAR PARA LEER LOS NÚMEROS (a, b, c) --- */
+
 function getQuadraticCoeffs(expr) {
-    // 1. Limpiamos espacios y estandarizamos
+    
   let clean = normalizar(expr).replace(/\s+/g, '').replace(/\*/g, '');
     
-    // Ahora la regex funcionará siempre porque 'clean' tiene ^2
+    
     const regex = /([+-]?\d*)x\^2([+-]?\d*)x([+-]?\d+)/;
     const match = clean.match(regex);
     
 
     if (match) {
-        // Función para convertir texto ("-", "+", "2", "") en número real
+        
         const parsePart = (str) => {
             if (!str || str === '+') return 1;
             if (str === '-') return -1;
@@ -953,10 +950,10 @@ function getQuadraticCoeffs(expr) {
             c: parsePart(match[3])
         };
     }
-    return null; // No se pudo leer (quizás faltan términos)
+    return null; 
 }
 
-/* --- GENERADOR DE PASOS DINÁMICO --- */
+
 
 function actualizarPreviewFraccion() {
     const num = normalizar(numInput.value.trim());
@@ -994,7 +991,7 @@ function actualizarPreviewFraccion() {
             const num = normalizar(numVal);
             const den = normalizar(denVal);
 
-            // Construimos la fracción nosotros
+            
             const expr = `(${num})/(${den})`;
 
             const core = nerdamer(expr);
@@ -1016,35 +1013,31 @@ function actualizarPreviewFraccion() {
 });
 
 
-/* --- GENERADOR DE PASOS DINÁMICO --- */
+
 function generateSteps(inputExpr, outputExpr, mode) {
     const stepsList = document.getElementById('steps-list');
     const stepsBox = document.getElementById('steps-box');
     
-    // Limpiamos la lista anterior
+    
     stepsList.innerHTML = ""; 
     let steps = [];
 
     try {
-        // Inicializamos nerdamer con la expresión
+        
         const expression = nerdamer(inputExpr);
         const num = expression.numerator();
         const den = expression.denominator();
 
-        /* =====================================================
-           PASO 0: EXPRESIÓN ORIGINAL
-        ===================================================== */
+        
         steps.push({
             title: "Expresión Original",
             math: `\\frac{${num.toTeX()}}{${den.toTeX()}}`
         });
 
-        /* =====================================================
-           PASO 1: FACTORIZAR AL MÁXIMO EL DENOMINADOR
-        ===================================================== */
+        
         const denFactored = nerdamer(`factor(${den.toString()})`);
 
-        // Solo mostramos este paso si hubo cambios al factorizar
+        
         if (den.toString() !== denFactored.toString()) {
             steps.push({
                 title: "1. Factorizar el denominador",
@@ -1053,13 +1046,11 @@ function generateSteps(inputExpr, outputExpr, mode) {
             });
         }
 
-        /* =====================================================
-           PASO 2: PLANTEAR LAS FRACCIONES (ANÁLISIS ROBUSTO)
-        ===================================================== */
-        // Regex para capturar: (x-1)^2  |  (x+2)  |  x^2  |  x
+        
+        
         let factoresRaw = denFactored.toString().match(/(\([^\)]+\)(\^\d+)?)|([a-z](\^\d+)?)/g);
         
-        // Fallback simple si el regex no detecta nada (ej: x*y)
+        
         if (!factoresRaw) factoresRaw = denFactored.toString().split('*');
 
         const letras = ['A', 'B', 'C', 'D', 'E', 'F', 'G'];
@@ -1071,7 +1062,7 @@ function generateSteps(inputExpr, outputExpr, mode) {
         if (factoresRaw && factoresRaw.length > 0) {
             
             factoresRaw.forEach((f) => {
-                // Separar base y exponente. Ej: (x-1)^2 -> base=(x-1), exp=2
+                
                 let base = f;
                 let exponente = 1;
                 
@@ -1081,67 +1072,65 @@ function generateSteps(inputExpr, outputExpr, mode) {
                     exponente = parseInt(partes[1]);
                 }
 
-                // Bucle para Potencias (Caso II de fracciones parciales)
+                
                 for (let k = 1; k <= exponente; k++) {
                     const letra = letras[currentLetraIndex];
                     
-                    // Construir el denominador visual: (x-1) o (x-1)^2
+                    
                     let denVisual = (k === 1) ? base : `${base}^${k}`;
-                    // Limpieza: si es (x), dejar solo x
+                    
                     denVisual = denVisual.replace(/^\(([^)]+)\)$/, '$1');
 
-                    // A. Agregar a la plantilla visual
+                    
                     plantilla.push(`\\frac{${letra}}{${denVisual}}`);
 
-                    // B. Preparar término para la Ecuación Lineal
-                    // Truco: Si hay exactamente 2 factores y son lineales, cruzamos.
-                    // Si no, usamos notación genérica para no romper la visualización.
+                    
+                    
+                    
                     if (factoresRaw.length === 2 && exponente === 1) {
                         const otroFactor = factoresRaw.find(x => x !== f);
                         terminosRHS.push(`${letra}(${otroFactor})`);
                     } else {
-                        // Caso complejo: A * (Todo / DenomActual)
-                        // Mostramos '...' para indicar el resto del polinomio
+                        
+                        
                         terminosRHS.push(`${letra}(\\dots)`); 
                     }
                     
-                    // C. Calcular raíz para el paso de evaluación
-                    // Solo para factores lineales (potencia 1 en el denominador actual)
-                // --- BUSCA ESTA PARTE EN EL PASO 2 Y REEMPLÁZALA ---
+                    
+                    
+                
                     if (k === exponente) { 
                         try {
                             const solucionRaiz = nerdamer.solve(`${base} = 0`, 'x');
                             let raizStr = solucionRaiz.toString().replace(/[\[\]]/g, '');
                             
-                            // NUEVO: Calculamos qué queda del denominador si quitamos este factor
-                            // Esto sirve para hallar el valor exacto de A, B...
+                            
+                            
                             let denResto = nerdamer(`(${denFactored.toString()})/(${base})`).toString();
 
                             calculosRaices.push({ 
                                 letra: letra, 
                                 raiz: raizStr,
-                                denResto: denResto // <--- GUARDAMOS ESTO
+                                denResto: denResto 
                             });
                         } catch(e) {}
                     }
-                    // ---------------------------------------------------
+                    
 
                     currentLetraIndex++;
                 }
             });
 
-            // MOSTRAR PASO 2
+            
             steps.push({
                 title: "2. Estructura de Fracciones Parciales",
                 math: `\\text{Planteamos una constante para cada factor:} \\\\
                        \\frac{${num.toTeX()}}{${denFactored.toTeX()}} = ${plantilla.join(' + ')}`
             });
 
-            /* =====================================================
-               PASO 3: ECUACIÓN LINEALIZADA
-            ===================================================== */
+            
             let rhsMath = terminosRHS.join(' + ');
-            // Si quedó muy genérico con puntos, ponemos un texto explicativo mejor
+            
             if (rhsMath.includes('dots') && factoresRaw.length > 2) {
                 rhsMath = "\\sum \\text{Incógnita} \\times \\text{Factores Restantes}";
             }
@@ -1152,20 +1141,18 @@ function generateSteps(inputExpr, outputExpr, mode) {
                        ${num.toTeX()} = ${rhsMath}`
             });
 
-            /* =====================================================
-               PASO 4: CALCULAR CONSTANTES (MÉTODO HEAVISIDE)
-            ===================================================== */
+            
             let pasosEvaluacion = [];
 
             calculosRaices.forEach(item => {
-                // Solo procedemos si la raíz es un número manejable
+                
                 if (item.raiz && item.raiz.length < 10) {
                     try {
-                        // Evaluamos el NUMERADOR original con la raíz
-                        // Ej: Si num es 2x+1 y raiz es 3 -> 2(3)+1 = 7
+                        
+                        
                         const valNum = nerdamer(num.toString()).sub('x', `(${item.raiz})`).evaluate().toString();
                         
-                        // Generamos la linea: "Si x = 3 => 7 = A(...)"
+                        
                         pasosEvaluacion.push(
                             `\\bullet \\text{ Si } x = ${item.raiz} \\implies ${num.toString().replace(/x/g, `(${item.raiz})`)} = ${valNum} \\dots \\implies \\mathbf{Hallamos \\; ${item.letra}}`
                         );
@@ -1187,32 +1174,30 @@ function generateSteps(inputExpr, outputExpr, mode) {
             }
 
         } else {
-            // FALLBACK: Si no se pudo analizar los factores
+            
             steps.push({
                 title: "2. Planteamiento",
                 math: `\\text{Aplicamos descomposición en fracciones simples.}`
             });
         }
         
-        /* =====================================================
-           PASO 4.5: RESULTADOS DE LAS CONSTANTES
-        ===================================================== */
+        
         let valoresEncontrados = [];
         
         calculosRaices.forEach(item => {
             try {
-                // 1. Evaluamos el Numerador con la raíz
+                
                 let valNumerador = nerdamer(num.toString()).sub('x', item.raiz).evaluate();
                 
-                // 2. Evaluamos el Denominador (sin el factor actual) con la raíz
+                
                 let valDenominador = nerdamer(item.denResto).sub('x', item.raiz).evaluate();
                 
-                // 3. Dividimos para hallar la constante (A = Num/Den)
+                
                 let valorFinal = nerdamer(`${valNumerador}/${valDenominador}`).toString();
                 
                 valoresEncontrados.push(`${item.letra} = ${valorFinal}`);
             } catch(e) {
-                // Si falla el cálculo exacto (ej: raíces complejas), no pasa nada
+                
             }
         });
 
@@ -1226,9 +1211,7 @@ function generateSteps(inputExpr, outputExpr, mode) {
         
         
 
-        /* =====================================================
-           PASO FINAL: RESULTADO
-        ===================================================== */
+        
         steps.push({
             title: "Solución Final",
             math: `\\mathbf{${outputExpr}}`
@@ -1236,11 +1219,11 @@ function generateSteps(inputExpr, outputExpr, mode) {
 
     } catch (e) {
         console.error("Error en pasos:", e);
-        // Si falla, al menos mostramos el resultado final
+        
         steps.push({ title: "Resultado Directo", math: outputExpr });
     }
 
-    // --- RENDERIZADO EN EL DOM ---
+    
     if (steps.length > 0) {
         stepsBox.style.display = "block";
         steps.forEach(s => {
@@ -1254,7 +1237,7 @@ function generateSteps(inputExpr, outputExpr, mode) {
 
             const mathSpan = document.createElement('div');
             try {
-                // Limpiamos los signos $$ si vinieran duplicados
+                
                 let cleanMath = s.math.replace(/^\$\$|\$\$$/g, ''); 
                 katex.render(cleanMath, mathSpan, { 
                     throwOnError: false, 
@@ -1272,7 +1255,7 @@ function generateSteps(inputExpr, outputExpr, mode) {
         stepsBox.style.display = "none";
     }
 }
-/* --- LISTENER PRINCIPAL MODIFICADO --- */
+
 input.addEventListener('input', () => {
     const val = input.value.trim();
     if (!val) {
@@ -1293,7 +1276,7 @@ input.addEventListener('input', () => {
         let finalOutput = "";
         let mode = "";
 
-        // Lógica de decisión Expandir vs Factorizar
+        
         if (rawText !== expandedText) {
             document.querySelector('.label').textContent = "Expansión (Producto Notable)";
             finalOutput = core.expand().toTeX();
@@ -1306,12 +1289,12 @@ input.addEventListener('input', () => {
             mode = "FACTOR";
         }
 
-        // LLAMADA AL PASO A PASO
+        
         generateSteps(val, finalOutput, mode);
 
     } catch (e) {
         console.log("Escribiendo...", e);
-        // No mostramos error en UI para no parpadear
+        
     }
     if (window.MathJax) MathJax.typesetPromise([preview, output]).catch(()=>{});
 });
