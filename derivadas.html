@@ -1,17 +1,18 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
+    <link rel="icon" href="icono.png" type="image/png">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Derivadas | √(Raiz) Cuadrada² </title>
 
     <script>
         (function() {
-            // 1. Intentamos leer la memoria
+            
             const localTheme = localStorage.getItem('theme');
-            // 2. Si hay algo guardado lo usamos, si no, usamos 'light'
+            
             const themeToSet = localTheme || 'light';
-            // 3. Lo aplicamos INMEDIATAMENTE al HTML
+            
             document.documentElement.setAttribute('data-theme', themeToSet);
         })();
     </script>
@@ -49,7 +50,7 @@
     @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700;900&display=swap');
     @import url('https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700&display=swap');
 
-    /* --- ANIMACIONES --- */
+    
     .calculadora {
         animation: fadeUp 0.8s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
         opacity: 0;
@@ -60,26 +61,26 @@
         to { opacity: 1; transform: translateY(0); } 
     }
 
-    /* --- CONTENEDOR PRINCIPAL (ESTILO CARD COMENTARIOS) --- */
+    
     .calculadora {
         background: #ffffff;
         padding: 40px 35px;
         border-radius: 40px;
         width: 100%;
-        max-width: 600px; /* Ancho idéntico al wrapper de comentarios */
-        box-shadow: 0 20px 40px rgba(0,0,0,0.08); /* Sombra exacta */
+        max-width: 600px; 
+        box-shadow: 0 20px 40px rgba(0,0,0,0.08); 
         box-sizing: border-box;
         font-family: 'Open Sans', sans-serif;
         margin: 0 auto;
     }
 
-    /* --- CABECERA --- */
+    
     .header-section { text-align: center; margin-bottom: 35px; }
     
      
     .header-section h1 { 
         font-family: 'Playfair Display', serif; 
-        font-size: clamp(24px, 6vw, 32px); /* Responsive como title-big */
+        font-size: clamp(24px, 6vw, 32px); 
         margin: 0; 
         font-weight: 700; 
         color: #1a1a1a; 
@@ -93,13 +94,13 @@
         font-weight: 700; 
         color: #999; 
         text-transform: uppercase; 
-        letter-spacing: 1.5px; /* Estilo 'pregunta-pro' */
+        letter-spacing: 1.5px; 
     }
       
 
-    /* --- INPUTS, PREVIEW Y RESULTADO (ESTILO UNIFICADO) --- */
+    
     #preview-container, #resultado {
-        background: #f9f9f9; /* Fondo gris suave */
+        background: #f9f9f9; 
         padding: 20px; 
         border-radius: 25px; 
         min-height: 70px; 
@@ -109,15 +110,15 @@
         justify-content: center; 
         border: 2px solid transparent; 
         overflow-x: auto;
-        box-shadow: 0 2px 5px rgba(0,0,0,0.02) inset; /* Sombra interna */
+        box-shadow: 0 2px 5px rgba(0,0,0,0.02) inset; 
         color: #333;
         font-size: 1.1rem;
     }
 
-    /* Espaciado solicitado mantenido */
+    
     #resultado { margin-top: 30px; margin-bottom: 30px; }
 
-    /* --- LABELS --- */
+    
     label { 
         display: block; 
         font-size: 12px; 
@@ -129,7 +130,7 @@
         letter-spacing: 0.5px;
     }
 
-    /* --- CAMPOS DE TEXTO Y SELECTS --- */
+    
     input[type="text"], input[type="number"], select {
         width: 100%; 
         background: #f9f9f9; 
@@ -153,20 +154,20 @@
         transform: translateY(-3px);
     }
 
-    /* --- GRID PARA LÍMITES --- */
+    
     .row { 
         display: grid; 
         grid-template-columns: 1fr 1fr; 
         gap: 15px; 
     }
 
-    /* --- BOTONES (ESTILO PREMIUM) --- */
+    
     .btn-principal {
         width: 100%; 
         background: #1a1a1a; 
         color: white; 
         border: none; 
-        border-radius: 999px; /* Píldora */
+        border-radius: 999px; 
         padding: 18px 35px; 
         font-weight: 700; 
         font-size: 16px;
@@ -200,7 +201,7 @@
     }
     .btn-secundario:hover { background: #f4f4f4; border-color: #ccc; color: #333; }
 
-    /* --- PÍLDORAS / CHIPS (ESTILO SELECTOR) --- */
+    
     .pills-nav { display: flex; justify-content: center; gap: 10px; margin-top: 15px; flex-wrap: wrap; }
     
     .pill { 
@@ -225,14 +226,14 @@
     }
     .pill:hover:not(.active) { background: #e0e0e0; }
 
-    /* --- PANEL DE SÍMBOLOS --- */
+    
     .symbols-container { 
         background: #ffffff; 
         border-radius: 30px; 
         padding: 20px; 
         margin-top: 20px; 
         border: 1px solid #f0f0f0; 
-        display: none; /* Se mantiene oculto por defecto como pediste */
+        display: none; 
         box-shadow: 0 10px 30px rgba(0,0,0,0.03);
     }
     
@@ -258,7 +259,7 @@
     .sym-btn span { font-size: 16px; font-weight: 700; margin-bottom: 2px; }
     .sym-btn small { font-size: 9px; text-transform: uppercase; color: #999; font-weight: 700; }
 
-    /* --- MODO OSCURO (COMPATIBILIDAD TOTAL) --- */
+    
     [data-theme="dark"] .calculadora {
         background: transparent;
         box-shadow: none;
@@ -268,7 +269,7 @@
     [data-theme="dark"] .header-section h1 { color: #ffffff; }
     [data-theme="dark"] label { color: #888; }
 
-    /* Inputs Dark Mode */
+    
     [data-theme="dark"] input, 
     [data-theme="dark"] select,
     [data-theme="dark"] #preview-container,
@@ -284,7 +285,7 @@
         background: #252525;
     }
 
-    /* Botones Dark Mode */
+    
     [data-theme="dark"] .btn-principal {
         background: #ffffff;
         color: #000000;
@@ -298,11 +299,11 @@
     }
     [data-theme="dark"] .btn-secundario:hover { background: #333; color: white; }
 
-    /* Chips Dark Mode */
+    
     [data-theme="dark"] .pill { background: #1e1e1e; color: #ccc; border-color: transparent; }
     [data-theme="dark"] .pill.active { background: #ffffff; color: #000; }
 
-    /* Symbols Dark Mode */
+    
     [data-theme="dark"] .symbols-container {
         background: #1a1a1a;
         border-color: #333;
@@ -314,12 +315,12 @@
     }
     [data-theme="dark"] .sym-btn:hover { background: #333; }
     
-    /* --- CONTENEDOR GRÁFICA --- */
+    
 #grafica-wrapper {
     width: 100%;
     margin-top: 20px;
     margin-bottom: 20px;
-    display: none; /* Oculto por defecto */
+    display: none; 
     justify-content: center;
     overflow: hidden;
     background: #f9f9f9;
@@ -328,7 +329,7 @@
     border: 2px solid transparent;
 }
 
-/* Ajustes para el texto dentro de la gráfica (ejes) */
+
 .function-plot text {
     font-family: 'Open Sans', sans-serif !important;
     font-size: 12px !important;
@@ -338,7 +339,7 @@
 .function-plot path.domain { stroke: #ccc !important; }
 .function-plot .tick line { stroke: #eee !important; }
 
-/* MODO OSCURO PARA LA GRÁFICA */
+
 [data-theme="dark"] #grafica-wrapper {
     background: #1e1e1e;
     border: 1px solid #333;
@@ -346,18 +347,18 @@
 [data-theme="dark"] .function-plot text { fill: #aaa !important; }
 [data-theme="dark"] .function-plot path.domain { stroke: #555 !important; }
 
-/* Clase para cambiar el Grid a Lista Vertical */
+
 .symbols-container .vertical-layout {
     display: flex !important;
     flex-direction: column !important;
     gap: 0 !important;
 }
 
-/* Estilo de cada fila de fórmula */
+
 .formula-row {
     padding: 15px 10px;
     border-bottom: 1px solid #f0f0f0;
-    font-family: 'Times New Roman', serif; /* Serif para fórmulas se ve más académico */
+    font-family: 'Times New Roman', serif; 
     font-size: 1.1rem;
     color: #333;
     display: flex;
@@ -366,13 +367,13 @@
     transition: background 0.2s;
 }
 
-/* Efecto hover suave */
+
 .formula-row:hover {
     background-color: #fcfcfc;
-    padding-left: 15px; /* Pequeño desplazamiento a la derecha */
+    padding-left: 15px; 
 }
 
-/* Modo Oscuro para la tabla */
+
 [data-theme="dark"] .formula-row {
     border-color: #333;
     color: #eee;
@@ -389,7 +390,7 @@
     background-color: #eaeaea;
 }
 
-      /* --- TOAST --- */
+      
 .toast {
     position: fixed;
     bottom: 30px;
@@ -408,13 +409,13 @@
     z-index: 9999;
 }
 
-/* Visible */
+
 .toast.show {
     opacity: 1;
     transform: translateX(-50%) translateY(0);
 }
 
-/* Dark mode */
+
 [data-theme="dark"] .toast {
     background: #ffffff;
     color: #000000;
@@ -422,19 +423,19 @@
 
 
 
-/* --- ESTILOS PARA INTEGRALES MÚLTIPLES --- */
 
-/* Contenedor flexible para columnas (2 para doble, 3 para triple) */
+
+
 .integral-grid {
     display: grid;
     gap: 12px;
     margin-top: 15px;
      margin-bottom: 20px;
-    /* Esto hace la magia: crea columnas automáticas que no bajan de 100px */
+    
     grid-template-columns: repeat(auto-fit, minmax(110px, 1fr)); 
 }
 
-/* Tarjeta visual para cada variable (dx, dy, dz) */
+
 .integral-col {
     background: #fff;
     border: 1px solid #e5e5e5;
@@ -458,9 +459,9 @@
     color: #888;
 }
 
-/* Inputs compactos para límites y selects */
+
 .compact-input, .integral-col select {
-    padding: 8px 10px !important; /* Más pequeños que el input principal */
+    padding: 8px 10px !important; 
     font-size: 14px !important;
     text-align: center;
     margin-bottom: 8px !important;
@@ -471,14 +472,14 @@
       border: 1px solid #e5e5e5;
 }
 
-/* Contenedor para los límites a/b en horizontal */
+
 .limits-row {
     display: flex;
     gap: 6px;
     align-items: center;
 }
 
-/* Modo oscuro */
+
 [data-theme="dark"] .integral-col {
     background: #252525;
     border-color: #333;
@@ -729,13 +730,13 @@
      <script src="script.js"></script>
       <script>
           
-          // Variable global para recordar el último input tocado
-let inputActualId = 'funcion'; // Por defecto será la función principal
+          
+let inputActualId = 'funcion'; 
 
-let modoActual = 'single'; // Puede ser 'single', 'double', 'triple'
+let modoActual = 'single'; 
 
-// 
-// Agregamos "escuchas" para detectar cuando tocas los inputs
+
+
 document.addEventListener('DOMContentLoaded', () => {
     const inputs = ['funcion', 'limA', 'limB'];
     inputs.forEach(id => {
@@ -826,72 +827,72 @@ function showCategory(cat, btn) {
     });
 }
 
-// Asegúrate de que esta variable exista globalmente en tu script
-// let inputActualId = 'funcion'; 
+
+
 
 function insertarSimbolo(s) {
-    // 1. Obtener el input correcto con seguridad
+    
     let input = document.getElementById(inputActualId);
     
-    // Si por alguna razón inputActualId está vacío o el elemento no existe, 
-    // hacemos fallback al input principal 'funcion'.
+    
+    
     if (!input) {
         input = document.getElementById('funcion');
-        // Si aun así no existe (caso extremo), salimos para evitar error.
+        
         if (!input) return; 
     }
 
-    // 2. Capturar posiciones del cursor o selección de texto
+    
     const start = input.selectionStart;
     const end = input.selectionEnd;
     const texto = input.value;
 
-    // 3. Insertar el símbolo
-    // Nota: Usamos 'end' en el segundo slice para permitir reemplazar texto seleccionado
+    
+    
     input.value = texto.slice(0, start) + s + texto.slice(end);
 
-    // 4. Devolver el foco inmediatamente (importante para que setSelectionRange funcione bien)
+    
     input.focus();
 
-    // 5. Calcular dónde queda el cursor
+    
     let nuevaPos;
 
     if (s.includes('()')) {
-        // Lógica inteligente: Si es algo tipo "sin()", poner cursor DENTRO del paréntesis
-        // Buscamos el primer '(' y sumamos 1 para quedar justo después
+        
+        
         nuevaPos = start + s.indexOf('(') + 1;
     } else {
-        // Caso normal: Poner el cursor al final de lo que insertamos
+        
         nuevaPos = start + s.length;
     }
 
-    // 6. Mover el cursor a la posición calculada
+    
     input.setSelectionRange(nuevaPos, nuevaPos);
 
-    // 7. Actualizar la vista (verificamos que la función exista para evitar errores)
+    
     if (typeof actualizarVistaPrevia === 'function') {
         actualizarVistaPrevia();
     }
 }
 
-// Lógica de cálculo (Nerdamer corregido)
+
 function normalizar(expr) { 
     if (!expr) return '';
 
-    // 1. Quitar espacios y pasar a minúsculas
+    
     let s = expr.toLowerCase().replace(/\s+/g, '');
     
-    // CASO E (PRIMERO): Valor absoluto |x| -> abs(x)
+    
 s = s.replace(/\|([^|]+)\|/g, 'abs($1)');
 
-        // CASO F: Superíndices
+        
     const superindices = { '⁰':'0', '¹':'1', '²':'2', '³':'3', '⁴':'4', '⁵':'5', '⁶':'6', '⁷':'7', '⁸':'8', '⁹':'9' };
     s = s.replace(/[⁰¹²³⁴⁵⁶⁷⁸⁹]/g, match => `^${superindices[match]}`);
 
-    // 2. Diccionario de Traducción (Orden importante: los más largos primero)
-    // Agregamos 'arctan' que faltaba y arreglamos notación inversa
+    
+    
     const reemplazos = [
-        { from: /arctan/g, to: 'atan' }, // ESTO arregla tu error de arctan
+        { from: /arctan/g, to: 'atan' }, 
         { from: /arctg/g, to: 'atan' },
         { from: /arcsin/g, to: 'asin' },
         { from: /arccos/g, to: 'acos' },
@@ -900,7 +901,7 @@ s = s.replace(/\|([^|]+)\|/g, 'abs($1)');
         { from: /arccot/g, to: 'acot' },
         { from: /sen/g, 'to': 'sin' },
         { from: /tg/g, 'to': 'tan' },
-        { from: /ln/g, 'to': 'log' }, // Nerdamer usa log para log natural
+        { from: /ln/g, 'to': 'log' }, 
         { from: /√/g, 'to': 'sqrt' },
         { from: /π/g, 'to': 'pi' },
         { from: /·/g, 'to': '*' }
@@ -908,44 +909,44 @@ s = s.replace(/\|([^|]+)\|/g, 'abs($1)');
 
     reemplazos.forEach(r => { s = s.replace(r.from, r.to); });
 
-    // 3. Manejo de notación inversa de calculadora (sin^-1 => asin)
+    
     s = s.replace(/sin\^-1/g, 'asin').replace(/cos\^-1/g, 'acos').replace(/tan\^-1/g, 'atan');
 
 const funcsTrig = 'sin|cos|tan|csc|sec|cot';
-    // Regex: Función + ^ + Número + (opcional paréntesis) + variable x,y,z
+    
     const reTrigPow = new RegExp(`(${funcsTrig})\\^(\\d+)\\(?([xyz])\\)?`, 'g');
     s = s.replace(reTrigPow, '($1($3))^$2');
     
-    // 4. Inteligencia: Funciones sin paréntesis (cosx => cos(x))
-    // Lista completa de funciones soportadas
+    
+    
     const funciones = ['asin', 'acos', 'atan', 'asec', 'acsc', 'acot', 'sin', 'cos', 'tan', 'sec', 'csc', 'cot', 'sqrt', 'log', 'abs', 'exp'];
     
-    // Primero envolvemos variables sueltas: "cosx" -> "cos(x)"
-    // Buscamos la función seguida EXACTAMENTE de x, y, t, z o un número
+    
+    
     funciones.forEach(fn => {
         const re = new RegExp(`${fn}([xyz\\d])`, 'g');
         s = s.replace(re, `${fn}($1)`);
     });
 
 s = s.replace(/([a-z])([xyz])/g, '$1*$2');
-    // 5. Multiplicación Implícita (Corregida para NO romper funciones)
     
-    // CASO A: Número seguido de Variable o Paréntesis (2x -> 2*x)
+    
+    
     s = s.replace(/(\d)([a-z\(])/g, '$1*$2');
 
-    // CASO B: Variable explícita (x,y,t,z) seguida de función (xcos(x) -> x*cos(x))
-    // OJO: Solo permitimos x,y,t,z antes de la función. Esto evita que la 'a' de 'acos' se separe.
+    
+    
     const funcionPattern = funciones.join('|');
-    // Regex: (x,y,t,z o paréntesis cerrado) seguido de (nombre de función)
+    
     const reMultFunc = new RegExp(`([xyz\\)])(${funcionPattern})`, 'g');
     s = s.replace(reMultFunc, '$1*$2');
 
 
-    // CASO C: Variable seguida de variable (xx -> x*x, xy -> x*y)
-    // Previene duplicados como 'xx'
+    
+    
     s = s.replace(/([xytz])([xytz])/g, '$1*$2');
 
-    // CASO D: Corchetes y llaves
+    
     s = s.replace(/[\[\{]/g, '(').replace(/[\]\}]/g, ')');
     
 
@@ -956,7 +957,7 @@ s = s.replace(/([a-z])([xyz])/g, '$1*$2');
 function actualizarVistaPrevia() {
     const preview = document.getElementById('latex-preview');
 
-    // --- 1. MAQUILLAJE (SE QUEDA IGUAL) ---
+    
     const procesarFuncion = (idInput) => {
         const input = document.getElementById(idInput).value.trim();
         if (!input) return "\\dots";
@@ -964,7 +965,7 @@ function actualizarVistaPrevia() {
         try {
             let tex = nerdamer(normalizar(input)).toTeX();
 
-            // Maquillaje trigonométrico intacto
+            
             tex = tex.replace(
                 /\\(sin|cos|tan|csc|sec|cot|asin|acos|atan)\s*\\left\((.*?)\\right\)\^\{?(\d+)\}?/g,
                 "\\$1^{$3}\\left($2\\right)"
@@ -978,7 +979,7 @@ function actualizarVistaPrevia() {
 
     let latexFinal = "";
 
-    // --- 2. MODO SIMPLE → DERIVADA ---
+    
     if (modoActual === 'single') {
         const v = document.getElementById('variable').value;
         const fTex = procesarFuncion('funcion');
@@ -1001,7 +1002,7 @@ function actualizarVistaPrevia() {
         }
     }
 
-    // --- 5. RENDER ---
+    
     preview.innerHTML = latexFinal;
     if (window.MathJax) {
         MathJax.typesetPromise([preview]).catch(err => console.log(err));
@@ -1033,7 +1034,7 @@ function calcularDerivada() {
         const v = document.getElementById('variable').value;
         const tipo = document.getElementById('tipo')?.value;
 
-        // Mostrar contenedor gráfico
+        
         const graphBox = document.getElementById('grafica-wrapper');
         const graphDiv = document.getElementById('grafica');
         if (graphBox) graphBox.style.display = 'flex';
@@ -1041,7 +1042,7 @@ function calcularDerivada() {
 
         const derivada = nerdamer(`diff(${f}, ${v})`);
 
-        // --- MODO EVALUAR ---
+        
 if (tipo === 'eval') {
     const valRaw = document.getElementById('valor-eval')?.value;
     if (!valRaw) {
@@ -1051,13 +1052,13 @@ if (tipo === 'eval') {
 
     const a = normalizar(valRaw);
 
-    // f(a)
+    
     const fEnA = nerdamer(f).sub(v, a).evaluate();
 
-    // f'(a)
+    
     const pendiente = derivada.sub(v, a).evaluate();
 
-    // Mostrar resultado
+    
     out.innerHTML = `
     $$
     f'(${a}) = ${pendiente.toTeX()}
@@ -1065,7 +1066,7 @@ if (tipo === 'eval') {
     `;
     MathJax.typesetPromise([out]);
 
-    // --- GRÁFICA: FUNCIÓN + RECTA TANGENTE ---
+    
     try {
         const fGraf = f.split(v).join('x');
 
@@ -1084,7 +1085,7 @@ if (tipo === 'eval') {
     return;
 }
 
-        // --- RESULTADO SIMBÓLICO ---
+        
         out.innerHTML = `
         $$
         \\frac{d}{d${v}} \\left( ${nerdamer(f).toTeX()} \\right)
@@ -1093,7 +1094,7 @@ if (tipo === 'eval') {
         `;
         MathJax.typesetPromise([out]);
 
-        // --- GRÁFICA ---
+        
         try {
             const fGraf = f.split(v).join('x');
             const dGraf = derivada.text().split(v).join('x');
@@ -1112,7 +1113,7 @@ if (tipo === 'eval') {
 
 
 
-// Función Renderizar actualizada para admitir título opcional en consola o tooltip si quisieras
+
 function renderizarGrafica(expresion, a, b, sombrear, etiqueta) {
     const wrapper = document.getElementById('grafica-wrapper');
     if(wrapper) wrapper.style.display = 'flex'; 
@@ -1131,10 +1132,10 @@ function renderizarGrafica(expresion, a, b, sombrear, etiqueta) {
     }
 
     const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
-    const lineColor = isDark ? '#fff' : '#1a1a1a'; // Blanco en dark, Negro en light
+    const lineColor = isDark ? '#fff' : '#1a1a1a'; 
     const gridColor = isDark ? '#444' : '#eee';
 
-    // Configuración base de datos
+    
     let datosGrafica = [
         {
             fn: expresion,
@@ -1146,7 +1147,7 @@ function renderizarGrafica(expresion, a, b, sombrear, etiqueta) {
         }
     ];
 
-    // Si es definida, agregamos el relleno
+    
     if (sombrear) {
         datosGrafica.push({
             fn: expresion,
@@ -1174,10 +1175,10 @@ function renderizarGrafica(expresion, a, b, sombrear, etiqueta) {
 }
 
 
-// Listener para redimensionar la gráfica si giran la pantalla
+
 window.addEventListener('resize', () => {
     if(document.getElementById('grafica-wrapper').style.display !== 'none'){
-        // Re-calcular si ya hay una integral definida mostrada
+        
         calcularIntegral(); 
     }
 });
@@ -1196,7 +1197,7 @@ function renderizarRectaTangente(funcion, pendiente, x0, y0) {
     const colorT = '#1976d2';
     const colorP = '#d32f2f';
 
-    // y = m(x - x0) + y0
+    
     const recta = `${pendiente}*(x - (${x0})) + (${y0})`;
 
     try {
@@ -1276,7 +1277,7 @@ function renderizarGraficaDerivada(fx, dfx) {
 
 
 
-/* --- DATOS DE LA TABLA DE INTEGRALES --- */
+
 const integralesComunes = [
     
   
@@ -1379,20 +1380,20 @@ const integralesComunes = [
 
 ];
 
-/* --- FUNCIÓN SHOWCATEGORY MEJORADA --- */
+
 function showCategory(cat, btn) {
-    // 1. Gestión de clases activas en botones
+    
     document.querySelectorAll('.pill').forEach(p => p.classList.remove('active'));
     btn.classList.add('active');
 
     const grid = document.getElementById('grid-content');
-    grid.innerHTML = ''; // Limpiar contenido anterior
+    grid.innerHTML = ''; 
 
-    // 2. Lógica: ¿Es la tabla o son botones?
+    
     if (cat === 'tabla') {
-        // --- MODO LISTA VERTICAL ---
-        grid.className = ''; // Borramos 'symbols-grid'
-        grid.classList.add('vertical-layout'); // Añadimos clase de lista
+        
+        grid.className = ''; 
+        grid.classList.add('vertical-layout'); 
 
         integralesComunes.forEach(formula => {
             const div = document.createElement('div');
@@ -1406,16 +1407,16 @@ function showCategory(cat, btn) {
             grid.appendChild(div);
         });
 
-        // Importante: Decirle a MathJax que renderice las nuevas fórmulas
+        
         if (window.MathJax) {
             MathJax.typesetPromise([grid]);
         }
 
     } else {
-        // --- MODO BOTONES (GRID) ---
-        grid.className = 'symbols-grid'; // Restauramos la cuadrícula
         
-        // Usamos tu objeto 'categorias' existente
+        grid.className = 'symbols-grid'; 
+        
+        
         if (categorias[cat]) {
             categorias[cat].forEach(item => {
                 const div = document.createElement('div');
@@ -1503,8 +1504,8 @@ function descargarGrafica() {
     if (!grafica) return;
 
     html2canvas(grafica, {
-        backgroundColor: null, // respeta light / dark
-        scale: 2               // PNG nítido
+        backgroundColor: null, 
+        scale: 2               
     }).then(canvas => {
         const link = document.createElement('a');
         link.download = 'grafica.png';
