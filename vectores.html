@@ -830,15 +830,19 @@ function addVectorRow() {
         updateSums();
     }
 
+
+
 function updateSums() {
     let rx = 0, ry = 0, rz = 0;
     steps = [];
 
+    
     steps.push({
         label: "Inicio",
         x: 0, y: 0, z: 0
     });
 
+    
     vectorData.forEach((v, i) => {
         const sign = v.op === '+' ? 1 : -1;
 
@@ -854,13 +858,34 @@ function updateSums() {
         });
     });
 
+    
     document.getElementById('total-x').value = rx.toFixed(2);
     document.getElementById('total-y').value = ry.toFixed(2);
     document.getElementById('total-z').value = rz.toFixed(2);
 
-    document.getElementById('total-mag').value =
-        Math.sqrt(rx*rx + ry*ry + rz*rz).toFixed(2);
+    
+    const mag = Math.sqrt(rx * rx + ry * ry + rz * rz);
+    document.getElementById('total-mag').value = mag.toFixed(2);
 
+    
+    const angleInput = document.getElementById('total-ang');
+
+    if (sumMode === "2D") {
+        let totalAngle = Math.atan2(ry, rx) * 180 / Math.PI;
+        if (totalAngle < 0) totalAngle += 360;
+
+        angleInput.value = totalAngle.toFixed(2);
+        angleInput.disabled = false;
+        angleInput.style.background = "";
+        angleInput.style.color = "";
+    } else {
+        angleInput.value = "—";
+        angleInput.disabled = true;
+        angleInput.style.background = "#e0e0e0";
+        angleInput.style.color = "#777";
+    }
+
+    
     renderSteps(steps);
 
     if (sumMode === "2D") {
@@ -871,7 +896,7 @@ function updateSums() {
 }
 
 
-   function drawSumGraph(tx, ty, steps) {
+function drawSumGraph(tx, ty, steps) {
  
         const traces = [];
         let cx = 0, cy = 0;
@@ -929,6 +954,7 @@ Plotly.newPlot(
 );
 
     }
+
 
     function toggleVectorC() {
         const type = document.getElementById('prod-type').value;
@@ -1448,6 +1474,7 @@ function getPlotLayout(title, is3D = false) {
         }
     };
 }
+
 
 
 
