@@ -1,17 +1,18 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
+    <link rel="icon" href="icono.png" type="image/png">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>√(Raiz) Cuadrada² </title>
+    <title> Triangulos | √(Raiz) Cuadrada² </title>
 
     <script>
         (function() {
-            // 1. Intentamos leer la memoria
+            
             const localTheme = localStorage.getItem('theme');
-            // 2. Si hay algo guardado lo usamos, si no, usamos 'light'
+            
             const themeToSet = localTheme || 'light';
-            // 3. Lo aplicamos INMEDIATAMENTE al HTML
+            
             document.documentElement.setAttribute('data-theme', themeToSet);
         })();
     </script>
@@ -32,7 +33,7 @@
     @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700;900&display=swap');
     @import url('https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700&display=swap');
 
-    /* --- ANIMACIONES --- */
+    
     .fade-in { 
         opacity: 0; 
         transform: translateY(20px); 
@@ -43,7 +44,7 @@
         to { opacity: 1; transform: translateY(0); } 
     }
 
-    /* --- BODY & CENTRADO --- */
+    
     body { 
       
         display: flex; 
@@ -57,19 +58,19 @@
         font-family: 'Open Sans', sans-serif;
     }
 
-    /* --- TARJETA PRINCIPAL (ESTILO "ECUACIONES") --- */
+    
     .calculadora-moderna {
         background: #ffffff;
         padding: 40px 35px; 
         border-radius: 40px;
-        box-shadow: 0 20px 40px rgba(0,0,0,0.08); /* Sombra idéntica */
+        box-shadow: 0 20px 40px rgba(0,0,0,0.08); 
         width: 100%;
         max-width: 700px;
         box-sizing: border-box;
         transition: all 0.3s ease;
     }
 
-    /* --- HEADER --- */
+    
     .header-section { text-align: center; margin-bottom: 35px; }
     
     .header-section h1 { 
@@ -91,7 +92,7 @@
         letter-spacing: 1.5px; 
     }
 
-    /* --- PILLS / PESTAÑAS (ESTILO PREMIUM) --- */
+    
     .pill-container { 
         display: flex; 
         justify-content: center; 
@@ -99,7 +100,7 @@
         gap: 10px;
     }
     
-    /* Nota: Adaptado para que funcione con tu estructura HTML actual */
+    
     .pill { 
         background: transparent; 
         border: none; 
@@ -129,7 +130,7 @@
     
     .pill-btn:hover:not(.active) { background: #e0e0e0; }
 
-    /* --- REFERENCE BOX & STATUS --- */
+    
     .reference-box { 
         background: #f9f9f9; 
         border-radius: 25px; 
@@ -160,7 +161,7 @@
         font-weight: 600; 
     }
 
-    /* --- INPUTS GRID (MANTENIENDO TU ESTRUCTURA) --- */
+    
     .grid-inputs { 
         display: grid; 
         grid-template-columns: repeat(3, 1fr); 
@@ -208,7 +209,7 @@
         cursor: not-allowed;
     }
 
-    /* --- BOTONES (ESTILO PÍLDORA) --- */
+    
     .botones-container { display: flex; flex-direction: column; gap: 15px; }
     
     .boton-estilo { 
@@ -225,7 +226,7 @@
         border: none;
     }
     
-    /* Botón Principal (Negro) */
+    
     .boton-principal { 
         background: #1a1a1a; 
         color: white; 
@@ -238,7 +239,7 @@
         box-shadow: 0 8px 15px rgba(0,0,0,0.15); 
     }
 
-    /* Botón Secundario (Simulado con tu clase boton-estilo si no tiene clase principal) */
+    
     .boton-estilo:not(.boton-principal) {
         background: transparent;
         color: #666;
@@ -250,21 +251,21 @@
         color: #333;
     }
 
-    /* --- RESULTADOS Y VISUALIZACIÓN --- */
+    
     #resultados, #visualizacion { 
         margin-top: 25px; 
         padding: 25px; 
         background: #f9f9f9; 
         border-radius: 25px; 
         border: 2px solid transparent; 
-        display: none; /* Se activa con JS */
+        display: none; 
         box-shadow: 0 2px 5px rgba(0,0,0,0.02) inset;
     }
 
     #visualizacion {
         position: relative; 
         height: 350px; 
-        display: none; /* Flex cuando activo */
+        display: none; 
         justify-content: center; 
         align-items: center; 
         overflow: hidden;
@@ -290,7 +291,7 @@
         font-size: 1.1em;
     }
 
-    /* --- MEDIA QUERIES (OPTIMIZACIÓN CELULAR) --- */
+    
     @media (max-width: 600px) { 
         body { padding: 10px; display: block; }
         .calculadora-moderna { padding: 30px 20px; margin: 20px auto; }
@@ -303,7 +304,7 @@
 }
 
 
-    /* --- MODO OSCURO COMPLETO (GEMELO A ECUACIONES) --- */
+    
     [data-theme="dark"] body { background: 
     #0a0a0a; }
     
@@ -318,7 +319,7 @@
     [data-theme="dark"] label { color: #888; }
     [data-theme="dark"] #data-status { color: #aaa; }
 
-    /* Inputs Dark */
+    
     [data-theme="dark"] input,
     [data-theme="dark"] .reference-box,
     [data-theme="dark"] #resultados,
@@ -334,7 +335,7 @@
         background: #252525;
     }
 
-    /* Buttons Dark */
+    
     [data-theme="dark"] .pill-btn { background: #1e1e1e; color: #ccc; }
     [data-theme="dark"] .pill-btn.active { background: #fff; color: #000; }
     
@@ -355,32 +356,32 @@
     [data-theme="dark"] .res-item { border-bottom-color: #333; color: #aaa; }
     [data-theme="dark"] .res-item span:last-child { color: #fff; }
     
-    /* --- ESTILOS PARA EL SVG (LÍNEAS Y TEXTO) --- */
+    
 
-/* Estilos por defecto (Modo Claro) */
+
 .dibujo-linea {
-    stroke: #333333; /* Gris oscuro */
+    stroke: #333333; 
     fill: none;
     stroke-width: 2;
     transition: stroke 0.3s ease;
 }
 
 .dibujo-texto {
-    fill: #555555; /* Texto principal oscuro */
+    fill: #555555; 
     font-family: 'Open Sans', sans-serif;
     transition: fill 0.3s ease;
 }
 
 .dibujo-texto-secundario {
-    fill: #999999; /* Texto secundario (ángulos) */
+    fill: #999999; 
     font-size: 11px;
     font-family: 'Open Sans', sans-serif;
     transition: fill 0.3s ease;
 }
 
-/* Estilos para MODO OSCURO */
+
 [data-theme="dark"] .dibujo-linea {
-    stroke: #ffffff; /* LÍNEAS BLANCAS */
+    stroke: #ffffff; 
 }
 
 [data-theme="dark"] .dibujo-texto {
@@ -400,13 +401,13 @@
 }
 
 
-/* --- PÍLDORA DE MODOS (SEGMENTED CONTROL) --- */
+
     .mode-switcher {
         display: flex;
-        background:  #f9f9f9; /* Fondo gris suave contenedor */
+        background:  #f9f9f9; 
         padding: 5px;
         border-radius: 999px;
-        margin-bottom: 25px; /* Separación con el visor Latex */
+        margin-bottom: 25px; 
         position: relative;
         justify-content: space-between;
         box-shadow: inset 0 1px 3px rgba(0,0,0,0.06);
@@ -430,18 +431,18 @@
         gap: 6px;
     }
 
-    /* Estilo del símbolo matemático dentro del botón */
+    
     .mode-btn span {
         font-size: 1.2em;
         font-weight: 400;
-        font-family: 'Playfair Display', serif; /* Toque elegante para el símbolo */
+        font-family: 'Playfair Display', serif; 
     }
 
     .mode-btn:hover:not(.active) {
         color: #555;
     }
 
-    /* ESTADO ACTIVO (La píldora blanca flotante) */
+    
     .mode-btn.active {
         background: #ffffff;
         color: #1a1a1a;
@@ -449,7 +450,7 @@
         transform: scale(1.02);
     }
     
-    /* --- AJUSTES MODO OSCURO --- */
+    
     [data-theme="dark"] .mode-switcher { 
         background: #151515; 
         box-shadow: inset 0 1px 3px rgba(255,255,255,0.05);
@@ -463,9 +464,9 @@
         box-shadow: 0 4px 12px rgba(0,0,0,0.3);
     }
     
-    /* --- BOTÓN DE ROTACIÓN --- */
+    
 .reference-box {
-    position: relative; /* Necesario para posicionar el botón */
+    position: relative; 
 }
 
 .rotate-btn {
@@ -488,7 +489,7 @@
 .rotate-btn:hover {
     background: rgba(0,0,0,0.05);
     color: #333;
-    transform: rotate(180deg); /* Pequeña animación al pasar el mouse */
+    transform: rotate(180deg); 
 }
 
 [data-theme="dark"] .rotate-btn:hover {
@@ -496,19 +497,19 @@
     color: #fff;
 }
 
-/* Transición suave para la rotación de los diagramas */
+
 #ref-svg, #svg-draw {
     transition: transform 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
     transform-origin: center center;
 }
 
  
- /* --- BOTONES FLOTANTES --- */
+ 
 .reference-box {
     position: relative;
 }
 
-/* Estilo base compartido */
+
 .rotate-btn, .tilt-btn {
     position: absolute;
     right: 10px;
@@ -536,29 +537,29 @@
     color: #fff;
 }
 
-/* POSICIONES */
-.rotate-btn { top: 10px; }
-.tilt-btn   { top: 45px; } /* 35px más abajo que el primero */
 
-/* TRANSICIÓN DE LOS DIAGRAMAS */
+.rotate-btn { top: 10px; }
+.tilt-btn   { top: 45px; } 
+
+
 #ref-svg, #svg-draw {
     transition: transform 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
     transform-origin: center center;
 }
 
 
-/* --- TEXTO QUE SIEMPRE MIRA AL FRENTE --- */
+
 svg text {
-    /* Define que el punto de pivote es el centro exacto de la letra */
+    
     transform-box: fill-box;
     transform-origin: center;
-    /* Suavizamos el movimiento */
+    
     transition: transform 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
 }
 
 
 
-/* Contenedor del resultado debe ser relativo para contener la marca */
+
 .visual-box {
     position: relative; 
 }
@@ -569,26 +570,26 @@ svg text {
 }
 @keyframes fadeIn { from { opacity: 0; transform: translateX(-10px); } to { opacity: 1; transform: translateX(0); } }
 
-/* --- WRAPPER PRINCIPAL --- */
+
 .advanced-wrapper {
     width: 100%;
     display: flex;
     flex-direction: column;
-    align-items: center; /* Centra el botón y el panel */
+    align-items: center; 
     margin-top: 25px;
 }
 
-/* --- ESTILO DEL BOTÓN --- */
+
 .toggle-datos {
     background: transparent;
     border: 1px solid #e0e0e0;
     padding: 12px 25px;
-    border-radius: 999px; /* Forma de píldora */
+    border-radius: 999px; 
     cursor: pointer;
     font-size: 0.9rem;
     color: #666;
     font-weight: 600;
-    font-family: 'Open Sans', sans-serif; /* Respetando NO Playfair */
+    font-family: 'Open Sans', sans-serif; 
     display: flex;
     align-items: center;
     gap: 10px;
@@ -603,12 +604,12 @@ svg text {
     transform: translateY(-2px);
 }
 
-/* Ícono Chevron */
+
 .chevron-icon {
     transition: transform 0.3s ease;
 }
 
-/* Clase que rotará el ícono cuando esté activo */
+
 .toggle-datos.active .chevron-icon {
     transform: rotate(180deg);
 }
@@ -619,23 +620,23 @@ svg text {
     border-color: #d0d0d0;
 }
 
-/* --- CONTENEDOR DE DATOS AVANZADOS --- */
+
 .datos-avanzados {
-    display: none; /* Oculto por defecto */
-    width: 100%; /* Ocupa el ancho disponible */
+    display: none; 
+    width: 100%; 
     max-width: 100%;
     margin-top: 15px;
     background: #f9f9f9;
     padding: 20px;
     border-radius: 25px;
-    border: 1px dashed #ddd; /* Borde sutil */
+    border: 1px dashed #ddd; 
     
-    /* Configuración Grid */
+    
     grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
     gap: 15px;
     box-sizing: border-box;
     
-    /* Animación de entrada suave */
+    
     animation: slideDown 0.3s ease forwards;
 }
 
@@ -644,12 +645,12 @@ svg text {
     to { opacity: 1; transform: translateY(0); }
 }
 
-/* Cuando se activa vía JS, usamos display: grid */
+
 .datos-avanzados.mostrar {
     display: grid;
 }
 
-/* --- FILAS DE DATOS --- */
+
 .dato-fila {
     display: flex;
     justify-content: space-between;
@@ -670,12 +671,12 @@ svg text {
 }
 
 .dato-valor {
-    font-family: 'Open Sans', sans-serif; /* O 'Courier New' si prefieres mono */
+    font-family: 'Open Sans', sans-serif; 
     font-weight: 700;
     color: #333;
 }
 
-/* --- MODO OSCURO --- */
+
 [data-theme="dark"] .toggle-datos {
     border-color: #444;
     color: #aaa;
@@ -995,11 +996,11 @@ function setMode(newMode) {
 
 
 function setModeUI(newMode) {
-    // Estado visual
+    
     document.getElementById('btn-rect').classList.toggle('active', newMode === 'rect');
     document.getElementById('btn-obli').classList.toggle('active', newMode === 'obli');
 
-    // Estado lógico (tu motor)
+    
     setMode(newMode);
 }
 
@@ -1015,7 +1016,7 @@ setTimeout(() => {
 
 function updateRefDiagram() {
     const svg = document.getElementById('ref-svg');
-    // Usamos las clases CSS 'dibujo-linea', 'dibujo-texto', etc.
+    
     if (mode === 'rect') {
         svg.innerHTML = `
             <path d="M40,20 L40,100 L160,100 Z" class="dibujo-linea"/>
@@ -1042,10 +1043,10 @@ function updateRefDiagram() {
 
 function dibujar(a, b, c, A, B, G) {
     const svg = document.getElementById('svg-draw');
-    document.getElementById('visualizacion').style.display = 'flex'; // Usar flex para centrar
+    document.getElementById('visualizacion').style.display = 'flex'; 
     svg.innerHTML = '';
 
-    // --- LÓGICA DE COORDENADAS ---
+    
     let v1, v2, v3;
 
     if (mode === 'rect') {
@@ -1058,7 +1059,7 @@ function dibujar(a, b, c, A, B, G) {
         v3 = {x: b * Math.cos(toRad(A)), y: b * Math.sin(toRad(A))}; 
     }
 
-  // --- ESCALADO Y CENTRADO ---
+  
     const minX = Math.min(v1.x, v2.x, v3.x);
     const maxX = Math.max(v1.x, v2.x, v3.x);
     const minY = Math.min(v1.y, v2.y, v3.y);
@@ -1075,15 +1076,15 @@ svg.style.overflow = "visible";
 
     const scale = Math.min((svgW - 120) / triW, (svgH - 120) / triH);
 
-    // 1. Calculamos el centro geométrico del triángulo YA escalado
+    
     const centerX = (minX + triW / 2) * scale;
     const centerY = (minY + triH / 2) * scale;
 
-    // 2. Calculamos cuánto moverlo para que ese centro coincida con el centro del SVG (150, 100)
+    
     const offsetX = (svgW / 2) - centerX;
     const offsetY = (svgH / 2) - centerY;
 
-    // 3. Aplicamos coordenadas finales (Invirtiendo Y para SVG)
+    
 
 const p1 = { 
     x: (svgW / 2) + (v1.x - (minX + triW / 2)) * scale, 
@@ -1097,19 +1098,19 @@ const p3 = {
     x: (svgW / 2) + (v3.x - (minX + triW / 2)) * scale, 
     y: (svgH / 2) - (v3.y - (minY + triH / 2)) * scale 
 };
-    // --- DIBUJAR TRIÁNGULO ---
+    
     const tri = document.createElementNS("http://www.w3.org/2000/svg", "path");
     tri.setAttribute("d", `M${p1.x},${p1.y} L${p2.x},${p2.y} L${p3.x},${p3.y} Z`);
-    // AQUÍ ESTÁ EL CAMBIO IMPORTANTE: Usamos la clase CSS en vez de atributos fijos
+    
     tri.setAttribute("class", "dibujo-linea"); 
-    // Mantenemos un fill transparente por si acaso
+    
     tri.setAttribute("fill", "rgba(0,0,0,0.02)"); 
     svg.appendChild(tri);
 
-    // --- POSICIONAR ETIQUETAS ---
-    // Usamos "dibujo-texto" para lados (negrita) y "dibujo-texto-secundario" para ángulos
     
-    // Lado c (Base)
+    
+    
+    
     svg.appendChild(crearTxt((p1.x + p2.x) / 2, Math.max(p1.y, p2.y) + 25, "c = " + c.toFixed(1), "dibujo-texto", "12px", "bold"));
     
     if (mode === 'rect') {
@@ -1133,7 +1134,7 @@ const p3 = {
     applyTransforms();
 }
 
-// Función auxiliar modificada para aceptar CLASE CSS en lugar de COLOR
+
 function crearTxt(x, y, txt, clase, size, weight = "normal") {
     const t = document.createElementNS("http://www.w3.org/2000/svg", "text");
     t.setAttribute("x", x);
@@ -1172,8 +1173,8 @@ function crearTxt(x, y, txt, clase, size, weight = "normal") {
         
         t.style.transformOrigin = "center";
 t.style.transformBox = "fill-box";
-t.setAttribute("text-anchor", "middle"); // Centra el texto horizontalmente
-t.setAttribute("dominant-baseline", "middle"); // Centra el texto verticalmente
+t.setAttribute("text-anchor", "middle"); 
+t.setAttribute("dominant-baseline", "middle"); 
     }
 
 function resolver() {
@@ -1186,17 +1187,17 @@ function resolver() {
 
     let pasos = [];
 
-    // Función auxiliar para redondear en texto (limpia el código abajo)
+    
     const f = (n) => Number(n).toFixed(2); 
 
-    // --- CASO ESPECIAL: PITÁGORAS ---
-  // --- CASO ESPECIAL: TRIÁNGULO RECTÁNGULO (SOH-CAH-TOA) ---
-    // Asumimos B=90°, b=Hipotenusa
+    
+  
+    
     if (mode === 'rect') {
         
-        // 1. SI TENEMOS DOS LADOS (Hallamos el 3ro y el Ángulo A)
         
-        // A) Tenemos Hipotenusa (b) y Cateto Opuesto (a) -> Usamos SENO
+        
+        
         if (a && b && !c) {
             c = Math.sqrt(Math.abs(b*b - a*a));
             pasos.push(`<b>Teorema de Pitágoras (Hallar lado c):</b><br>
@@ -1210,7 +1211,7 @@ function resolver() {
                 $$ \\alpha = \\arcsin(${f(a/b)}) = \\mathbf{${f(A)}^\\circ} $$`);
             }
         }
-        // B) Tenemos Hipotenusa (b) y Cateto Adyacente (c) -> Usamos COSENO
+        
         else if (c && b && !a) {
             a = Math.sqrt(Math.abs(b*b - c*c));
             pasos.push(`<b>Teorema de Pitágoras (Hallar lado a):</b><br>
@@ -1224,7 +1225,7 @@ function resolver() {
                 $$ \\alpha = \\arccos(${f(c/b)}) = \\mathbf{${f(A)}^\\circ} $$`);
             }
         }
-        // C) Tenemos los dos Catetos (a y c) -> Usamos TANGENTE
+        
         else if (a && c && !b) {
             b = Math.sqrt(a*a + c*c);
             pasos.push(`<b>Teorema de Pitágoras (Hallar hipotenusa):</b><br>
@@ -1239,16 +1240,16 @@ function resolver() {
             }
         }
 
-        // 2. SI TENEMOS UN ÁNGULO Y UN LADO (Despejamos fórmulas básicas)
         
-        // Convertir Gamma a Alpha si es necesario (para simplificar lógica)
+        
+        
         if (!A && G) {
             A = 90 - G;
             pasos.push(`<b>Ángulos Complementarios:</b><br> $$ \\alpha = 90^\\circ - \\gamma = 90^\\circ - ${f(G)}^\\circ = ${f(A)}^\\circ $$`);
         }
 
         if (A) {
-            // D) Tenemos Ángulo A e Hipotenusa (b)
+            
             if (b && (!a || !c)) {
                 if (!a) {
                     a = b * Math.sin(toRad(A));
@@ -1263,7 +1264,7 @@ function resolver() {
                     $$ c = ${f(b)} \\cdot \\cos(${f(A)}^\\circ) = \\mathbf{${f(c)}} $$`);
                 }
             }
-            // E) Tenemos Ángulo A y Cateto Opuesto (a)
+            
             else if (a && (!b || !c)) {
                 if (!b) {
                     b = a / Math.sin(toRad(A));
@@ -1278,7 +1279,7 @@ function resolver() {
                     $$ c = \\frac{${f(a)}}{\\tan(${f(A)}^\\circ)} = \\mathbf{${f(c)}} $$`);
                 }
             }
-            // F) Tenemos Ángulo A y Cateto Adyacente (c)
+            
             else if (c && (!b || !a)) {
                 if (!b) {
                     b = c / Math.cos(toRad(A));
@@ -1295,9 +1296,9 @@ function resolver() {
             }
         }
     }
-    // --- MOTOR MATEMÁTICO ITERATIVO ---
+    
     for (let i = 0; i < 6; i++) {
-        // 1. Suma de Ángulos
+        
         if (A && B && !G) { 
             G = 180 - A - B; 
             pasos.push(`<b>Suma de Ángulos:</b><br>
@@ -1314,8 +1315,8 @@ function resolver() {
             $$ \\alpha = 180^\\circ - \\beta - \\gamma = 180^\\circ - ${f(B)}^\\circ - ${f(G)}^\\circ = \\mathbf{${f(A)}^\\circ} $$`);
         }
 
-        // 2. Ley de Cosenos (Lados)
-        // Usamos \\cdot para multiplicación y \\cos para la función
+        
+        
         if (a && c && B && !b) {
             b = Math.sqrt(a*a + c*c - 2*a*c*Math.cos(toRad(B)));
             pasos.push(`<b>Ley de Cosenos (Hallar Lado):</b><br>
@@ -1335,7 +1336,7 @@ function resolver() {
             $$ c = \\sqrt{${f(a)}^2 + ${f(b)}^2 - 2(${f(a)})(${f(b)}) \\cos(${f(G)}^\\circ)} = \\mathbf{${f(c)}} $$`);
         }
 
-        // 3. Caso LLL (Hallar Ángulos) -> AQUÍ ESTÁ LA FRACCIÓN QUE PEDISTE
+        
         if (a && b && c) {
             if(a+b<=c || a+c<=b || b+c<=a) { alert("Error: No forma un triángulo válido."); return; }
             
@@ -1359,8 +1360,8 @@ function resolver() {
             }
         }
 
-  // 4. Ley de Senos (Proporciones)
-        // Usamos \\frac para que se vea como fracción vertical
+  
+        
         if (a && A) {
             if (B && !b) { 
                 b = a * Math.sin(toRad(B)) / Math.sin(toRad(A)); 
@@ -1437,56 +1438,56 @@ function resolver() {
 function mostrar(a, b, c, A, B, G, pasos) {
     document.getElementById('resultados').style.display = 'block';
 
-    // 1. Cálculos Básicos
-    const s = (a + b + c) / 2; // Semiperímetro
+    
+    const s = (a + b + c) / 2; 
     const area = Math.sqrt(s * (s - a) * (s - b) * (s - c));
     const perimetro = a + b + c;
 
-    // 2. Cálculos Avanzados
-    // Alturas (h = 2 * Area / base)
+    
+    
     const ha = (2 * area) / a;
     const hb = (2 * area) / b;
     const hc = (2 * area) / c;
 
-    // Medianas (Teorema de Apolonio)
+    
     const ma = 0.5 * Math.sqrt(2 * b * b + 2 * c * c - a * a);
     const mb = 0.5 * Math.sqrt(2 * a * a + 2 * c * c - b * b);
     const mc = 0.5 * Math.sqrt(2 * a * a + 2 * b * b - c * c);
 
-    // Radios
-    const r = area / s; // Inradio
-    const R_circ = (a * b * c) / (4 * area); // Circunradio
+    
+    const r = area / s; 
+    const R_circ = (a * b * c) / (4 * area); 
 
-    // 3. Geometría Analítica (Coordenadas)
-    // Asumimos A en (0,0), B en (c,0)
+    
+    
     const Arad = toRad(A);
     
-    // Coordenadas de los Vértices
+    
     const Ax = 0, Ay = 0;
     const Bx = c, By = 0;
     const Cx = b * Math.cos(Arad);
     const Cy = b * Math.sin(Arad);
 
-    // Centroide (Baricentro) - Promedio de coordenadas
+    
     const Gx = (Ax + Bx + Cx) / 3;
     const Gy = (Ay + By + Cy) / 3;
 
-    // Incentro (Centro circunferencia inscrita) - Ponderado por lados opuestos
-    // Formula: (a*Ax + b*Bx + c*Cx) / P
-    // Nota: El vértice A es opuesto al lado a, etc.
+    
+    
+    
     const Ix = (a * Ax + b * Bx + c * Cx) / perimetro;
     const Iy = (a * Ay + b * By + c * Cy) / perimetro;
 
-    // Circuncentro (Centro circunferencia circunscrita)
-    // Fórmula simplificada dado que A=(0,0) y B=(c,0)
+    
+    
     const D = 2 * (Ax * (By - Cy) + Bx * (Cy - Ay) + Cx * (Ay - By));
     const Ox = ((Ax*Ax + Ay*Ay)*(By - Cy) + (Bx*Bx + By*By)*(Cy - Ay) + (Cx*Cx + Cy*Cy)*(Ay - By)) / D;
     const Oy = ((Ax*Ax + Ay*Ay)*(Cx - Bx) + (Bx*Bx + By*By)*(Ax - Cx) + (Cx*Cx + Cy*Cy)*(Bx - Ax)) / D;
 
 
-    // --- RENDERING HTML ---
+    
 
-    // Parte 1: Datos Principales
+    
  let htmlNormal = `
         <div class="res-item"><span>Lado a:</span><span>${a.toFixed(2)}</span></div>
         <div class="res-item"><span>Lado b ${mode==='rect'?'(Hip)':''}:</span><span>${b.toFixed(2)}</span></div>
@@ -1500,8 +1501,8 @@ function mostrar(a, b, c, A, B, G, pasos) {
 
    document.getElementById('res-content').innerHTML = htmlNormal;
 
-    // Parte 3: Contenedor Oculto con Datos Técnicos
-    // Función auxiliar para formatear coordenadas
+    
+    
     const fmt = (n) => n.toFixed(4);
     const coord = (x, y) => `[${fmt(x)}, ${fmt(y)}]`;
 
@@ -1531,7 +1532,7 @@ function mostrar(a, b, c, A, B, G, pasos) {
 
 
 
-    // --- RENDERIZADO DE PASOS Y FÓRMULAS ---
+    
     const contenedorPasos = document.getElementById('procedimiento-contenedor');
     const listaPasos = document.getElementById('pasos-lista');
 
@@ -1577,24 +1578,24 @@ function exportarPNG() {
 
     const ctx = canvas.getContext('2d');
     
-    // 1. Configurar dimensiones cuadradas (700x700) 
-    // Usamos 700x700 porque el viewBox es 300x300, así mantenemos la proporción perfecta.
+    
+    
     const exportSize = 700;
     svg.setAttribute('width', exportSize); 
     svg.setAttribute('height', exportSize);
     
-    // 2. Serializar el SVG a texto
+    
     let xml = new XMLSerializer().serializeToString(svg);
     
-    // --- CORRECCIONES CRUCIALES PARA QUE FUNCIONE ---
     
-    // A) Asegurar el Namespace (Obligatorio para que funcione como imagen)
+    
+    
     if (!xml.match(/^<svg[^>]+xmlns="http\:\/\/www\.w3\.org\/2000\/svg"/)) {
         xml = xml.replace(/^<svg/, '<svg xmlns="http://www.w3.org/2000/svg"');
     }
 
-    // B) Inyectar Estilos Forzados vía CSS interno
-    // Esto evita el error de "doble atributo style" que rompe el XML.
+    
+    
     const estilosExport = `
     <style>
         .dibujo-linea { stroke: #000 !important; fill: rgba(0,0,0,0.02) !important; stroke-width: 2.5; }
@@ -1603,10 +1604,10 @@ function exportarPNG() {
     </style>`;
     xml = xml.replace(/<svg(.*?)>/, `<svg$1>${estilosExport}`);
 
-    // C) Borrar marca de agua antigua del SVG (de forma segura con Regex global)
+    
     xml = xml.replace(/<text[^>]*>.*?√\(Raiz\) Cuadrada².*?<\/text>/g, '');
 
-    // 3. Preparar la imagen
+    
     const svg64 = btoa(unescape(encodeURIComponent(xml)));
     const img = new Image();
     
@@ -1614,14 +1615,14 @@ function exportarPNG() {
     canvas.height = exportSize;
     
     img.onload = function() {
-        // 4. Pintar fondo blanco (Evita que el fondo sea negro o transparente)
+        
         ctx.fillStyle = "white"; 
         ctx.fillRect(0, 0, canvas.width, canvas.height);
         
-        // 5. Dibujar el triángulo
+        
         ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
         
-        // 6. Dibujar la MARCA DE AGUA en alta definición sobre el Canvas
+        
         ctx.save();
         ctx.font = "900 28px 'Playfair Display', serif"; 
         ctx.fillStyle = "#1a1a1a";
@@ -1630,7 +1631,7 @@ function exportarPNG() {
         ctx.fillText("√(Raiz) Cuadrada²", canvas.width - 40, canvas.height - 40);
         ctx.restore();
 
-        // 7. Descargar (Método compatible con todos los navegadores)
+        
         const link = document.createElement('a');
         link.download = 'triangulo-raiz-cuadrada.png';
         link.href = canvas.toDataURL('image/png', 1.0); 
@@ -1638,7 +1639,7 @@ function exportarPNG() {
         link.click();
         document.body.removeChild(link);
         
-        // Limpieza de atributos temporales
+        
         svg.removeAttribute('width'); 
         svg.removeAttribute('height');
     };
@@ -1653,10 +1654,10 @@ function exportarPNG() {
 }
 
 
-// --- LÓGICA DE VISUALIZACIÓN ---
 
-let rotationState = 0; // Controla la base: 0°, 90°, 180°, Espejos
-let tiltState = 0;     // Controla el ajuste fino: 0°, 20°, 40°, -20°
+
+let rotationState = 0; 
+let tiltState = 0;     
 
 function toggleRotation() {
     rotationState = (rotationState + 1) % 5;
@@ -1664,7 +1665,7 @@ function toggleRotation() {
 }
 
 function toggleTilt() {
-    // Ciclo de grados: 0 -> 20 -> 40 -> -20 -> 0
+    
     if (tiltState === 0) tiltState = 20;
     else if (tiltState === 20) tiltState = 40;
     else if (tiltState === 40) tiltState = 60;
@@ -1678,50 +1679,50 @@ function toggleTilt() {
 }
 
 function applyTransforms() {
-    // 1. Los contenedores principales (los SVGs)
+    
     const svgs = [document.getElementById('ref-svg'), document.getElementById('svg-draw')];
     
-    // 2. Definir transformaciones BASE (Contenedor) e INVERSA (Texto)
+    
     let baseStr = "";
-    let textBaseStr = ""; // Lo opuesto a la base
+    let textBaseStr = ""; 
 
     switch(rotationState) {
-        case 0: // Normal
+        case 0: 
             baseStr = ""; 
             textBaseStr = ""; 
             break;
-        case 1: // 90°
+        case 1: 
             baseStr = "rotate(90deg)"; 
-            textBaseStr = "rotate(-90deg)"; // Contra-restar
+            textBaseStr = "rotate(-90deg)"; 
             break;
-        case 2: // 180°
+        case 2: 
             baseStr = "rotate(180deg)"; 
-            textBaseStr = "rotate(-180deg)"; // Contra-restar
+            textBaseStr = "rotate(-180deg)"; 
             break;
-        case 3: // Espejo Horizontal
+        case 3: 
             baseStr = "scaleX(-1)"; 
-            textBaseStr = "scaleX(-1)"; // Volver a voltear para leer bien
+            textBaseStr = "scaleX(-1)"; 
             break;
-        case 4: // Espejo Vertical
+        case 4: 
             baseStr = "scaleY(-1)"; 
-            textBaseStr = "scaleY(-1)"; // Volver a voltear
+            textBaseStr = "scaleY(-1)"; 
             break;
     }
 
-    // 3. Definir transformaciones FINAS (Compás) e INVERSA
+    
     let fineStr = `rotate(${tiltState}deg)`;
-    let textFineStr = `rotate(${-tiltState}deg)`; // Contra-restar inclinación
+    let textFineStr = `rotate(${-tiltState}deg)`; 
 
-    // 4. Aplicar a los SVGs (Contenedores)
+    
     svgs.forEach(svg => {
         if (!svg) return;
 
-        // A. Transformar el SVG completo
+        
         svg.style.transformOrigin = "center center";
         svg.style.transform = `${baseStr} ${fineStr}`;
 
-        // B. Buscar TODOS los textos dentro de este SVG y aplicar la inversa
-        // El orden inverso es importante: primero deshacemos el fino, luego la base.
+        
+        
         const texts = svg.querySelectorAll('text');
         texts.forEach(text => {
             text.style.transform = `${textBaseStr} ${textFineStr}`;
@@ -1732,19 +1733,19 @@ function applyTransforms() {
 function toggleAdvanced(btn) {
     const panel = document.getElementById('panel-avanzado');
     
-    // Alternar la visibilidad del panel
+    
     if (panel.style.display === 'grid') {
         panel.style.display = 'none';
-        btn.classList.remove('active'); // Quita rotación de flecha
-        // btn.querySelector('span').textContent = "Ver más datos avanzados"; // Opcional: Cambiar texto
+        btn.classList.remove('active'); 
+        
     } else {
         panel.style.display = 'grid';
-        btn.classList.add('active'); // Rota la flecha
-        // btn.querySelector('span').textContent = "Ocultar datos avanzados"; // Opcional: Cambiar texto
+        btn.classList.add('active'); 
+        
     }
 }
 
-// Inicializar iconos
+
 if (window.lucide) {
     window.lucide.createIcons();
 }
