@@ -772,6 +772,73 @@ input[type="color"].eq-color:hover {
     padding-top: 8px;
 }
 
+/* --- OVERLAY DE ROTACIÓN (SOLO MÓVIL) --- */
+#mobile-rotate-overlay {
+    display: none; /* Oculto por defecto en PC */
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+    background: #0a0a0a; /* Fondo oscuro elegante */
+    color: white;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 30px;
+}
+
+.rotate-content {
+    max-width: 300px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    animation: fadeIn 0.5s ease;
+}
+
+.rotate-icon {
+    width: 48px; 
+    height: 48px; 
+    margin-bottom: 10px;
+    stroke-width: 1.5;
+}
+
+.rotate-arrow {
+    width: 24px;
+    height: 24px;
+    margin-top: -20px;
+    margin-bottom: 20px;
+    margin-left: 30px; /* Para que parezca que rota el cel */
+    color: var(--accent); /* Tu color de acento o blanco */
+    animation: spinIcon 2s infinite ease-in-out;
+}
+
+#mobile-rotate-overlay h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.4rem;
+    margin-bottom: 10px;
+}
+
+#mobile-rotate-overlay p {
+    font-family: 'Open Sans', sans-serif;
+    font-size: 0.9rem;
+    color: #999;
+    margin-bottom: 30px;
+    line-height: 1.5;
+}
+
+@keyframes spinIcon {
+    0% { transform: rotate(0deg); }
+    50% { transform: rotate(90deg); }
+    100% { transform: rotate(90deg); }
+}
+
+/* --- LÓGICA DE VISIBILIDAD --- */
+/* Solo mostrar si es pantalla pequeña (max-width: 768px) Y está vertical (portrait) */
+@media screen and (max-width: 768px) and (orientation: portrait) {
+    #mobile-rotate-overlay {
+        display: flex;
+    }
+}
 
 
 </style>
@@ -1014,6 +1081,26 @@ input[type="color"].eq-color:hover {
   </div>
 </div>
 
+<div id="mobile-rotate-overlay">
+    <div class="rotate-content">
+        <i data-lucide="smartphone" class="rotate-icon"></i>
+        <i data-lucide="rotate-cw" class="rotate-arrow"></i>
+        
+        <h2>Mejor experiencia visual</h2>
+        <p>Abre el modo pantalla completa y activa la vista horizontal en tu dispositivo. (O activa modo ordenador en tu navegador)</p>
+        
+        <button id="btn-force-landscape" class="btn-principal">
+            <i data-lucide="maximize"></i>
+            Entrar en Modo Inmersivo
+        </button>
+        
+        <button onclick="document.getElementById('mobile-rotate-overlay').style.display='none'" 
+                style="background: transparent; border: none; color: #666; margin-top: 15px; font-size: 12px; text-decoration: underline;">
+            Continuar en vertical (no recomendado)
+        </button>
+    </div>
+</div>
+
 <script src="script.js"></script>
 
 <script>
@@ -1052,6 +1139,41 @@ document.getElementById('lightRoughness').addEventListener('input', e => {
     renderGraph();
 });
 
+
+document.getElementById('btn-force-landscape').addEventListener('click', async () => {
+    const overlay = document.getElementById('mobile-rotate-overlay');
+    const docEl = document.documentElement;
+
+    try {
+        // 1. Pedir Pantalla Completa
+        if (docEl.requestFullscreen) {
+            await docEl.requestFullscreen();
+        } else if (docEl.webkitRequestFullscreen) { /* Safari */
+            await docEl.webkitRequestFullscreen();
+        } else if (docEl.msRequestFullscreen) { /* IE11 */
+            await docEl.msRequestFullscreen();
+        }
+
+        // 2. Intentar bloquear orientación (Funciona en Android Chrome)
+        if (screen.orientation && screen.orientation.lock) {
+            try {
+                await screen.orientation.lock('landscape');
+                // Si funciona, ocultamos el overlay
+                overlay.style.display = 'none';
+            } catch (err) {
+                console.log("El dispositivo no soporta bloqueo de orientación automático.");
+                // Si falla (ej. iPhone), ocultamos el overlay igual para que el usuario gire manual
+                overlay.style.display = 'none';
+            }
+        } else {
+            // Navegadores antiguos o iOS
+            overlay.style.display = 'none';
+        }
+
+    } catch (err) {
+        console.error("Error al intentar pantalla completa:", err);
+    }
+});
 
 </script>
 
