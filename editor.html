@@ -1,0 +1,947 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <link rel="icon" href="icono.png" type="image/png">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Editor Expresiones | √(Raiz) Cuadrada² </title>
+
+    <script>
+        (function() {
+            
+            const localTheme = localStorage.getItem('theme');
+            
+            const themeToSet = localTheme || 'light';
+            
+            document.documentElement.setAttribute('data-theme', themeToSet);
+        })();
+    </script>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600&family=Playfair+Display:ital,wght@0,700;0,900;1,700&display=swap" rel="stylesheet">
+    
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <link rel="stylesheet" href="styles.css">
+
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js" async></script>
+   <style>
+    /* --- FUENTES E IMPORTACIONES --- */
+    @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700;900&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700&display=swap');
+
+    /* --- VARIABLES DE TEMA (CLARO / OSCURO) --- */
+    :root {
+        --bg-body: #f4f4f4;
+        --bg-container: #ffffff;
+        --text-main: #1a1a1a;
+        --text-sec: #666666;
+        --border-color: #eeeeee;
+        --input-bg: #f9f9f9;
+        --pill-menu-bg: #f0f0f0;
+        --pill-active-bg: #ffffff;
+        --pill-active-text: #000000;
+        --sym-btn-bg: #ffffff;
+        --sym-btn-hover: #1a1a1a;
+        --sym-text-hover: #ffffff;
+        --btn-main-bg: #1a1a1a;
+        --btn-main-text: #ffffff;
+        --shadow-soft: 0 20px 40px rgba(0,0,0,0.08);
+        --shadow-hover: 0 10px 25px rgba(0,0,0,0.12);
+    }
+
+    [data-theme="dark"] {
+        --bg-body: transparent; /* Se adapta al fondo global */
+        --bg-container: #1e1e1e;
+        --text-main: #ffffff;
+        --text-sec: #a0a0a0;
+        --border-color: #333333;
+        --input-bg: #2a2a2a;
+        --pill-menu-bg: #252525;
+        --pill-active-bg: #333333;
+        --pill-active-text: #ffffff;
+        --sym-btn-bg: #2a2a2a;
+        --sym-btn-hover: #ffffff;
+        --sym-text-hover: #000000;
+        --btn-main-bg: #ffffff;
+        --btn-main-text: #000000;
+        --shadow-soft: none;
+        --shadow-hover: 0 5px 15px rgba(0,0,0,0.3);
+    }
+
+    /* --- ESTILOS GENERALES --- */
+    body { 
+        background: white; 
+        font-family: 'Open Sans', sans-serif; 
+        margin: 0; 
+        padding: 20px; 
+        display: flex; 
+        justify-content: center; 
+        color: var(--text-main);
+        transition: background 0.3s ease, color 0.3s ease;
+    }
+
+    /* --- CONTENEDOR PRINCIPAL --- */
+    .container { 
+        background: var(--bg-container); 
+        padding: 40px 35px; 
+        border-radius: 40px; 
+        width: 100%; 
+        max-width: 850px; 
+        display: flex; 
+        flex-direction: column; 
+        align-items: center; 
+        box-shadow: var(--shadow-soft); 
+        position: relative; 
+        box-sizing: border-box;
+        transition: background 0.3s ease, border 0.3s ease;
+    }
+
+    /* --- CABECERA --- */
+    .header { text-align: center; margin-bottom: 25px; width: 100%; position: relative; }
+    
+    .header h1 { 
+        font-family: 'Playfair Display', serif; 
+        font-size: 32px; 
+        font-weight: 700;
+        margin: 0; 
+        color: var(--text-main);
+    }
+    
+    .main-subtitle {
+        font-family: 'Open Sans', sans-serif; /* Cambio a Open Sans para consistencia */
+        font-weight: 700;
+        font-size: 13px;
+        color: var(--text-sec);
+        margin-top: 8px; 
+        margin-bottom: 20px;
+        text-align: center;
+        text-transform: uppercase;
+        letter-spacing: 1.5px;
+    }
+
+    /* --- SELECTOR DE COLOR Y BORRAR --- */
+    .color-wrapper { position: absolute; top: 5px; right: 0; display: flex; align-items: center; }
+    
+    .btn-clear {
+        background: none;
+        border: none;
+        cursor: pointer;
+        padding: 8px;
+        color: var(--text-sec);
+        transition: 0.2s;
+        display: flex;
+        align-items: center;
+        margin-right: 10px;
+    }
+    .btn-clear:hover {
+        color: #ff4d4d; /* Rojo suave */
+        transform: scale(1.1);
+    }
+
+    .color-trigger { 
+        width: 28px; 
+        height: 28px; 
+        border-radius: 50%; /* Redondo es más moderno */
+        border: 2px solid var(--border-color); 
+        cursor: pointer; 
+        background-color: #000; 
+        transition: 0.2s; 
+        box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+    .color-trigger:hover { transform: scale(1.1); border-color: var(--text-main); }
+    
+    #hidden-color-input { 
+        position: absolute; top: 0; right: 0; width: 30px; height: 30px; opacity: 0; cursor: pointer; 
+    }
+
+    /* --- MENÚ DE PÍLDORAS --- */
+    .pill-menu { 
+       display: flex;
+    flex-wrap: wrap;       
+    justify-content: center; 
+    gap: 5px;              
+    
+    background: var(--input-bg); 
+    padding: 12px;          
+    border-radius: 35px;   
+    margin-bottom: 25px;
+    position: relative;
+    box-shadow: inset 0 1px 3px rgba(0,0,0,0.06);
+        transition: background 0.3s ease;
+    }
+
+    .pill-btn { 
+        padding: 10px 20px; 
+        border-radius: 999px; 
+        border: none; 
+        background: transparent; 
+        font-weight: 600; 
+        font-size: 13px;        
+        cursor: pointer; 
+        color: var(--text-sec); 
+        transition: 0.3s cubic-bezier(0.25, 0.8, 0.25, 1); 
+        white-space: nowrap;
+        font-family: 'Open Sans', sans-serif;
+    }
+    
+    .pill-btn:hover { color: var(--text-main); }
+    
+    .pill-btn.active { 
+        background: var(--pill-active-bg); 
+        color: var(--pill-active-text); 
+        box-shadow: 0 4px 10px rgba(0,0,0,0.05); 
+    }
+
+    /* --- GRID DE SÍMBOLOS --- */
+    .grids-container { width: 100%; margin-bottom: 20px; }
+    
+    .symbol-grid { 
+        display: none; 
+        grid-template-columns: repeat(auto-fill, minmax(80px, 1fr)); 
+        gap: 12px; 
+        padding: 20px; 
+        background: var(--input-bg); 
+        border-radius: 25px; 
+        border: 1px solid transparent; 
+        animation: fadeIn 0.3s ease;
+           box-shadow: inset 0 1px 3px rgba(0,0,0,0.06);
+    }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
+
+    .symbol-grid.active { display: grid; }
+
+    /* BOTONES DE SÍMBOLOS */
+    .btn-sym { 
+        background: var(--sym-btn-bg); 
+        border: 1px solid var(--border-color); 
+        padding: 15px 5px; 
+        border-radius: 16px; 
+        cursor: pointer; 
+        display: flex; 
+        flex-direction: column; 
+        align-items: center; 
+        transition: all 0.2s ease; 
+        color: var(--text-main);
+        box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+    }
+    
+    .btn-sym:hover { 
+        background: var(--sym-btn-hover); 
+        color: var(--sym-text-hover); 
+        border-color: var(--sym-btn-hover); 
+        transform: translateY(-3px);
+        box-shadow: var(--shadow-hover);
+    }
+    
+    .btn-sym b { font-size: 20px; margin-bottom: 5px; font-family: 'Times New Roman', serif; }
+    .btn-sym span { font-size: 10px; font-weight: 700; text-transform: uppercase; opacity: 0.7; }
+
+    /* --- VISOR (PREVIEW) --- */
+    .preview-box { 
+        background: var(--bg-container); 
+        border-radius: 25px; 
+        margin-bottom: 25px; 
+        width: 100%; 
+        min-height: 120px; 
+        display: flex; 
+        align-items: center; 
+        justify-content: center; 
+        border: 2px dashed var(--border-color); /* Borde punteado elegante */
+        overflow-x: auto;
+        color: var(--text-main);
+        transition: all 0.3s ease;
+           box-shadow: inset 0 1px 3px rgba(0,0,0,0.06);
+    }
+    
+    #math-target { padding: 20px; display: inline-block; font-size: 1.2em; }
+
+    /* --- ÁREA DE TEXTO --- */
+    textarea { 
+        width: 100%; 
+        padding: 20px; 
+        border-radius: 20px; 
+        border: 2px solid transparent; 
+        background: var(--input-bg);
+        color: var(--text-main);
+        font-size: 16px; 
+        font-family: 'Courier New', monospace; 
+        outline: none; 
+        resize: vertical; 
+        min-height: 100px; 
+        margin-bottom: 20px; 
+        text-align: center; 
+        box-sizing: border-box;
+        transition: all 0.3s ease;
+           box-shadow: inset 0 1px 3px rgba(0,0,0,0.06);
+    }
+    
+    textarea:focus { 
+        background: var(--bg-container); 
+        border-color: var(--text-main); 
+        box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+        
+    }
+
+    /* --- ACCIONES --- */
+    .actions { display: flex; gap: 15px; width: 100%; flex-wrap: wrap; }
+    
+    select { 
+        padding: 16px 25px; 
+        border-radius: 999px; 
+        border: 1px solid var(--border-color); 
+        flex: 1; 
+        font-weight: 600; 
+        outline: none; 
+        cursor: pointer; 
+        background: var(--input-bg);
+        color: var(--text-main);
+        font-family: 'Open Sans', sans-serif;
+        min-width: 150px;
+    }
+    
+    .btn-dl { 
+        flex:2;
+    width: 100%;
+    background: transparent;
+    color: #666;
+    border: 1px solid #e0e0e0;
+    padding: 14px;
+    border-radius: 999px;
+    font-size: 14px;
+    cursor: pointer;
+    transition: 0.3s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    font-weight: 600;
+    }
+    
+    .btn-dl:hover { 
+        transform: translateY(-3px) scale(1.02); 
+        box-shadow: 0 10px 20px rgba(0,0,0,0.15); 
+        opacity: 0.95;
+    }
+
+    /* --- RESPONSIVE --- */
+    @media (max-width: 600px) {
+        .container { padding: 30px 20px; border-radius: 30px; }
+        .header h1 { font-size: 26px; }
+        .pill-menu { border-radius: 20px; justify-content: flex-start; overflow-x: auto; flex-wrap: nowrap; }
+        .actions { flex-direction: column; }
+        .btn-dl, select { width: 100%; }
+        .symbol-grid { grid-template-columns: repeat(auto-fill, minmax(60px, 1fr)); }
+    }
+</style>
+
+    </head>
+<body>
+
+    
+    <header class="mobile-header">
+        <div class="nav-header">
+            <button class="icon-btn"><i data-lucide="search"></i></button>
+            <button class="icon-btn" onclick="toggleTheme()"><i data-lucide="moon"></i></button>
+        </div>
+        <button class="icon-btn" onclick="toggleMenu()"><i data-lucide="menu"></i></button>
+    </header>
+
+    <div class="wrapper">
+        <aside class="sidebar" id="sidebar">
+            <div class="nav-header">
+               <button class="icon-btn" title="Inicio"
+        onclick="window.location.href='index.html'">
+  <i data-lucide="home"></i>
+</button>
+
+<button class="icon-btn" title="Modo"
+        onclick="toggleTheme()">
+  <i id="theme-icon" data-lucide="moon"></i>
+</button>
+
+<button class="icon-btn" title="Recargar"
+        onclick="location.reload()"
+        id="close-menu">
+  <i data-lucide="x"></i>
+</button>
+
+            </div>
+
+            <nav>
+                <ul class="nav-links">
+                    <li><a href="index.html"><i data-lucide="square-radical"></i> Página Principal</a></li>
+
+                    
+                    <div class="nav-group">
+    <div class="nav-item has-submenu" onclick="toggleSubmenu(this)">
+        <div class="nav-text-container">
+            <i data-lucide="calculator"></i>
+            <span>CALCULADORA</span>
+        </div>
+        <i data-lucide="chevron-down" class="arrow-icon"></i>
+    </div>
+    
+    <div class="submenu">
+        <a href="ecuaciones.html"><i data-lucide="equal" class="sub-icon"></i> Ecuaciones</a>
+        <a href="sistemas.html"><i data-lucide="layers" class="sub-icon"></i> Sistemas Ecuaciones</a>
+        <a href="matrices.html"><i data-lucide="grid-3x3" class="sub-icon"></i> Matrices</a>
+        <a href="derivadas.html"><i data-lucide="trending-up" class="sub-icon"></i> Derivadas</a>
+        <a href="integrales.html"><i data-lucide="sigma" class="sub-icon"></i> Integrales</a>
+        <a href="laplace.html"><i data-lucide="waves" class="sub-icon"></i> Transf. Laplace</a>
+    </div>
+</div>
+
+<div class="nav-group">
+    <div class="nav-item has-submenu" onclick="toggleSubmenu(this)">
+        <div class="nav-text-container">
+            <i data-lucide="ruler"></i>
+            <span>HERRAMIENTAS</span>
+        </div>
+        <i data-lucide="chevron-down" class="arrow-icon"></i>
+    </div>
+    
+    <div class="submenu">
+        <a href="simbolos.html"><i data-lucide="omega" class="sub-icon"></i> Símbolos</a>
+        <a href="factorizar.html"><i data-lucide="divide" class="sub-icon"></i> Factorizadora</a>
+        <a href="fraccionesparciales.html"><i data-lucide="percent" class="sub-icon"></i> Fracciones Parciales</a>
+        <a href="triangulos.html"><i data-lucide="triangle" class="sub-icon"></i> Calc. Triángulos</a>
+        <a href="vectores.html"><i data-lucide="move-diagonal" class="sub-icon"></i> Vectores</a>
+        <a href="circulounitario.html"><i data-lucide="circle" class="sub-icon"></i> Círculo Unitario</a>
+        <a href="editor.html"><i data-lucide="edit-3" class="sub-icon"></i> Editor Expresiones</a>
+    </div>
+</div>
+
+<div class="nav-group">
+    <div class="nav-item has-submenu" onclick="toggleSubmenu(this)">
+        <div class="nav-text-container">
+            <i data-lucide="activity"></i>
+            <span>GRAFICADORAS</span>
+        </div>
+        <i data-lucide="chevron-down" class="arrow-icon"></i>
+    </div>
+    
+    <div class="submenu">
+        <a href="graficadora2d.html"><i data-lucide="line-chart" class="sub-icon"></i> Funciones 2D</a>
+        <a href="graficadora3d.html"><i data-lucide="box" class="sub-icon"></i> Graficadora 3D</a>
+        <a href="conicas.html"><i data-lucide="orbit" class="sub-icon"></i> Cónicas</a>
+        <a href="campos.html"><i data-lucide="wind" class="sub-icon"></i> Campos Vectoriales</a>
+    </div>
+</div>
+
+                    
+                    <li><a href="cursos.html"><i data-lucide="book-open"></i> CURSOS</a></li>
+                    <li><a href="formularios.html"><i data-lucide="file-text"></i> FORMULARIOS</a></li>
+                    <li><a href="youtube.html"><i data-lucide="youtube"></i> Canal de YouTube</a></li>
+                    <li><a href="autor.html"><i data-lucide="user"></i> Sobre el autor</a></li>
+                </ul>
+            </nav>
+        </aside>
+
+        <main class="content">
+            
+           <div class="container">
+    <div class="header">
+        <h1>Editor de expresiones</h1>
+        <h2 class="main-subtitle">√(Raíz) Cuadrada²</h2>
+        <button class="btn-clear" ...>
+       
+    </div>
+
+    <div class="pill-menu" id="pill-menu"></div>
+        
+    <div class="grids-container" id="grids-container"></div>
+
+    <div class="preview-box">
+        <div id="math-target">\[ ... \]</div>
+        
+    </div>
+
+    <textarea id="math-input" spellcheck="false" placeholder="Escribe código LaTeX aquí..."></textarea>
+
+    <div class="actions">
+        <select id="res-val">
+            <option value="1.2">Calidad Baja</option>
+            <option value="2.8" selected>Calidad Media</option>
+            <option value="4.5">Calidad Alta</option>
+        </select>
+        <button class="btn-dl" onclick="optimizedExport()">Descargar PNG</button>
+    </div>
+</div>
+            
+
+<footer class="footer-global">
+    <div class="footer-wrapper">
+        
+        <div class="footer-section">
+            <h4 class="footer-h4">Contacto</h4>
+            <a href="mailto:s.rodriguezrojas939@gmail.com" class="footer-email">
+                s.rodriguezrojas939@gmail.com
+            </a>
+            <div class="footer-socials">
+                <a href="https://wa.me/573196510401" target="_blank" title="WhatsApp">
+                    <i data-lucide="message-circle"></i>
+                </a>
+                <a href="https://www.youtube.com/@ElRaizCuadrada" target="_blank" title="YouTube">
+                    <i data-lucide="youtube"></i>
+                </a>
+                <a href="mailto:s.rodriguezrojas939@gmail.com" title="Correo">
+                    <i data-lucide="mail"></i>
+                </a>
+                <a href="https://github.com" target="_blank" title="GitHub">
+                    <i data-lucide="github"></i>
+                </a>
+            </div>
+        </div>
+
+        <div class="footer-section">
+            <a href="https://www.youtube.com/@ElRaizCuadrada" target="_blank" class="footer-logo-link">
+                <h1 class="footer-title">√(Raiz) Cuadrada²</h1>
+            </a>
+        </div>
+
+        <div class="footer-section">
+            <h4 class="footer-h4">Visitas al sitio</h4>
+            <div class="visitor-counter">
+                <img src="https://hitwebcounter.com/counter/counter.php?page=21465053&style=0024&nbdigits=5&type=page&initCount=0" alt="Visitas">
+            </div>
+        </div>
+
+    </div>
+</footer>
+           
+        </main>
+        
+     <script src="script.js"></script>
+      
+<script>
+    // ================= CONFIGURACIÓN Y ESTADO =================
+    const menus = {
+        "Letras Griegas": [
+            {n: 'Alpha', s: '\\alpha', i: 'α'},
+            {n: 'Beta', s: '\\beta', i: 'β'},
+            {n: 'Gamma', s: '\\gamma', i: 'γ'},
+            {n: 'Delta', s: '\\delta', i: 'δ'},
+            {n: 'Epsilon', s: '\\epsilon', i: 'ε'},
+            {n: 'Zeta', s: '\\zeta', i: 'ζ'},
+            {n: 'Theta', s: '\\theta', i: 'θ'},
+            {n: 'Lambda', s: '\\lambda', i: 'λ'},
+            {n: 'Mu', s: '\\mu', i: 'μ'},
+            {n: 'Pi', s: '\\pi', i: 'π'},
+            {n: 'Rho', s: '\\rho', i: 'ρ'},
+            {n: 'Sigma', s: '\\sigma', i: 'σ'},
+            {n: 'Tau', s: '\\tau', i: 'τ'},
+            {n: 'Phi', s: '\\phi', i: 'φ'},
+            {n: 'Omega', s: '\\omega', i: 'ω'},
+            {n: 'Delta M.', s: '\\Delta', i: 'Δ'},
+            {n: 'Sigma M.', s: '\\Sigma', i: 'Σ'},
+            {n: 'Omega M.', s: '\\Omega', i: 'Ω'},
+            {n: 'Gamma', s: '\\Gamma ', i: 'Γ'},
+            {n: 'Theta', s: '\\Theta ', i: 'Θ'},
+            {n: 'Lambda', s: ' \\Lambda ', i: 'Λ'},
+            {n: 'Xi', s: '\\Xi ', i: 'Ξ'},
+            {n: 'Pi', s: '\\Pi ', i: 'Π'},
+            {n: 'Upsilon', s: '\\Upsilon ', i: 'Υ'},
+            {n: 'Phi', s: '\\Phi ', i: 'Φ'},
+            {n: 'Psi', s: '\\Psi ', i: 'Ψ'}
+        ],
+        "Flechas": [
+            {n: 'Derecha', s: '\\rightarrow', i: '→'},
+            {n: 'Izquierda', s: '\\leftarrow', i: '←'},
+            {n: 'Implica', s: '\\implies', i: '⇒'},
+            {n: 'Equival', s: '\\iff', i: '⇔'},
+            {n: 'Mapeo', s: '\\mapsto', i: '↦'},
+            {n: 'Arriba', s: '\\uparrow', i: '↑'},
+            {n: 'Abajo', s: '\\downarrow', i: '↓'},
+            {n: 'Doble Dir', s: '\\leftrightarrow', i: '↔'},
+            {n: 'Hacia', s: '\\to', i: '→'},
+            {n: 'Tiende a', s: '\\longrightarrow', i: '⟶'},
+            {n: 'Diag Arriba', s: '\\nearrow', i: '↗'},
+            {n: 'Diag Abajo', s: '\\searrow', i: '↘'},
+            {n: 'Flecha Texto R', s: '\\xrightarrow[ ]{ }', i: '→ₓˣ'},
+            {n: 'Flecha Texto L', s: '\\xleftarrow[ ]{ }', i: '←ₓˣ'},
+            {n: 'Doble Texto', s: '\\xleftrightarrow[ ]{ }', i: '↔ₓˣ'},
+            {n: 'Techo Flecha', s: '\\overrightarrow{ }', i: '→̅ˣ'},
+            {n: 'No Implica', s: '\\nRightarrow', i: '⇏'},
+            {n: 'No Equiv', s: '\\nLeftrightarrow', i: '⇎'},
+            {n: 'Doble Arriba', s: '\\Uparrow', i: '⇑'},
+            {n: 'Doble Abajo', s: '\\Downarrow', i: '⇓'},
+            {n: 'Vector', s: '\\rightharpoonup', i: '⇀'},
+            {n: 'Inyección', s: '\\hookrightarrow', i: '↳'},
+            {n: 'Sobreyección', s: '\\twoheadrightarrow', i: '↠'},
+            {n: 'Mapeo Largo', s: '\\longmapsto', i: '⟼'},
+            {n: 'Diag Arriba Izq', s: '\\nwarrow', i: '↖'},
+            {n: 'Diag Abajo Izq', s: '\\swarrow', i: '↙'},
+            {n: 'Equilibrio', s: '\\rightleftharpoons', i: '⇌'},
+            {n: 'Serpiente', s: '\\rightsquigarrow', i: '⇝'},
+            {n: 'Ciclo', s: '\\circlearrowright', i: '↻'},
+            {n: 'Lógica L', s: '\\Lsh', i: '↰'},
+            {n: 'Lógica R', s: '\\Rsh', i: '↱'},
+            {n: 'Vértice Doble', s: '\\updownarrow', i: '↕'}
+        ],
+        "Lógica": [
+            {n: 'Para todo', s: '\\forall ', i: '∀'},
+            {n: 'Existe', s: '\\exists ', i: '∃'},
+            {n: 'No existe', s: '\\nexists ', i: '∄'},
+            {n: 'Pertenece', s: '\\in ', i: '∈'},
+            {n: 'No pert.', s: '\\notin ', i: '∉'},
+            {n: 'Unión', s: '\\cup ', i: '∪'},
+            {n: 'Intersec', s: '\\cap ', i: '∩'},
+            {n: 'Vacío', s: '\\emptyset', i: '∅'},
+            {n: 'Subconj', s: '\\subset ', i: '⊂'},
+            {n: 'Incluido', s: '\\subseteq ', i: '⊆'},
+            {n: 'Tal que', s: '\\mid ', i: '|'},
+            {n: 'Por tanto', s: '\\therefore ', i: '∴'},
+            {n: 'Porque', s: '\\because ', i: '∵'},
+            {n: 'Y (and)', s: '\\land ', i: '∧'},
+            {n: 'O (or)', s: '\\lor ', i: '∨'},
+            {n: 'Negación', s: '\\neg ', i: '¬'},
+            {n: 'Equiv', s: '\\equiv ', i: '≡'},
+            {n: 'Verdad', s: '\\top ', i: '⊤'},
+            {n: 'Falso', s: '\\bot ', i: '⊥'},
+            {n: 'Superconj', s: '\\supset ', i: '⊃'},
+            {n: 'Super Incl', s: '\\supseteq ', i: '⊇'},
+            {n: 'No Incl', s: '\\not\subseteq ', i: '⊈'},
+            {n: 'Dif Set', s: '\\setminus ', i: '∖'},
+            {n: 'XOR', s: '\\oplus ', i: '⊕'},
+            {n: 'Entalla', s: '\\vDash ', i: '⊨'},
+            {n: 'Demuestra', s: '\\vdash ', i: '⊢'},
+            {n: 'Complem.', s: '{x}^{c}', i: 'xᶜ'},
+            {n: 'Barra Sup', s: '\\overline{x}', i: 'x̅'},
+            {n: 'Puntos', s: '\\cdots ', i: '⋯'},
+            {n: 'Congruente', s: '\\cong ', i: '≅'},
+            {n: 'Similar', s: '\\sim ', i: '∼'},
+            {n: 'Aprox', s: '\\approx ', i: '≈'}
+        ],
+        "Principales": [
+            {n: 'Suma', s: '+', i: '+'},
+            {n: 'Resta', s: '-', i: '-'},
+            {n: 'Igual', s: '=', i: '='},
+            {n: 'Punto', s: '\\cdot ', i: '·'},
+            {n: 'Por', s: '\\times ', i: '×'},
+            {n: 'División', s: '\\div ', i: '÷'},
+            {n: 'Fracción', s: '\\frac{a}{b}', i: '÷'},
+            {n: 'Potencia', s: '^{n}', i: 'xⁿ'},
+            {n: 'Subíndice', s: '_{n}', i: 'xₙ'},
+            {n: 'Raiz n', s: ' \\sqrt[]{}', i: 'ⁿ√'},
+            {n: 'Raiz cuadrada', s: ' \\sqrt{}', i: '√'},
+            {n: 'Más-menos', s: '\\pm ', i: '±'},
+            {n: 'Menos-más', s: '\\mp ', i: '∓'},
+            {n: 'Aproxim.', s: '\\approx ', i: '≈'},
+            {n: 'Distinto', s: '\\neq ', i: '≠'},
+            {n: 'Idéntico', s: '\\equiv ', i: '≡'},
+            {n: 'Similar', s: '\\sim ', i: '∼'},
+            {n: 'Proporc.', s: '\\propto ', i: '∝'},
+             {n: 'Infinito', s: '\\infty ', i: '∞'},
+            {n: 'Enter', s: '\\atop', i: 'Enter ↵'}
+
+        ],
+        "Desigualdades": [
+            {n: 'Menor que', s: '<', i: '<'},
+            {n: 'Mayor que', s: '>', i: '>'},
+            {n: 'Menor igual', s: '\\leq ', i: '≤'},
+            {n: 'Mayor igual', s: '\\geq ', i: '≥'},
+            {n: 'Mucho menor', s: '\\ll ', i: '≪'},
+            {n: 'Mucho mayor', s: '\\gg ', i: '≫'},
+            {n: 'No menor', s: '\\nless ', i: '≮'},
+            {n: 'No mayor', s: '\\ngtr ', i: '≯'},
+            {n: 'Precede', s: '\\prec ', i: '≺'},
+            {n: 'Sigue', s: '\\succ ', i: '≻'},
+            {n: 'Prec. o Igual', s: '\\preceq ', i: '≼'},
+            {n: 'Suc. o Igual', s: '\\succeq ', i: '≽'},
+            {n: 'Menor o Mayor', s: '\\lessgtr ', i: '≶'},
+            {n: 'Mayor o Menor', s: '\\gtrless ', i: '≷'},
+            {n: 'No Menor Ig.', s: '\\nleq ', i: '≰'},
+            {n: 'No Mayor Ig.', s: '\\ngeq ', i: '≱'},
+            {n: 'Menor Sim.', s: '\\lesssim ', i: '≲'},
+            {n: 'Mayor Sim.', s: '\\gtrsim ', i: '≳'},
+            {n: 'Menor Aprox.', s: '\\lessapprox ', i: '⪅'},
+            {n: 'Mayor Aprox.', s: '\\gtrapprox ', i: '⪆'},
+            {n: 'Diferente', s: '\\neq ', i: '≠'},
+            {n: 'Aprox', s: '\\approx ', i: '≈'},
+            {n: 'Equiv', s: '\\equiv ', i: '≡'},
+            {n: 'Congruente', s: '\\cong ', i: '≅'},
+            {n: 'Similar', s: '\\sim ', i: '∼'},
+            {n: 'Sim o Igual', s: '\\simeq ', i: '≃'},
+            {n: 'Aprox o Igual', s: '\\approxeq ', i: '≊'},
+            {n: 'Definido como', s: '\\triangleq ', i: '≜'},
+            {n: 'Proporcional', s: '\\propto ', i: '∝'},
+            {n: 'Punto Igual', s: '\\doteq ', i: '≐'},
+            {n: 'Asintótico', s: '\\asymp ', i: '≍'},
+            {n: 'Identidad', s: '\\equiv ', i: '≡'},
+            {n: 'Corresp.', s: '\\leftrightarrow ', i: '↔'}
+        ],
+        "Cálculo": [
+            { n:'Evaluar', s:'\\left. x \\right|_a^b', i:'x|ₐᵇ' },
+            {n: 'Integral', s: '\\int ', i: '∫'},
+            {n: 'Int. Doble', s: '\\iint ', i: '∬'},
+            {n: 'Int. Triple', s: '\\iiint ', i: '∭'},
+            {n: 'Int. Cerrada', s: '\\oint ', i: '∮'},
+            {n: 'Derivada', s: '\\frac{d}{dx}', i: 'd/dx'},
+            {n: 'Deriv. n', s: '\\frac{d^{n}}{dx^{n}}', i: 'dⁿ'},
+            {n: 'Parcial', s: '\\frac{\\partial }{\\partial x}', i: '∂/∂x'},
+            {n: 'Parcial n', s: '\\frac{\\partial^{n} }{\\partial x^{n}}', i: '∂ⁿ'},
+            {n: 'Nabla', s: '\\nabla ', i: '∇'},
+            {n: 'Gradiente', s: '\\nabla f', i: 'grad'},
+            {n: 'Divergencia', s: '\\nabla \\cdot ', i: 'div'},
+            {n: 'Rotacional', s: '\\nabla \\times ', i: 'rot'},
+            {n: 'Laplace', s: '\\mathcal{L}\\{ f(t) \\}', i: 'ℒ'},
+            {n: 'Laplace Inv', s: '\\mathcal{L}^{-1}\\{ F(s) \\}', i: 'ℒ⁻¹'},
+            {n: 'Límite', s: '\\lim_{x \\to \\infty}', i: 'lim'},
+            {n: 'Sumatoria', s: '\\sum_{i=1}^{n}', i: '∑'},
+            {n: 'Productoria', s: '\\prod_{i=1}^{n}', i: '∏'},
+            {n: 'Deriv. Punto', s: '\\dot{x}', i: 'ẋ'},
+            {n: 'Deriv. Prima', s: "f'(x)", i: "f'"},
+            { n:'Integral Def.', s:'\\int_{a}^{b}', i:'∫ₐᵇ' },
+  { n:'Integral Impro.', s:'\\int_{0}^{\\infty}', i:'∫∞' },
+  { n:'Límite Finito', s:'\\lim_{x \\to a}', i:'limₐ' },
+  { n:'Límite Izq.', s:'\\lim_{x \\to a^-}', i:'lim⁻' },
+  { n:'Límite Der.', s:'\\lim_{x \\to a^+}', i:'lim⁺' },
+  { n:'Serie', s:'\\sum_{n=0}^{\\infty}', i:'∑∞' },
+  { n:'Serie Taylor', s:'\\sum_{n=0}^{\\infty} \\frac{f^{(n)}(a)}{n!}(x-a)^n', i:'Taylor' },
+  { n:'Serie Maclaurin', s:'\\sum_{n=0}^{\\infty} \\frac{f^{(n)}(0)}{n!}x^n', i:'Macl' },
+  { n:'Jacobiano', s:'\\frac{\\partial(x,y)}{\\partial(u,v)}', i:'J' }
+            
+        ],
+        "Conjuntos": [
+            {n: 'Pertenencia', s: '\\in ', i: '∈'},
+            {n: 'No pertenencia', s: '\\notin ', i: '∉'},
+            {n: 'Unión', s: '\\cup ', i: '∪'},
+            {n: 'Intersección', s: '\\cap ', i: '∩'},
+            {n: 'Vacío', s: '\\emptyset ', i: '∅'},
+            {n: 'Subconjunto', s: '\\subset ', i: '⊂'},
+            {n: 'Incluido', s: '\\subseteq ', i: '⊆'},
+            {n: 'No incluido', s: '\\nsubseteq ', i: '⊈'},
+            {n: 'Diferencia', s: '\\setminus ', i: '\\'},
+            {n: 'Producto Cart.', s: '\\times ', i: '×'},
+            {n: 'Potencia (P)', s: '\\mathcal{P}', i: '𝒫'},
+            {n: 'Naturales (N)', s: '\\mathbb{N}', i: 'ℕ'},
+            {n: 'Enteros (Z)', s: '\\mathbb{Z}', i: 'ℤ'},
+            {n: 'Racionales (Q)', s: '\\mathbb{Q}', i: 'ℚ'},
+            {n: 'Reales (R)', s: '\\mathbb{R}', i: 'ℝ'},
+            {n: 'Complejos (C)', s: '\\mathbb{C}', i: 'ℂ'},
+            {n: 'Primos (P)', s: '\\mathbb{P}', i: 'ℙ'},
+            {n: 'Intersec Cuadr.', s: '\\sqcap ', i: '⊓'},
+            {n: 'Unión Cuadr.', s: '\\sqcup ', i: '⊔'},
+            {n: 'Unión Cuadr. G', s: '\\bigsqcup ', i: '⨆'},
+            {n: 'Intersec Doble', s: '\\Cap ', i: '⋒'},
+            {n: 'Unión Doble', s: '\\Cup ', i: '⋓'},
+            {n: 'Unión Plus G', s: '\\biguplus ', i: '⨄'},
+            {n: 'Intersec G', s: '\\bigcap ', i: '⋂'},
+            {n: 'Unión G', s: '\\bigcup ', i: '⋃'},
+            {n: 'Suma Dir G', s: '\\bigoplus ', i: '⨁'},
+            {n: 'Producto T. G', s: '\\bigotimes ', i: '⨂'},
+            {n: 'Punto G', s: '\\bigodot ', i: '⨀'},
+            {n: 'Subconj Cuadr.', s: '\\sqsubseteq ', i: '⊑'},
+            {n: 'Superconj Cuadr.', s: '\\sqsupseteq ', i: '⊒'},
+            {n: 'Subconj Estricto', s: '\\sqsubset ', i: '⊏'},
+            {n: 'Superconj Estricto', s: '\\sqsupset ', i: '⊐'},
+            {n: 'Subconj No Igual', s: '\\subsetneq ', i: '⊊'},
+            {n: 'Superconj No Igual', s: '\\supsetneq ', i: '⊋'},
+            {n: 'Dif. Simétrica', s: '\\triangle ', i: '∆'},
+            {n: 'Coproducto', s: '\\amalg ', i: '⨿'},
+            {n: 'Complemento', s: 'x^{c}', i: 'xᶜ'},
+            {n: 'Restricción', s: '\\upharpoonright ', i: '↾'}
+        ],
+        "Matrices/Sist": [
+            {n: 'Sist. 2 eq', s: '\\begin{cases} x+y=1 \\\\ x-y=0 \\end{cases}', i: '{='},
+            {n: 'Matriz ( )', s: '\\begin{pmatrix} a & b \\\\ c & d \\end{pmatrix}', i: '(M)'},
+            {n: 'Matriz [ ]', s: '\\begin{bmatrix} a & b \\\\ c & d \\end{bmatrix}', i: '[M]'},
+            {n: 'Determinante', s: '\\begin{vmatrix} a & b \\\\ c & d \\end{vmatrix}', i: '|M|'},
+            {n: 'Vector', s: '\\vec{v}', i: 'v⃗'},
+            {n: 'Versor', s: '\\hat{u}', i: 'û'},
+            {n: 'Norma', s: '\\| v \\|', i: '||v||'},
+            {n: 'Traspuesta', s: 'A^{T}', i: 'Aᵀ'},
+            {n: 'Inversa', s: 'A^{-1}', i: 'A⁻¹'},
+            {n: 'Puntos Horiz', s: '\\cdots ', i: '⋯'},
+            {n: 'Puntos Vert', s: '\\vdots ', i: '⋮'},
+            {n: 'Puntos Diag', s: '\\ddots ', i: '⋱'},
+            {n: 'Dimensión', s: '\\mathbb{R}^{n \\times m}', i: 'Rⁿˣᵐ'},
+           { n:'Sist. 3 eq', s:'\\begin{cases} x+y+z=1 \\\\ x-y+z=0 \\\\ x+y-z=2 \\end{cases}', i:'{3=}' },
+  { n:'Sist. 4 eq', s:'\\begin{cases} x_1= \\\\ x_2= \\\\ x_3= \\\\ x_4= \\end{cases}', i:'{4=}' },
+  { n:'Función Partes', s:'f(x)=\\begin{cases} x & \\text{si } x>0 \\\\ -x & \\text{si } x<0 \\\\ 0 & \\text{si } x=0 \\end{cases}', i:'f{x}' },
+  { n:'Matriz 3x3', s:'\\begin{bmatrix} a & b & c \\\\ d & e & f \\\\ g & h & i \\end{bmatrix}', i:'[3³]' },
+  { n:'Matriz 4x4', s:'\\begin{bmatrix} 1 & 0 & 0 & 0 \\\\ 0 & 1 & 0 & 0 \\\\ 0 & 0 & 1 & 0 \\\\ 0 & 0 & 0 & 1 \\end{bmatrix}', i:'[4⁴]' },
+  { n:'Matriz Aum.', s:'\\left[\\begin{array}{cc|c} 1 & 0 & a \\\\ 0 & 1 & b \\end{array}\\right]', i:'[M|b]' },
+  { n:'Matriz Puntos', s:'\\begin{pmatrix} a_{11} & \\cdots & a_{1n} \\\\ \\vdots & \\ddots & \\vdots \\\\ a_{m1} & \\cdots & a_{mn} \\end{pmatrix}', i:'[⋱]' },
+  { n:'Suma Vertical', s:'\\begin{array}{r} x+y \\\\ +x-y \\\\ \\hline 2x \\end{array}', i:'x+y̲' },
+                {n: 'Ángulo', s: '\\angle ', i: '∠'},
+            {n: 'Triángulo', s: '\\triangle ', i: '△'},
+            {n: 'Perpendic.', s: '\\perp ', i: '⊥'},
+            {n: 'Paralelo', s: '\\parallel ', i: '∥'},
+            {n: 'Barra sup.', s: '\\overline{x}', i: 'x̄'},
+            {n: 'Barra inf.', s: '\\underline{x}', i: 'x_'},
+            {n: 'Sombrero L', s: '\\widehat{abc}', i: 'Â'},
+            {n: 'Grados', s: '^{\\circ}', i: '°'},
+            {n: 'Daga', s: '\\dagger ', i: '†'},
+            {n: 'Planck', s: '\\hbar ', i: 'ℏ'}
+        ],
+        "Paréntesis": [
+            {n: 'Paréntesis', s: '\\left(  \\right)', i: '( )'},
+            {n: 'Corchetes', s: '\\left[  \\right]', i: '[ ]'},
+            {n: 'Llaves', s: '\\left\\{  \\right\\}', i: '{ }'},
+            {n: 'Absoluto', s: '\\left|  \\right|', i: '|x|'},
+            {n: 'Norma', s: '\\left\\|  \\right\\|', i: '||x||'},
+            {n: 'Angulares', s: '\\langle  \\rangle', i: '⟨ ⟩'},
+            {n: 'Suelo', s: '\\lfloor  \\rfloor', i: '⌊ ⌋'},
+            {n: 'Techo', s: '\\lceil  \\rceil', i: '⌈ ⌉'},
+            {n: 'Izq. Abierta', s: '\\left(  \\right.', i: '( ...'},
+            {n: 'Der. Abierta', s: '\\left.  \\right)', i: '... )'},
+            {n: 'Solo Izq.', s: '\\left\\{  \\right.', i: '{ ...'},
+            {n: 'Solo Der.', s: '\\left.  \\right\\}', i: '... }'},
+             { n:'Eval. Barra', s:'\\left. x \\right|_a^b', i:'x|ₐᵇ' },
+  { n:'Int. Izq', s:'\\left[ x, y \\right)', i:'[x,y)' },
+  { n:'Int. Der', s:'\\left( x, y \\right]', i:'(x,y]' },
+  { n:'Barra Central', s:'\\left( x \\middle| y \\right)', i:'(x|y)' },
+  { n:'Llave Central', s:'\\left\\{ x \\middle| y \\right\\}', i:'{x|y}' },
+  { n:'Doble Corch.', s:'[\\![ x ]\\!]', i:'[[x]]' },
+  { n:'Llave Sup', s:'\\overbrace{ x }^{ n }', i:'⏞' },
+  { n:'Llave Inf', s:'\\underbrace{ x }_{ n }', i:'⏟' },
+  { n:'Barra Sup', s:'\\overline{ x }', i:'x̅' },
+  { n:'Barra Inf', s:'\\underline{ x }', i:'x̲' }
+        ],
+        "Otros": [
+            {n: 'Espacio', s: '\\: ', i: '␣'},
+            {n: 'Espacio L', s: '\\quad ', i: '␣+'},
+            {n: 'Texto', s: '\\text{ }', i: 'Abc'},
+             { n:'Negro',    s:'{\\color{black}}',    i:'▣' },
+  { n:'Gris',     s:'{\\color{Gray}color}',     i:'▣' },
+  { n:'Blanco',   s:'{\\color{white}color}',    i:'▣' },
+  { n:'Rojo',     s:'{\\color{Red}color}',      i:'▣' },
+  { n:'Verde',    s:'{\\color{green}color}',    i:'▣' },
+  { n:'Azul',     s:'{\\color{blue}color}',     i:'▣' },
+  { n:'Cian',     s:'{\\color{Cyan}color}',     i:'▣' },
+  { n:'Magenta',  s:'{\\color{magenta}color}',  i:'▣' },
+  { n:'Amarillo', s:'{\\color{yellow}color}',   i:'▣' },
+             { n:'Frac. Parc. (Caso 1)', s:'\\frac{P(x)}{(x-a)(x-b)}=\\frac{A}{x-a}+\\frac{B}{x-b}', i:'A/(x−a)' },
+  { n:'Frac. Parc. (Caso 2)', s:'\\frac{P(x)}{(x-a)^n}=\\frac{A_1}{x-a}+\\frac{A_2}{(x-a)^2}+\\cdots+\\frac{A_n}{(x-a)^n}', i:'A/(x−a)ⁿ' },
+  { n:'Frac. Parc. (Caso 3)', s:'\\frac{P(x)}{(ax^2+bx+c)}=\\frac{Ax+B}{ax^2+bx+c}', i:'(Ax+B)' },
+  { n:'Frac. Parc. (Caso 4)', s:'\\frac{P(x)}{(ax^2+bx+c)^n}=\\frac{A_1x+B_1}{ax^2+bx+c}+\\cdots+\\frac{A_nx+B_n}{(ax^2+bx+c)^n}', i:'Ax+B_ⁿ' },
+  { n:'Def. Derivada', s:'f\'(x)=\\lim_{h\\to0}\\frac{f(x+h)-f(x)}{h}', i:'df/dx' },
+             { n:'Ley Senos', s:'\\frac{a}{\\sin A}=\\frac{b}{\\sin B}=\\frac{c}{\\sin C}', i:'sen' },
+  { n:'Ley Cosenos', s:'c^2=a^2+b^2-2ab\\cos C', i:'cos' },
+          { n:'Cuadrado Binomio', s:'(a+b)^2=a^2+2ab+b^2', i:'(a+b)²' },
+  { n:'Diferencia Cuad.', s:'(a-b)^2=a^2-2ab+b^2', i:'(a−b)²' },
+  { n:'Suma Cubos', s:'a^3+b^3=(a+b)(a^2-ab+b^2)', i:'a³+b³' },
+  { n:'Resta Cubos', s:'a^3-b^3=(a-b)(a^2+ab+b^2)', i:'a³−b³' }        ]
+        
+        
+    };
+    let renderTimer;
+    let currentColor = '#000000';
+    const inputArea = document.getElementById('math-input');
+    const display = document.getElementById('math-target');
+    const colorInput = document.getElementById('hidden-color-input');
+    const colorTrigger = document.getElementById('color-trigger');
+
+    // ================= INICIALIZACIÓN =================
+    function init() {
+        // Crear menú de píldoras
+        const pillContainer = document.getElementById('pill-menu');
+        const gridsContainer = document.getElementById('grids-container');
+        let first = true;
+        for (let cat in menus) {
+            // Crear botón de píldora
+            let pill = document.createElement('button');
+            pill.className = `pill-btn ${first ? 'active' : ''}`;
+            pill.textContent = cat;
+            pill.onclick = () => switchTab(cat);
+            pillContainer.appendChild(pill);
+            
+            // Crear rejilla de símbolos
+            let grid = document.createElement('div');
+            grid.className = `symbol-grid ${first ? 'active' : ''}`;
+            grid.id = `grid-${cat}`;
+            menus[cat].forEach(item => {
+                let b = document.createElement('button');
+                b.className = 'btn-sym';
+                b.onclick = () => insertSymbol(item.s);
+                b.innerHTML = `<b>${item.i}</b><span>${item.n}</span>`;
+                grid.appendChild(b);
+            });
+            gridsContainer.appendChild(grid);
+            first = false;
+        }
+
+        // Configurar inputs
+        inputArea.value = "\\frac{-b \\pm \\sqrt{b^2 - 4ac}}{2a}";
+        colorInput.addEventListener('input', updateColor);
+        inputArea.addEventListener('input', () => {
+            clearTimeout(renderTimer);
+            renderTimer = setTimeout(render, 350);
+        });
+        render();
+    }
+
+    // ================= LÓGICA DE INTERFAZ =================
+    function switchTab(catName) {
+        document.querySelectorAll('.pill-btn').forEach(b => b.classList.toggle('active', b.textContent === catName));
+        document.querySelectorAll('.symbol-grid').forEach(g => g.classList.toggle('active', g.id === `grid-${catName}`));
+    }
+
+    function updateColor(e) {
+        currentColor = e.target.value;
+        colorTrigger.style.backgroundColor = currentColor;
+        render();
+    }
+
+    function insertSymbol(code) {
+        let s = inputArea.selectionStart;
+        inputArea.value = inputArea.value.substring(0, s) + code + inputArea.value.substring(inputArea.selectionEnd);
+        inputArea.focus();
+        render();
+    }
+
+    // ================= RENDERIZADO Y EXPORTACIÓN (INTACTOS) =================
+    function render() {
+        display.style.opacity = "0.4";
+        const rawContent = inputArea.value || '\\text{...}';
+        display.innerHTML = `\\[ \\color{${currentColor}}{${rawContent}} \\]`;
+        MathJax.typesetPromise([display]).then(() => { display.style.opacity = "1"; });
+    }
+
+    async function optimizedExport() {
+        const svg = display.querySelector('svg');
+        if (!svg) return;
+        const btn = document.querySelector('.btn-dl');
+        btn.innerText = "Procesando...";
+        const requestedScale = parseFloat(document.getElementById('res-val').value);
+        const bbox = svg.viewBox.baseVal;
+        const maxDimension = 4500; // Límite de seguridad
+        let finalScale = requestedScale;
+        if (bbox.width * finalScale > maxDimension) finalScale = maxDimension / bbox.width;
+        if (bbox.height * finalScale > maxDimension) finalScale = Math.min(finalScale, maxDimension / bbox.height);
+        
+        const canvas = document.createElement('canvas');
+        const padding = 30 * finalScale;
+        canvas.width = (bbox.width * finalScale) + padding;
+        canvas.height = (bbox.height * finalScale) + padding;
+        const ctx = canvas.getContext('2d');
+        const svgData = new XMLSerializer().serializeToString(svg);
+        const img = new Image();
+        const blob = new Blob([svgData], {type: 'image/svg+xml;charset=utf-8'});
+        const url = URL.createObjectURL(blob);
+        img.onload = () => {
+            ctx.drawImage(img, padding/2, padding/2, bbox.width * finalScale, bbox.height * finalScale);
+            canvas.toBlob((b) => {
+                const link = document.createElement('a');
+                link.download = `math_formula_${Date.now()}.png`;
+                link.href = URL.createObjectURL(b);
+                link.click();
+                URL.revokeObjectURL(url);
+                btn.innerText = "Descargar PNG";
+            }, 'image/png', 1.0);
+        };
+        img.src = url;
+    }
+    window.onload = init;
+</script>
+</body>
+<button class="mobile-theme-toggle" onclick="toggleTheme()" aria-label="Cambiar tema">
+    <i data-lucide="sun" class="icon-sun"></i>
+    <i data-lucide="moon" class="icon-moon"></i>
+</button>
+
+
+</html>
