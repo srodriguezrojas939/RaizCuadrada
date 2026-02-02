@@ -77,7 +77,7 @@
 }
 
 table {
-    min-width: 700px; 
+    min-width: 700px; /* fuerza scroll horizontal */
 }
 
 
@@ -302,8 +302,6 @@ table {
         border-radius: 25px; 
         border: 2px solid transparent; 
         height: 450px; 
-        position: relative; 
-        overflow: hidden; 
         box-shadow: 0 2px 5px rgba(0,0,0,0.02) inset;
         margin-top: 30px;
     }
@@ -440,6 +438,105 @@ table {
         min-height: 400px; 
     }
 }
+
+/* ============================
+   MOBILE FIXES (NO PC CHANGES)
+   ============================ */
+@media (max-width: 768px) {
+
+    /* --- BODY: evitar cortes --- */
+    body {
+        display: block !important;
+        padding: 16px 12px !important;
+        min-height: 100dvh;
+        height: auto;
+        overflow-x: hidden;
+    }
+
+    /* --- Calculadora respira mejor --- */
+    .calculadora-moderna {
+        padding: 24px 18px !important;
+        border-radius: 26px;
+    }
+
+    /* --- Inputs y filas --- */
+    .inputs-row {
+        flex-wrap: wrap;
+        gap: 10px;
+    }
+
+    input[type="text"],
+    input[type="number"],
+    .res-input,
+    select {
+        font-size: 14px;
+        padding: 11px 14px;
+    }
+
+    /* --- TABLA: scroll horizontal limpio --- */
+    .vector-container {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    table {
+        min-width: 720px;
+    }
+
+    th {
+        font-size: 10px;
+        padding: 8px;
+    }
+
+    td input {
+        width: 65px !important;
+        font-size: 12px;
+        padding: 8px;
+    }
+
+    /* --- Botones más cómodos --- */
+    .btn-black {
+        width: 30px;
+        height: 30px;
+        font-size: 15px;
+    }
+
+    /* --- Pills no se salen --- */
+    .pill-container {
+        max-width: 100%;
+        padding: 4px;
+    }
+
+    .pill-btn {
+        padding: 9px 12px;
+        font-size: 12px;
+    }
+
+    /* --- GRÁFICA (CLAVE) --- */
+    #graph-container {
+        height: 55dvh;
+        min-height: 320px;
+        max-height: 500px;
+        margin-top: 25px;
+        overflow: hidden;
+    }
+
+    /* --- Cards grid más compacta --- */
+    .prod-grid {
+        grid-template-columns: 1fr;
+        gap: 16px;
+    }
+
+    .vector-card {
+        padding: 18px;
+    }
+
+    /* --- Download buttons wrap bien --- */
+    .download-container {
+        gap: 10px;
+    }
+}
+
 </style>
   
 
@@ -623,8 +720,7 @@ table {
       
 
         <div class="download-container">
-            <button class="btn-download-pill" onclick="downloadPlot('plot-sum')">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+            <button class="btn-download-pill" onclick="downloadPlot('plot-sum')">       <i data-lucide="download"></i>
                 Descargar PNG
             </button>
         </div>
