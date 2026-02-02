@@ -26,7 +26,7 @@
     <link rel="stylesheet" href="styles.css">
 
   <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js" async></script>
-   <style>
+    <style>
     /* --- FUENTES E IMPORTACIONES --- */
     @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700;900&display=swap');
     @import url('https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700&display=swap');
@@ -52,13 +52,13 @@
     }
 
     [data-theme="dark"] {
-        --bg-body: transparent; /* Se adapta al fondo global */
-        --bg-container: #1e1e1e;
+        --bg-body: #0a0a0a; /* Se adapta al fondo global */
+        --bg-container: #0a0a0a;
         --text-main: #ffffff;
         --text-sec: #a0a0a0;
         --border-color: #333333;
         --input-bg: #2a2a2a;
-        --pill-menu-bg: #252525;
+        --pill-menu-bg: #151515;
         --pill-active-bg: #333333;
         --pill-active-text: #ffffff;
         --sym-btn-bg: #2a2a2a;
@@ -170,6 +170,7 @@
     position: relative;
     box-shadow: inset 0 1px 3px rgba(0,0,0,0.06);
         transition: background 0.3s ease;
+        
     }
 
     .pill-btn { 
@@ -177,7 +178,7 @@
         border-radius: 999px; 
         border: none; 
         background: transparent; 
-        font-weight: 600; 
+        font-weight: 800; 
         font-size: 13px;        
         cursor: pointer; 
         color: var(--text-sec); 
@@ -302,7 +303,7 @@
     }
     
     .btn-dl { 
-        flex:2;
+        flex:;
     width: 100%;
     background: transparent;
     color: #666;
@@ -333,6 +334,74 @@
         .actions { flex-direction: column; }
         .btn-dl, select { width: 100%; }
         .symbol-grid { grid-template-columns: repeat(auto-fill, minmax(60px, 1fr)); }
+    }
+    /* --- RESPONSIVE (CORREGIDO PARA PILAS) --- */
+    @media (max-width: 600px) {
+        .container { 
+            padding: 25px 15px; /* Un poco menos padding lateral */
+            border-radius: 30px; 
+            width: 95%; /* Asegura que no toque los bordes */
+        }
+
+        .header h1 { font-size: 24px; }
+        
+        /* AQUÍ ESTÁ EL CAMBIO CLAVE */
+        .pill-menu { 
+            border-radius: 25px; /* Bordes menos redondos para acomodar varias filas */
+            justify-content: center; /* Centrar los botones */
+            overflow-x: visible; /* Quitar el scroll */
+            flex-wrap: wrap !important; /* IMPORTANTE: Obliga a bajar de renglón */
+            gap: 8px; /* Espacio un poco más pequeño entre botones */
+        }
+
+        .pill-btn {
+            font-size: 11px; /* Letra un poco más chica para que quepan más */
+            padding: 8px 14px; /* Botones más compactos */
+            flex-grow: 1; /* Truco: hace que ocupen el ancho disponible uniformemente */
+            text-align: center;
+        }
+
+        .actions { flex-direction: column; }
+        .btn-dl, select { width: 100%; margin-bottom: 5px; }
+        
+        .symbol-grid { 
+            grid-template-columns: repeat(auto-fill, minmax(65px, 1fr)); 
+            gap: 8px;
+        }
+    }
+    /* --- RESPONSIVE (CORREGIDO PARA PILAS) --- */
+    @media (max-width: 600px) {
+        .container { 
+            padding: 25px 15px; /* Un poco menos padding lateral */
+            border-radius: 30px; 
+            width: 95%; /* Asegura que no toque los bordes */
+        }
+
+        .header h1 { font-size: 24px; }
+        
+        /* AQUÍ ESTÁ EL CAMBIO CLAVE */
+        .pill-menu { 
+            border-radius: 25px; /* Bordes menos redondos para acomodar varias filas */
+            justify-content: center; /* Centrar los botones */
+            overflow-x: visible; /* Quitar el scroll */
+            flex-wrap: wrap !important; /* IMPORTANTE: Obliga a bajar de renglón */
+            gap: 8px; /* Espacio un poco más pequeño entre botones */
+        }
+
+        .pill-btn {
+            font-size: 11px; /* Letra un poco más chica para que quepan más */
+            padding: 8px 14px; /* Botones más compactos */
+            flex-grow: 1; /* Truco: hace que ocupen el ancho disponible uniformemente */
+            text-align: center;
+        }
+
+        .actions { flex-direction: column; }
+        .btn-dl, select { width: 100%; margin-bottom: 5px; }
+        
+        .symbol-grid { 
+            grid-template-columns: repeat(auto-fill, minmax(65px, 1fr)); 
+            gap: 8px;
+        }
     }
 </style>
 
