@@ -26,7 +26,9 @@
     <link rel="stylesheet" href="styles.css">
 
   <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js" async></script>
-    <style>
+
+    
+       <style>
     /* --- FUENTES E IMPORTACIONES --- */
     @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700;900&display=swap');
     @import url('https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700&display=swap');
@@ -72,12 +74,13 @@
 
     /* --- ESTILOS GENERALES --- */
     body { 
-        background: white; 
+        background: transparent; 
         font-family: 'Open Sans', sans-serif; 
         margin: 0; 
         padding: 20px; 
-        display: flex; 
         justify-content: center; 
+        min-height: 100vh; /* Asegura altura completa */
+        display:block;
         color: var(--text-main);
         transition: background 0.3s ease, color 0.3s ease;
     }
@@ -88,6 +91,7 @@
         padding: 40px 35px; 
         border-radius: 40px; 
         width: 100%; 
+        margin: 0 auto;
         max-width: 850px; 
         display: flex; 
         flex-direction: column; 
@@ -326,83 +330,57 @@
         opacity: 0.95;
     }
 
-    /* --- RESPONSIVE --- */
+ /* --- RESPONSIVE OPTIMIZADO PARA MÓVIL --- */
     @media (max-width: 600px) {
-        .container { padding: 30px 20px; border-radius: 30px; }
-        .header h1 { font-size: 26px; }
-        .pill-menu { border-radius: 20px; justify-content: flex-start; overflow-x: auto; flex-wrap: nowrap; }
-        .actions { flex-direction: column; }
-        .btn-dl, select { width: 100%; }
-        .symbol-grid { grid-template-columns: repeat(auto-fill, minmax(60px, 1fr)); }
-    }
-    /* --- RESPONSIVE (CORREGIDO PARA PILAS) --- */
-    @media (max-width: 600px) {
-        .container { 
-            padding: 25px 15px; /* Un poco menos padding lateral */
-            border-radius: 30px; 
-            width: 95%; /* Asegura que no toque los bordes */
+        body {
+            padding: 10px 5px; /* Menos margen al borde de la pantalla */
         }
 
-        .header h1 { font-size: 24px; }
+        .container { 
+            padding: 20px 15px; 
+            border-radius: 25px; 
+            width: 100%; /* Ocupar todo el ancho disponible */
+            max-width: 100%; /* Evita que se salga */
+            border: none; /* A veces el borde ocupa espacio extra */
+        }
+
+        .header h1 { font-size: 22px; }
         
-        /* AQUÍ ESTÁ EL CAMBIO CLAVE */
+        /* Ajuste del menú de píldoras */
         .pill-menu { 
-            border-radius: 25px; /* Bordes menos redondos para acomodar varias filas */
-            justify-content: center; /* Centrar los botones */
-            overflow-x: visible; /* Quitar el scroll */
-            flex-wrap: wrap !important; /* IMPORTANTE: Obliga a bajar de renglón */
-            gap: 8px; /* Espacio un poco más pequeño entre botones */
+            border-radius: 20px;
+            justify-content: center;
+            flex-wrap: wrap !important; /* Obliga a bajar de renglón */
+            gap: 6px;
+            padding: 10px;
         }
 
         .pill-btn {
-            font-size: 11px; /* Letra un poco más chica para que quepan más */
-            padding: 8px 14px; /* Botones más compactos */
-            flex-grow: 1; /* Truco: hace que ocupen el ancho disponible uniformemente */
+            font-size: 11px;
+            padding: 6px 12px;
+            flex-grow: 1; /* Rellena espacios vacíos */
             text-align: center;
         }
 
-        .actions { flex-direction: column; }
-        .btn-dl, select { width: 100%; margin-bottom: 5px; }
-        
+        /* Ajuste del Grid de símbolos */
         .symbol-grid { 
-            grid-template-columns: repeat(auto-fill, minmax(65px, 1fr)); 
+            grid-template-columns: repeat(auto-fill, minmax(60px, 1fr)); 
             gap: 8px;
+            padding: 10px; /* Menos padding interno */
+        }
+        
+        /* Botones de acción */
+        .actions { flex-direction: column; gap: 10px; }
+        .btn-dl, select { width: 100%; margin: 0; }
+        
+        /* Corrección del input para que no empuje el ancho */
+        textarea {
+            width: 100%;
+            min-height: 80px;
+            font-size: 14px; /* Letra legible pero más chica */
         }
     }
-    /* --- RESPONSIVE (CORREGIDO PARA PILAS) --- */
-    @media (max-width: 600px) {
-        .container { 
-            padding: 25px 15px; /* Un poco menos padding lateral */
-            border-radius: 30px; 
-            width: 95%; /* Asegura que no toque los bordes */
-        }
-
-        .header h1 { font-size: 24px; }
-        
-        /* AQUÍ ESTÁ EL CAMBIO CLAVE */
-        .pill-menu { 
-            border-radius: 25px; /* Bordes menos redondos para acomodar varias filas */
-            justify-content: center; /* Centrar los botones */
-            overflow-x: visible; /* Quitar el scroll */
-            flex-wrap: wrap !important; /* IMPORTANTE: Obliga a bajar de renglón */
-            gap: 8px; /* Espacio un poco más pequeño entre botones */
-        }
-
-        .pill-btn {
-            font-size: 11px; /* Letra un poco más chica para que quepan más */
-            padding: 8px 14px; /* Botones más compactos */
-            flex-grow: 1; /* Truco: hace que ocupen el ancho disponible uniformemente */
-            text-align: center;
-        }
-
-        .actions { flex-direction: column; }
-        .btn-dl, select { width: 100%; margin-bottom: 5px; }
-        
-        .symbol-grid { 
-            grid-template-columns: repeat(auto-fill, minmax(65px, 1fr)); 
-            gap: 8px;
-        }
-    }
+    
 </style>
 
     </head>
