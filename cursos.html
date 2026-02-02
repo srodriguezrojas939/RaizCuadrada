@@ -1,0 +1,442 @@
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <link rel="icon" href="icono.png" type="image/png">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title> Cursos |√(Raiz) Cuadrada² </title>
+
+    <script>
+        (function() {
+            
+            const localTheme = localStorage.getItem('theme');
+            
+            const themeToSet = localTheme || 'light';
+            
+            document.documentElement.setAttribute('data-theme', themeToSet);
+        })();
+    </script>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600&family=Playfair+Display:ital,wght@0,700;0,900;1,700&display=swap" rel="stylesheet">
+    
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <link rel="stylesheet" href="styles.css">
+
+<style>
+
+    .accordion-wrapper {
+        width: 100%;
+        margin-bottom: 25px;
+        display: flex;
+        flex-direction: column;
+        gap: 10px; 
+    }
+
+    .accordion-btn {
+        background: var(--input-bg);
+        color: var(--text-main);
+        cursor: pointer;
+        padding: 18px 25px;
+        width: 100%;
+        border: none;
+        text-align: left;
+        outline: none;
+        font-size: 15px;
+        font-family: 'Open Sans', sans-serif;
+        font-weight: 600;
+        border-radius: 20px;
+        transition: 0.3s;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        border: 1px solid transparent;
+    }
+
+    
+    .accordion-btn:hover {
+        background: var(--bg-container);
+        border-color: var(--border-color);
+        box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+    }
+
+    
+    .accordion-btn.active {
+        background: var(--btn-main-bg);
+        color: var(--btn-main-text);
+        border-radius: 20px 20px 5px 5px; 
+    }
+
+    
+    .acc-icon {
+        font-size: 20px;
+        font-weight: 300;
+        transition: transform 0.3s ease;
+    }
+    .accordion-btn.active .acc-icon {
+        transform: rotate(45deg); 
+    }
+
+    
+    .accordion-content {
+        padding: 0 20px;
+        background: var(--input-bg);
+        max-height: 0;
+        overflow: hidden;
+        transition: max-height 0.3s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.3s ease, padding 0.3s ease;
+        border-radius: 0 0 20px 20px;
+        opacity: 0;
+        margin-top: -10px; 
+    }
+
+    .accordion-content p {
+        margin: 15px 0;
+        font-size: 14px;
+        color: var(--text-sec);
+        line-height: 1.6;
+    }
+
+    
+    .accordion-content.show {
+        opacity: 1;
+        margin-top: -5px; 
+        
+    }
+    
+    
+    .thanks-wrapper {
+        padding: 10px 0;
+    }
+
+    
+    .thanks-wrapper p {
+        margin-bottom: 12px;
+        line-height: 1.6;
+    }
+
+    
+    .text-trigger {
+        color: var(--text-main); 
+        font-weight: 700;
+        cursor: pointer;
+        border-bottom: 1px dashed var(--text-sec); 
+        transition: all 0.2s ease;
+        display: inline-block;
+    }
+
+    .text-trigger:hover {
+        color: red; 
+        border-bottom-style: solid;
+    }
+
+    
+    .hidden-sublist {
+        display: none; 
+        list-style-type: none; 
+        padding-left: 20px;
+        border-left: 2px solid var(--border-color); 
+        margin: 5px 0 15px 10px;
+        animation: slideDown 0.3s ease;
+    }
+
+    
+    .hidden-sublist li {
+        font-size: 13px;
+        color: var(--text-sec);
+        margin-bottom: 4px;
+        font-family: 'Open Sans', sans-serif;
+    }
+
+    
+    @keyframes slideDown {
+        from { opacity: 0; transform: translateY(-5px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    
+    .final-thanks {
+        margin-top: 15px;
+        font-style: italic;
+        color: var(--text-main);
+    }
+    .tech-note {
+        background: rgba(150, 150, 150, 0.1); 
+        padding: 15px;
+        margin-top: 20px;
+        border-radius: 30px;
+        font-size: 13px;
+    }
+
+    .note-title {
+        display: block;
+        font-weight: 700;
+        margin-bottom: 5px;
+        color: var(--text-main);
+    }
+
+    .tech-note p {
+        margin: 0;
+        color: var(--text-sec);
+    }
+
+    
+    
+    </style>
+    </head>
+<body>
+
+    
+    <header class="mobile-header">
+        <div class="nav-header">
+            <button class="icon-btn"><i data-lucide="search"></i></button>
+            <button class="icon-btn" onclick="toggleTheme()"><i data-lucide="moon"></i></button>
+        </div>
+        <button class="icon-btn" onclick="toggleMenu()"><i data-lucide="menu"></i></button>
+    </header>
+
+    <div class="wrapper">
+        <aside class="sidebar" id="sidebar">
+            <div class="nav-header">
+               <button class="icon-btn" title="Inicio"
+        onclick="window.location.href='index.html'">
+  <i data-lucide="home"></i>
+</button>
+
+<button class="icon-btn" title="Modo"
+        onclick="toggleTheme()">
+  <i id="theme-icon" data-lucide="moon"></i>
+</button>
+
+<button class="icon-btn" title="Recargar"
+        onclick="location.reload()"
+        id="close-menu">
+  <i data-lucide="x"></i>
+</button>
+
+            </div>
+
+            <nav>
+                <ul class="nav-links">
+                    <li><a href="index.html"><i data-lucide="square-radical"></i> Página Principal</a></li>
+
+                    
+                    <div class="nav-group">
+    <div class="nav-item has-submenu" onclick="toggleSubmenu(this)">
+        <div class="nav-text-container">
+            <i data-lucide="calculator"></i>
+            <span>CALCULADORA</span>
+        </div>
+        <i data-lucide="chevron-down" class="arrow-icon"></i>
+    </div>
+    
+    <div class="submenu">
+        <a href="ecuaciones.html"><i data-lucide="equal" class="sub-icon"></i> Ecuaciones</a>
+        <a href="sistemas.html"><i data-lucide="layers" class="sub-icon"></i> Sistemas Ecuaciones</a>
+        <a href="matrices.html"><i data-lucide="grid-3x3" class="sub-icon"></i> Matrices</a>
+        <a href="derivadas.html"><i data-lucide="trending-up" class="sub-icon"></i> Derivadas</a>
+        <a href="integrales.html"><i data-lucide="sigma" class="sub-icon"></i> Integrales</a>
+        <a href="laplace.html"><i data-lucide="waves" class="sub-icon"></i> Transf. Laplace</a>
+    </div>
+</div>
+
+<div class="nav-group">
+    <div class="nav-item has-submenu" onclick="toggleSubmenu(this)">
+        <div class="nav-text-container">
+            <i data-lucide="ruler"></i>
+            <span>HERRAMIENTAS</span>
+        </div>
+        <i data-lucide="chevron-down" class="arrow-icon"></i>
+    </div>
+    
+    <div class="submenu">
+        <a href="simbolos.html"><i data-lucide="omega" class="sub-icon"></i> Símbolos</a>
+        <a href="factorizar.html"><i data-lucide="divide" class="sub-icon"></i> Factorizadora</a>
+        <a href="fraccionesparciales.html"><i data-lucide="percent" class="sub-icon"></i> Fracciones Parciales</a>
+        <a href="triangulos.html"><i data-lucide="triangle" class="sub-icon"></i> Calc. Triángulos</a>
+        <a href="vectores.html"><i data-lucide="move-diagonal" class="sub-icon"></i> Vectores</a>
+        <a href="circulounitario.html"><i data-lucide="circle" class="sub-icon"></i> Círculo Unitario</a>
+        <a href="editor.html"><i data-lucide="edit-3" class="sub-icon"></i> Editor Expresiones</a>
+    </div>
+</div>
+
+<div class="nav-group">
+    <div class="nav-item has-submenu" onclick="toggleSubmenu(this)">
+        <div class="nav-text-container">
+            <i data-lucide="activity"></i>
+            <span>GRAFICADORAS</span>
+        </div>
+        <i data-lucide="chevron-down" class="arrow-icon"></i>
+    </div>
+    
+    <div class="submenu">
+        <a href="graficadora2d.html"><i data-lucide="line-chart" class="sub-icon"></i> Funciones 2D</a>
+        <a href="graficadora3d.html"><i data-lucide="box" class="sub-icon"></i> Graficadora 3D</a>
+        <a href="conicas.html"><i data-lucide="orbit" class="sub-icon"></i> Cónicas</a>
+        <a href="campos.html"><i data-lucide="wind" class="sub-icon"></i> Campos Vectoriales</a>
+    </div>
+</div>
+
+                    
+                    <li><a href="cursos.html"><i data-lucide="book-open"></i> CURSOS</a></li>
+                    <li><a href="formularios.html"><i data-lucide="file-text"></i> FORMULARIOS</a></li>
+                    <li><a href="youtube.html"><i data-lucide="youtube"></i> Canal de YouTube</a></li>
+                    <li><a href="autor.html"><i data-lucide="user"></i> Sobre el autor</a></li>
+                </ul>
+            </nav>
+        </aside>
+
+        <main class="content">
+            
+            
+         <div class="accordion-wrapper">
+    
+    <button class="accordion-btn">
+        <span>Proximamente</span>
+        <span class="acc-icon">+</span>
+    </button>
+  <div class="accordion-content">
+    <div class="thanks-wrapper">
+        <p>
+           Los cursos estarán disponibles proximamente, junto con videos que acompañen tu aprendizaje, si eres docente y tienes videos, guias o contenido de tu autoria y deseas que aparezcan aqui contactame.     <a href="mailto:s.rodriguezrojas939@gmail.com" class="contact-link">
+            s.rodriguezrojas939@gmail.com
+        </a>
+        </p>
+
+        </div>
+    </div>
+</div>
+
+                <button class="accordion-btn">
+        <span>Listado de futuros cursos</span>
+        <span class="acc-icon">+</span>
+    </button>
+    <div class="accordion-content">
+    <div class="thanks-wrapper">
+        <p>
+         Matematica operativa (Algebra y trigonometria)
+        </p>
+
+        <p>
+       Calculo diferencial
+        </p>
+        
+        
+        <p>
+       Calculo integral
+        </p>
+
+
+        <p>
+       Curso Conicas
+        </p>
+        
+        
+        </div>
+    </div>
+</div>
+
+
+   
+  
+
+</div>
+            
+
+<footer class="footer-global">
+    <div class="footer-wrapper">
+        
+        <div class="footer-section">
+            <h4 class="footer-h4">Contacto</h4>
+            <a href="mailto:s.rodriguezrojas939@gmail.com" class="footer-email">
+                s.rodriguezrojas939@gmail.com
+            </a>
+            <div class="footer-socials">
+                <a href="https://wa.me/573196510401" target="_blank" title="WhatsApp">
+                    <i data-lucide="message-circle"></i>
+                </a>
+                <a href="https://www.youtube.com/@ElRaizCuadrada" target="_blank" title="YouTube">
+                    <i data-lucide="youtube"></i>
+                </a>
+                <a href="mailto:s.rodriguezrojas939@gmail.com" title="Correo">
+                    <i data-lucide="mail"></i>
+                </a>
+                <a href="https://github.com" target="_blank" title="GitHub">
+                    <i data-lucide="github"></i>
+                </a>
+            </div>
+        </div>
+
+        <div class="footer-section">
+            <a href="https://www.youtube.com/@ElRaizCuadrada" target="_blank" class="footer-logo-link">
+                <h1 class="footer-title">√(Raiz) Cuadrada²</h1>
+            </a>
+        </div>
+
+        <div class="footer-section">
+            <h4 class="footer-h4">Visitas al sitio</h4>
+            <div class="visitor-counter">
+                <img src="https://hitwebcounter.com/counter/counter.php?page=21465053&style=0024&nbdigits=5&type=page&initCount=0" alt="Visitas">
+            </div>
+        </div>
+
+    </div>
+</footer>
+           
+        </main>
+        
+     <script src="script.js"></script>
+     <script>
+    
+    var acc = document.getElementsByClassName("accordion-btn");
+    var i;
+
+    for (i = 0; i < acc.length; i++) {
+        acc[i].addEventListener("click", function() {
+            
+            this.classList.toggle("active");
+
+            
+            var panel = this.nextElementSibling;
+
+            
+            if (panel.style.maxHeight) {
+                panel.style.maxHeight = null;
+                panel.classList.remove("show");
+                
+                setTimeout(() => { this.style.borderRadius = "20px"; }, 300);
+            } else {
+                panel.classList.add("show");
+                panel.style.maxHeight = panel.scrollHeight + "px";
+                
+                this.style.borderRadius = "20px 20px 5px 5px"; 
+            }
+        });
+    }
+    
+    function toggleList(id) {
+        var list = document.getElementById(id);
+        
+        
+        if (list.style.display === "block") {
+            list.style.display = "none";
+        } else {
+            
+            document.querySelectorAll('.hidden-sublist').forEach(el => el.style.display = 'none');
+            
+            
+            list.style.display = "block";
+        }
+    }
+    
+</script>
+</body>
+<button class="mobile-theme-toggle" onclick="toggleTheme()" aria-label="Cambiar tema">
+    <i data-lucide="sun" class="icon-sun"></i>
+    <i data-lucide="moon" class="icon-moon"></i>
+</button>
+
+
+</html>
