@@ -1,0 +1,1716 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Graficadora 2D | √(Raiz) Cuadrada²</title>
+    
+    <script src="https://cdn.plot.ly/plotly-2.24.1.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/11.8.0/math.js"></script>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+
+<script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+<script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+<script src="https://unpkg.com/lucide@latest"></script>
+
+
+    <script>
+        (function() {
+            
+            const localTheme = localStorage.getItem('theme');
+            
+            const themeToSet = localTheme || 'light';
+            
+            document.documentElement.setAttribute('data-theme', themeToSet);
+        })();
+    </script>
+    
+     <link rel="stylesheet" href="styles.css">
+     
+<style>
+    
+    @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700;900&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700&display=swap');
+
+    :root {
+        
+        --bg-body: #ffffff;         
+        --bg-sidebar: #ffffff;      
+        --bg-input: #f9f9f9;        
+        --bg-card-inner: #f4f4f4;   
+        --text-main: #333333;
+        --text-muted: #999999;
+        --accent: #1a1a1a;          
+        --accent-hover: #000000;
+        --text-inverse: #ffffff;
+        --border-color: #eeeeee;
+        
+        
+        --shadow-sidebar: 5px 0 30px rgba(0,0,0,0.05);
+        --shadow-inset: 0 2px 5px rgba(0,0,0,0.02) inset;
+        --radius-lg: 40px;          
+        --radius-md: 25px;          
+        --radius-pill: 999px;       
+    }
+
+    [data-theme="dark"] {
+        
+        --bg-body: #0a0a0a;
+        --bg-sidebar: #0a0a0a;      
+        --bg-input: #1e1e1e;
+        --bg-card-inner: #252525;
+        --text-main: #ffffff;
+        --text-muted: #888888;
+        --accent: #ffffff;          
+        --accent-hover: #e0e0e0;
+        --text-inverse: #000000;
+        --border-color: #333333;
+        --shadow-sidebar: none;     
+    }
+
+    
+    body {
+        margin: 0;
+        padding: 0;
+        font-family: 'Open Sans', sans-serif; 
+        background-color: var(--bg-body);
+        color: var(--text-main);
+        overflow: hidden;
+        display: flex;
+        height: 100vh;
+        transition: background 0.3s ease, color 0.3s ease;
+    }
+
+    
+    #sidebar {
+        width: 340px; 
+        background: var(--bg-sidebar);
+        border-right: 1px solid var(--border-color);
+        display: flex;
+        flex-direction: column;
+        padding: 30px 25px; 
+        box-shadow: var(--shadow-sidebar);
+        z-index: 10;
+        height: 100vh;
+        overflow-y: auto;
+        overflow-x: hidden;
+        box-sizing: border-box;
+        transition: 0.3s;
+    }
+
+    
+    #sidebar::-webkit-scrollbar { width: 4px; }
+    #sidebar::-webkit-scrollbar-thumb { background: var(--text-muted); border-radius: 4px; }
+
+    
+    h1 {
+        font-family: 'Playfair Display', serif; 
+        font-size: 1.6rem;
+        font-weight: 700;
+        color: var(--accent); 
+        letter-spacing: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center; 
+        gap: 10px;
+        text-align: center;
+        line-height: 1.1;
+        margin-bottom: 2px;
+    }
+
+  
+
+    
+    .control-group { margin-bottom: 25px; }
+
+    label {
+        display: block;
+        font-size: 11px;
+        color: var(--text-muted); 
+        margin-bottom: 10px;
+        margin-left: 15px; 
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 1px; 
+    }
+
+      input[type="text"], input[type="number"], select {
+        width: 100%; 
+        background: #f9f9f9; 
+        border: 2px solid transparent;
+        padding: 16px 22px; 
+        border-radius: 25px; 
+        font-family: inherit;
+        font-size: 15px; 
+        color: #333; 
+        transition: all 0.3s ease;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.02) inset;
+        margin-bottom: 25px;
+        box-sizing: border-box;
+        outline: none;
+    }
+
+    input:focus, select:focus {
+        background: white; 
+        border-color: #1a1a1a;
+        box-shadow: 0 10px 25px rgba(0,0,0,0.08); 
+        transform: translateY(-3px);
+    }
+    
+    
+       .btn-principal {
+        width: 100%; 
+        background: #1a1a1a; 
+        color: white; 
+        border: none; 
+        border-radius: 999px; 
+        padding: 18px 35px; 
+        font-weight: 700; 
+        font-size: 16px;
+        cursor: pointer; 
+        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        margin-bottom: 15px;
+        font-family: 'Open Sans', sans-serif;
+    }
+
+    .btn-principal:hover { 
+        transform: translateY(-3px) scale(1.02); 
+        background: #000; 
+        box-shadow: 0 8px 15px rgba(0,0,0,0.15);
+    }
+
+    
+    button {
+        background: #f4f4f4; 
+        border: 2px solid transparent; 
+        padding: 10px 18px; 
+        border-radius: 999px; 
+        font-size: 13px; 
+        cursor: pointer; 
+        transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+        font-weight: 600; 
+        color: #666; 
+        font-family: 'Open Sans', sans-serif;
+    }
+
+    button:hover {
+        transform: translateY(-3px) scale(1.02);
+        opacity: 1; 
+        box-shadow: 0 15px 30px rgba(0,0,0,0.15);
+    }
+    
+    button:active { 
+        background: #1a1a1a; 
+        color: white; 
+        border-color: #1a1a1a;
+        box-shadow: 0 8px 15px rgba(0,0,0,0.15); 
+        transform: scale(1.05);
+    }
+    
+    
+    .btn-delete {
+        background: #ff4d4d; 
+        width: 30px; 
+        height: 30px;
+        padding: 0;
+        border-radius: 50%;
+        margin-top: 0;
+        box-shadow: none;
+    }
+
+    
+    input[type="range"] {
+        width: 100%;
+        cursor: pointer;
+        accent-color: var(--accent);
+        margin: 10px 0;
+    }
+    
+    .range-values {
+        display: flex;
+        justify-content: space-between;
+        font-size: 10px;
+        font-weight: 700;
+        color: var(--text-muted);
+        text-transform: uppercase;
+        padding: 0 10px;
+    }
+
+    
+    .func-row {
+        background: white; 
+        border: 1px solid transparent;
+        padding: 15px;
+        border-radius: var(--radius-md); 
+        position: relative;
+        margin-bottom: 8px;
+        transition: 0.3s;
+    }
+    
+    .func-row:hover {
+        border-color: var(--border-color);
+        transform: translateY(-2px);
+    }
+
+    .func-label {
+        font-size: 10px;
+        font-weight: 800;
+        text-transform: uppercase;
+        color: var(--text-muted);
+        margin-bottom: 8px;
+        display: block;
+        letter-spacing: 0.5px;
+        text-align: center; 
+    }
+
+    .row-controls {
+        display: flex;
+        gap: 8px;
+        align-items: center;
+        justify-content: center; 
+        margin-top: 10px;
+    }
+    
+    
+    .scheme-select {
+        background: var(--bg-sidebar);
+        color: var(--text-main);
+        border: 1px solid var(--border-color);
+        border-radius: 15px;
+        font-size: 11px;
+        padding: 4px 10px;
+        max-width: 100px;
+        cursor: pointer;
+        box-shadow: none;
+        margin-bottom: 0;
+    }
+
+
+
+
+[data-theme="dark"] .func-row {
+    background: #1e1e1e;       
+    border: 1px solid #333;    
+    box-shadow: none;          
+}
+
+[data-theme="dark"] .func-row:hover {
+    background: #252525;       
+    border-color: #555;        
+}
+
+
+[data-theme="dark"] .row-controls {
+    background: #121212;       
+    border-color: #333;        
+}
+
+
+[data-theme="dark"] .scheme-select {
+    color: #e5e5e5;            
+}
+
+
+[data-theme="dark"] .scheme-select option {
+    background: #1e1e1e;
+    color: #fff;
+}
+
+
+[data-theme="dark"] .func-label {
+    
+    text-shadow: 0 0 10px rgba(0,0,0,0.5); 
+}
+
+[data-theme="dark"] .func-subtitle {
+    color: #888; 
+}
+
+
+[data-theme="dark"] input[type="text"].eq-input {
+    background: #121212;
+    color: #fff;
+    border: 1px solid #333;
+}
+
+[data-theme="dark"] input[type="text"].eq-input:focus {
+    border-color: #fff;
+    background: #000;
+}
+
+    
+    #plot-container {
+        flex-grow: 1;
+        height: 100%;
+        position: relative;
+        
+        background: var(--bg-body); 
+    }
+
+    
+    #latex-panel {
+        width: 100%;
+        margin: 15px 0;
+        padding: 15px;
+        box-sizing: border-box;
+         background: #f9f9f9; 
+        padding: 20px; 
+        border-radius: 25px; 
+        min-height: 70px; 
+        display: flex; 
+        align-items: center; 
+        justify-content: center; 
+        border: 2px solid transparent; 
+        overflow-x: auto;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.02) inset; 
+        color: #333;
+        font-size: 1.1rem;
+    }
+
+    #latex-content {
+        width: 100%;
+        color: var(--text-main);
+        font-family: 'STIX Two Text', serif; 
+        font-size: 1rem;
+        display: flex;
+        flex-direction: column;
+        align-items: center; 
+        justify-content: center;
+    }
+
+    .latex-item {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 8px;
+        background: transparent;
+        padding: 5px 15px;
+        border-radius: 20px;
+    }
+    
+    
+[data-theme="dark"] #latex-panel {
+    background: #1e1e1e;        
+    border: 1px solid #333;     
+    color: #e2e8f0;             
+    box-shadow: none;           
+}
+
+
+[data-theme="dark"] #latex-content {
+    color: inherit; 
+}
+
+
+[data-theme="dark"] .latex-item:hover {
+    background: rgba(255,255,255,0.05);
+}
+
+    .color-dot {
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+        flex-shrink: 0;
+        border: 2px solid rgba(0,0,0,0.1);
+    }
+
+    
+    .footer {
+        margin-top: auto;
+        font-size: 10px;
+        color: var(--text-muted);
+        text-align: center;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        padding-top: 20px;
+    }
+    
+    
+    .hidden { display: none !important; }
+    
+    
+    .symbol-toggle {
+        background: var(--bg-card-inner);
+        border: none;
+        color: var(--text-main);
+        padding: 10px;
+        font-size: 12px;
+        font-weight: 600;
+        border-radius: 15px;
+        text-align: center;
+    }
+    .symbol-content button {
+        background: var(--bg-sidebar);
+        border: 1px solid var(--border-color);
+        color: var(--text-main);
+        border-radius: 10px;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+    }
+    .symbol-content button:hover {
+        background: var(--bg-input);
+    }
+    
+    .symbol-group {
+    position: relative;
+    flex: 1;
+}
+
+.symbol-content {
+    display: none;
+    position: absolute;
+    top: 110%;
+    left: 0;
+    width: 100%;
+    background: var(--bg-sidebar);
+    border: 1px solid var(--border-color);
+    border-radius: 15px;
+    padding: 8px;
+    z-index: 50;
+
+    grid-template-columns: repeat(2, 1fr);
+    gap: 6px;
+}
+
+
+
+.symbol-group.open .symbol-content {
+    display: grid;
+}
+
+.category-bar {
+    display: flex;
+    gap: 6px;
+    width: 100%;
+    margin-bottom: 10px;
+}
+
+.category-bar .symbol-toggle {
+    width: 100%;
+    padding: 8px;
+    font-size: 0.75rem;
+}
+
+  .mode-switcher {
+        display: flex;
+        background:  #f9f9f9; 
+        border-radius: 999px;
+        margin-bottom: 15px; 
+        position: relative;
+        padding:5px;
+        justify-content: space-between;
+        box-shadow: inset 0 1px 3px rgba(0,0,0,0.06);
+    }
+    
+    .mode-btn {
+        flex: 1;
+        border: none;
+          background: #ffffff;
+        color: #1a1a1a;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.12);
+        border-radius: 999px;
+        cursor: pointer;
+        font-family: 'Open Sans', sans-serif;
+        font-weight: 700;
+        font-size: 14px;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 6px;
+        padding:5px;
+        margin-top: 5px;
+         margin-bottom: 5px;
+          margin-left: 5px;
+           margin-right: 5px;
+    }
+    
+        [data-theme="dark"] .mode-switcher { 
+        background: #151515; 
+        box-shadow: inset 0 1px 3px rgba(255,255,255,0.05);
+    }
+    [data-theme="dark"] .mode-btn {   background: #333; 
+        color: #fff; 
+        box-shadow: 0 4px 12px rgba(0,0,0,0.3);}
+    
+    
+
+.row-controls {
+    display: flex;
+    align-items: center;
+    gap: 8px; 
+    background: #ffffff;
+    border-radius: 30px; 
+    padding: 4px; 
+    border: 1px solid #f1f1f1; 
+    box-shadow: 0 2px 5px rgba(0,0,0,0.03); 
+    justify-content: space-between;
+}
+
+
+.scheme-select {
+    appearance: none; 
+    background-color: transparent;
+    border: none;
+    font-family: 'Open Sans', sans-serif;
+    font-size: 11px;
+    font-weight: 600;
+    color: #555;
+    padding: 6px 12px;
+    cursor: pointer;
+    text-align: center;
+    border-radius: 999px;
+    transition: background 0.2s;
+}
+
+.scheme-select:hover {
+    background-color: #f4f4f4;
+    color: #000;
+}
+
+.scheme-select:focus {
+    outline: none;
+}
+
+
+input[type="color"].eq-color {
+    -webkit-appearance: none;
+    border: none;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    cursor: pointer;
+    padding: 0;
+    background: none;
+    transition: transform 0.2s;
+    overflow: hidden; 
+}
+
+input[type="color"].eq-color::-webkit-color-swatch-wrapper {
+    padding: 0;
+}
+
+input[type="color"].eq-color::-webkit-color-swatch {
+    border: none;
+    border-radius: 50%;
+    border: 1px solid rgba(0,0,0,0.1); 
+}
+
+input[type="color"].eq-color:hover {
+    transform: scale(1.1);
+}
+
+
+
+.opacity-slider::-webkit-slider-thumb {
+    appearance: none;
+    width: 12px;
+    height: 12px;
+    background: #333;
+    border-radius: 50%;
+    cursor: pointer;
+    transition: transform 0.1s;
+}
+
+.opacity-slider::-webkit-slider-thumb:hover {
+    transform: scale(1.3);
+}
+
+
+.btn-delete {
+    background: transparent !important; 
+    color: #cbd5e1 !important; 
+    width: 28px !important;
+    height: 28px !important;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+    border: none;
+    box-shadow: none !important;
+}
+
+.btn-delete:hover {
+    background: #fee2e2 !important; 
+    color: #ef4444 !important; 
+    transform: rotate(90deg); 
+}
+
+
+.hidden {
+    display: none !important;
+}
+
+
+  p { 
+        font-family: 'Open Sans', sans-serif; 
+        font-size: 9px; 
+        font-weight: 700; 
+        color: #999; 
+        text-transform: uppercase; 
+        letter-spacing: 1.5px; 
+        text-align: center;
+        margin-bottom: 30px;
+    }
+    
+ 
+ 
+.top-bar {
+    display: flex;
+    justify-content: space-between; 
+    align-items: center;
+    width: 100%;
+    margin-bottom: 20px;
+    padding: 0 5px; 
+    box-sizing: border-box;
+}
+
+
+.icon-group {
+    display: flex;
+    align-items: center;
+    gap: 8px; 
+}
+
+
+.top-btn {
+    background: transparent;
+    border: none;
+    color: var(--text-main); 
+    cursor: pointer;
+    padding: 5px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 8px;
+    transition: background 0.2s, transform 0.2s;
+}
+
+.top-btn:hover {
+    background: rgba(0,0,0,0.05); 
+    transform: scale(1.1);
+}
+
+
+[data-theme="dark"] .top-btn:hover {
+    background: rgba(255,255,255,0.1);
+}
+
+
+
+
+.func-subtitle {
+    font-size: 9px;
+    text-transform: uppercase;
+    color: var(--text-muted); 
+    font-weight: 700;
+    display: block;
+    margin-bottom: 4px;
+}
+
+
+.scheme-select {
+    color: var(--text-main); 
+}
+
+
+.control-divider {
+    border-top: 1px solid var(--border-color);
+    padding-top: 8px;
+}
+
+
+#mobile-rotate-overlay {
+    display: none; 
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+    background: #0a0a0a; 
+    color: white;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 30px;
+}
+
+.rotate-content {
+    max-width: 300px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    animation: fadeIn 0.5s ease;
+}
+
+.rotate-icon {
+    width: 48px; 
+    height: 48px; 
+    margin-bottom: 10px;
+    stroke-width: 1.5;
+}
+
+.rotate-arrow {
+    width: 24px;
+    height: 24px;
+    margin-top: -20px;
+    margin-bottom: 20px;
+    margin-left: 30px; 
+    color: var(--accent); 
+    animation: spinIcon 2s infinite ease-in-out;
+}
+
+#mobile-rotate-overlay h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.4rem;
+    margin-bottom: 10px;
+}
+
+#mobile-rotate-overlay p {
+    font-family: 'Open Sans', sans-serif;
+    font-size: 0.9rem;
+    color: #999;
+    margin-bottom: 30px;
+    line-height: 1.5;
+}
+
+@keyframes spinIcon {
+    0% { transform: rotate(0deg); }
+    50% { transform: rotate(90deg); }
+    100% { transform: rotate(90deg); }
+}
+
+
+
+@media screen and (max-width: 768px) and (orientation: portrait) {
+    #mobile-rotate-overlay {
+        display: flex;
+    }
+}
+
+.btn-icon-action {
+    background: transparent;
+    padding: 8px; 
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+    color: inherit; 
+}
+
+.btn-icon-action:hover {
+    background-color: rgba(128, 128, 128, 0.1); 
+}
+
+
+.btn-icon-action svg {
+    width: 16px;
+    height: 16px;
+}
+
+
+</style>
+</head>
+<body>
+
+    <div id="sidebar">
+       
+<div class="top-bar">
+    
+    <div class="icon-group">
+        <button id="home" class="top-btn" title="Página principal" onclick="window.location.href='index.html'">
+            <i data-lucide="home" style="width: 20px; height: 20px;"></i>
+        </button>
+
+        <button id="themeBtn" class="top-btn" title="Cambiar Tema" onclick="toggleTheme()">
+            <i data-lucide="moon" style="width: 20px; height: 20px;"></i>
+        </button>
+    </div>
+
+    <div class="icon-group">
+        <button id="fullscreenBtn" class="top-btn" title="Pantalla completa">
+            <i data-lucide="maximize" style="width: 20px; height: 20px;"></i>
+        </button>
+
+        <button id="resetBtn" class="top-btn" title="Reiniciar Pagina">
+            <i data-lucide="rotate-ccw" style="width: 20px; height: 20px;"></i>
+        </button>
+
+    </div>
+
+</div>
+
+        <h1>
+            Graficadora 2D
+        </h1>
+  <p>√(Raiz) Cuadrada²</p>
+    
+
+<div class="control-group">
+   
+   
+    <div class="mode-switcher">
+   <div style="display: flex; gap: 10px; width: 100%;">
+ <button class="mode-btn"
+        onclick="addFunction()"
+        style="flex: 1; padding: 8px; font-size: 0.75rem; display: flex; align-items: center; justify-content: center; gap: 6px;">
+    <i data-lucide="circle-plus" style="width: 14px; height: 14px;"></i> 
+    Agregar función
+</button>
+
+
+    
+</div>
+
+</div>
+
+<div class="category-bar">
+
+  <div class="symbol-group">
+    <button class="symbol-toggle">Simbolos</button>
+    <div class="symbol-content">
+           <button onclick="insertSymbol('*')">*</button>
+      <button onclick="insertSymbol('√()')">√</button>
+      <button onclick="insertSymbol('¹')">x¹</button>
+      <button onclick="insertSymbol('²')">x²</button>
+      <button onclick="insertSymbol('³')">x³</button>
+      <button onclick="insertSymbol('sen(')">sen</button>
+      <button onclick="insertSymbol('cos(')">cos</button>
+      <button onclick="insertSymbol('tan(')">tan</button>
+         <button onclick="insertSymbol('asen(')">arcsen</button>
+      <button onclick="insertSymbol('acos(')">arccos</button>
+      <button onclick="insertSymbol('atan(')">arctan</button>
+       <button onclick="insertSymbol('abs()')">|x|</button>
+         <button onclick="insertSymbol('e^x')">eˣ</button>
+           <button onclick="insertSymbol('pi')">π</button>
+             <button onclick="insertSymbol('()/()')">ˣ/ᵧ</button>
+    </div>
+  </div>
+
+
+
+</div>
+
+<div id="latex-panel">
+    <div id="latex-content"></div>
+</div>
+
+
+
+
+<div id="functionsContainer" style="display: flex; flex-direction: column; gap: 10px;">
+    </div>
+    
+    <input type="hidden" id="funcType" value="explicit">
+</div>
+
+        <div class="control-group" style="display:none;">
+            <label>slider valores A</label>
+            <input type="range" id="resInput" min="20" max="100" value="50" step="5">
+            <div class="range-values">
+            </div>
+        </div>
+
+<div class="control-group" style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px;">
+   
+   
+</div>
+
+
+        <button onclick="renderGraph()" class="btn-principal">Actualizar Grafica</button>
+
+    </div>
+
+    <div id="plot-container"></div>
+
+
+<div id="mobile-rotate-overlay">
+    <div class="rotate-content">
+        <i data-lucide="smartphone" class="rotate-icon"></i>
+        <i data-lucide="rotate-cw" class="rotate-arrow"></i>
+        
+        <h2>Mejor experiencia visual</h2>
+        <p>Abre el modo pantalla completa y activa la vista horizontal en tu dispositivo. (O activa modo ordenador en tu navegador)</p>
+        
+        <button id="btn-force-landscape" class="btn-principal">
+            <i data-lucide="maximize"></i>
+            Entrar en Modo Inmersivo
+        </button>
+        
+        <button onclick="document.getElementById('mobile-rotate-overlay').style.display='none'" 
+                style="background: transparent; border: none; color: #666; margin-top: 15px; font-size: 12px; text-decoration: underline;">
+            Continuar en vertical (no recomendado)
+        </button>
+    </div>
+</div>
+
+<script src="script.js"></script>
+
+<script>
+    function toggleColorPicker() {
+        const select = document.getElementById('colorScheme');
+        const container = document.getElementById('customColorContainer');
+        
+        container.style.display = (select.value === 'custom') ? 'block' : 'none';
+    }
+    
+ 
+
+document.getElementById('btn-force-landscape').addEventListener('click', async () => {
+    const overlay = document.getElementById('mobile-rotate-overlay');
+    const docEl = document.documentElement;
+
+    try {
+        
+        if (docEl.requestFullscreen) {
+            await docEl.requestFullscreen();
+        } else if (docEl.webkitRequestFullscreen) { 
+            await docEl.webkitRequestFullscreen();
+        } else if (docEl.msRequestFullscreen) { 
+            await docEl.msRequestFullscreen();
+        }
+
+        
+        if (screen.orientation && screen.orientation.lock) {
+            try {
+                await screen.orientation.lock('landscape');
+                
+                overlay.style.display = 'none';
+            } catch (err) {
+                console.log("El dispositivo no soporta bloqueo de orientación automático.");
+                
+                overlay.style.display = 'none';
+            }
+        } else {
+            
+            overlay.style.display = 'none';
+        }
+
+    } catch (err) {
+        console.error("Error al intentar pantalla completa:", err);
+    }
+});
+
+    
+    const fullscreenBtn = document.getElementById('fullscreenBtn');
+
+fullscreenBtn.addEventListener('click', () => {
+  if (!document.fullscreenElement) {
+    document.documentElement.requestFullscreen();
+  } else {
+    document.exitFullscreen();
+  }
+});
+
+const resetBtn = document.getElementById('resetBtn');
+
+resetBtn.addEventListener('click', () => {
+  location.reload();
+});
+
+    document.addEventListener('click', (e) => {
+    if (!e.target.classList.contains('symbol-toggle')) return;
+
+    const group = e.target.closest('.symbol-group');
+    const isOpen = group.classList.contains('open');
+
+    
+    document.querySelectorAll('.symbol-group').forEach(g => {
+        g.classList.remove('open');
+        g.querySelector('.symbol-toggle').innerText =
+            g.querySelector('.symbol-toggle').innerText.replace('▾', '▸');
+    });
+
+    
+    if (!isOpen) {
+        group.classList.add('open');
+        e.target.innerText = e.target.innerText.replace('▸', '▾');
+    }
+});
+
+
+    function insertSymbol(sym) {
+        
+        const inputs = document.querySelectorAll('.eq-input');
+        if (inputs.length > 0) {
+            
+            const input = inputs[inputs.length - 1]; 
+              input.value += sym;
+    input.focus();
+    requestRender();
+        }
+    }
+
+    </script>
+    
+    <script>
+     
+     
+
+
+let RESOLUTION = 400;
+
+
+let dynamicRange = {
+    xmin: -10,
+    xmax: 10,
+    ymin: -10,
+    ymax: 10
+};
+
+
+let isRendering = false;
+
+
+let plotDiv = null;
+
+
+const DEFAULT_COLORS = [
+    '#38bdf8',
+    '#fbbf24',
+    '#a3e635',
+    '#f472b6',
+    '#c084fc'
+];
+
+
+const IMPLICIT_EPSILON = 1e-2;
+
+
+const MAX_POINTS = 2000;
+
+
+function addFunction() {
+    const container = document.getElementById('functionsContainer');
+    const index = container.children.length;
+
+ const initColor = DEFAULT_COLORS[index % DEFAULT_COLORS.length];
+
+    const labelText = "Función 2D";
+
+    const div = document.createElement('div');
+    div.className = 'func-row';
+
+    div.innerHTML = `
+        <input
+    type="text"
+    class="func-label"
+    value="${labelText}"
+    placeholder="Nombre de la función"
+    style="
+        color:${initColor};
+        font-weight: 800;
+        border: none;
+        background: transparent;
+        outline: none;
+        padding: 0;
+        margin-bottom: 4px;
+        font-size: 12px;
+    "
+    oninput="updateLatexPanel()"
+/>
+
+
+        <input 
+            type="text"
+            class="eq-input"
+            placeholder="Ej: x^2, y=x^2, x^2+y^2=4"
+            style="width:100%; margin:6px 0;"
+            oninput="
+    updateParamSliders(this.closest('.func-row'));
+    renderGraph();
+    updateLatexPanel();
+"
+
+
+        >
+        <div class="param-container" style="display:flex; flex-direction:column; gap:6px;"></div>
+
+
+        <div class="row-controls" style="padding: 10px; display: flex; flex-direction: column; gap: 10px;">
+            
+            <div>
+                <span class="func-subtitle">Estilo de línea</span>
+
+                <div style="display: flex; align-items: center; gap: 10px; justify-content: space-between;">
+
+                    <div style="position: relative;">
+                        <select class="scheme-select"
+                                onchange="renderGraph()"
+                                style="appearance:none;">
+                            <option value="solid">Normal</option>
+                            <option value="dot">Punteada</option>
+                            <option value="dash">Punteada larga</option>
+                        </select>
+
+                        <i data-lucide="chevron-down"
+                           style="position:absolute; right:4px; top:50%;
+                                  transform:translateY(-50%);
+                                  width:14px; height:14px;
+                                  pointer-events:none;">
+                        </i>
+                    </div>
+
+
+<button
+        class="btn-icon-action" 
+        onclick="toggleSpecialPoints(this)" 
+        title="Ver puntos especiales">
+    <i data-lucide="eye"></i>
+</button>
+
+                    <div style="display:flex; align-items:center; gap:8px;">
+                        <div style="position: relative; width: 20px; height: 20px;">
+                            <i data-lucide="square"
+                               style="width:100%; height:100%;
+                                      fill:${initColor};
+                                      color:${initColor};">
+                            </i>
+
+                            <input type="color"
+                                   class="eq-color"
+                                   value="${initColor}"
+                                   style="position:absolute; inset:0;
+                                          opacity:0; cursor:pointer;"
+                                   oninput="
+                                       this.previousElementSibling.style.fill = this.value;
+                                       this.previousElementSibling.style.color = this.value;
+                                       this.closest('.func-row')
+                                           .querySelector('.func-label')
+                                           .style.color = this.value;
+                                       renderGraph();
+                                       updateLatexPanel();
+                                   ">
+                        </div>
+
+                        <button class="btn-delete"
+                            onclick="this.closest('.func-row').remove(); renderGraph(); updateLatexPanel();"
+                            title="Eliminar función">
+                            <i data-lucide="trash-2"
+                               style="width:16px; height:16px;">
+                            </i>
+                        </button>
+                        
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    `;
+
+    container.appendChild(div);
+    lucide.createIcons();
+    renderGraph();
+    updateLatexPanel();
+}
+
+
+
+function calculate2DFunction(eqStr, color, lineStyle = 'solid', opacity = 1 , params) {
+    if (!eqStr || !eqStr.trim()) return null;
+
+    const { xmin, xmax, ymin, ymax } = dynamicRange;
+    const res = RESOLUTION;
+
+    const clean = eqStr.replace(/\s+/g, '');
+
+    
+    const isExplicit =
+        clean.startsWith('y=') ||
+        (!clean.includes('=') && !/(^|[^a-zA-Z])y([^a-zA-Z]|$)/.test(clean));
+
+    
+    if (isExplicit) {
+        let expression = clean;
+        if (expression.startsWith('y=')) {
+            expression = expression.slice(2);
+        }
+
+        let expr;
+        try {
+            expr = math.compile(normalizeInput(expression));
+        } catch {
+            return null;
+        }
+
+        const xVals = [];
+        const yVals = [];
+
+        const step = (xmax - xmin) / res;
+
+        for (let i = 0; i <= res; i++) {
+            const x = xmin + i * step;
+
+            try {
+               const y = expr.evaluate({ x, ...params });
+
+                if (typeof y === 'number' && isFinite(y)) {
+                    xVals.push(x);
+                    yVals.push(y);
+                } else {
+                    xVals.push(x);
+                    yVals.push(null);
+                }
+            } catch {
+                xVals.push(x);
+                yVals.push(null);
+            }
+        }
+
+        return {
+            type: 'scatter',
+            mode: 'lines',
+            x: xVals,
+            y: yVals,
+            line: {
+                color,
+                width: 2,
+                dash: lineStyle
+            },
+            opacity,
+            hoverinfo: 'x+y'
+        };
+    }
+
+    
+
+    let expression = clean;
+    if (clean.includes('=')) {
+        const [lhs, rhs] = clean.split('=');
+        expression = `(${lhs}) - (${rhs})`;
+    }
+
+    let expr;
+    try {
+        expr = math.compile(normalizeInput(expression));
+    } catch {
+        return null;
+    }
+
+    const xVals = [];
+    const yVals = [];
+    const zVals = [];
+
+    for (let i = 0; i < res; i++) {
+        xVals.push(xmin + (xmax - xmin) * i / (res - 1));
+        yVals.push(ymin + (ymax - ymin) * i / (res - 1));
+    }
+
+    for (let i = 0; i < res; i++) {
+        const row = [];
+        for (let j = 0; j < res; j++) {
+            try {
+                const z = expr.evaluate({
+    x: xVals[j],
+    y: yVals[i],
+    ...params
+});
+
+                row.push(isFinite(z) ? z : NaN);
+            } catch {
+                row.push(NaN);
+            }
+        }
+        zVals.push(row);
+    }
+
+    return {
+        type: 'contour',
+        x: xVals,
+        y: yVals,
+        z: zVals,
+        contours: {
+            start: 0,
+            end: 0,
+            size: 1,
+            coloring: 'lines'
+        },
+        line: {
+            color,
+            width: 2,
+            dash: lineStyle
+        },
+        showscale: false,
+        opacity,
+        hoverinfo: 'skip'
+    };
+}
+
+
+
+function renderGraph() {
+
+    const isDark =
+        document.documentElement.getAttribute('data-theme') === 'dark';
+
+    
+  const bgHex   = isDark ? '#0a0a0a' : '#ffffff'; 
+    const textHex = isDark ? '#ffffff' : '#000000'; 
+    const gridHex = isDark ? '#333333' : '#e5e5e5'; 
+    const zeroHex = isDark ? '#d4d4d4' : '#000000'; 
+    const { xmin, xmax, ymin, ymax } = dynamicRange;
+
+    
+    const layout = {
+        paper_bgcolor: bgHex,
+        plot_bgcolor: bgHex,
+        font: { color: textHex },
+        margin: { l: 45, r: 10, b: 45, t: 10 },
+        showlegend: false,
+
+        xaxis: {
+            range: [xmin, xmax],
+            title: 'X',
+            color: textHex,
+            gridcolor: gridHex,
+            zerolinecolor: zeroHex,
+            zerolinewidth: 1.5,
+            showline: true,
+            mirror: true
+        },
+
+        yaxis: {
+            range: [ymin, ymax],
+            title: 'Y',
+            color: textHex,
+            gridcolor: gridHex,
+            zerolinecolor: zeroHex,
+            zerolinewidth: 1.5,
+            showline: true,
+            mirror: true,
+            scaleanchor: 'x',
+            scaleratio: 1
+        }
+    };
+
+    
+    const rows = document.querySelectorAll('.func-row');
+    const traces = [];
+
+    rows.forEach(row => {
+        const eqInput = row.querySelector('.eq-input');
+        if (!eqInput) return;
+
+        const eqStr = eqInput.value.trim();
+        if (!eqStr) return;
+
+       const colorInput = row.querySelector('.eq-color');
+const color = colorInput ? colorInput.value : '#38bdf8';
+
+const paramSliders = row.querySelectorAll('.param-slider');
+const params = {};
+
+paramSliders.forEach(s => {
+    params[s.dataset.param] = parseFloat(s.value);
+});
+
+        const lineStyle =
+            row.querySelector('.scheme-select')?.value || 'solid';
+
+        try {
+            const trace = calculate2DFunction(
+                eqStr,
+                color,
+                lineStyle,
+                1,
+                params
+            );
+
+            if (trace) traces.push(trace);
+
+        } catch (err) {
+            console.error('Error graficando:', eqStr, err);
+        }
+    });
+
+    Plotly.newPlot(
+        'plot-container',
+        traces,
+        layout,
+        {
+            responsive: true,
+            displaylogo: false,
+            scrollZoom: true   
+        }
+    );
+
+attachZoomHandler();
+    updateLatexPanel();
+    RESOLUTION = adaptiveResolution();
+
+}
+
+
+function updateLatexPanel() {
+    const container = document.getElementById('latex-content');
+    const rows = document.querySelectorAll('.func-row');
+    let htmlContent = '';
+
+    rows.forEach(row => {
+        const eqInput = row.querySelector('.eq-input');
+        if (!eqInput) return;
+
+        const rawEq = eqInput.value.trim();
+        if (!rawEq) return;
+
+        const color =
+            row.querySelector('.eq-color')?.value || '#38bdf8';
+
+        
+        const cleanEq = normalizeInput(rawEq);
+
+        try {
+            
+            math.parse(cleanEq);
+
+            htmlContent += `
+                <div class="latex-item">
+                    <span class="color-dot" style="background:${color}"></span>
+                    <div>$$ ${rawEq} $$</div>
+                </div>
+            `;
+        } catch (e) {
+            htmlContent += `
+                <div class="latex-item">
+                    <span class="color-dot" style="background:transparent"></span>
+                    <span style="color:#ef4444; font-size:0.75em">
+                        Sintaxis incompleta…
+                    </span>
+                </div>
+            `;
+        }
+    });
+
+    container.innerHTML = htmlContent;
+
+    
+    if (window.MathJax) {
+        MathJax.typesetPromise([container]).catch(err => console.log(err));
+    }
+}
+
+
+document.addEventListener('input', e => {
+    if (e.target.classList.contains('eq-input')) {
+        updateLatexPanel();
+    }
+});
+
+
+
+function normalizeInput(str) {
+    
+    let s = str.toLowerCase().trim();
+
+    
+    s = s.replace(/²/g, '^2');       
+    s = s.replace(/³/g, '^3'); 
+     s = s.replace(/⁴/g, '^4');
+      s = s.replace(/⁵/g, '^5');
+       s = s.replace(/⁶/g, '^6');
+        s = s.replace(/⁷/g, '^7')
+           s = s.replace(/⁸/g, '^8');
+             s = s.replace(/⁹/g, '^9');
+               s = s.replace(/ˣ/g, '^x');
+    s = s.replace(/√/g, 'sqrt');     
+    s = s.replace(/π/g, 'pi');       
+   
+
+    
+    s = s.replace(/sen/g, 'sin');
+
+    
+    
+    const funcs = ['sin', 'cos', 'tan', 'sqrt', 'log', 'exp', 'abs'];
+    funcs.forEach(fn => {
+        
+        const re = new RegExp(`${fn}([xyz])`, 'g'); 
+        s = s.replace(re, `${fn}($1)`);
+    });
+
+    
+    
+    
+    s = s.replace(/(\d)([a-z\(])/g, '$1*$2');
+    
+    
+    s = s.replace(/(\))([a-z\d\(])/g, '$1*$2');
+
+    
+    funcs.forEach(fn => {
+        const re = new RegExp(`([xyz])${fn}`, 'g');
+        s = s.replace(re, `$1*${fn}`);
+    });
+    
+    
+    
+    
+    s = s.replace(/([xyz])([xyz])/g, '$1*$2');
+
+    return s;
+}
+
+
+function attachZoomHandler() {
+    const plot = document.getElementById('plot-container');
+    if (!plot) return;
+
+    plot.on('plotly_relayout', event => {
+        
+        if (event['xaxis.range[0]'] !== undefined) {
+            dynamicRange.xmin = event['xaxis.range[0]'];
+            dynamicRange.xmax = event['xaxis.range[1]'];
+        }
+
+        
+        if (event['yaxis.range[0]'] !== undefined) {
+            dynamicRange.ymin = event['yaxis.range[0]'];
+            dynamicRange.ymax = event['yaxis.range[1]'];
+        }
+
+        
+        if (event['xaxis.autorange']) {
+            dynamicRange = {
+                xmin: -10,
+                xmax: 10,
+                ymin: -10,
+                ymax: 10
+            };
+        }
+
+        
+        renderGraph();
+    });
+}
+
+function extractParameters(expr) {
+    const clean = expr.replace(/\s+/g, '');
+    const matches = clean.match(/[a-z]/g) || [];
+
+    return [...new Set(
+        matches.filter(l => l !== 'x' && l !== 'y')
+    )];
+}
+
+
+function updateParamSliders(row) {
+    const eqInput = row.querySelector('.eq-input');
+    const container = row.querySelector('.param-container');
+    if (!eqInput || !container) return;
+
+    const params = extractParameters(eqInput.value);
+
+    container.innerHTML = '';
+
+    params.forEach(p => {
+        const slider = document.createElement('div');
+        slider.innerHTML = `
+            <label style="font-size:11px">
+                ${p} = <span class="param-value">1</span>
+            </label>
+            <input
+                type="range"
+                min="-10"
+                max="10"
+                step="0.1"
+                value="1"
+                class="param-slider"
+                data-param="${p}"
+                oninput="
+                    this.previousElementSibling
+                        .querySelector('.param-value').innerText = this.value;
+                    renderGraph();
+                "
+            >
+        `;
+        container.appendChild(slider);
+    });
+}
+
+function toggleSpecialPoints(button) {
+    const row = button.closest('.func-row');
+    const eqStr = row.querySelector('.eq-input').value.trim();
+    if (!eqStr) return;
+
+    const color = row.querySelector('.eq-color')?.value || '#38bdf8';
+    const lineStyle = row.querySelector('.scheme-select')?.value || 'solid';
+
+    
+    const clean = normalizeInput(eqStr);
+    let expr;
+    try {
+        expr = math.compile(clean.startsWith('y=') ? clean.slice(2) : clean);
+    } catch {
+        console.log('Error al parsear la función');
+        return;
+    }
+
+    const { xmin, xmax } = dynamicRange;
+    const step = (xmax - xmin) / 1000;
+    const points = [];
+
+    for (let x = xmin; x <= xmax; x += step) {
+        let y;
+        try { y = expr.evaluate({ x }); } catch { continue; }
+        if (!isFinite(y)) continue;
+
+        
+        if (Math.abs(y) < 1e-2) points.push({ x, y: 0, type: 'X' });
+        
+        if (Math.abs(x) < 1e-2) points.push({ x: 0, y, type: 'Y' });
+    }
+
+    
+    for (let i = 1; i < points.length - 1; i++) {
+        if (points[i-1].y < points[i].y && points[i+1].y < points[i].y) {
+            points.push({ x: points[i].x, y: points[i].y, type: 'max' });
+        }
+        if (points[i-1].y > points[i].y && points[i+1].y > points[i].y) {
+            points.push({ x: points[i].x, y: points[i].y, type: 'min' });
+        }
+    }
+
+    
+    const trace = {
+        x: points.map(p => p.x),
+        y: points.map(p => p.y),
+        mode: 'markers',
+        marker: {
+            color: 'red',
+            size: 6,
+            symbol: points.map(p => {
+                if (p.type === 'X') return 'x-thin';
+                if (p.type === 'Y') return 'circle';
+                if (p.type === 'max') return 'triangle-up';
+                if (p.type === 'min') return 'triangle-down';
+                return 'circle';
+            })
+        },
+        hoverinfo: 'x+y'
+    };
+
+    Plotly.addTraces('plot-container', trace);
+}
+
+
+function adaptiveResolution() {
+    const spanX = dynamicRange.xmax - dynamicRange.xmin;
+
+    if (spanX < 5) return 600;
+    if (spanX < 20) return 400;
+    if (spanX < 50) return 300;
+    return 200;
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    lucide.createIcons();
+});
+
+
+lucide.createIcons();
+   window.onload = renderGraph;
+
+    </script>
+</body>
+</html>
