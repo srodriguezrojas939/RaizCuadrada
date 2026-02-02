@@ -1,10 +1,11 @@
+
 <!DOCTYPE html>
 <html lang="es">
 <head>
     <link rel="icon" href="icono.png" type="image/png">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>√(Raiz) Cuadrada² </title>
+    <title> }Gracias ♥ |√(Raiz) Cuadrada² </title>
 
     <script>
         (function() {
@@ -25,6 +26,87 @@
 
     <link rel="stylesheet" href="styles.css">
 
+<style>
+/* --- ACORDEÓN / DESPLEGABLES --- */
+    .accordion-wrapper {
+        width: 100%;
+        margin-bottom: 25px;
+        display: flex;
+        flex-direction: column;
+        gap: 10px; /* Espacio entre cada titulo */
+    }
+
+    .accordion-btn {
+        background: var(--input-bg);
+        color: var(--text-main);
+        cursor: pointer;
+        padding: 18px 25px;
+        width: 100%;
+        border: none;
+        text-align: left;
+        outline: none;
+        font-size: 15px;
+        font-family: 'Open Sans', sans-serif;
+        font-weight: 600;
+        border-radius: 20px;
+        transition: 0.3s;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        border: 1px solid transparent;
+    }
+
+    /* Efecto Hover */
+    .accordion-btn:hover {
+        background: var(--bg-container);
+        border-color: var(--border-color);
+        box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+    }
+
+    /* Cuando está activo (abierto) */
+    .accordion-btn.active {
+        background: var(--btn-main-bg);
+        color: var(--btn-main-text);
+        border-radius: 20px 20px 5px 5px; /* Bordes de abajo menos redondos al abrir */
+    }
+
+    /* El icono (+) */
+    .acc-icon {
+        font-size: 20px;
+        font-weight: 300;
+        transition: transform 0.3s ease;
+    }
+    .accordion-btn.active .acc-icon {
+        transform: rotate(45deg); /* Gira a una X */
+    }
+
+    /* El contenido oculto */
+    .accordion-content {
+        padding: 0 20px;
+        background: var(--input-bg);
+        max-height: 0;
+        overflow: hidden;
+        transition: max-height 0.3s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.3s ease, padding 0.3s ease;
+        border-radius: 0 0 20px 20px;
+        opacity: 0;
+        margin-top: -10px; /* Para que pegue con el botón */
+    }
+
+    .accordion-content p {
+        margin: 15px 0;
+        font-size: 14px;
+        color: var(--text-sec);
+        line-height: 1.6;
+    }
+
+    /* Clase para abrir el contenido */
+    .accordion-content.show {
+        opacity: 1;
+        margin-top: -5px; /* Pequeño ajuste visual */
+        /* max-height se calcula con JS */
+    }
+    
+    </style>
     </head>
 <body>
 
@@ -131,7 +213,41 @@
         <main class="content">
             
             
-            AQUI BORRO XD
+         <div class="accordion-wrapper">
+    
+    <button class="accordion-btn">
+        <span>Autor</span>
+        <span class="acc-icon">+</span>
+    </button>
+    <div class="accordion-content">
+        <p>Soy Sebastian.</p>
+    </div>
+
+    <button class="accordion-btn">
+        <span>Como colaborar</span>
+        <span class="acc-icon">+</span>
+    </button>
+    <div class="accordion-content">
+        <p>Actualmente estamos trabajando en atajos rápidos. Por ahora, puedes usar Tab para navegar entre los botones.</p>
+    </div>
+
+    <button class="accordion-btn">
+        <span>Proceso</span>
+        <span class="acc-icon">+</span>
+    </button>
+    <div class="accordion-content">
+        <p>Selecciona la calidad deseada en el menú inferior y presiona "Descargar PNG". La imagen tendrá fondo transparente.</p>
+    </div>
+
+    <button class="accordion-btn">
+        <span>Agradecimiento</span>
+        <span class="acc-icon">+</span>
+    </button>
+    <div class="accordion-content">
+        <p>Somos un canal educativo dedicado a simplificar las matemáticas. ¡Suscríbete para más contenido!</p>
+    </div>
+
+</div>
             
 
 <footer class="footer-global">
@@ -177,6 +293,34 @@
         </main>
         
      <script src="script.js"></script>
+     <script>
+    // Lógica para los desplegables
+    var acc = document.getElementsByClassName("accordion-btn");
+    var i;
+
+    for (i = 0; i < acc.length; i++) {
+        acc[i].addEventListener("click", function() {
+            // Alternar la clase 'active' en el botón
+            this.classList.toggle("active");
+
+            // Seleccionar el panel de contenido siguiente
+            var panel = this.nextElementSibling;
+
+            // Lógica de apertura/cierre con animación suave
+            if (panel.style.maxHeight) {
+                panel.style.maxHeight = null;
+                panel.classList.remove("show");
+                // Restaurar borde redondo completo del botón con un pequeño retraso
+                setTimeout(() => { this.style.borderRadius = "20px"; }, 300);
+            } else {
+                panel.classList.add("show");
+                panel.style.maxHeight = panel.scrollHeight + "px";
+                // Ajustar borde del botón inmediatamente
+                this.style.borderRadius = "20px 20px 5px 5px"; 
+            }
+        });
+    }
+</script>
 </body>
 <button class="mobile-theme-toggle" onclick="toggleTheme()" aria-label="Cambiar tema">
     <i data-lucide="sun" class="icon-sun"></i>
