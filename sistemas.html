@@ -1,17 +1,18 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
+    <link rel="icon" href="icono.png" type="image/png">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title> Sistemas de ecuaciones | √(Raiz) Cuadrada² </title>
 
     <script>
         (function() {
-            // 1. Intentamos leer la memoria
+            
             const localTheme = localStorage.getItem('theme');
-            // 2. Si hay algo guardado lo usamos, si no, usamos 'light'
+            
             const themeToSet = localTheme || 'light';
-            // 3. Lo aplicamos INMEDIATAMENTE al HTML
+            
             document.documentElement.setAttribute('data-theme', themeToSet);
         })();
       
@@ -42,7 +43,7 @@
     @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700;900&display=swap');
     @import url('https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700&display=swap');
 
-    /* --- BASE --- */
+    
     body { 
         background: #ffffff; 
         font-family: 'Open Sans', sans-serif; 
@@ -54,13 +55,13 @@
         transition: background 0.3s ease;
     }
 
-      /* --- ANIMACIONES --- */
+      
     .fade-in { 
         opacity: 0; 
         transform: translateY(20px); 
         animation: fadeUp 0.8s cubic-bezier(0.2, 0.8, 0.2, 1) forwards; 
         width: 100%; 
-        max-width: 600px; /* Ancho idéntico al wrapper de comentarios */
+        max-width: 600px; 
         margin: 0 auto;
     }
     
@@ -69,23 +70,23 @@
         to { opacity: 1; transform: translateY(0); } 
     }
 
-    /* --- CONTENEDOR PRINCIPAL --- */
+    
      .calculadora {
-        background: #ffffff; /* Fondo limpio tipo tarjeta */
+        background: #ffffff; 
         padding: 40px 35px; 
         border-radius: 40px;
-        box-shadow: 0 20px 40px rgba(0,0,0,0.08); /* Sombra exacta de comentarios */
+        box-shadow: 0 20px 40px rgba(0,0,0,0.08); 
         box-sizing: border-box;
         font-family: 'Open Sans', sans-serif;
     }
 
 
-    /* --- HEADER --- */
+    
    .header-section { text-align: center; margin-bottom: 35px; }
     
     .header-section h1 { 
         font-family: 'Playfair Display', serif; 
-        font-size: clamp(24px, 6vw, 32px); /* Responsive como title-big */
+        font-size: clamp(24px, 6vw, 32px); 
         margin: 0; 
         font-weight: 700; 
         color: #1a1a1a; 
@@ -99,12 +100,12 @@
         font-weight: 700; 
         color: #999; 
         text-transform: uppercase; 
-        letter-spacing: 1.5px; /* Estilo 'pregunta-pro' */
+        letter-spacing: 1.5px; 
     }
 
-    /* --- PREVIEW Y RESULTADOS --- */
+    
    #preview-container, #resultado {
-        background: #f9f9f9; /* Mismo gris que los inputs */
+        background: #f9f9f9; 
         margin-bottom: 25px; 
         padding: 20px;
         border-radius: 25px; 
@@ -112,14 +113,14 @@
         display: flex;
         align-items: center; 
         justify-content: center; 
-        border: 2px solid transparent; /* Para mantener consistencia */
+        border: 2px solid transparent; 
         overflow-x: auto;
-        box-shadow: 0 2px 5px rgba(0,0,0,0.02) inset; /* Sombra interna sutil */
+        box-shadow: 0 2px 5px rgba(0,0,0,0.02) inset; 
         font-size: 1.1rem;
         color: #333;
     }
 
-    /* --- INPUTS --- */
+    
     .input-group { margin-bottom: 20px; }
     
      label { 
@@ -130,7 +131,7 @@
         margin-left: 15px; 
         color: #555; 
         text-transform: uppercase; 
-        letter-spacing: 0.5px; /* Estilo exacto de form-group label */
+        letter-spacing: 0.5px; 
     }
     
     input {
@@ -155,13 +156,13 @@
         transform: translateY(-3px);
     }
 
-    /* --- CONTROLES FILAS (Botones Pequeños) --- */
+    
     .controles-filas { display: flex; gap: 15px; margin-bottom: 25px; }
     
     .btn-mini {
         flex: 1; 
         padding: 14px; 
-        border-radius: 999px; /* Píldora completa */
+        border-radius: 999px; 
         border: 1px solid #e0e0e0;
         background: transparent; 
         cursor: pointer; 
@@ -180,7 +181,7 @@
         border-color: #ccc; 
     }
 
-    /* --- OPCIÓN DECIMAL (Contenedor Switch) --- */
+    
     .opcion-decimal {
         display: flex; 
         align-items: center; 
@@ -196,7 +197,7 @@
         font-size: 14px;
     }
 
-    /* --- SWITCH --- */
+    
     .switch { position: relative; display: inline-block; width: 46px; height: 24px; margin-top: 8px}
     .switch input { opacity: 0; width: 0; height: 0; }
     .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background: #ccc; transition: .4s; border-radius: 34px; }
@@ -204,7 +205,7 @@
     input:checked + .slider { background: #1a1a1a; }
     input:checked + .slider:before { transform: translateX(22px); }
 
-    /* --- BOTÓN PRINCIPAL --- */
+    
     .btn-principal {
         width: 100%; 
         background: #1a1a1a; 
@@ -232,7 +233,7 @@
     }
 }
 
-    /* --- PÍLDORAS (Navegación) --- */
+    
     .pills-nav { display: flex; justify-content: center; gap: 10px; margin-top: 30px; flex-wrap: wrap; }
     .pill { 
         background: #f4f4f4; 
@@ -254,7 +255,7 @@
     }
     .pill:hover:not(.active) { background: #e0e0e0; }
 
-    /* --- SIMBOLOS --- */
+    
     .symbols-container { 
         background: #ffffff; 
         border-radius: 30px; 
@@ -288,16 +289,16 @@
     .sym-btn span { font-size: 18px; font-weight: 600; margin-bottom: 4px; }
     .sym-btn small { font-size: 9px; text-transform: uppercase; color: #999; font-weight: 700; }
 
-    /* ========================================= */
-    /* MODO OSCURO                   */
-    /* ========================================= */
+    
+    
+    
     
     [data-theme="dark"] body { 
     background: #0a0a0a; 
 }
         
   [data-theme="dark"] .calculadora {
-        background: #0a0a0a; /* O #1a1a1a si prefieres tarjeta sólida */
+        background: #0a0a0a; 
         box-shadow: none;
         border: 1px solid rgba(255,255,255,0.1);
     }
@@ -306,7 +307,7 @@
     [data-theme="dark"] .header-section p { color: #888; }
     [data-theme="dark"] label { color: #888; }
 
-    /* Inputs Dark Mode */
+    
     [data-theme="dark"] input[type="text"], 
     [data-theme="dark"] select,
     [data-theme="dark"] #preview-container,
@@ -328,7 +329,7 @@
         border: 1px solid #333;
     }
 
-    /* Botones Dark Mode */
+    
     [data-theme="dark"] .btn-principal {
         background: #ffffff;
         color: #000000;
@@ -342,11 +343,11 @@
     }
     [data-theme="dark"] .btn-secundario:hover { background: #333; color: white; }
 
-    /* Chips Dark Mode */
+    
     [data-theme="dark"] .pill { background: #1e1e1e; color: #ccc; border-color: transparent; }
     [data-theme="dark"] .pill.active { background: #ffffff; color: #000; }
 
-    /* Symbols Dark Mode */
+    
     [data-theme="dark"] .symbols-container {
         background: #1a1a1a;
         border-color: #333;
@@ -358,43 +359,43 @@
     }
     [data-theme="dark"] .sym-btn:hover { background: #333; }
     
-    /* Contenedor del switch */
+    
 [data-theme="dark"] .opcion-decimal {
-    background: #1e1e1e;   /* Un gris oscuro para diferenciarse del fondo negro */
+    background: #1e1e1e;   
     color: #ffffff;
     border: 1px solid #333;
     box-shadow: none;
 }
 
-/* El riel del switch cuando está apagado */
+
 [data-theme="dark"] .slider {
     background-color: #333; 
 }
 
-/* El riel del switch cuando está ENCENDIDO (Blanco para resaltar) */
+
 [data-theme="dark"] input:checked + .slider {
     background-color: #ffffff;
 }
 
-/* La bolita del switch cuando está ENCENDIDO (Negra para contraste) */
+
 [data-theme="dark"] input:checked + .slider:before {
     background-color: #000000;
 }
 
     
     @media (max-width: 480px) {
-    /* En celular quitamos flex para evitar que centre recortando bordes */
+    
     body {
         display: block; 
-        padding: 10px; /* Menos espacio en los bordes de la pantalla */
+        padding: 10px; 
     }
 
-    /* Ajustamos el margen para que se centre con block */
+    
     .fade-in {
         margin: 20px auto; 
     }
 
-    /* Reducimos el relleno interno de la tarjeta para ganar espacio útil */
+    
     .calculadora {
         padding: 30px 20px; 
     }
@@ -602,13 +603,13 @@
      
 
     let contadorFilas = 2;
-    let inputActivo = document.querySelector('.eq-input'); // Por defecto el primero
+    let inputActivo = document.querySelector('.eq-input'); 
 
     function setInputActivo(el) {
         inputActivo = el;
     }
 
-    // Categorías con un ejemplo cada una
+    
     const categorias = {
           principales: [
         { s: '(', t: 'ABRIR (' }, 
@@ -701,17 +702,17 @@
  function normalizar(expr) { 
         if (!expr) return '';
 
-        // 1. Quitar espacios y pasar a minúsculas
+        
         let s = expr.toLowerCase().replace(/\s+/g, '');
         
-        // CASO E: Valor absoluto |x| -> abs(x)
+        
         s = s.replace(/\|([^|]+)\|/g, 'abs($1)');
 
-        // CASO F: Superíndices
+        
         const superindices = { '⁰':'0', '¹':'1', '²':'2', '³':'3', '⁴':'4', '⁵':'5', '⁶':'6', '⁷':'7', '⁸':'8', '⁹':'9' };
         s = s.replace(/[⁰¹²³⁴⁵⁶⁷⁸⁹]/g, match => `^${superindices[match]}`);
 
-        // 2. Diccionario de Traducción
+        
         const reemplazos = [
             { from: /arctan/g, to: 'atan' },
             { from: /arctg/g, to: 'atan' },
@@ -730,14 +731,14 @@
 
         reemplazos.forEach(r => { s = s.replace(r.from, r.to); });
 
-        // 3. Notación inversa
+        
         s = s.replace(/sin\^-1/g, 'asin').replace(/cos\^-1/g, 'acos').replace(/tan\^-1/g, 'atan');
 
         const funcsTrig = 'sin|cos|tan|csc|sec|cot';
         const reTrigPow = new RegExp(`(${funcsTrig})\\^(\\d+)\\(?([xyz])\\)?`, 'g');
         s = s.replace(reTrigPow, '($1($3))^$2');
         
-        // 4. Inteligencia: Funciones sin paréntesis
+        
         const funciones = ['asin', 'acos', 'atan', 'asec', 'acsc', 'acot', 'sin', 'cos', 'tan', 'sec', 'csc', 'cot', 'sqrt', 'log', 'abs', 'exp'];
         
         funciones.forEach(fn => {
@@ -745,22 +746,22 @@
             s = s.replace(re, `${fn}($1)`);
         });
 
-        // 5. Multiplicación Implícita
-        // CASO A: Número seguido de Variable o Paréntesis (2x -> 2*x)
+        
+        
         s = s.replace(/(\d)([a-z\(])/g, '$1*$2');
 
-        // CASO B: Variable explícita seguida de función
+        
         const funcionPattern = funciones.join('|');
         const reMultFunc = new RegExp(`([xyz\\)])(${funcionPattern})`, 'g');
         s = s.replace(reMultFunc, '$1*$2');
 
-        // CASO C: Variable seguida de variable (xx -> x*x)
+        
         s = s.replace(/([xytz])([xytz])/g, '$1*$2');
 
-        // CASO D: Corchetes
+        
         s = s.replace(/[\[\{]/g, '(').replace(/[\]\}]/g, ')');
         
-        // NORMALIZAR INECUACIONES (Unicode → ASCII)
+        
 s = s.replace(/≤/g, '<=').replace(/≥/g, '>=');
 
         return s;
@@ -826,7 +827,7 @@ function detectarVariables(eqs) {
 
 
 function evaluarSistema(eqs, vars, valores) {
-    // valores = {x:1, y:2}
+    
     return eqs.map(eq => {
         let expr = eq;
         vars.forEach(v => {
@@ -863,7 +864,7 @@ function resolverLineal(A, b) {
     let M = A.map((row, i) => [...row, b[i]]);
 
     for (let i = 0; i < n; i++) {
-        // Pivot
+        
         let max = i;
         for (let k = i+1; k < n; k++)
             if (Math.abs(M[k][i]) > Math.abs(M[max][i])) max = k;
@@ -871,7 +872,7 @@ function resolverLineal(A, b) {
 
         if (Math.abs(M[i][i]) < 1e-12) return null;
 
-        // Eliminar
+        
         for (let k = i+1; k < n; k++) {
             let c = M[k][i] / M[i][i];
             for (let j = i; j <= n; j++)
@@ -879,7 +880,7 @@ function resolverLineal(A, b) {
         }
     }
 
-    // Sustitución atrás
+    
     let x = Array(n).fill(0);
     for (let i = n-1; i >= 0; i--) {
         x[i] = M[i][n] / M[i][i];
@@ -1036,7 +1037,7 @@ for (let s of semillas) {
    
     }
 
-    // Inicializar categoría principales al cargar
+    
     showCategory('principales', document.querySelector('.pill'));
 </script>
       
