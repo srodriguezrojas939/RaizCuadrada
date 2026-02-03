@@ -919,11 +919,53 @@ input[type="color"].eq-color:hover {
 </div>
 
 
+
+<div id="table-panel" style="display:none; margin-top:10px; margin-bottom: 10px; ">
+    <div style="display:flex; gap:10px; align-items:center; margin-bottom:6px;">
+
+        <label>
+            Desde
+            <input id="table-xmin" type="number" value="-4" step="0.5" style="width:80px">
+        </label>
+
+        <label>
+            Hasta
+            <input id="table-xmax" type="number" value="4" step="0.5" style="width:80px">
+        </label>
+
+        <label>
+            Paso
+            <input id="table-step" type="number" value="1" step="0.1" style="width:80px">
+        </label>
+
+   </div>
+   
+   <div style="
+    display:flex;
+    gap:10px;
+    align-items:center;
+    justify-content:center;
+    margin-bottom:6px;
+">
+
+        <button style="margin: auto;" onclick="updateTable()">Actualizar</button>
+        <button  style="margin: auto;" onclick="toggleTable()">Ocultar</button>
+ 
+</div>
+   
+   
+    <div id="table-content" style="max-height:200px; margin-bottom: 10px; overflow:auto;"></div>
+</div>
+
+<button style="margin-bottom: 20px;" onclick="toggleTable()"> Ver tabla</button>
+
         <button onclick="renderGraph()" class="btn-principal">Actualizar Grafica</button>
 
     </div>
 
     <div id="plot-container"></div>
+
+
 
 
 <div id="mobile-rotate-overlay">
@@ -949,6 +991,12 @@ input[type="color"].eq-color:hover {
 <script src="script.js"></script>
 
 <script>
+    
+    function toggleTable() {
+    const panel = document.getElementById('table-panel');
+    panel.style.display = panel.style.display === 'none' ? 'block' : 'none';
+}
+
     function toggleColorPicker() {
         const select = document.getElementById('colorScheme');
         const container = document.getElementById('customColorContainer');
@@ -1080,7 +1128,6 @@ const IMPLICIT_EPSILON = 1e-2;
 
 
 const MAX_POINTS = 2000;
-
 
 function addFunction() {
     const container = document.getElementById('functionsContainer');
@@ -1316,7 +1363,7 @@ function calculate2DFunction(eqStr, color, lineStyle = 'solid', opacity = 1 , pa
         zVals.push(row);
     }
 
-    return {
+  return {
         type: 'contour',
         x: xVals,
         y: yVals,
@@ -1324,11 +1371,18 @@ function calculate2DFunction(eqStr, color, lineStyle = 'solid', opacity = 1 , pa
         contours: {
             start: 0,
             end: 0,
-            size: 1,
+            size: 0, 
             coloring: 'lines'
         },
+        
+        colorscale: [
+            [0, color], 
+            [1, color]
+        ],
+        
         line: {
-            color,
+            
+            
             width: 2,
             dash: lineStyle
         },
@@ -1439,8 +1493,66 @@ paramSliders.forEach(s => {
 attachZoomHandler();
     updateLatexPanel();
     RESOLUTION = adaptiveResolution();
+updateTable();
 
 }
+
+
+function updateTable() {
+    const xmin = parseFloat(document.getElementById('table-xmin').value);
+    const xmax = parseFloat(document.getElementById('table-xmax').value);
+    const step = parseFloat(document.getElementById('table-step').value);
+
+    const rows = document.querySelectorAll('.func-row');
+    const container = document.getElementById('table-content');
+
+    let html = '<table border="1" cellpadding="4" style="border-collapse:collapse;">';
+    html += '<tr><th>x</th>';
+
+    const functions = [];
+
+    rows.forEach((row, i) => {
+        const eq = row.querySelector('.eq-input').value.trim();
+        if (!eq) return;
+
+        
+        if (eq.includes('=') && !eq.startsWith('y=')) return;
+
+        const label =
+            row.querySelector('.func-label')?.value || `f${i + 1}`;
+
+        try {
+            const expr = math.compile(
+                normalizeInput(eq.startsWith('y=') ? eq.slice(2) : eq)
+            );
+            functions.push({ label, expr });
+            html += `<th>${label}</th>`;
+        } catch {}
+    });
+
+    html += '</tr>';
+
+    for (let x = xmin; x <= xmax + 1e-9; x += step) {
+        html += `<tr><td>${x.toFixed(3)}</td>`;
+
+        functions.forEach(f => {
+            let y = '';
+            try {
+                const val = f.expr.evaluate({ x });
+                y = isFinite(val) ? val.toFixed(4) : '—';
+            } catch {
+                y = '—';
+            }
+            html += `<td>${y}</td>`;
+        });
+
+        html += '</tr>';
+    }
+
+    html += '</table>';
+    container.innerHTML = html;
+}
+
 
 
 function updateLatexPanel() {
@@ -1631,64 +1743,94 @@ function updateParamSliders(row) {
 
 function toggleSpecialPoints(button) {
     const row = button.closest('.func-row');
-    const eqStr = row.querySelector('.eq-input').value.trim();
+    const eqStr = row.querySelector('.eq-input')?.value.trim();
     if (!eqStr) return;
 
-    const color = row.querySelector('.eq-color')?.value || '#38bdf8';
-    const lineStyle = row.querySelector('.scheme-select')?.value || 'solid';
+    const color = row.querySelector('.eq-color')?.value || '#ef4444';
 
     
-    const clean = normalizeInput(eqStr);
     let expr;
     try {
-        expr = math.compile(clean.startsWith('y=') ? clean.slice(2) : clean);
+        let clean = normalizeInput(eqStr);
+        if (clean.startsWith('y=')) clean = clean.slice(2);
+        expr = math.compile(clean);
     } catch {
-        console.log('Error al parsear la función');
         return;
     }
 
     const { xmin, xmax } = dynamicRange;
-    const step = (xmax - xmin) / 1000;
-    const points = [];
 
-    for (let x = xmin; x <= xmax; x += step) {
+    const SAMPLE_POINTS = 200;        
+    const MAX_POINTS = 10;            
+    const dx = (xmax - xmin) / SAMPLE_POINTS;
+
+    const samples = [];
+
+    for (let i = 0; i <= SAMPLE_POINTS; i++) {
+        const x = xmin + i * dx;
         let y;
-        try { y = expr.evaluate({ x }); } catch { continue; }
-        if (!isFinite(y)) continue;
+        try {
+            y = expr.evaluate({ x });
+            if (!isFinite(y)) continue;
+            samples.push({ x, y });
+        } catch {}
+    }
 
-        
-        if (Math.abs(y) < 1e-2) points.push({ x, y: 0, type: 'X' });
-        
-        if (Math.abs(x) < 1e-2) points.push({ x: 0, y, type: 'Y' });
+    const special = [];
+
+    
+    const y0 = samples.find(p => Math.abs(p.x) < dx);
+    if (y0) special.push({ ...y0, type: 'Y' });
+
+    
+    for (let i = 1; i < samples.length && special.length < MAX_POINTS; i++) {
+        const a = samples[i - 1];
+        const b = samples[i];
+        if (a.y === 0 || a.y * b.y < 0) {
+            const x = (a.x + b.x) / 2;
+            special.push({ x, y: 0, type: 'X' });
+        }
     }
 
     
-    for (let i = 1; i < points.length - 1; i++) {
-        if (points[i-1].y < points[i].y && points[i+1].y < points[i].y) {
-            points.push({ x: points[i].x, y: points[i].y, type: 'max' });
+    for (let i = 1; i < samples.length - 1 && special.length < MAX_POINTS; i++) {
+        const prev = samples[i - 1];
+        const curr = samples[i];
+        const next = samples[i + 1];
+
+        if (prev.y < curr.y && next.y < curr.y) {
+            special.push({ ...curr, type: 'max' });
         }
-        if (points[i-1].y > points[i].y && points[i+1].y > points[i].y) {
-            points.push({ x: points[i].x, y: points[i].y, type: 'min' });
+        if (prev.y > curr.y && next.y > curr.y) {
+            special.push({ ...curr, type: 'min' });
         }
     }
+
+    
+    const points = special.slice(0, MAX_POINTS);
+
+    if (!points.length) return;
 
     
     const trace = {
+        type: 'scatter',
+        mode: 'markers',
         x: points.map(p => p.x),
         y: points.map(p => p.y),
-        mode: 'markers',
         marker: {
-            color: 'red',
-            size: 6,
+            size: 12,
+            color: color,
+            line: { width: 2, color: '#000' },
             symbol: points.map(p => {
-                if (p.type === 'X') return 'x-thin';
+                if (p.type === 'X') return 'x';
                 if (p.type === 'Y') return 'circle';
                 if (p.type === 'max') return 'triangle-up';
                 if (p.type === 'min') return 'triangle-down';
                 return 'circle';
             })
         },
-        hoverinfo: 'x+y'
+        hovertemplate:
+            'x=%{x:.3f}<br>y=%{y:.3f}<extra></extra>'
     };
 
     Plotly.addTraces('plot-container', trace);
