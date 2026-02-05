@@ -26,31 +26,48 @@
 
     <link rel="stylesheet" href="styles.css">
     <style>
-    * --- TARJETA YOUTUBE --- */
+
+        html, body {
+  max-width: 100%;
+  overflow-x: hidden;
+}
+@media (max-width: 768px) {
+  .wrapper {
+    display: block;
+  }
+
+  .content {
+    width: 100%;
+  }
+}
+* {
+  box-sizing: border-box;
+}
+
     .yt-card {
         display: flex;
         align-items: center;
         gap: 20px;
-        background: var(--input-bg); /* Mismo fondo que tus inputs */
+        background: var(--input-bg); 
         border: 1px solid var(--border-color);
         padding: 20px;
-        border-radius: 25px; /* Bordes redondeados consistentes */
-        text-decoration: none; /* Quitar subrayado del link */
+        border-radius: 25px; 
+        text-decoration: none; 
         margin-bottom: 25px;
         transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
         width: 100%;
         box-sizing: border-box;
     }
 
-    /* Efecto Hover: Se eleva y cambia ligeramente de color */
+    
     .yt-card:hover {
         transform: translateY(-4px);
         background: var(--bg-container);
         box-shadow: var(--shadow-hover);
-        border-color: #ff0000; /* Detalle sutil rojo YouTube al pasar mouse */
+        border-color: #ff0000; 
     }
 
-    /* Caja del ícono */
+    
     .yt-icon-box {
         background: #ffffff;
         width: 100px;
@@ -59,9 +76,9 @@
         display: flex;
         align-items: center;
         justify-content: center;
-        flex-shrink: 0; /* Evita que el icono se aplaste */
+        flex-shrink: 0; 
         box-shadow: 0 4px 10px rgba(0,0,0,0.05);
-        color: #ff0000; /* Color rojo de YouTube */
+        color: #ff0000; 
         transition: transform 0.3s ease;
     }
     
@@ -71,7 +88,7 @@
         color: #ffffff;
     }
 
-    /* Contenido de texto */
+    
     .yt-content {
         display: flex;
         flex-direction: column;
@@ -92,20 +109,20 @@
         line-height: 1.4;
     }
 
-    /* --- AJUSTES MODO OSCURO --- */
+    
     [data-theme="dark"] .yt-icon-box {
-        background: #1e1e1e; /* Fondo oscuro para el icono */
+        background: #1e1e1e; 
     }
     [data-theme="dark"] .yt-card:hover .yt-icon-box {
-        background: #ff0000; /* Rojo brillante al hover */
+        background: #ff0000; 
     }
 
-    /* --- AJUSTE RESPONSIVE (CELULAR) --- */
+    
     @media (max-width: 600px) {
         .yt-card {
             padding: 15px;
             gap: 15px;
-            align-items: flex-start; /* Alinea arriba si el texto es largo */
+            align-items: flex-start; 
         }
         .yt-title { font-size: 16px; }
         .yt-desc { font-size: 12px; }
