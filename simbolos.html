@@ -31,6 +31,53 @@
 
         html, body { max-width: 100%; overflow-x: hidden; } @media (max-width: 768px) { .wrapper { display: block; } .content { width: 100%; } } * { box-sizing: border-box; }
         
+        
+@media (max-width: 480px) {
+
+  
+  .grid {
+    grid-template-columns: repeat(auto-fill, minmax(65px, 1fr)) !important;
+    gap: 6px !important;
+  }
+
+  
+  .card {
+    padding: 6px 2px !important;
+    border-radius: 12px !important;
+  }
+
+  
+  .symbol {
+    font-size: 18px !important;
+    margin-bottom: 2px !important;
+    line-height: 1 !important;
+  }
+
+  
+  .name {
+    font-size: 6px !important;
+    letter-spacing: 0.3px !important;
+  }
+
+  
+  .mode-switcher {
+    padding: 6px !important;
+    gap: 3px !important;
+    border-radius: 22px !important;
+  }
+
+  .mode-btn {
+    min-width: 60px !important;
+    padding: 5px 8px !important;
+    font-size: 11px !important;
+  }
+
+  
+  .section-title-text {
+    font-size: 20px !important;
+  }
+}
+
     :root {
         
         --bg-body: #ffffff;          
