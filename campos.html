@@ -6,7 +6,7 @@
       <link rel="icon" href="icono.png" type="image/png">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title> Diagrama de campos | √(Raiz) Cuadrada²</title>
+    <title>Diagrama de campos | √(Raiz) Cuadrada²</title>
     
     <script src="https://cdn.plot.ly/plotly-2.24.1.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/11.8.0/math.js"></script>
@@ -173,7 +173,7 @@
         font-size: 16px;
         cursor: pointer; 
         transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-        margin-bottom: 15px;
+        margin-bottom: 30px;
         font-family: 'Open Sans', sans-serif;
     }
 
@@ -1065,8 +1065,21 @@ input[type="color"].eq-color:hover {
 <div class="control-group" style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px;">
    
    
+
+
+
+
+
+        <button onclick="renderGraph()" class="btn-principal">Actualizar Grafica</button>
+        
+        
+           
 </div>
 
+
+
+
+        
 <div class="control-group">
   <label>Densidad de flechas</label>
   <input
@@ -1165,11 +1178,6 @@ input[type="color"].eq-color:hover {
 
 
 
-
-
-
-
-        <button onclick="renderGraph()" class="btn-principal">Actualizar Grafica</button>
 
     </div>
 
@@ -1600,6 +1608,9 @@ function attachRowEvents(row, func) {
   });
 }
 
+const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+
+
 function buildEvaluator(expr) {
         try {
             
@@ -1896,15 +1907,39 @@ if (vizState.hideArrows) {
 
 
 
-    Plotly.newPlot('plot-container', traces, {
-      scene: {
-        xaxis: { title: 'X' },
-        yaxis: { title: 'Y' },
-        zaxis: { title: 'Z' },
-        aspectmode: 'cube'
-      },
-      margin: { t: 0 }
-    }, { responsive: true });
+const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+
+Plotly.newPlot('plot-container', traces, {
+  paper_bgcolor: isDark ? '#0a0a0a' : '#ffffff',
+  plot_bgcolor:  isDark ? '#0a0a0a' : '#ffffff',
+
+  scene: {
+    bgcolor: isDark ? '#0a0a0a' : '#ffffff',
+
+    xaxis: {
+      title: 'X',
+      color: isDark ? '#ffffff' : '#000000',
+      gridcolor: isDark ? '#333' : '#ccc',
+      zerolinecolor: isDark ? '#555' : '#ccc'
+    },
+    yaxis: {
+      title: 'Y',
+      color: isDark ? '#ffffff' : '#000000',
+      gridcolor: isDark ? '#333' : '#ccc',
+      zerolinecolor: isDark ? '#555' : '#ccc'
+    },
+    zaxis: {
+      title: 'Z',
+      color: isDark ? '#ffffff' : '#000000',
+      gridcolor: isDark ? '#333' : '#ccc',
+      zerolinecolor: isDark ? '#555' : '#ccc'
+    },
+
+    aspectmode: 'cube'
+  },
+
+  margin: { t: 0 }
+}, { responsive: true });
 
     return;
   }
@@ -2028,16 +2063,33 @@ if (vizState.streamlines) {
     traces.push(colorbarTrace(globalMaxMag, activeFunc.colorScheme));
   }
 
-  const layout = {
-    margin: { t: 20, l: 80 }, 
-    xaxis: { range: [dynamicRange.xmin, dynamicRange.xmax] },
-    yaxis: {
-      range: [dynamicRange.ymin, dynamicRange.ymax],
-      scaleanchor: 'x'
-    },
-    dragmode: 'zoom',
-    showlegend: false
-  };
+const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+
+const layout = {
+  margin: { t: 20, l: 80 },
+
+  paper_bgcolor: isDark ? '#0a0a0a' : '#ffffff',
+  plot_bgcolor:  isDark ? '#0a0a0a' : '#ffffff',
+
+  xaxis: {
+    range: [dynamicRange.xmin, dynamicRange.xmax],
+    color: isDark ? '#ffffff' : '#000000',
+    gridcolor: isDark ? '#333' : '#e5e5e5',
+    zerolinecolor: isDark ? '#555' : '#ccc'
+  },
+
+  yaxis: {
+    range: [dynamicRange.ymin, dynamicRange.ymax],
+    scaleanchor: 'x',
+    color: isDark ? '#ffffff' : '#000000',
+    gridcolor: isDark ? '#333' : '#e5e5e5',
+    zerolinecolor: isDark ? '#555' : '#ccc'
+  },
+
+  dragmode: 'zoom',
+  showlegend: false
+};
+
 
   Plotly.newPlot('plot-container', traces, layout, {
     scrollZoom: true,
@@ -2554,8 +2606,9 @@ document.addEventListener('DOMContentLoaded', () => {
         renderGraph();
     });
 
-lucide.createIcons();
 window.onload = () => renderGraph();
+
+lucide.createIcons();
 
     </script>
 </body>
