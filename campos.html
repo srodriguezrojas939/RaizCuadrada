@@ -1,0 +1,2561 @@
+
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+      <link rel="icon" href="icono.png" type="image/png">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Graficadora 2D | √(Raiz) Cuadrada²</title>
+    
+    <script src="https://cdn.plot.ly/plotly-2.24.1.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/11.8.0/math.js"></script>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+
+<script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+<script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+<script src="https://unpkg.com/lucide@latest"></script>
+
+
+    <script>
+        (function() {
+            
+            const localTheme = localStorage.getItem('theme');
+            
+            const themeToSet = localTheme || 'light';
+            
+            document.documentElement.setAttribute('data-theme', themeToSet);
+        })();
+    </script>
+    
+     <link rel="stylesheet" href="styles.css">
+     
+<style>
+    
+    @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700;900&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700&display=swap');
+
+    :root {
+        
+        --bg-body: #ffffff;         
+        --bg-sidebar: #ffffff;      
+        --bg-input: #f9f9f9;        
+        --bg-card-inner: #f4f4f4;   
+        --text-main: #333333;
+        --text-muted: #999999;
+        --accent: #1a1a1a;          
+        --accent-hover: #000000;
+        --text-inverse: #ffffff;
+        --border-color: #eeeeee;
+        
+        
+        --shadow-sidebar: 5px 0 30px rgba(0,0,0,0.05);
+        --shadow-inset: 0 2px 5px rgba(0,0,0,0.02) inset;
+        --radius-lg: 40px;          
+        --radius-md: 25px;          
+        --radius-pill: 999px;       
+    }
+
+    [data-theme="dark"] {
+        
+        --bg-body: #0a0a0a;
+        --bg-sidebar: #0a0a0a;      
+        --bg-input: #1e1e1e;
+        --bg-card-inner: #252525;
+        --text-main: #ffffff;
+        --text-muted: #888888;
+        --accent: #ffffff;          
+        --accent-hover: #e0e0e0;
+        --text-inverse: #000000;
+        --border-color: #333333;
+        --shadow-sidebar: none;     
+    }
+
+    
+    body {
+        margin: 0;
+        padding: 0;
+        font-family: 'Open Sans', sans-serif; 
+        background-color: var(--bg-body);
+        color: var(--text-main);
+        overflow: hidden;
+        display: flex;
+        height: 100vh;
+        transition: background 0.3s ease, color 0.3s ease;
+    }
+
+    
+    #sidebar {
+        width: 340px; 
+        background: var(--bg-sidebar);
+        border-right: 1px solid var(--border-color);
+        display: flex;
+        flex-direction: column;
+        padding: 30px 25px; 
+        box-shadow: var(--shadow-sidebar);
+        z-index: 10;
+        height: 100vh;
+        overflow-y: auto;
+        overflow-x: hidden;
+        box-sizing: border-box;
+        transition: 0.3s;
+    }
+
+    
+    #sidebar::-webkit-scrollbar { width: 4px; }
+    #sidebar::-webkit-scrollbar-thumb { background: var(--text-muted); border-radius: 4px; }
+
+    
+    h1 {
+        font-family: 'Playfair Display', serif; 
+        font-size: 1.6rem;
+        font-weight: 700;
+        color: var(--accent); 
+        letter-spacing: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center; 
+        gap: 10px;
+        text-align: center;
+        line-height: 1.1;
+        margin-bottom: 2px;
+    }
+
+  
+
+    
+    .control-group { margin-bottom: 25px; }
+
+    label {
+        display: block;
+        font-size: 11px;
+        color: var(--text-muted); 
+        margin-bottom: 10px;
+        margin-left: 15px; 
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 1px; 
+    }
+
+      input[type="text"], input[type="number"], select {
+        width: 100%; 
+        background: #f9f9f9; 
+        border: 2px solid transparent;
+        padding: 16px 22px; 
+        border-radius: 25px; 
+        font-family: inherit;
+        font-size: 15px; 
+        color: #333; 
+        transition: all 0.3s ease;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.02) inset;
+        margin-bottom: 25px;
+        box-sizing: border-box;
+        outline: none;
+    }
+
+    input:focus, select:focus {
+        background: white; 
+        border-color: #1a1a1a;
+        box-shadow: 0 10px 25px rgba(0,0,0,0.08); 
+        transform: translateY(-3px);
+    }
+    
+    
+       .btn-principal {
+        width: 100%; 
+        background: #1a1a1a; 
+        color: white; 
+        border: none; 
+        border-radius: 999px; 
+        padding: 18px 35px; 
+        font-weight: 700; 
+        font-size: 16px;
+        cursor: pointer; 
+        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        margin-bottom: 15px;
+        font-family: 'Open Sans', sans-serif;
+    }
+
+    .btn-principal:hover { 
+        transform: translateY(-3px) scale(1.02); 
+        background: #000; 
+        box-shadow: 0 8px 15px rgba(0,0,0,0.15);
+    }
+
+    
+    button {
+        background: #f4f4f4; 
+        border: 2px solid transparent; 
+        padding: 10px 18px; 
+        border-radius: 999px; 
+        font-size: 13px; 
+        cursor: pointer; 
+        transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+        font-weight: 600; 
+        color: #666; 
+        font-family: 'Open Sans', sans-serif;
+    }
+
+    button:hover {
+        transform: translateY(-3px) scale(1.02);
+        opacity: 1; 
+        box-shadow: 0 15px 30px rgba(0,0,0,0.15);
+    }
+    
+    button:active { 
+        background: #1a1a1a; 
+        color: white; 
+        border-color: #1a1a1a;
+        box-shadow: 0 8px 15px rgba(0,0,0,0.15); 
+        transform: scale(1.05);
+    }
+    
+    
+    .btn-delete {
+        background: #ff4d4d; 
+        width: 30px; 
+        height: 30px;
+        padding: 0;
+        border-radius: 50%;
+        margin-top: 0;
+        box-shadow: none;
+    }
+
+    
+    input[type="range"] {
+        width: 100%;
+        cursor: pointer;
+        accent-color: var(--accent);
+        margin: 10px 0;
+    }
+    
+    .range-values {
+        display: flex;
+        justify-content: space-between;
+        font-size: 10px;
+        font-weight: 700;
+        color: var(--text-muted);
+        text-transform: uppercase;
+        padding: 0 10px;
+    }
+
+    
+    .func-row {
+        background: white; 
+        border: 1px solid transparent;
+        padding: 15px;
+        border-radius: var(--radius-md); 
+        position: relative;
+        margin-bottom: 8px;
+        transition: 0.3s;
+    }
+    
+    .func-row:hover {
+        border-color: var(--border-color);
+        transform: translateY(-2px);
+    }
+
+    .func-label {
+        font-size: 10px;
+        font-weight: 800;
+        text-transform: uppercase;
+        color: var(--text-muted);
+        margin-bottom: 8px;
+        display: block;
+        letter-spacing: 0.5px;
+        text-align: center; 
+    }
+
+    .row-controls {
+        display: flex;
+        gap: 8px;
+        align-items: center;
+        justify-content: center; 
+        margin-top: 10px;
+    }
+    
+    
+    .scheme-select {
+        background: var(--bg-sidebar);
+        color: var(--text-main);
+        border: 1px solid var(--border-color);
+        border-radius: 15px;
+        font-size: 11px;
+        padding: 4px 10px;
+        max-width: 100px;
+        cursor: pointer;
+        box-shadow: none;
+        margin-bottom: 0;
+    }
+
+
+
+
+[data-theme="dark"] .func-row {
+    background: #1e1e1e;       
+    border: 1px solid #333;    
+    box-shadow: none;          
+}
+
+[data-theme="dark"] .func-row:hover {
+    background: #252525;       
+    border-color: #555;        
+}
+
+
+[data-theme="dark"] .row-controls {
+    background: #121212;       
+    border-color: #333;        
+}
+
+
+[data-theme="dark"] .scheme-select {
+    color: #e5e5e5;            
+}
+
+
+[data-theme="dark"] .scheme-select option {
+    background: #1e1e1e;
+    color: #fff;
+}
+
+
+[data-theme="dark"] .func-label {
+    
+    text-shadow: 0 0 10px rgba(0,0,0,0.5); 
+}
+
+[data-theme="dark"] .func-subtitle {
+    color: #888; 
+}
+
+
+[data-theme="dark"] input[type="text"].eq-input {
+    background: #121212;
+    color: #fff;
+    border: 1px solid #333;
+}
+
+[data-theme="dark"] input[type="text"].eq-input:focus {
+    border-color: #fff;
+    background: #000;
+}
+
+    
+    #plot-container {
+        flex-grow: 1;
+        height: 100%;
+        position: relative;
+        
+        background: var(--bg-body); 
+    }
+
+    
+    #latex-panel {
+        width: 100%;
+        margin: 15px 0;
+        padding: 15px;
+        box-sizing: border-box;
+         background: #f9f9f9; 
+        padding: 20px; 
+        border-radius: 25px; 
+        min-height: 70px; 
+        display: flex; 
+        align-items: center; 
+        justify-content: center; 
+        border: 2px solid transparent; 
+        overflow-x: auto;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.02) inset; 
+        color: #333;
+        font-size: 1.1rem;
+    }
+
+    #latex-content {
+        width: 100%;
+        color: var(--text-main);
+        font-family: 'STIX Two Text', serif; 
+        font-size: 1rem;
+        display: flex;
+        flex-direction: column;
+        align-items: center; 
+        justify-content: center;
+    }
+
+    .latex-item {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 8px;
+        background: transparent;
+        padding: 5px 15px;
+        border-radius: 20px;
+    }
+    
+    
+[data-theme="dark"] #latex-panel {
+    background: #1e1e1e;        
+    border: 1px solid #333;     
+    color: #e2e8f0;             
+    box-shadow: none;           
+}
+
+
+[data-theme="dark"] #latex-content {
+    color: inherit; 
+}
+
+
+[data-theme="dark"] .latex-item:hover {
+    background: rgba(255,255,255,0.05);
+}
+
+    .color-dot {
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+        flex-shrink: 0;
+        border: 2px solid rgba(0,0,0,0.1);
+    }
+
+    
+    .footer {
+        margin-top: auto;
+        font-size: 10px;
+        color: var(--text-muted);
+        text-align: center;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        padding-top: 20px;
+    }
+    
+    
+    .hidden { display: none !important; }
+    
+    
+    .symbol-toggle {
+        background: var(--bg-card-inner);
+        border: none;
+        color: var(--text-main);
+        padding: 10px;
+        font-size: 12px;
+        font-weight: 600;
+        border-radius: 15px;
+        text-align: center;
+    }
+    .symbol-content button {
+        background: var(--bg-sidebar);
+        border: 1px solid var(--border-color);
+        color: var(--text-main);
+        border-radius: 10px;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+    }
+    .symbol-content button:hover {
+        background: var(--bg-input);
+    }
+    
+    .symbol-group {
+    position: relative;
+    flex: 1;
+}
+
+.symbol-content {
+    display: none;
+    position: absolute;
+    top: 110%;
+    left: 0;
+    width: 100%;
+    background: var(--bg-sidebar);
+    border: 1px solid var(--border-color);
+    border-radius: 15px;
+    padding: 8px;
+    z-index: 50;
+
+    grid-template-columns: repeat(2, 1fr);
+    gap: 6px;
+}
+
+
+
+.symbol-group.open .symbol-content {
+    display: grid;
+}
+
+.category-bar {
+    display: flex;
+    gap: 6px;
+    width: 100%;
+    margin-bottom: 10px;
+}
+
+.category-bar .symbol-toggle {
+    width: 100%;
+    padding: 8px;
+    font-size: 0.75rem;
+}
+
+  .mode-switcher {
+        display: flex;
+        background:  #f9f9f9; 
+        border-radius: 999px;
+        margin-bottom: 15px; 
+        position: relative;
+        padding:5px;
+        justify-content: space-between;
+        box-shadow: inset 0 1px 3px rgba(0,0,0,0.06);
+    }
+    
+    .mode-btn {
+        flex: 1;
+        border: none;
+          background: #ffffff;
+        color: #1a1a1a;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.12);
+        border-radius: 999px;
+        cursor: pointer;
+        font-family: 'Open Sans', sans-serif;
+        font-weight: 700;
+        font-size: 14px;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 6px;
+        padding:5px;
+        margin-top: 5px;
+         margin-bottom: 5px;
+          margin-left: 5px;
+           margin-right: 5px;
+    }
+    
+        [data-theme="dark"] .mode-switcher { 
+        background: #151515; 
+        box-shadow: inset 0 1px 3px rgba(255,255,255,0.05);
+    }
+    [data-theme="dark"] .mode-btn {   background: #333; 
+        color: #fff; 
+        box-shadow: 0 4px 12px rgba(0,0,0,0.3);}
+    
+    
+
+.row-controls {
+    display: flex;
+    align-items: center;
+    gap: 8px; 
+    background: #ffffff;
+    border-radius: 30px; 
+    padding: 4px; 
+    border: 1px solid #f1f1f1; 
+    box-shadow: 0 2px 5px rgba(0,0,0,0.03); 
+    justify-content: space-between;
+}
+
+
+.scheme-select {
+    appearance: none; 
+    background-color: transparent;
+    border: none;
+    font-family: 'Open Sans', sans-serif;
+    font-size: 11px;
+    font-weight: 600;
+    color: #555;
+    padding: 6px 12px;
+    cursor: pointer;
+    text-align: center;
+    border-radius: 999px;
+    transition: background 0.2s;
+}
+
+.scheme-select:hover {
+    background-color: #f4f4f4;
+    color: #000;
+}
+
+.scheme-select:focus {
+    outline: none;
+}
+
+
+input[type="color"].eq-color {
+    -webkit-appearance: none;
+    border: none;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    cursor: pointer;
+    padding: 0;
+    background: none;
+    transition: transform 0.2s;
+    overflow: hidden; 
+}
+
+input[type="color"].eq-color::-webkit-color-swatch-wrapper {
+    padding: 0;
+}
+
+input[type="color"].eq-color::-webkit-color-swatch {
+    border: none;
+    border-radius: 50%;
+    border: 1px solid rgba(0,0,0,0.1); 
+}
+
+input[type="color"].eq-color:hover {
+    transform: scale(1.1);
+}
+
+
+
+.opacity-slider::-webkit-slider-thumb {
+    appearance: none;
+    width: 12px;
+    height: 12px;
+    background: #333;
+    border-radius: 50%;
+    cursor: pointer;
+    transition: transform 0.1s;
+}
+
+.opacity-slider::-webkit-slider-thumb:hover {
+    transform: scale(1.3);
+}
+
+
+.btn-delete {
+    background: transparent !important; 
+    color: #cbd5e1 !important; 
+    width: 28px !important;
+    height: 28px !important;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+    border: none;
+    box-shadow: none !important;
+}
+
+.btn-delete:hover {
+    background: #fee2e2 !important; 
+    color: #ef4444 !important; 
+    transform: rotate(90deg); 
+}
+
+
+.hidden {
+    display: none !important;
+}
+
+
+  p { 
+        font-family: 'Open Sans', sans-serif; 
+        font-size: 9px; 
+        font-weight: 700; 
+        color: #999; 
+        text-transform: uppercase; 
+        letter-spacing: 1.5px; 
+        text-align: center;
+        margin-bottom: 30px;
+    }
+    
+ 
+ 
+.top-bar {
+    display: flex;
+    justify-content: space-between; 
+    align-items: center;
+    width: 100%;
+    margin-bottom: 20px;
+    padding: 0 5px; 
+    box-sizing: border-box;
+}
+
+
+.icon-group {
+    display: flex;
+    align-items: center;
+    gap: 8px; 
+}
+
+
+.top-btn {
+    background: transparent;
+    border: none;
+    color: var(--text-main); 
+    cursor: pointer;
+    padding: 5px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 8px;
+    transition: background 0.2s, transform 0.2s;
+}
+
+.top-btn:hover {
+    background: rgba(0,0,0,0.05); 
+    transform: scale(1.1);
+}
+
+
+[data-theme="dark"] .top-btn:hover {
+    background: rgba(255,255,255,0.1);
+}
+
+
+
+
+.func-subtitle {
+    font-size: 9px;
+    text-transform: uppercase;
+    color: var(--text-muted); 
+    font-weight: 700;
+    display: block;
+    margin-bottom: 4px;
+}
+
+
+.scheme-select {
+    color: var(--text-main); 
+}
+
+
+.control-divider {
+    border-top: 1px solid var(--border-color);
+    padding-top: 8px;
+}
+
+
+#mobile-rotate-overlay {
+    display: none; 
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+    background: #0a0a0a; 
+    color: white;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 30px;
+}
+
+.rotate-content {
+    max-width: 300px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    animation: fadeIn 0.5s ease;
+}
+
+.rotate-icon {
+    width: 48px; 
+    height: 48px; 
+    margin-bottom: 10px;
+    stroke-width: 1.5;
+}
+
+.rotate-arrow {
+    width: 24px;
+    height: 24px;
+    margin-top: -20px;
+    margin-bottom: 20px;
+    margin-left: 30px; 
+    color: var(--accent); 
+    animation: spinIcon 2s infinite ease-in-out;
+}
+
+#mobile-rotate-overlay h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.4rem;
+    margin-bottom: 10px;
+}
+
+#mobile-rotate-overlay p {
+    font-family: 'Open Sans', sans-serif;
+    font-size: 0.9rem;
+    color: #999;
+    margin-bottom: 30px;
+    line-height: 1.5;
+}
+
+@keyframes spinIcon {
+    0% { transform: rotate(0deg); }
+    50% { transform: rotate(90deg); }
+    100% { transform: rotate(90deg); }
+}
+
+
+
+@media screen and (max-width: 768px) and (orientation: portrait) {
+    #mobile-rotate-overlay {
+        display: flex;
+    }
+}
+
+.btn-icon-action {
+    background: transparent;
+    padding: 8px; 
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+    color: inherit; 
+}
+
+.btn-icon-action:hover {
+    background-color: rgba(128, 128, 128, 0.1); 
+}
+
+
+.btn-icon-action svg {
+    width: 16px;
+    height: 16px;
+}
+
+.viz-controls {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 10px;
+  justify-items: center;
+}
+
+.viz-btn {
+  width: 100%;
+  background: var(--bg-card-inner);
+  color: var(--text-main);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-pill);
+  padding: 10px 14px;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+
+  cursor: pointer;
+  transition: all 0.25s ease;
+}
+
+.viz-btn i {
+  width: 14px;
+  height: 14px;
+}
+
+.viz-btn:hover {
+  background: var(--bg-input);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 18px rgba(0,0,0,0.08);
+}
+
+.viz-btn.active {
+  background: var(--accent);
+  color: var(--text-inverse);
+  border-color: var(--accent);
+}
+.viz-toggle {
+  width: 100%;
+  background: var(--bg-card-inner);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-pill);
+  padding: 10px 14px;
+
+  display: flex;
+  align-items: center;
+ justify-content: center;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.switch {
+  position: relative;
+  width: 38px;
+  height: 20px;
+}
+
+.switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.slider {
+  position: absolute;
+  inset: 0;
+  background: var(--border-color);
+  border-radius: 999px;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.slider::before {
+  content: "";
+  position: absolute;
+  width: 14px;
+  height: 14px;
+  left: 3px;
+  top: 3px;
+  background: white;
+  border-radius: 50%;
+  transition: 0.3s;
+}
+
+.switch input:checked + .slider {
+  background: var(--accent);
+}
+
+.switch input:checked + .slider::before {
+  transform: translateX(18px);
+}
+
+
+
+.animate-warning-text {
+  font-size: 10px;
+  color: #999;
+  margin-top: 8px;
+  cursor: pointer;
+  text-align: center;
+  line-height: 1.4;
+}
+
+.animate-warning-text:hover {
+  color: #555;
+}
+
+.animate-warning-text .more-info {
+  text-decoration: underline;
+  font-weight: 700;
+}
+
+.animate-warning-details {
+  margin-top: 6px;
+  font-size: 10px;
+  color: #777;
+  text-align: center;
+  line-height: 1.5;
+}
+
+.animate-warning-details code {
+  display: block;
+  background: #f4f4f4;
+  border-radius: 20px;
+  padding: 4px;
+  margin-top: 4px;
+  font-size: 10px;
+}
+
+.range-block {
+  display: grid;
+  grid-template-columns: 18px 1fr 1fr;
+  gap: 6px;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.range-block span {
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--text-muted);
+}
+
+.range-block input[type="number"] {
+  padding: 6px;
+  font-size: 11px;
+  border-radius: 8px;
+}
+
+.range-block input[type="range"] {
+  grid-column: 1 / -1;
+}
+
+
+
+</style>
+</head>
+<body>
+
+    <div id="sidebar">
+       
+<div class="top-bar">
+    
+    <div class="icon-group">
+        <button id="home" class="top-btn" title="Página principal" onclick="window.location.href='index.html'">
+            <i data-lucide="home" style="width: 20px; height: 20px;"></i>
+        </button>
+
+        <button id="themeBtn" class="top-btn" title="Cambiar Tema" onclick="toggleTheme()">
+            <i data-lucide="moon" style="width: 20px; height: 20px;"></i>
+        </button>
+    </div>
+
+    <div class="icon-group">
+        <button id="fullscreenBtn" class="top-btn" title="Pantalla completa">
+            <i data-lucide="maximize" style="width: 20px; height: 20px;"></i>
+        </button>
+
+        <button id="resetBtn" class="top-btn" title="Reiniciar Pagina">
+            <i data-lucide="rotate-ccw" style="width: 20px; height: 20px;"></i>
+        </button>
+
+    </div>
+
+</div>
+
+        <h1>
+            Diagrama de campo vectorial
+        </h1>
+  <p>√(Raiz) Cuadrada²</p>
+    
+
+<div class="control-group">
+   
+
+<div class="category-bar">
+
+  <div class="symbol-group">
+    <button class="symbol-toggle">Simbolos</button>
+    <div class="symbol-content">
+           <button onclick="insertSymbol('*')">*</button>
+      <button onclick="insertSymbol('√()')">√</button>
+      <button onclick="insertSymbol('¹')">x¹</button>
+      <button onclick="insertSymbol('²')">x²</button>
+      <button onclick="insertSymbol('³')">x³</button>
+      <button onclick="insertSymbol('sen(')">sen</button>
+      <button onclick="insertSymbol('cos(')">cos</button>
+      <button onclick="insertSymbol('tan(')">tan</button>
+         <button onclick="insertSymbol('asen(')">arcsen</button>
+      <button onclick="insertSymbol('acos(')">arccos</button>
+      <button onclick="insertSymbol('atan(')">arctan</button>
+       <button onclick="insertSymbol('abs()')">|x|</button>
+         <button onclick="insertSymbol('e^x')">eˣ</button>
+           <button onclick="insertSymbol('pi')">π</button>
+             <button onclick="insertSymbol('()/()')">ˣ/ᵧ</button>
+    </div>
+  </div>
+
+
+</div>
+
+<div id="latex-panel">
+    <div id="latex-content"></div>
+</div>
+
+
+
+
+<div id="functionsContainer" style="display: flex; flex-direction: column; gap: 10px;">
+    </div>
+    
+    <input type="hidden" id="funcType" value="explicit">
+</div>
+
+        <div class="control-group" style="display:none;">
+            <label>slider valores A</label>
+            <input type="range" id="resInput" min="20" max="100" value="50" step="5">
+            <div class="range-values">
+            </div>
+        </div>
+
+<div class="control-group" style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px;">
+   
+   
+</div>
+
+<div class="control-group">
+  <label>Densidad de flechas</label>
+  <input
+    type="range"
+    min="6"
+    max="30"
+    step="1"
+    value="16"
+    id="densitySlider">
+</div>
+
+<div class="control-group">
+  <label>Tamaño de flechas</label>
+  <input
+    type="range"
+    min="0.3"
+    max="2.5"
+    step="0.1"
+    value="1"
+    id="arrowSizeSlider">
+</div>
+
+<div class="control-group">
+  <label>Rango de visualización</label>
+
+  
+  <div class="range-block">
+    <span>X</span>
+    <input type="number" id="xmin" value="-10">
+    <input type="number" id="xmax" value="10">
+    <input type="range" id="xrange" min="1" max="50" value="10">
+  </div>
+
+  
+  <div class="range-block">
+    <span>Y</span>
+    <input type="number" id="ymin" value="-10">
+    <input type="number" id="ymax" value="10">
+    <input type="range" id="yrange" min="1" max="50" value="10">
+  </div>
+
+  
+  <div class="range-block hidden" id="z-range-block">
+    <span>Z</span>
+    <input type="number" id="zmin" value="-10">
+    <input type="number" id="zmax" value="10">
+    <input type="range" id="zrange" min="1" max="50" value="10">
+  </div>
+</div>
+
+
+
+<div class="control-group">
+  <label>Modo de visualización</label>
+
+  <div class="viz-controls">
+
+    
+    <button class="viz-btn" id="btn-streamlines">
+      <i data-lucide="wind"></i>
+      Streamlines
+    </button>
+
+    <button class="viz-btn" id="btn-animate">
+      <i data-lucide="play"></i>
+      Animar
+    </button>
+    
+    <div id="animate-3d-warning" class="hidden">
+  <p class="animate-warning-text">
+    El botón animar en 3D solo funciona si usas una variable de tiempo (<b>t</b>)
+    <span class="more-info">(más info)</span>
+  </p>
+
+  <div class="animate-warning-details hidden">
+    <p>
+      Para que la animación funcione en 3D, tu campo vectorial debe depender del
+      tiempo <b>t</b>.
+    </p>
+    <p><b>Ejemplos:</b></p>
+    <code>R = sin(t)</code><br>
+    <code>P = y · cos(t)</code><br>
+    <code>Q = -x · sin(t)</code>
+  </div>
+</div>
+
+
+
+    <button class="viz-btn" id="btn-hide-arrows">
+      <i data-lucide="eye-off"></i>
+      Ocultar flechas
+    </button>
+
+  </div>
+</div>
+
+
+
+
+
+
+
+        <button onclick="renderGraph()" class="btn-principal">Actualizar Grafica</button>
+
+    </div>
+
+    <div id="plot-container"></div>
+
+
+<div id="mobile-rotate-overlay">
+    <div class="rotate-content">
+        <i data-lucide="smartphone" class="rotate-icon"></i>
+        <i data-lucide="rotate-cw" class="rotate-arrow"></i>
+        
+        <h2>Mejor experiencia visual</h2>
+        <p>Abre el modo pantalla completa y activa la vista horizontal en tu dispositivo. (O activa modo ordenador en tu navegador)</p>
+        
+        <button id="btn-force-landscape" class="btn-principal">
+            <i data-lucide="maximize"></i>
+            Entrar en Modo Inmersivo
+        </button>
+        
+        <button onclick="document.getElementById('mobile-rotate-overlay').style.display='none'" 
+                style="background: transparent; border: none; color: #666; margin-top: 15px; font-size: 12px; text-decoration: underline;">
+            Continuar en vertical (no recomendado)
+        </button>
+    </div>
+</div>
+
+<script src="script.js"></script>
+
+<script>
+    
+    let activeInput = null;
+
+
+    let time = 0;
+
+
+    const state = {
+        functions: []
+    };
+    
+  let dynamicRange = {
+  xmin: -10,
+  xmax: 10,
+  ymin: -10,
+  ymax: 10,
+  zmin: -10,
+  zmax: 10
+};
+
+
+const controls = {
+  density: 16,     
+  arrowScale: 1.0  
+};
+
+
+const vizState = {
+  hideArrows: false,
+  streamlines: false,
+  animate: false
+};
+
+
+let particleTimer = null;
+let particles = [];
+
+document.getElementById('btn-animate').addEventListener('click', () => {
+  vizState.animate = !vizState.animate;
+
+  if (is3DMode()) {
+    if (vizState.animate) {
+      start3DAnimation();
+    } else {
+      stop3DAnimation();
+    }
+  } else {
+    
+    if (vizState.animate) {
+      startParticleAnimation();
+    } else {
+      stopParticleAnimation();
+    }
+  }
+});
+
+
+
+document.getElementById('btn-streamlines').addEventListener('click', () => {
+  vizState.streamlines = !vizState.streamlines;
+  renderGraph();
+});
+
+
+document.getElementById('btn-hide-arrows').addEventListener('click', () => {
+  vizState.hideArrows = !vizState.hideArrows;
+  renderGraph();
+});
+
+
+document.getElementById('densitySlider').addEventListener('input', e => {
+  controls.density = parseInt(e.target.value);
+  renderGraph();
+});
+
+document.getElementById('arrowSizeSlider').addEventListener('input', e => {
+  controls.arrowScale = parseFloat(e.target.value);
+  renderGraph();
+});
+
+
+
+    function toggleColorPicker() {
+        const select = document.getElementById('colorScheme');
+        const container = document.getElementById('customColorContainer');
+        
+        container.style.display = (select.value === 'custom') ? 'block' : 'none';
+    }
+    
+ 
+document.querySelectorAll('.viz-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    btn.classList.toggle('active');
+  });
+});
+
+
+document.getElementById('btn-force-landscape').addEventListener('click', async () => {
+    const overlay = document.getElementById('mobile-rotate-overlay');
+    const docEl = document.documentElement;
+
+    try {
+        
+        if (docEl.requestFullscreen) {
+            await docEl.requestFullscreen();
+        } else if (docEl.webkitRequestFullscreen) { 
+            await docEl.webkitRequestFullscreen();
+        } else if (docEl.msRequestFullscreen) { 
+            await docEl.msRequestFullscreen();
+        }
+
+        
+        if (screen.orientation && screen.orientation.lock) {
+            try {
+                await screen.orientation.lock('landscape');
+                
+                overlay.style.display = 'none';
+            } catch (err) {
+                console.log("El dispositivo no soporta bloqueo de orientación automático.");
+                
+                overlay.style.display = 'none';
+            }
+        } else {
+            
+            overlay.style.display = 'none';
+        }
+
+    } catch (err) {
+        console.error("Error al intentar pantalla completa:", err);
+    }
+});
+
+    
+    const fullscreenBtn = document.getElementById('fullscreenBtn');
+
+fullscreenBtn.addEventListener('click', () => {
+  if (!document.fullscreenElement) {
+    document.documentElement.requestFullscreen();
+  } else {
+    document.exitFullscreen();
+  }
+});
+
+const resetBtn = document.getElementById('resetBtn');
+
+resetBtn.addEventListener('click', () => {
+  location.reload();
+});
+
+    document.addEventListener('click', (e) => {
+    if (!e.target.classList.contains('symbol-toggle')) return;
+
+    const group = e.target.closest('.symbol-group');
+    const isOpen = group.classList.contains('open');
+
+    
+    document.querySelectorAll('.symbol-group').forEach(g => {
+        g.classList.remove('open');
+        g.querySelector('.symbol-toggle').innerText =
+            g.querySelector('.symbol-toggle').innerText.replace('▾', '▸');
+    });
+
+    
+    if (!isOpen) {
+        group.classList.add('open');
+        e.target.innerText = e.target.innerText.replace('▸', '▾');
+    }
+});
+
+
+
+
+function insertSymbol(sym) {
+  if (!activeInput) return;
+
+  const start = activeInput.selectionStart;
+  const end = activeInput.selectionEnd;
+
+  activeInput.value =
+    activeInput.value.slice(0, start) +
+    sym +
+    activeInput.value.slice(end);
+
+  activeInput.focus();
+  activeInput.selectionStart = activeInput.selectionEnd =
+    start + sym.length;
+
+  requestRender();
+}
+
+document.querySelector('.symbol-toggle').addEventListener('click', () => {
+  if (activeInput) activeInput.focus();
+});
+
+
+    </script>
+    
+    <script>
+        
+        function update3DAnimateWarning() {
+  const warning = document.getElementById('animate-3d-warning');
+  if (!warning) return;
+
+  if (is3DMode()) {
+    warning.classList.remove('hidden');
+  } else {
+    warning.classList.add('hidden');
+  }
+}
+
+
+  
+function addFunction() {
+  const id = crypto.randomUUID();
+
+  const func = {
+    id,
+    P: '',
+    Q: '',
+    R: '',
+    color: '#38bdf8',
+    colorScheme: 'jet', 
+    visible: true
+  };
+
+  state.functions.push(func);
+
+  const row = document.createElement('div');
+  row.className = 'func-row';
+  row.dataset.id = id;
+
+ row.innerHTML = `
+    <span class="func-label">Campo vectorial</span>
+
+    <span class="func-subtitle">P(x, y)</span>
+    <input type="text" class="eq-input eq-p" placeholder="Ej: x + y">
+
+    <span class="func-subtitle">Q(x, y)</span>
+    <input type="text" class="eq-input eq-q" placeholder="Ej: x - y">
+
+    <span class="func-subtitle">R(x, y, z) (opcional)</span>
+    <input type="text" class="eq-input eq-r" placeholder="Ej: z o 0">
+
+    <div class="row-controls">
+        
+        <div style="position: relative; display: flex; align-items: center;">
+            
+            <select class="scheme-select" style="
+                appearance: none; 
+                -webkit-appearance: none; 
+                padding-right: 25px; 
+                background: transparent; 
+                position: relative; 
+                z-index: 2; 
+                cursor: pointer;">
+                <option value="solid">Color sólido</option>
+                <option value="viridis">Viridis</option>
+                <option value="plasma">Plasma</option>
+                <option value="jet" selected>Jet</option>
+                <option value="hot">Hot</option>
+                <option value="electric">Electric</option>
+                <option value="earth">Earth</option>
+            </select>
+            
+            <i data-lucide="chevron-down" style="
+                position: absolute; 
+                right: 5px; 
+                width: 14px; 
+                height: 14px; 
+                pointer-events: none; 
+                z-index: 1; 
+                color: var(--text-muted, #888);">
+            </i>
+        </div>
+
+        <div>
+            <div style="position: relative; width: 20px; height: 20px;">
+                <i data-lucide="square" style="width: 100%; height: 100%; fill: ${func.color}; color: ${func.color};"></i>
+                <input type="color" class="eq-color" value="${func.color}" 
+                    style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; opacity: 0; cursor: pointer;">
+            </div>
+        </div>
+      
+    </div>
+  `;
+  
+
+  document.getElementById('functionsContainer').appendChild(row);
+  lucide.createIcons();
+
+  attachRowEvents(row, func);
+}
+
+document.addEventListener('click', e => {
+  if (e.target.closest('.animate-warning-text')) {
+    const details = document.querySelector('.animate-warning-details');
+    details.classList.toggle('hidden');
+  }
+});
+
+
+function updateRangeFromInputs() {
+  dynamicRange.xmin = parseFloat(xmin.value);
+  dynamicRange.xmax = parseFloat(xmax.value);
+  dynamicRange.ymin = parseFloat(ymin.value);
+  dynamicRange.ymax = parseFloat(ymax.value);
+  dynamicRange.zmin = parseFloat(zmin.value);
+  dynamicRange.zmax = parseFloat(zmax.value);
+
+  renderGraph();
+}
+
+
+function applySliderRange(axis, value) {
+  dynamicRange[`${axis}min`] = -value;
+  dynamicRange[`${axis}max`] = value;
+
+  document.getElementById(`${axis}min`).value = -value;
+  document.getElementById(`${axis}max`).value = value;
+
+  renderGraph();
+}
+
+
+function attachRowEvents(row, func) {
+  const inputP = row.querySelector('.eq-p');
+  const inputQ = row.querySelector('.eq-q');
+  const inputR = row.querySelector('.eq-r');
+
+[inputP, inputQ, inputR].forEach(input => {
+  input.addEventListener('focus', () => {
+    activeInput = input;
+  });
+
+  input.addEventListener('click', () => {
+    activeInput = input;
+  });
+});
+
+
+  const colorInput = row.querySelector('.eq-color');
+  const colorIcon = row.querySelector('[data-lucide="square"]');
+  const schemeSelect = row.querySelector('.scheme-select');
+
+  const deleteBtn = row.querySelector('.btn-delete');
+
+  
+  inputP.addEventListener('input', () => {
+    func.P = inputP.value;
+    updateLatexPanel();
+    requestRender();
+  });
+
+  inputQ.addEventListener('input', () => {
+    func.Q = inputQ.value;
+    updateLatexPanel();
+    requestRender();
+  });
+
+  inputR.addEventListener('input', () => {
+    func.R = inputR.value;
+    updateLatexPanel();
+    requestRender();
+  });
+
+  
+  colorInput.addEventListener('input', () => {
+    func.color = colorInput.value;
+
+    
+    if (colorIcon) {
+      colorIcon.style.fill = func.color;
+      colorIcon.style.color = func.color;
+    }
+
+    
+    const label = row.querySelector('.func-label');
+    if (label) label.style.color = func.color;
+
+    requestRender();
+  });
+
+  
+  if (schemeSelect) {
+    schemeSelect.value = func.colorScheme || 'jet';
+
+    schemeSelect.addEventListener('change', () => {
+      func.colorScheme = schemeSelect.value;
+      requestRender();
+    });
+  }
+
+  
+  deleteBtn.addEventListener('click', () => {
+    state.functions = state.functions.filter(f => f.id !== func.id);
+    row.remove();
+    updateLatexPanel();
+    requestRender();
+  });
+}
+
+function buildEvaluator(expr) {
+        try {
+            
+            
+            return new Function('x', 'y', `with(Math) { return (${normalizeInput(expr)}); }`);
+        } catch (e) {
+            return null;
+        }
+    }
+    
+
+function generateVectorField(func, range, density = 20) {
+  const Px = buildEvaluator(func.P);
+  const Qy = buildEvaluator(func.Q);
+
+  if (!Px || !Qy) return null;
+
+  const xs = [];
+  const ys = [];
+  const us = [];
+  const vs = [];
+
+  const dx = (range.xmax - range.xmin) / density;
+  const dy = (range.ymax - range.ymin) / density;
+
+  for (let i = 0; i <= density; i++) {
+    for (let j = 0; j <= density; j++) {
+      const x = range.xmin + i * dx;
+      const y = range.ymin + j * dy;
+
+      let u, v;
+      try {
+        u = Px(x, y);
+        v = Qy(x, y);
+      } catch {
+        continue;
+      }
+
+      if (!isFinite(u) || !isFinite(v)) continue;
+
+      xs.push(x);
+      ys.push(y);
+      us.push(u);
+      vs.push(v);
+    }
+  }
+
+  return { xs, ys, us, vs };
+}
+
+
+function updateLatexPanel() {
+  const container = document.getElementById('latex-content');
+  container.innerHTML = '';
+
+  state.functions.forEach(func => {
+    if (!func.P && !func.Q && !func.R) return;
+
+    let latex = `\\vec F = (`;
+
+    if (func.P) latex += func.P;
+    latex += ', ';
+    if (func.Q) latex += func.Q;
+    latex += ')';
+
+    if (func.R.trim()) {
+      latex = `\\vec F = (${func.P}, ${func.Q}, ${func.R})`;
+    }
+
+    const item = document.createElement('div');
+    item.className = 'latex-item';
+    item.innerHTML = `
+      <span class="color-dot" style="background:${func.color}"></span>
+      <div>$$ ${latex} $$</div>
+    `;
+
+    container.appendChild(item);
+  });
+
+  if (window.MathJax) {
+    MathJax.typesetPromise([container]);
+  }
+}
+
+
+
+document.addEventListener('input', e => {
+    if (e.target.classList.contains('eq-input')) {
+        updateLatexPanel();
+    }
+});
+
+function getColorFromScheme(t, scheme) {
+  t = Math.min(1, Math.max(0, t));
+
+  const maps = {
+    viridis: [
+      [68, 1, 84],
+      [59, 82, 139],
+      [33, 145, 140],
+      [94, 201, 98],
+      [253, 231, 37]
+    ],
+    plasma: [
+      [13, 8, 135],
+      [84, 3, 160],
+      [139, 10, 165],
+      [203, 71, 119],
+      [248, 230, 33]
+    ],
+    jet: [
+      [0, 0, 131],
+      [0, 60, 170],
+      [5, 255, 255],
+      [255, 255, 0],
+      [128, 0, 0]
+    ],
+    hot: [
+      [0, 0, 0],
+      [230, 0, 0],
+      [255, 210, 0],
+      [255, 255, 255]
+    ],
+    electric: [
+      [0, 0, 0],
+      [30, 144, 255],
+      [173, 216, 230],
+      [255, 255, 255]
+    ],
+    earth: [
+      [0, 64, 0],
+      [34, 139, 34],
+      [210, 180, 140],
+      [245, 245, 245]
+    ]
+  };
+
+  const colors = maps[scheme] || maps.viridis;
+  const n = colors.length - 1;
+  const i = Math.floor(t * n);
+  const f = t * n - i;
+
+  const c0 = colors[i];
+  const c1 = colors[Math.min(i + 1, n)];
+
+  const r = Math.round(c0[0] + f * (c1[0] - c0[0]));
+  const g = Math.round(c0[1] + f * (c1[1] - c0[1]));
+  const b = Math.round(c0[2] + f * (c1[2] - c0[2]));
+
+  return `rgb(${r},${g},${b})`;
+}
+
+function colorbarTrace(maxMag, scheme) {
+  const plotlyScales = {
+    viridis: 'Viridis',
+    plasma: 'Plasma',
+    jet: 'Jet',
+    hot: 'Hot',
+    electric: 'Electric',
+    earth: 'Earth'
+  };
+
+  return {
+    x: [null],
+    y: [null],
+    type: 'scatter',
+    mode: 'markers',
+    marker: {
+      size: 0.1,
+      color: [0, maxMag],
+      colorscale: plotlyScales[scheme] || 'Viridis',
+      cmin: 0,
+      cmax: maxMag,
+      showscale: true,
+      colorbar: {
+        title: {
+          text: '‖F‖',
+          side: 'right'
+        },
+        thickness: 14,
+        len: 0.75,
+        x: -0.08,          
+        y: 0.5,
+        outlinewidth: 0,
+        tickfont: { size: 10 },
+        titlefont: { size: 12 }
+      }
+    },
+    hoverinfo: 'none',
+    showlegend: false
+  };
+}
+
+
+function generateStreamlines(func, range, seedCount = 20, steps = 120, dt = 0.08) {
+  const Px = buildEvaluator(func.P);
+  const Qy = buildEvaluator(func.Q);
+  if (!Px || !Qy) return [];
+
+  const lines = [];
+
+  for (let i = 0; i < seedCount; i++) {
+    for (let j = 0; j < seedCount; j++) {
+
+      let x = range.xmin + (i / seedCount) * (range.xmax - range.xmin);
+      let y = range.ymin + (j / seedCount) * (range.ymax - range.ymin);
+
+      const xs = [];
+      const ys = [];
+
+      for (let k = 0; k < steps; k++) {
+        let u, v;
+        try {
+          u = Px(x, y);
+          v = Qy(x, y);
+        } catch { break; }
+
+        if (!isFinite(u) || !isFinite(v)) break;
+
+        xs.push(x);
+        ys.push(y);
+
+        const mag = Math.hypot(u, v);
+        if (mag === 0) break;
+
+        x += (u / mag) * dt;
+        y += (v / mag) * dt;
+
+        if (
+          x < range.xmin || x > range.xmax ||
+          y < range.ymin || y > range.ymax
+        ) break;
+      }
+
+      if (xs.length > 1) {
+        lines.push({
+          x: xs,
+          y: ys,
+          type: 'scattergl',
+          mode: 'lines',
+          line: {
+            width: 1,
+            color: func.colorScheme === 'solid'
+              ? func.color
+              : 'rgba(100,100,100,0.6)'
+          },
+          hoverinfo: 'none',
+          showlegend: false
+        });
+      }
+    }
+  }
+
+  return lines;
+}
+
+
+function renderGraph() {
+    update3DAnimateWarning();
+updateZRangeVisibility();
+
+  const traces = [];
+
+  if (is3DMode()) {
+    const func = state.functions.find(f => f.R && f.R.trim());
+    const field3D = generateVectorField3D(func, dynamicRange, 7);
+    if (!field3D) return;
+    if (!vizState.animate) {
+  stop3DAnimation();
+}
+
+
+   if (!vizState.hideArrows) {
+  if (vizState.streamlines) {
+    traces.push(streamTubeTrace3D(field3D, func));
+  } else {
+    traces.push(vectorFieldTrace3D(field3D, func));
+  }
+}
+
+
+if (vizState.hideArrows) {
+  traces.push({
+    type: 'scatter3d',
+    x: [0],
+    y: [0],
+    z: [0],
+    mode: 'markers',
+    marker: { size: 1, opacity: 0 },
+    hoverinfo: 'none',
+    showlegend: false
+  });
+}
+
+
+
+    Plotly.newPlot('plot-container', traces, {
+      scene: {
+        xaxis: { title: 'X' },
+        yaxis: { title: 'Y' },
+        zaxis: { title: 'Z' },
+        aspectmode: 'cube'
+      },
+      margin: { t: 0 }
+    }, { responsive: true });
+
+    return;
+  }
+
+  
+  renderGraph2D();
+}
+
+
+function solidColorScale(hex) {
+  return [
+    [0, hex],
+    [1, hex]
+  ];
+}
+
+
+function vectorMagnitude3D(field) {
+  return field.us.map((u, i) =>
+    Math.hypot(u, field.vs[i], field.ws[i])
+  );
+}
+
+
+function generateSeeds3D(range, count) {
+  const seeds = { x: [], y: [], z: [] };
+
+  const n = Math.max(3, Math.floor(count / 3));
+
+  for (let i = 0; i < n; i++) {
+    for (let j = 0; j < n; j++) {
+      for (let k = 0; k < n; k++) {
+        seeds.x.push(range.xmin + (i / n) * (range.xmax - range.xmin));
+        seeds.y.push(range.ymin + (j / n) * (range.ymax - range.ymin));
+        seeds.z.push(range.ymin + (k / n) * (range.ymax - range.ymin));
+      }
+    }
+  }
+
+  return seeds;
+}
+
+
+function streamTubeTrace3D(field, func) {
+  const mag = vectorMagnitude3D(field);
+  const maxMag = Math.max(...mag);
+
+  const plotlyScales = {
+    viridis: 'Viridis',
+    plasma: 'Plasma',
+    jet: 'Jet',
+    hot: 'Hot',
+    electric: 'Electric',
+    earth: 'Earth'
+  };
+
+  const isSolid = func.colorScheme === 'solid';
+
+  return {
+    type: 'streamtube',
+
+    x: field.xs,
+    y: field.ys,
+    z: field.zs,
+
+    u: field.us,
+    v: field.vs,
+    w: field.ws,
+
+    starts: generateSeeds3D(dynamicRange, controls.density),
+
+    sizeref: 0.4 / controls.arrowScale,
+    maxdisplayed: 300,
+
+    colorscale: isSolid
+      ? solidColorScale(func.color)
+      : plotlyScales[func.colorScheme] || 'Viridis',
+
+    cmin: 0,
+    cmax: maxMag,
+
+    showscale: !isSolid
+  };
+}
+
+
+
+function renderGraph2D() {
+  const traces = [];
+  let globalMaxMag = 0; 
+
+  state.functions.forEach(func => {
+    if (!func.P || !func.Q) return;
+
+    const density = adaptiveResolution();
+    const field = generateVectorField(func, dynamicRange, density);
+    if (!field) return;
+
+    
+    for (let i = 0; i < field.us.length; i++) {
+      const m = Math.hypot(field.us[i], field.vs[i]);
+      if (m > globalMaxMag) globalMaxMag = m;
+    }
+
+  if (!vizState.hideArrows) {
+  traces.push(...vectorFieldTrace(field, func));
+  traces.push(...arrowHeadTraces(field, func));
+}
+
+if (vizState.streamlines) {
+  traces.push(...generateStreamlines(func, dynamicRange, 16));
+}
+
+
+  });
+  
+
+  
+  const activeFunc = state.functions.find(f => f.colorScheme !== 'solid');
+  if (activeFunc && globalMaxMag > 0) {
+    traces.push(colorbarTrace(globalMaxMag, activeFunc.colorScheme));
+  }
+
+  const layout = {
+    margin: { t: 20, l: 80 }, 
+    xaxis: { range: [dynamicRange.xmin, dynamicRange.xmax] },
+    yaxis: {
+      range: [dynamicRange.ymin, dynamicRange.ymax],
+      scaleanchor: 'x'
+    },
+    dragmode: 'zoom',
+    showlegend: false
+  };
+
+  Plotly.newPlot('plot-container', traces, layout, {
+    scrollZoom: true,
+    responsive: true
+  });
+
+  attachZoomHandler();
+}
+
+
+
+function normalizeInput(str) {
+    
+    let s = str.toLowerCase().trim();
+
+    
+    s = s.replace(/²/g, '^2');       
+    s = s.replace(/³/g, '^3'); 
+     s = s.replace(/⁴/g, '^4');
+      s = s.replace(/⁵/g, '^5');
+       s = s.replace(/⁶/g, '^6');
+        s = s.replace(/⁷/g, '^7')
+           s = s.replace(/⁸/g, '^8');
+             s = s.replace(/⁹/g, '^9');
+               s = s.replace(/ˣ/g, '^x');
+    s = s.replace(/√/g, 'sqrt');     
+    s = s.replace(/π/g, 'pi');       
+   
+
+    
+    s = s.replace(/sen/g, 'sin');
+
+    
+    
+    const funcs = ['sin', 'cos', 'tan', 'sqrt', 'log', 'exp', 'abs'];
+    funcs.forEach(fn => {
+        
+        const re = new RegExp(`${fn}([xyz])`, 'g'); 
+        s = s.replace(re, `${fn}($1)`);
+    });
+
+    
+    
+    
+    s = s.replace(/(\d)([a-z\(])/g, '$1*$2');
+    
+    
+    s = s.replace(/(\))([a-z\d\(])/g, '$1*$2');
+
+    
+    funcs.forEach(fn => {
+        const re = new RegExp(`([xyz])${fn}`, 'g');
+        s = s.replace(re, `$1*${fn}`);
+    });
+    
+    
+    
+    
+    s = s.replace(/([xyz])([xyz])/g, '$1*$2');
+
+    return s;
+}
+
+
+function attachZoomHandler() {
+    const plot = document.getElementById('plot-container');
+    if (!plot) return;
+
+    plot.on('plotly_relayout', event => {
+        
+        if (event['xaxis.range[0]'] !== undefined) {
+            dynamicRange.xmin = event['xaxis.range[0]'];
+            dynamicRange.xmax = event['xaxis.range[1]'];
+        }
+
+        
+        if (event['yaxis.range[0]'] !== undefined) {
+            dynamicRange.ymin = event['yaxis.range[0]'];
+            dynamicRange.ymax = event['yaxis.range[1]'];
+        }
+
+        
+        if (event['xaxis.autorange']) {
+            dynamicRange = {
+                xmin: -10,
+                xmax: 10,
+                ymin: -10,
+                ymax: 10
+            };
+        }
+
+        
+        renderGraph();
+    });
+}
+
+
+
+function vectorFieldTrace(field, func) {
+  const traces = [];
+
+ const baseSize = (dynamicRange.xmax - dynamicRange.xmin) * 0.04;
+const size = baseSize * controls.arrowScale;
+
+
+  let maxMag = 0;
+  for (let i = 0; i < field.us.length; i++) {
+    const m = Math.hypot(field.us[i], field.vs[i]);
+    if (m > maxMag) maxMag = m;
+  }
+
+  for (let i = 0; i < field.xs.length; i++) {
+    const u = field.us[i];
+    const v = field.vs[i];
+    const mag = Math.hypot(u, v);
+    if (mag === 0) continue;
+
+    const dx = (u / mag) * size;
+    const dy = (v / mag) * size;
+
+    const t = mag / maxMag;
+
+    const color =
+      func.colorScheme === 'solid'
+        ? func.color
+        : getColorFromScheme(t, func.colorScheme);
+
+    traces.push({
+      x: [field.xs[i], field.xs[i] + dx],
+      y: [field.ys[i], field.ys[i] + dy],
+      type: 'scattergl',
+      mode: 'lines',
+      line: { color, width: 1.6 },
+      hoverinfo: 'none',
+       showlegend: false
+    });
+  }
+
+  return traces;
+}
+
+
+
+
+function arrowHeadTraces(field, func) {
+  const traces = [];
+
+  const baseSize = (dynamicRange.xmax - dynamicRange.xmin) * 0.04;
+const size = baseSize * controls.arrowScale;
+const headLength = size * 0.35;
+
+
+  const angle = Math.PI / 7;
+
+  let maxMag = 0;
+  for (let i = 0; i < field.us.length; i++) {
+    maxMag = Math.max(maxMag, Math.hypot(field.us[i], field.vs[i]));
+  }
+
+  for (let i = 0; i < field.xs.length; i++) {
+    const u = field.us[i];
+    const v = field.vs[i];
+    const mag = Math.hypot(u, v);
+    if (mag === 0) continue;
+
+    const ux = u / mag;
+    const uy = v / mag;
+
+    const x0 = field.xs[i];
+    const y0 = field.ys[i];
+    const x1 = x0 + ux * size;
+    const y1 = y0 + uy * size;
+
+    const t = mag / maxMag;
+    const color =
+      func.colorScheme === 'solid'
+        ? func.color
+        : getColorFromScheme(t, func.colorScheme);
+
+    const theta = Math.atan2(uy, ux);
+
+    const xL = x1 - headLength * Math.cos(theta - angle);
+    const yL = y1 - headLength * Math.sin(theta - angle);
+
+    const xR = x1 - headLength * Math.cos(theta + angle);
+    const yR = y1 - headLength * Math.sin(theta + angle);
+
+    traces.push({
+      x: [xL, x1, xR],
+      y: [yL, y1, yR],
+      type: 'scattergl',
+      mode: 'lines',
+      line: { color, width: 1.6 },
+      hoverinfo: 'none',
+      showlegend: false
+    });
+  }
+
+  return traces;
+}
+
+
+function initParticles(func, count = 150) {
+  const Px = buildEvaluator(func.P);
+  const Qy = buildEvaluator(func.Q);
+  if (!Px || !Qy) return [];
+
+  const pts = [];
+
+  for (let i = 0; i < count; i++) {
+    pts.push({
+      x: dynamicRange.xmin + Math.random() * (dynamicRange.xmax - dynamicRange.xmin),
+      y: dynamicRange.ymin + Math.random() * (dynamicRange.ymax - dynamicRange.ymin),
+      life: Math.random() * 200
+    });
+  }
+
+  return pts;
+}
+
+function stepParticles(func, dt = 0.05) {
+  const Px = buildEvaluator(func.P);
+  const Qy = buildEvaluator(func.Q);
+
+  particles.forEach(p => {
+    let u, v;
+    try {
+      u = Px(p.x, p.y);
+      v = Qy(p.x, p.y);
+    } catch { return; }
+
+    const mag = Math.hypot(u, v);
+    if (!isFinite(mag) || mag === 0) return;
+
+    p.x += (u / mag) * dt;
+    p.y += (v / mag) * dt;
+
+    p.life--;
+
+    if (
+      p.life <= 0 ||
+      p.x < dynamicRange.xmin || p.x > dynamicRange.xmax ||
+      p.y < dynamicRange.ymin || p.y > dynamicRange.ymax
+    ) {
+      p.x = dynamicRange.xmin + Math.random() * (dynamicRange.xmax - dynamicRange.xmin);
+      p.y = dynamicRange.ymin + Math.random() * (dynamicRange.ymax - dynamicRange.ymin);
+      p.life = 200;
+    }
+  });
+}
+
+function startParticleAnimation() {
+  stopParticleAnimation();
+
+  const func = state.functions.find(f => f.P && f.Q);
+  if (!func) return;
+
+  particles = initParticles(func);
+
+  particleTimer = setInterval(() => {
+    stepParticles(func);
+    renderParticleFrame(func);
+  }, 40);
+}
+
+function stopParticleAnimation() {
+  if (particleTimer) {
+    clearInterval(particleTimer);
+    particleTimer = null;
+    particles = [];
+    renderGraph();
+  }
+}
+
+
+function renderParticleFrame(func) {
+  const traces = [];
+
+  const density = adaptiveResolution();
+  const field = generateVectorField(func, dynamicRange, density);
+  if (!field) return;
+
+  
+  if (!vizState.hideArrows) {
+    traces.push(...vectorFieldTrace(field, func));
+    traces.push(...arrowHeadTraces(field, func));
+  }
+
+  
+  if (vizState.streamlines) {
+    traces.push(...generateStreamlines(func, dynamicRange, 16));
+  }
+
+  
+  traces.push(particleTrace(func));
+
+  Plotly.react('plot-container', traces, {
+    margin: { t: 20, l: 80 },
+    xaxis: { range: [dynamicRange.xmin, dynamicRange.xmax] },
+    yaxis: {
+      range: [dynamicRange.ymin, dynamicRange.ymax],
+      scaleanchor: 'x'
+    },
+    showlegend: false
+  });
+}
+
+
+
+function particleTrace(func) {
+  return {
+    x: particles.map(p => p.x),
+    y: particles.map(p => p.y),
+    type: 'scattergl',
+    mode: 'markers',
+    marker: {
+      size: 5,
+      color: func.colorScheme === 'solid'
+        ? func.color
+        : 'rgba(160,160,160,0.9)'
+    },
+    hoverinfo: 'none',
+    showlegend: false
+  };
+}
+
+function renderParticleFrame(func) {
+  const baseTraces = [];
+
+  if (vizState.streamlines) {
+    baseTraces.push(...generateStreamlines(func, dynamicRange, 16));
+  }
+
+  baseTraces.push(particleTrace(func));
+
+  Plotly.react('plot-container', baseTraces, {
+    xaxis: { range: [dynamicRange.xmin, dynamicRange.xmax] },
+    yaxis: { range: [dynamicRange.ymin, dynamicRange.ymax], scaleanchor: 'x' },
+    margin: { t: 20, l: 80 },
+    showlegend: false
+  });
+}
+
+
+
+
+
+function adaptiveResolution() {
+  return controls.density;
+}
+
+function is3DMode() {
+  return state.functions.some(f => f.R && f.R.trim() !== '');
+}
+
+function buildEvaluator(expr) {
+  try {
+    return new Function(
+      'x', 'y', 'z', 't',
+      `with(Math) { return (${normalizeInput(expr)}); }`
+    );
+  } catch {
+    return null;
+  }
+}
+
+
+
+function generateVectorField3D(func, range) {
+  const Px = buildEvaluator(func.P);
+  const Qy = buildEvaluator(func.Q);
+  const Rz = buildEvaluator(func.R);
+
+  if (!Px || !Qy || !Rz) return null;
+
+  const density = Math.max(3, Math.floor(controls.density / 3));
+
+  const xs = [], ys = [], zs = [];
+  const us = [], vs = [], ws = [];
+
+  const dx = (range.xmax - range.xmin) / density;
+  const dy = (range.ymax - range.ymin) / density;
+  const dz = (range.ymax - range.ymin) / density;
+
+  for (let i = 0; i <= density; i++) {
+    for (let j = 0; j <= density; j++) {
+      for (let k = 0; k <= density; k++) {
+        const x = range.xmin + i * dx;
+        const y = range.ymin + j * dy;
+        const z = range.ymin + k * dz;
+
+        try {
+         const u = Px(x, y, z, time);
+const v = Qy(x, y, z, time);
+const w = Rz(x, y, z, time);
+
+
+          if (![u, v, w].every(isFinite)) continue;
+
+          xs.push(x); ys.push(y); zs.push(z);
+          us.push(u); vs.push(v); ws.push(w);
+        } catch {}
+      }
+    }
+  }
+
+  return { xs, ys, zs, us, vs, ws };
+}
+
+
+let animationTimer3D = null;
+
+function start3DAnimation() {
+  stop3DAnimation();
+
+  animationTimer3D = setInterval(() => {
+    time += 0.05;
+    renderGraph();
+  }, 40);
+}
+
+function stop3DAnimation() {
+  if (animationTimer3D) {
+    clearInterval(animationTimer3D);
+    animationTimer3D = null;
+  }
+}
+
+
+function vectorFieldTrace3D(field, func) {
+  const mag = vectorMagnitude3D(field);
+  const maxMag = Math.max(...mag);
+
+  const plotlyScales = {
+    viridis: 'Viridis',
+    plasma: 'Plasma',
+    jet: 'Jet',
+    hot: 'Hot',
+    electric: 'Electric',
+    earth: 'Earth'
+  };
+
+  const isSolid = func.colorScheme === 'solid';
+
+  
+  const sizeRef = 1.2 / controls.arrowScale;
+
+  return {
+    type: 'cone',
+    x: field.xs,
+    y: field.ys,
+    z: field.zs,
+    u: field.us,
+    v: field.vs,
+    w: field.ws,
+
+    sizemode: 'scaled',
+    sizeref: sizeRef,
+
+    anchor: 'tail',
+
+    colorscale: isSolid
+      ? solidColorScale(func.color)
+      : plotlyScales[func.colorScheme] || 'Viridis',
+
+    cmin: 0,
+    cmax: maxMag,
+    showscale: !isSolid
+  };
+}
+
+function updateZRangeVisibility() {
+  const zBlock = document.getElementById('z-range-block');
+  if (!zBlock) return;
+
+  if (is3DMode()) {
+    zBlock.classList.remove('hidden');
+  } else {
+    zBlock.classList.add('hidden');
+  }
+}
+
+
+
+['x', 'y', 'z'].forEach(axis => {
+  const min = document.getElementById(`${axis}min`);
+  const max = document.getElementById(`${axis}max`);
+  const slider = document.getElementById(`${axis}range`);
+
+  if (!min || !max || !slider) return;
+
+  min.addEventListener('input', updateRangeFromInputs);
+  max.addEventListener('input', updateRangeFromInputs);
+
+  slider.addEventListener('input', e => {
+    applySliderRange(axis, parseFloat(e.target.value));
+  });
+});
+
+
+
+
+
+document.addEventListener('DOMContentLoaded', () => {
+    lucide.createIcons();
+});
+
+document.addEventListener('DOMContentLoaded', () => {
+        lucide.createIcons();
+        
+        
+        addFunction(); 
+        
+        renderGraph();
+    });
+
+lucide.createIcons();
+
+    </script>
+</body>
+</html>
