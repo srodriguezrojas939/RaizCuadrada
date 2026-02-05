@@ -50,6 +50,127 @@ window.MathJax = {
     <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js" async></script>
 
  <style>
+ 
+ 
+@media (max-width: 480px) {
+
+  
+  body {
+    padding: 8px;
+  }
+
+  
+  .fade-in {
+    max-width: 100%;
+    margin: 12px auto;
+  }
+
+  
+  .calculadora {
+    padding: 22px 16px;
+    border-radius: 28px;
+  }
+
+  
+  #preview-container,
+  #resultado {
+    padding: 14px;
+    border-radius: 20px;
+    font-size: 1rem;
+  }
+
+  
+  label {
+    margin-left: 8px;
+  }
+
+  
+  input[type="text"],
+  select {
+    padding: 14px 16px;
+    border-radius: 22px;
+    margin-bottom: 20px;
+  }
+
+  
+  .control-item {
+    padding: 12px 16px;
+    border-radius: 40px;
+  }
+
+  
+  .btn-principal {
+    padding: 16px;
+    font-size: 15px;
+  }
+
+  
+  .btn-secundario {
+    padding: 12px;
+    font-size: 13px;
+  }
+
+  
+  .pill {
+    padding: 8px 14px;
+    font-size: 12px;
+  }
+
+  
+  .symbols-container {
+    padding: 16px;
+    border-radius: 24px;
+  }
+
+  .symbols-grid {
+    grid-template-columns: repeat(auto-fill, minmax(60px, 1fr));
+    gap: 8px;
+  }
+
+  .sym-btn {
+    padding: 10px 4px;
+    border-radius: 12px;
+    font-size: 13px;
+  }
+
+  
+  .dos-columnas,
+  .controls-container {
+    grid-template-columns: 1fr;
+  }
+
+  
+  .btn-principal:hover,
+  .btn-secundario:hover,
+  .sym-btn:hover {
+    transform: none;
+    box-shadow: none;
+  }
+}
+
+
+@media (max-width: 480px) {
+
+  body {
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
+  
+  .header-section h1 {
+    font-weight: 800;
+  }
+
+  label,
+  .switch-label,
+  .pill,
+  .btn-principal,
+  .btn-secundario {
+    font-weight: 800;
+  }
+}
+
+
     @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700;900&display=swap');
     @import url('https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700&display=swap');
 
