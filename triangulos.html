@@ -3,8 +3,7 @@
 <head>
     <link rel="icon" href="icono.png" type="image/png">
     <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title> Triangulos | √(Raiz) Cuadrada² </title>
 
     <script>
@@ -293,6 +292,10 @@
     }
 
     
+    @media (max-width: 600px) { 
+        body { padding: 10px; display: block; }
+        .calculadora-moderna { padding: 30px 20px; margin: 20px auto; }
+    }
 
 .grid-inputs {
     display: grid;
@@ -705,29 +708,6 @@ svg text {
     color: #eee;
 }
 
-/* ===== ESCALADO DESKTOP REAL EN MÓVIL ===== */
-
-@media (max-width: 480px) {
-
-    body {
-        overflow-x: hidden;
-    }
-
-    .desktop-scale-wrapper {
-        transform: scale(0.72);
-        transform-origin: top center;
-
-        /* CLAVE: centrar tras el scale */
-        position: relative;
-        left: 50%;
-        transform: translateX(-50%) scale(0.60);
-
-        width: max-content;
-    }
-
-}
-
-
 </style>
   
     </head>
@@ -836,7 +816,7 @@ svg text {
 
         <main class="content">
             
-              <div class="desktop-scale-wrapper">
+            
             <div class="fade-in" style="width: 100%; display: flex; justify-content: center;">
     <div class="calculadora-moderna">
         <div class="header-section">
@@ -945,8 +925,6 @@ svg text {
 <canvas id="export-canvas" style="display:none;"></canvas>
             
 
- </div>
- 
 <footer class="footer-global">
     <div class="footer-wrapper">
         
