@@ -53,9 +53,7 @@ window.MathJax = {
     @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700;900&display=swap');
     @import url('https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700&display=swap');
 
-      html, body { max-width: 100%; overflow-x: hidden; } 
-    @media (max-width: 768px) { .wrapper { display: block; } .content { width: 100%; } } 
-
+     
      
     
     .fade-in { 
@@ -1168,35 +1166,38 @@ function resolverEcuacion() {
                     res = nerdamer(s).toTeX(); 
                 }
             } else {
-    try {
-  
-let raizExacta = simplificarRaizExacta(s);
-if (raizExacta !== null) {
-    res = raizExacta;
-} else {
+try {
     
-    let val = parseFloat(nerdamer(s).evaluate().text());
+    let raizExacta = simplificarRaizExacta(s);
+    if (raizExacta !== null) {
+        res = raizExacta;
+    } else {
+        
+        let val = parseFloat(nerdamer(s).evaluate().text());
 
-    if (!isNaN(val)) {
-        let radFrac = radicalFraccionBonita(val);
-        if (radFrac) {
-            res = radFrac;
-        } else {
+        if (!isNaN(val)) {
+            
             let frac = fraccionBonita(val);
             if (frac) {
                 res = frac;
             } else {
-                res = nerdamer(s).toTeX();
+                
+                let radFrac = radicalFraccionBonita(val);
+                if (radFrac) {
+                    res = radFrac;
+                } else {
+                    
+                    res = nerdamer(s).toTeX();
+                }
             }
+        } else {
+            res = nerdamer(s).toTeX();
         }
-    } else {
-        res = nerdamer(s).toTeX();
     }
+} catch {
+    res = nerdamer(s).toTeX();
 }
- }
- catch {
-        res = nerdamer(s).toTeX();
-    }
+ 
 }
 
             
@@ -1204,8 +1205,21 @@ if (raizExacta !== null) {
             return solucionesFinales.length > 1 ? `${v}_{${i+1}} = ${res}` : `${v} = ${res}`;
         });
 
-        out.innerHTML = `$$ ${resultados.join(' ; \\quad ')} $$`;
-     ultimoLatexResultado = resultados.join(' ; ');
+  if (resultados.length === 1) {
+    out.innerHTML = `$$ ${resultados[0]} $$`;
+    ultimoLatexResultado = resultados[0];
+} else {
+    let sistema = resultados.map(r => r).join(' \\\\ ');
+    out.innerHTML = `
+        $$ 
+        \\begin{cases}
+        ${sistema}
+        \\end{cases}
+        $$
+    `;
+    ultimoLatexResultado = resultados.join('\n');
+}
+
 
         MathJax.typesetPromise([out]);
 
