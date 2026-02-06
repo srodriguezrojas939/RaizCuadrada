@@ -709,21 +709,25 @@ svg text {
     color: #eee;
 }
 
-/* ===== ESCALADO TIPO DESKTOP EN MÓVIL ===== */
-.desktop-scale-wrapper {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    width: 100%;
-}
+/* ===== ESCALADO DESKTOP REAL EN MÓVIL ===== */
 
-@media (max-width: 420px) {
-    .desktop-scale-wrapper {
-        transform: scale(0.7);
-        width: calc(100% / 0.7);
+@media (max-width: 480px) {
+
+    body {
+        overflow-x: hidden;
     }
-}
 
+    .desktop-scale-wrapper {
+        transform: scale(0.72);
+        transform-origin: top center;
+
+        /* CLAVE: centrar tras el scale */
+        position: relative;
+        left: 50%;
+        transform: translateX(-50%) scale(0.72);
+
+        width: max-content;
+    }
 
 }
 
