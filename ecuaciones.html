@@ -55,7 +55,7 @@ window.MathJax = {
 
       html, body { max-width: 100%; overflow-x: hidden; } 
     @media (max-width: 768px) { .wrapper { display: block; } .content { width: 100%; } } 
-    * { box-sizing: border-box; }
+
      
     
     .fade-in { 
@@ -1071,6 +1071,22 @@ function fraccionBonita(valor, tolerancia = 1e-5, maxDen = 20) {
 }
 
 
+function simplificarRaizExacta(expr) {
+    try {
+        
+        let evaluado = nerdamer(expr).evaluate();
+
+        
+        if (evaluado.isNumber()) {
+            let val = parseFloat(evaluado.text());
+            if (Number.isInteger(val)) {
+                return val.toString();
+            }
+        }
+    } catch (e) {}
+    return null;
+}
+
 
 
 function resolverEcuacion() {
@@ -1094,7 +1110,8 @@ function resolverEcuacion() {
         let normalized = normalizar(rawInput);
 
         nerdamer.set('SOLVE_SOLUTIONS_AS_EXPRESSIONS', 'true');
-        
+        nerdamer.set('SIMPLIFY_RATIONAL_EXPONENTS', true);
+
         let sol = nerdamer.solve(normalized, v);
         let listaOriginal = sol.symbol.elements;
 
@@ -1152,22 +1169,32 @@ function resolverEcuacion() {
                 }
             } else {
     try {
-     let val = parseFloat(nerdamer(s).evaluate().text());
-
-let radFrac = radicalFraccionBonita(val);
-if (radFrac) {
-    res = radFrac;
+  
+let raizExacta = simplificarRaizExacta(s);
+if (raizExacta !== null) {
+    res = raizExacta;
 } else {
-   
-    let frac = fraccionBonita(val);
-    if (frac) {
-        res = frac;
+    
+    let val = parseFloat(nerdamer(s).evaluate().text());
+
+    if (!isNaN(val)) {
+        let radFrac = radicalFraccionBonita(val);
+        if (radFrac) {
+            res = radFrac;
+        } else {
+            let frac = fraccionBonita(val);
+            if (frac) {
+                res = frac;
+            } else {
+                res = nerdamer(s).toTeX();
+            }
+        }
     } else {
         res = nerdamer(s).toTeX();
     }
 }
-
-    } catch {
+ }
+ catch {
         res = nerdamer(s).toTeX();
     }
 }
