@@ -441,6 +441,12 @@
         background-color: #333;
     }
     
+    #zoom-wrapper {
+  transform-origin: top center;
+  will-change: transform;
+}
+
+
 </style>
    
   
@@ -549,6 +555,7 @@
 
         <main class="content">
             
+             <div id="zoom-wrapper">
             
        <div class="calculadora-moderna">
     <div class="header-section">
@@ -602,6 +609,8 @@
 </div>
 
 </div>
+ </div>
+ 
 
 <footer class="footer-global">
     <div class="footer-wrapper">
@@ -1046,6 +1055,33 @@ document.querySelectorAll('.math-input').forEach(el => {
     el.setAttribute('inputmode', 'decimal'); 
 });
 </script>
+<script>
+(function () {
+  const isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+  if (!isMobile) return;
+
+  const wrapper = document.getElementById('zoom-wrapper');
+  if (!wrapper) return;
+
+  // Escala objetivo (ajusta si quieres)
+  const targetScale = Math.min(
+    window.innerWidth / 1100, // ancho "tipo PC"
+    1
+  );
+
+  wrapper.style.transform = 'scale(1)';
+  wrapper.style.transition = 'transform 0.8s cubic-bezier(0.22, 1, 0.36, 1)';
+
+  requestAnimationFrame(() => {
+    wrapper.style.transform = `scale(${targetScale})`;
+  });
+
+  // Ajustar altura para evitar corte
+  wrapper.style.height = `${100 / targetScale}vh`;
+})();
+</script>
+
+
 </body>
 <button class="mobile-theme-toggle" onclick="toggleTheme()" aria-label="Cambiar tema">
     <i data-lucide="sun" class="icon-sun"></i>
