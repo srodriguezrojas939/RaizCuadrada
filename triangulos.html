@@ -3,7 +3,8 @@
 <head>
     <link rel="icon" href="icono.png" type="image/png">
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
     <title> Triangulos | √(Raiz) Cuadrada² </title>
 
     <script>
@@ -708,6 +709,25 @@ svg text {
     color: #eee;
 }
 
+/* ===== ESCALADO TIPO DESKTOP EN MÓVIL ===== */
+.desktop-scale-wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+}
+
+@media (max-width: 420px) {
+    .desktop-scale-wrapper {
+        transform: scale(0.7);
+        width: calc(100% / 0.7);
+    }
+}
+
+
+}
+
+
 </style>
   
     </head>
@@ -816,7 +836,7 @@ svg text {
 
         <main class="content">
             
-            
+              <div class="desktop-scale-wrapper">
             <div class="fade-in" style="width: 100%; display: flex; justify-content: center;">
     <div class="calculadora-moderna">
         <div class="header-section">
@@ -925,6 +945,8 @@ svg text {
 <canvas id="export-canvas" style="display:none;"></canvas>
             
 
+ </div>
+ 
 <footer class="footer-global">
     <div class="footer-wrapper">
         
