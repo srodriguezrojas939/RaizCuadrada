@@ -489,6 +489,122 @@
     }
     [data-theme="dark"] .step-formula { color: #white; }
     
+    /* --- NOTIFICACIÓN DE ZOOM (SOLO MÓVIL) --- */
+.zoom-alert {
+    position: fixed;
+    top: 20px;
+    left: 20px;
+    z-index: 10000; /* Por encima de todo */
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: 1px solid rgba(0,0,0,0.05);
+    border-radius: 20px;
+    padding: 15px;
+    width: 280px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+    
+    /* Estado inicial invisible */
+    opacity: 0;
+    transform: translateY(-20px) scale(0.95);
+    pointer-events: none;
+    transition: all 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+    
+    font-family: 'Open Sans', sans-serif;
+    display: none; /* Oculto por defecto */
+}
+
+/* Solo visible en pantallas pequeñas */
+@media (max-width: 768px) {
+    .zoom-alert.active {
+        display: block;
+        opacity: 1;
+        transform: translateY(0) scale(1);
+        pointer-events: all;
+    }
+}
+
+.zoom-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 8px;
+}
+
+.zoom-header i {
+    color: #1a1a1a;
+    width: 20px;
+    height: 20px;
+}
+
+.zoom-title {
+    font-family: 'Playfair Display', serif;
+    font-weight: 700;
+    font-size: 14px;
+    color: #1a1a1a;
+    margin: 0;
+}
+
+.zoom-text {
+    font-size: 12px;
+    color: #555;
+    margin: 0 0 12px 0;
+    line-height: 1.4;
+}
+
+.zoom-actions {
+    display: flex;
+    gap: 8px;
+}
+
+.zoom-btn {
+    flex: 1;
+    border: none;
+    padding: 8px 0;
+    border-radius: 99px;
+    font-size: 11px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: 0.2s;
+    font-family: 'Open Sans', sans-serif;
+}
+
+.btn-ok {
+    background: #1a1a1a;
+    color: white;
+}
+
+.btn-no-show {
+    background: transparent;
+    border: 1px solid #ddd;
+    color: #666;
+}
+
+/* --- MODO OSCURO PARA LA ALERTA --- */
+[data-theme="dark"] .zoom-alert {
+    background: rgba(20, 20, 20, 0.95);
+    border: 1px solid rgba(255,255,255,0.1);
+}
+
+[data-theme="dark"] .zoom-header i,
+[data-theme="dark"] .zoom-title {
+    color: #ffffff;
+}
+
+[data-theme="dark"] .zoom-text {
+    color: #aaa;
+}
+
+[data-theme="dark"] .btn-ok {
+    background: #ffffff;
+    color: #000;
+}
+
+[data-theme="dark"] .btn-no-show {
+    border-color: #444;
+    color: #ccc;
+}
+
 </style>
 
   
@@ -1307,6 +1423,64 @@ input.addEventListener('input', () => {
 
 </script>
       
+      <div id="zoomAlert" class="zoom-alert">
+    <div class="zoom-header">
+        <i data-lucide="move-diagonal-2"></i> <h4 class="zoom-title">Vista Completa</h4>
+    </div>
+    <p class="zoom-text">
+        Si el sitio se ve cortado, aleja con tus dedos para ajustar la vista a tu pantalla.
+    </p>
+    <div class="zoom-actions">
+        <button class="zoom-btn btn-ok" onclick="cerrarZoomAlert()">Entendido</button>
+        <button class="zoom-btn btn-no-show" onclick="noMostrarZoomMas()">No volver a mostrar</button>
+    </div>
+</div>
+
+<script>
+    // Lógica para la alerta de Zoom
+    document.addEventListener("DOMContentLoaded", function() {
+        // 1. Verificar si el usuario ya dijo "No volver a mostrar"
+        const zoomSeen = localStorage.getItem('zoomAlertDismissed');
+        
+        // 2. Verificar si es dispositivo móvil (ancho menor a 768px)
+        const isMobile = window.innerWidth <= 768;
+
+        if (!zoomSeen && isMobile) {
+            const alertBox = document.getElementById('zoomAlert');
+            
+            // Esperar 1 segundo antes de aparecer para que sea elegante
+            setTimeout(() => {
+                alertBox.classList.add('active');
+                lucide.createIcons(); // Refrescar icono por si acaso
+            }, 1000);
+
+            // 3. Temporizador: Desaparecer automáticamente a los 7 segundos
+            setTimeout(() => {
+                cerrarZoomAlert();
+            }, 8000); // 1s de entrada + 7s de lectura
+        }
+    });
+
+    // Función para cerrar (Solo por esta sesión)
+    function cerrarZoomAlert() {
+        const alertBox = document.getElementById('zoomAlert');
+        if(alertBox) {
+            alertBox.style.opacity = '0';
+            alertBox.style.transform = 'translateY(-20px)';
+            // Remover del DOM después de la animación
+            setTimeout(() => {
+                alertBox.classList.remove('active');
+            }, 500);
+        }
+    }
+
+    // Función para "No volver a mostrar" (Persistente)
+    function noMostrarZoomMas() {
+        localStorage.setItem('zoomAlertDismissed', 'true');
+        cerrarZoomAlert();
+    }
+</script>
+
 </body>
 
 <div id="toast-copiado" class="toast"></div>
