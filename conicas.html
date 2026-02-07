@@ -441,18 +441,12 @@
         background-color: #333;
     }
     
-    #zoom-wrapper {
-  transform-origin: top center;
-  will-change: transform;
-}
-
-
 </style>
    
   
     </head>
 <body>
- <div id="zoom-wrapper">
+
     
     <header class="mobile-header">
         <div class="nav-header">
@@ -652,7 +646,6 @@
         </main>
         
      <script src="script.js"></script>
-  
   
 <script>
     
@@ -1053,35 +1046,6 @@ document.querySelectorAll('.math-input').forEach(el => {
     el.setAttribute('inputmode', 'decimal'); 
 });
 </script>
-<script>
-(function () {
-  const isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
-  if (!isMobile) return;
-
-  const wrapper = document.getElementById('zoom-wrapper');
-  if (!wrapper) return;
-
-  // Escala objetivo (ajusta si quieres)
-  const targetScale = Math.min(
-    window.innerWidth / 900, // ancho "tipo PC"
-    1
-  );
-
-  wrapper.style.transform = 'scale(1)';
-  wrapper.style.transition = 'transform 0.8s cubic-bezier(0.22, 1, 0.36, 1)';
-
-  requestAnimationFrame(() => {
-    wrapper.style.transform = `scale(${targetScale})`;
-  });
-
-  // Ajustar altura para evitar corte
-  wrapper.style.height = `${100 / targetScale}vh`;
-})();
-</script>
-
-
- </div>
-   
 </body>
 <button class="mobile-theme-toggle" onclick="toggleTheme()" aria-label="Cambiar tema">
     <i data-lucide="sun" class="icon-sun"></i>
