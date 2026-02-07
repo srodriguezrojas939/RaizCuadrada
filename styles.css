@@ -1,5 +1,5 @@
  :root {
-            /* Paleta de colores Estricta */
+            
             --bg-color: #ffffff;
             --text-color: #000000;
             --accent-grey: #f4f4f4;
@@ -16,13 +16,13 @@
         }
         
         a {
-    text-decoration: none; /* Elimina la línea azul/subrayado por defecto */
-    color: inherit;        /* Obliga al link a usar el color del texto que lo rodea */
-    transition: var(--transition); /* Mantiene las animaciones suaves */
+    text-decoration: none; 
+    color: inherit;        
+    transition: var(--transition); 
 }
 
 a:hover {
-    text-decoration: none; /* Asegura que no aparezca al pasar el mouse */
+    text-decoration: none; 
     color: inherit;
 }
 
@@ -44,13 +44,13 @@ a:hover {
             font-family: 'Playfair Display', serif;
         }
 
-        /* --- LAYOUT --- */
+        
         .wrapper {
             display: flex;
             min-height: 100vh;
         }
 
-        /* --- SIDEBAR / NAV --- */
+        
         .sidebar {
             width: var(--sidebar-width);
             height: 100vh;
@@ -116,7 +116,7 @@ a:hover {
             padding-left: 20px;
         }
 
-        /* --- MAIN CONTENT --- */
+        
         .content {
             flex: 1;
             margin-left: var(--sidebar-width);
@@ -127,7 +127,7 @@ a:hover {
    
 
 
-        /* --- MOBILE ADAPTATION --- */
+        
         .mobile-header {
             display: none;
             position: fixed;
@@ -170,11 +170,11 @@ a:hover {
             }
 
             .nav-header {
-                display: none; /* In sidebar on mobile */
+                display: none; 
             }
         }
 
-        /* Animación de entrada para los elementos al hacer scroll */
+        
         .reveal-on-scroll {
             opacity: 0;
             transform: translateY(30px);
@@ -189,7 +189,7 @@ a:hover {
         
     
 
-/* --- ESTILOS DEL FOOTER MEJORADO --- */
+
 .footer-global {
     background-color: var(--bg-color);
     border-top: 1px solid var(--border-color);
@@ -209,7 +209,7 @@ a:hover {
 }
 
 .footer-section {
-    flex: 0 0 100%; /* Una sección por pantalla en móvil */
+    flex: 0 0 100%; 
     scroll-snap-align: center;
     display: flex;
     flex-direction: column;
@@ -219,7 +219,7 @@ a:hover {
     padding: 20px;
 }
 
-/* Tipografía */
+
 .footer-h4 {
     font-family: 'Playfair Display', serif;
     font-size: 20px;
@@ -255,7 +255,7 @@ a:hover {
     border-bottom-color: var(--text-color);
 }
 
-/* Iconos Sociales Lucide */
+
 .footer-socials {
     display: flex;
     gap: 25px;
@@ -273,21 +273,21 @@ a:hover {
 }
 
 .visitor-counter img {
-    filter: grayscale(1); /* Lo hace gris para que no rompa el diseño */
+    filter: grayscale(1); 
     opacity: 0.8;
     transition: 0.3s;
 }
 
 .visitor-counter img:hover {
-    filter: grayscale(0); /* Al pasar el mouse vuelve el color */
+    filter: grayscale(0); 
     opacity: 1;
 }
 
-/* Scrollbar minimalista */
+
 .footer-wrapper::-webkit-scrollbar { height: 3px; }
 .footer-wrapper::-webkit-scrollbar-thumb { background: var(--border-color); border-radius: 10px; }
 
-/* AJUSTE PARA PC */
+
 @media (min-width: 850px) {
     .footer-wrapper {
         overflow-x: hidden;
@@ -299,9 +299,9 @@ a:hover {
     }
 }
 
-/* --- BOTÓN FLOTANTE MÓVIL --- */
+
 .mobile-theme-toggle {
-    display: none; /* Oculto por defecto en PC */
+    display: none; 
     position: fixed;
     bottom: 25px;
     right: 25px;
@@ -317,7 +317,7 @@ a:hover {
     transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 
-/* Solo mostrar en pantallas pequeñas (Celulares/Tablets) */
+
 @media (max-width: 900px) {
     .mobile-theme-toggle {
         display: flex;
@@ -328,24 +328,24 @@ a:hover {
     @keyframes popIn { to { opacity: 1; transform: scale(1); } }
 }
 
-/* INTERACCIÓN AL TOCAR */
+
 .mobile-theme-toggle:active { transform: scale(0.9); }
 
-/* --- COLORES Y LÓGICA DE ICONOS --- */
 
-/* MODO DÍA (Por defecto) */
+
+
 .mobile-theme-toggle {
-    background: #1a1a1a; /* Botón Negro */
-    color: #ffffff;      /* Icono Blanco */
+    background: #1a1a1a; 
+    color: #ffffff;      
 }
 .mobile-theme-toggle .icon-moon { display: block; }
 .mobile-theme-toggle .icon-sun { display: none; }
 
-/* MODO NOCHE (Cuando se activa) */
+
 [data-theme="dark"] .mobile-theme-toggle {
-    background: #ffffff; /* Botón Blanco */
-    color: #1a1a1a;      /* Icono Negro */
-    box-shadow: 0 0 20px rgba(255,255,255,0.3); /* Resplandor blanco */
+    background: #ffffff; 
+    color: #1a1a1a;      
+    box-shadow: 0 0 20px rgba(255,255,255,0.3); 
 }
 [data-theme="dark"] .mobile-theme-toggle .icon-moon { display: none; }
 [data-theme="dark"] .mobile-theme-toggle .icon-sun { display: block; }
@@ -353,27 +353,27 @@ a:hover {
 
 
 
-        /* --- ESTILOS DEL MENÚ LATERAL (CORREGIDO) --- */
+        
 
-/* Contenedor del grupo (para que no afecte el flujo) */
+
 .nav-group {
     width: 100%;
     display: block;
 }
 
-/* El botón principal (Calculadoras, Herramientas...) */
+
 .nav-item.has-submenu {
     display: flex;
     align-items: center;
-    justify-content: space-between; /* Flecha a la esquina derecha */
+    justify-content: space-between; 
     width: 100%;
-    padding: 18px 12px; /* Mismo padding que tus otros enlaces */
+    padding: 18px 12px; 
     cursor: pointer;
     box-sizing: border-box;
     color: var(--text-color);
-    font-family: inherit; /* Hereda la fuente exacta del sitio */
-    font-size: 1rem;      /* Tamaño estándar */
-    font-weight: 700;     /* Mismo peso que el resto */
+    font-family: inherit; 
+    font-size: 1rem;      
+    font-weight: 700;     
     transition: background-color 0.2s ease;
 }
 
@@ -381,14 +381,14 @@ a:hover {
     background-color: var(--accent-grey);
 }
 
-/* Contenedor de texto + icono izquierdo para mantenerlos juntos */
+
 .nav-text-container {
     display: flex;
     align-items: center;
-    gap: 12px; /* Espacio entre icono carpeta y texto */
+    gap: 12px; 
 }
 
-/* La flecha derecha */
+
 .arrow-icon {
     width: 16px;
     height: 16px;
@@ -396,13 +396,13 @@ a:hover {
     transition: transform 0.3s ease;
 }
 
-/* Rotación de la flecha */
+
 .nav-group.active .arrow-icon {
     transform: rotate(180deg);
     opacity: 1;
 }
 
-/* El Submenú */
+
 .submenu {
     max-height: 0;
     overflow: hidden;
@@ -411,19 +411,19 @@ a:hover {
     width: 100%;
 }
 
-/* Los enlaces del submenú (Hijos) */
+
 .submenu a {
-    display: flex;       /* Para alinear icono y texto */
+    display: flex;       
     align-items: center;
-    gap: 10px;           /* Espacio entre icono pequeño y texto */
+    gap: 10px;           
     
-    padding: 10px 24px 10px 52px; /* 52px a la izquierda para indentar bajo el texto padre */
+    padding: 10px 24px 10px 52px; 
     text-decoration: none;
     color: var(--text-color);
-    font-size: 0.9em;    /* Ligeramente más pequeño */
+    font-size: 0.9em;    
     opacity: 0.75;
     transition: all 0.2s ease;
-    border-left: 2px solid transparent; /* Borde invisible para hover */
+    border-left: 2px solid transparent; 
 }
 
 .submenu a:hover {
@@ -432,59 +432,59 @@ a:hover {
     background: rgba(0,0,0,0.03);
 }
 
-/* Iconos pequeños del submenú */
+
 .sub-icon {
-    width: 14px;  /* Más pequeños que los principales */
+    width: 14px;  
     height: 14px;
     opacity: 0.8;
 }
 
-/* Ajuste Dark Mode */
+
 [data-theme="dark"] .submenu a:hover {
     background: rgba(255,255,255,0.05);
 }
 
-/* --- SCROLL DEL SIDEBAR --- */
+
 
 #sidebar {
-    /* 1. Habilitar el scroll vertical */
+    
     overflow-y: auto;
     
-    /* 2. Asegurar que ocupe toda la altura */
+    
     height: 100vh;
     
-    /* 3. Comportamiento suave */
+    
     scroll-behavior: smooth;
     
-    /* Opcional: Para Firefox */
+    
     scrollbar-width: thin;
     scrollbar-color: rgba(0,0,0,0.2) transparent;
 }
 
-/* --- ESTILIZAR LA BARRA (Chrome, Edge, Safari) --- */
 
-/* Ancho de la barra */
+
+
 #sidebar::-webkit-scrollbar {
-    width: 5px; /* Muy delgada y elegante */
+    width: 5px; 
 }
 
-/* El carril (fondo de la barra) - Transparente */
+
 #sidebar::-webkit-scrollbar-track {
     background: transparent;
 }
 
-/* El pulgar (lo que se mueve) */
+
 #sidebar::-webkit-scrollbar-thumb {
-    background-color: rgba(0, 0, 0, 0.1); /* Gris muy suave */
-    border-radius: 10px; /* Redondito */
+    background-color: rgba(0, 0, 0, 0.1); 
+    border-radius: 10px; 
 }
 
-/* Hover: Se oscurece un poco al tocarlo */
+
 #sidebar::-webkit-scrollbar-thumb:hover {
     background-color: rgba(0, 0, 0, 0.3);
 }
 
-/* --- ADAPTACIÓN AL MODO OSCURO --- */
+
 [data-theme="dark"] #sidebar {
     scrollbar-color: rgba(255,255,255,0.2) transparent;
 }
@@ -496,7 +496,124 @@ a:hover {
 [data-theme="dark"] #sidebar::-webkit-scrollbar-thumb:hover {
     background-color: rgba(255, 255, 255, 0.3);
 }
-        
+
+
+   
+.zoom-alert {
+    position: fixed;
+    top: 20px;
+    left: 20px;
+    z-index: 10000; 
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: 1px solid rgba(0,0,0,0.05);
+    border-radius: 20px;
+    padding: 15px;
+    width: 280px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+    
+    
+    opacity: 0;
+    transform: translateY(-20px) scale(0.95);
+    pointer-events: none;
+    transition: all 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+    
+    font-family: 'Open Sans', sans-serif;
+    display: none; 
+}
+
+
+@media (max-width: 768px) {
+    .zoom-alert.active {
+        display: block;
+        opacity: 1;
+        transform: translateY(0) scale(1);
+        pointer-events: all;
+    }
+}
+
+.zoom-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 8px;
+}
+
+.zoom-header i {
+    color: #1a1a1a;
+    width: 20px;
+    height: 20px;
+}
+
+.zoom-title {
+    font-family: 'Playfair Display', serif;
+    font-weight: 700;
+    font-size: 14px;
+    color: #1a1a1a;
+    margin: 0;
+}
+
+.zoom-text {
+    font-size: 12px;
+    color: #555;
+    margin: 0 0 12px 0;
+    line-height: 1.4;
+}
+
+.zoom-actions {
+    display: flex;
+    gap: 8px;
+}
+
+.zoom-btn {
+    flex: 1;
+    border: none;
+    padding: 8px 0;
+    border-radius: 99px;
+    font-size: 11px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: 0.2s;
+    font-family: 'Open Sans', sans-serif;
+}
+
+.btn-ok {
+    background: #1a1a1a;
+    color: white;
+}
+
+.btn-no-show {
+    background: transparent;
+    border: 1px solid #ddd;
+    color: #666;
+}
+
+
+[data-theme="dark"] .zoom-alert {
+    background: rgba(20, 20, 20, 0.95);
+    border: 1px solid rgba(255,255,255,0.1);
+}
+
+[data-theme="dark"] .zoom-header i,
+[data-theme="dark"] .zoom-title {
+    color: #ffffff;
+}
+
+[data-theme="dark"] .zoom-text {
+    color: #aaa;
+}
+
+[data-theme="dark"] .btn-ok {
+    background: #ffffff;
+    color: #000;
+}
+
+[data-theme="dark"] .btn-no-show {
+    border-color: #444;
+    color: #ccc;
+}
+
 
      
     
