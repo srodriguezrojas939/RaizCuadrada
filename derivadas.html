@@ -1537,6 +1537,21 @@ document.addEventListener('focusin', (e) => {
 
         <div id="toast-copiado" class="toast">Copiado</div>
 
+
+        
+       <div id="zoomAlert" class="zoom-alert">
+    <div class="zoom-header">
+        <i data-lucide="move-diagonal-2"></i> <h4 class="zoom-title">Vista Completa</h4>
+    </div>
+    <p class="zoom-text">
+        Si el sitio se ve cortado, aleja con tus dedos para ajustar la vista a tu pantalla.
+    </p>
+    <div class="zoom-actions">
+        <button class="zoom-btn btn-ok" onclick="cerrarZoomAlert()">Entendido</button>
+        <button class="zoom-btn btn-no-show" onclick="noMostrarZoomMas()">No volver a mostrar</button>
+    </div>
+</div>     
+        
 </body>
 <button class="mobile-theme-toggle" onclick="toggleTheme()" aria-label="Cambiar tema">
     <i data-lucide="sun" class="icon-sun"></i>
