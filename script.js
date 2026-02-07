@@ -1,7 +1,7 @@
 /* --- ARCHIVO: script.js --- */
 
 /* =========================================
-   1. FUNCIONES GLOBALES (Acciones del usuario)
+   1. FUNCIONES GLOBALES 
    ========================================= */
 
 // Función auxiliar para actualizar los iconos de sol/luna
@@ -38,7 +38,7 @@ function toggleTheme() {
     updatePlotsTheme();
 }
 
-// Función: Menú Móvil (Hamburguesa)
+// Función: Menú Móvil 
 function toggleMenu() {
     const sidebar = document.getElementById('sidebar');
     if (sidebar) {
@@ -46,7 +46,7 @@ function toggleMenu() {
     }
 }
 
-// Función: Submenú Lateral (Acordeón)
+// Función: Submenú Lateral
 function toggleSubmenu(element) {
     const parent = element.parentElement; // El contenedor .nav-group
     const submenu = parent.querySelector('.submenu');
@@ -90,7 +90,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
     // B. INICIALIZAR ICONOS LUCIDE (General)
-    // Esto asegura que todos los iconos del sitio se dibujen
+
     if (typeof lucide !== 'undefined') {
         lucide.createIcons();
     }
@@ -98,7 +98,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // C. ANIMACIÓN DE SCROLL (Intersection Observer)
     const observerOptions = {
-        threshold: 0.1 // Se activa cuando el 10% del elemento es visible
+        threshold: 0.1 
     };
 
     const observer = new IntersectionObserver((entries) => {
@@ -114,3 +114,48 @@ document.addEventListener('DOMContentLoaded', () => {
     // Activar observador en todos los elementos con la clase .reveal-on-scroll
     document.querySelectorAll('.reveal-on-scroll').forEach(el => observer.observe(el));
 });
+
+
+ 
+    document.addEventListener("DOMContentLoaded", function() {
+
+        const zoomSeen = localStorage.getItem('zoomAlertDismissed');
+        
+       
+        const isMobile = window.innerWidth <= 768;
+
+        if (!zoomSeen && isMobile) {
+            const alertBox = document.getElementById('zoomAlert');
+            
+            
+            setTimeout(() => {
+                alertBox.classList.add('active');
+                lucide.createIcons(); 
+            }, 1000);
+
+         
+            setTimeout(() => {
+                cerrarZoomAlert();
+            }, 6500); 
+        }
+    });
+
+
+    function cerrarZoomAlert() {
+        const alertBox = document.getElementById('zoomAlert');
+        if(alertBox) {
+            alertBox.style.opacity = '0';
+            alertBox.style.transform = 'translateY(-20px)';
+         
+            setTimeout(() => {
+                alertBox.classList.remove('active');
+            }, 500);
+        }
+    }
+
+   
+    function noMostrarZoomMas() {
+        localStorage.setItem('zoomAlertDismissed', 'true');
+        cerrarZoomAlert();
+    }
+
