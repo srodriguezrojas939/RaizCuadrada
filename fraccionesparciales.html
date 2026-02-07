@@ -1437,44 +1437,44 @@ input.addEventListener('input', () => {
 </div>
 
 <script>
-    // Lógica para la alerta de Zoom
+    
     document.addEventListener("DOMContentLoaded", function() {
-        // 1. Verificar si el usuario ya dijo "No volver a mostrar"
+
         const zoomSeen = localStorage.getItem('zoomAlertDismissed');
         
-        // 2. Verificar si es dispositivo móvil (ancho menor a 768px)
+       
         const isMobile = window.innerWidth <= 768;
 
         if (!zoomSeen && isMobile) {
             const alertBox = document.getElementById('zoomAlert');
             
-            // Esperar 1 segundo antes de aparecer para que sea elegante
+            
             setTimeout(() => {
                 alertBox.classList.add('active');
-                lucide.createIcons(); // Refrescar icono por si acaso
+                lucide.createIcons(); 
             }, 1000);
 
-            // 3. Temporizador: Desaparecer automáticamente a los 7 segundos
+         
             setTimeout(() => {
                 cerrarZoomAlert();
-            }, 8000); // 1s de entrada + 7s de lectura
+            }, 8000); 
         }
     });
 
-    // Función para cerrar (Solo por esta sesión)
+
     function cerrarZoomAlert() {
         const alertBox = document.getElementById('zoomAlert');
         if(alertBox) {
             alertBox.style.opacity = '0';
             alertBox.style.transform = 'translateY(-20px)';
-            // Remover del DOM después de la animación
+         
             setTimeout(() => {
                 alertBox.classList.remove('active');
             }, 500);
         }
     }
 
-    // Función para "No volver a mostrar" (Persistente)
+   
     function noMostrarZoomMas() {
         localStorage.setItem('zoomAlertDismissed', 'true');
         cerrarZoomAlert();
