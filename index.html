@@ -6,7 +6,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>√(Raiz) Cuadrada² </title>
-
+<link rel="manifest" href="manifest.json">
     
     <script>
         (function() {
@@ -1897,7 +1897,69 @@ body[data-theme="dark"] .card:hover {
     background-color: rgba(255, 255, 255, 0.3);
 }
 
-        
+
+
+/* --- Estilos Botón Descargar App (Basado en btn-premium) --- */
+
+.install-app-btn {
+    position: relative; /* Para posicionar los iconos superpuestos */
+    margin-top: 25px;   /* Separación estética */
+    min-width: 200px;   /* Tamaño consistente */
+}
+
+/* Ajuste de iconos Lucide dentro del botón premium */
+.install-app-btn i {
+    width: 22px;
+    height: 22px;
+    transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+/* Animación al pasar el mouse (Hover) */
+.install-app-btn:hover .icon-download {
+    animation: downloadBounce 1s infinite ease-in-out;
+}
+
+@keyframes downloadBounce {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(3px); }
+}
+
+/* --- Estados de Carga y Éxito --- */
+
+/* Estado inicial: El check está oculto y pequeño */
+.install-app-btn .icon-success {
+    position: absolute;
+    opacity: 0;
+    transform: scale(0) rotate(-45deg);
+}
+
+/* Estado "Instalado/Éxito" */
+.install-app-btn.installed {
+    background: #1a1a1a; /* Mantiene el color base */
+    cursor: default;
+}
+
+.install-app-btn.installed .icon-download {
+    opacity: 0;
+    transform: translateY(20px); /* Se va hacia abajo */
+}
+
+.install-app-btn.installed .icon-success {
+    opacity: 1;
+    transform: scale(1.2) rotate(0deg); /* Aparece con pop */
+    color: #4ade80; /* Un verde sutil o blanco según prefieras */
+}
+
+.install-app-btn.installed .btn-text {
+    /* Opcional: Si quieres cambiar el texto al finalizar */
+    transition: opacity 0.3s;
+}
+
+/* --- Compatibilidad Modo Oscuro (Usando tus selectores existentes) --- */
+[data-theme="dark"] .install-app-btn.installed .icon-success {
+    color: #ffffff; /* En modo oscuro el check resalta en blanco */
+}
+
 
     </style>
 </head>
@@ -2019,6 +2081,13 @@ body[data-theme="dark"] .card:hover {
             <span class="rotating-text">Formularios</span>
         </div>
     </div>
+
+
+<button id="btnInstallApp" class="btn-premium install-app-btn" style="display: none;">
+    <i data-lucide="download" class="icon-download"></i>
+    <i data-lucide="check" class="icon-success"></i> <span class="btn-text">Descargar App</span>
+</button>
+
 
     <div class="welcome-footer">
         <i data-lucide="arrow-down" class="arrow-icon"></i>
@@ -2483,6 +2552,64 @@ function toggleSubmenu(element) {
     }
 }
     
+    
+    let deferredPrompt;
+const installBtn = document.getElementById('btnInstallApp');
+const btnText = installBtn.querySelector('.btn-text');
+
+// 1. Escuchar si la app es instalable
+window.addEventListener('beforeinstallprompt', (e) => {
+    // Prevenir que el navegador muestre su banner nativo inmediatamente
+    e.preventDefault();
+    // Guardar el evento para dispararlo después
+    deferredPrompt = e;
+    // Mostrar nuestro botón premium
+    installBtn.style.display = 'flex';
+    
+    // Actualizar iconos de Lucide (por si acaso)
+    lucide.createIcons();
+});
+
+// 2. Acción al hacer click
+installBtn.addEventListener('click', async () => {
+    if (!deferredPrompt) return;
+
+    // Mostrar el prompt nativo de instalación
+    deferredPrompt.prompt();
+
+    // Esperar la elección del usuario
+    const { outcome } = await deferredPrompt.userChoice;
+    
+    if (outcome === 'accepted') {
+        console.log('Usuario aceptó instalar');
+        animateSuccess(); // Ejecutar tu animación
+    } else {
+        console.log('Usuario rechazó instalar');
+    }
+
+    // Limpiar la variable, ya no se puede usar de nuevo
+    deferredPrompt = null;
+});
+
+// 3. Animación de Éxito (Estilo "Enviando" de tu CSS pero adaptado)
+function animateSuccess() {
+    installBtn.classList.add('installed');
+    btnText.textContent = "¡Instalando...";
+    
+    setTimeout(() => {
+        btnText.textContent = "Instalada";
+        // Opcional: Ocultar el botón después de unos segundos
+        // setTimeout(() => installBtn.style.display = 'none', 3000);
+    }, 2000);
+}
+
+// 4. Detectar si ya se instaló (para ocultar el botón si vuelve a entrar)
+window.addEventListener('appinstalled', () => {
+    installBtn.style.display = 'none';
+    deferredPrompt = null;
+    console.log('PWA instalada');
+});
+
 
     </script>
 
