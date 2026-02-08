@@ -2486,7 +2486,29 @@ function toggleSubmenu(element) {
 
     </script>
 
-    
+  <script type="module">
+  // Import the functions you need from the SDKs you need
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-app.js";
+  import { getAnalytics } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-analytics.js";
+  // TODO: Add SDKs for Firebase products that you want to use
+  // https://firebase.google.com/docs/web/setup#available-libraries
+
+  // Your web app's Firebase configuration
+  // For Firebase JS SDK v7.20.0 and later, measurementId is optional
+  const firebaseConfig = {
+    apiKey: "AIzaSyBAme6spIhN40m4cXhjrEHzLTgRLxhs4-c",
+    authDomain: "cuadrada-raiz.firebaseapp.com",
+    projectId: "cuadrada-raiz",
+    storageBucket: "cuadrada-raiz.firebasestorage.app",
+    messagingSenderId: "489684529835",
+    appId: "1:489684529835:web:c6ad5ce899026cf9267dee",
+    measurementId: "G-4L9077ZNYD"
+  };
+
+  // Initialize Firebase
+  const app = initializeApp(firebaseConfig);
+  const analytics = getAnalytics(app);
+</script>  
 </body>
 <button class="mobile-theme-toggle" onclick="toggleTheme()" aria-label="Cambiar tema">
     <i data-lucide="sun" class="icon-sun"></i>
