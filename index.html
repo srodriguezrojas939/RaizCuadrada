@@ -1898,67 +1898,142 @@ body[data-theme="dark"] .card:hover {
 }
 
 
-
-/* --- Estilos Botón Descargar App (Basado en btn-premium) --- */
-
-.install-app-btn {
-    position: relative; /* Para posicionar los iconos superpuestos */
-    margin-top: 35px;   /* Separación estética */
-    min-width: 200px;   /* Tamaño consistente */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.6);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
 }
 
-/* Ajuste de iconos Lucide dentro del botón premium */
-.install-app-btn i {
-    width: 22px;
-    height: 22px;
-    transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+.modal-overlay.active {
+  display: flex;
 }
 
-/* Animación al pasar el mouse (Hover) */
-.install-app-btn:hover .icon-download {
-    animation: downloadBounce 1s infinite ease-in-out;
+.modal {
+  background: #111;
+  color: #fff;
+  max-width: 520px;
+  width: 90%;
+  padding: 24px;
+  border-radius: 14px;
+  position: relative;
+  max-height: 85vh;
+  overflow-y: auto;
 }
 
-@keyframes downloadBounce {
-    0%, 100% { transform: translateY(0); }
-    50% { transform: translateY(3px); }
+.modal h2 {
+  margin-top: 0;
 }
 
-/* --- Estados de Carga y Éxito --- */
-
-/* Estado inicial: El check está oculto y pequeño */
-.install-app-btn .icon-success {
-    position: absolute;
-    opacity: 0;
-    transform: scale(0) rotate(-45deg);
+.modal h3 {
+  margin-top: 20px;
 }
 
-/* Estado "Instalado/Éxito" */
-.install-app-btn.installed {
-    background: #1a1a1a; /* Mantiene el color base */
-    cursor: default;
+.modal ol {
+  padding-left: 20px;
 }
 
-.install-app-btn.installed .icon-download {
-    opacity: 0;
-    transform: translateY(20px); /* Se va hacia abajo */
+.close-modal {
+  position: absolute;
+  top: 12px;
+  right: 14px;
+  background: none;
+  border: none;
+  color: #fff;
+  font-size: 22px;
+  cursor: pointer;
 }
 
-.install-app-btn.installed .icon-success {
-    opacity: 1;
-    transform: scale(1.2) rotate(0deg); /* Aparece con pop */
-    color: #ffffff; /* Un verde sutil o blanco según prefieras */
+.note {
+  font-size: 0.85rem;
+  opacity: 0.8;
+  margin-top: 16px;
 }
 
-.install-app-btn.installed .btn-text {
-    /* Opcional: Si quieres cambiar el texto al finalizar */
-    transition: opacity 0.3s;
+.modal::-webkit-scrollbar {
+  width: 2px;
 }
 
-/* --- Compatibilidad Modo Oscuro (Usando tus selectores existentes) --- */
-[data-theme="dark"] .install-app-btn.installed .icon-success {
-    color: #ffffff; /* En modo oscuro el check resalta en blanco */
+.modal::-webkit-scrollbar-track {
+  background: transparent;
 }
+
+.modal::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, #fff, #000);
+  border-radius: 10px;
+}
+
+
+.modal::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(180deg, #fff, #000);
+}
+
+
+
+
+.install-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+
+  padding: 14px 22px;
+  border-radius: 999px;
+
+  background: var(--btn-bg);
+  color: var(--btn-text);
+
+  border: none;
+  outline: none;
+  cursor: pointer;
+
+  font-size: 0.95rem;
+  font-weight: 500;
+  letter-spacing: 0.2px;
+
+  box-shadow: 0 8px 20px var(--btn-shadow);
+margin-top:25px;
+  transition:
+    transform 0.25s ease,
+    box-shadow 0.25s ease,
+    background 0.25s ease;
+}
+
+
+.install-btn i {
+  width: 18px;
+  height: 18px;
+  stroke-width: 2.2;
+  transition: transform 0.25s ease;
+}
+
+
+.install-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 28px var(--btn-shadow);
+}
+
+.install-btn:hover i {
+  transform: translateY(2px);
+}
+
+
+.install-btn:active {
+  transform: translateY(0);
+  box-shadow: 0 6px 14px var(--btn-shadow);
+}
+
+
+.install-btn:focus-visible {
+  outline: none;
+  box-shadow:
+    0 0 0 3px rgba(99, 102, 241, 0.35),
+    0 8px 20px var(--btn-shadow);
+}
+
+
 
 
     </style>
@@ -2082,10 +2157,9 @@ body[data-theme="dark"] .card:hover {
         </div>
     </div>
 
-
-<button id="btnInstallApp" class="btn-premium install-app-btn" >
-    <i data-lucide="download" class="icon-download"></i>
-    <i data-lucide="check" class="icon-success"></i> <span class="btn-text">Descargar App</span>
+<button id="btnInstallApp" type="button" class="install-btn">
+  <i data-lucide="download"></i>
+  <span>Instalar App</span>
 </button>
 
 
@@ -2557,53 +2631,53 @@ function toggleSubmenu(element) {
 const installBtn = document.getElementById('btnInstallApp');
 const btnText = installBtn.querySelector('.btn-text');
 
-// 1. Escuchar si la app es instalable
+
 window.addEventListener('beforeinstallprompt', (e) => {
-    // Prevenir que el navegador muestre su banner nativo inmediatamente
+    
     e.preventDefault();
-    // Guardar el evento para dispararlo después
+    
     deferredPrompt = e;
-    // Mostrar nuestro botón premium
+    
     installBtn.style.display = 'flex';
     
-    // Actualizar iconos de Lucide (por si acaso)
+    
     lucide.createIcons();
 });
 
-// 2. Acción al hacer click
+
 installBtn.addEventListener('click', async () => {
     if (!deferredPrompt) return;
 
-    // Mostrar el prompt nativo de instalación
+    
     deferredPrompt.prompt();
 
-    // Esperar la elección del usuario
+    
     const { outcome } = await deferredPrompt.userChoice;
     
     if (outcome === 'accepted') {
         console.log('Usuario aceptó instalar');
-        animateSuccess(); // Ejecutar tu animación
+        animateSuccess(); 
     } else {
         console.log('Usuario rechazó instalar');
     }
 
-    // Limpiar la variable, ya no se puede usar de nuevo
+    
     deferredPrompt = null;
 });
 
-// 3. Animación de Éxito (Estilo "Enviando" de tu CSS pero adaptado)
+
 function animateSuccess() {
     installBtn.classList.add('installed');
     btnText.textContent = "¡Instalando...";
     
     setTimeout(() => {
         btnText.textContent = "Instalada";
-        // Opcional: Ocultar el botón después de unos segundos
-        // setTimeout(() => installBtn.style.display = 'none', 3000);
+        
+        
     }, 2000);
 }
 
-// 4. Detectar si ya se instaló (para ocultar el botón si vuelve a entrar)
+
 window.addEventListener('appinstalled', () => {
     installBtn.style.display = 'none';
     deferredPrompt = null;
@@ -2611,17 +2685,18 @@ window.addEventListener('appinstalled', () => {
 });
 
 
+
     </script>
 
   <script type="module">
-  // Import the functions you need from the SDKs you need
+  
   import { initializeApp } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-app.js";
   import { getAnalytics } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-analytics.js";
-  // TODO: Add SDKs for Firebase products that you want to use
-  // https://firebase.google.com/docs/web/setup#available-libraries
+  
+  
 
-  // Your web app's Firebase configuration
-  // For Firebase JS SDK v7.20.0 and later, measurementId is optional
+  
+  
   const firebaseConfig = {
     apiKey: "AIzaSyBAme6spIhN40m4cXhjrEHzLTgRLxhs4-c",
     authDomain: "cuadrada-raiz.firebaseapp.com",
@@ -2632,11 +2707,105 @@ window.addEventListener('appinstalled', () => {
     measurementId: "G-4L9077ZNYD"
   };
 
-  // Initialize Firebase
+  
   const app = initializeApp(firebaseConfig);
   const analytics = getAnalytics(app);
 </script>  
+
+
 </body>
+
+
+<div id="installModal" class="modal-overlay">
+  <div class="modal">
+    <button class="close-modal" id="closeModal">
+      <i data-lucide="x"></i>
+    </button>
+
+    <h2 class="modal-title">
+      <i data-lucide="download"></i>
+      Instalar la aplicación
+    </h2>
+
+    <p class="modal-desc">
+      Instala esta app en tu dispositivo para acceder más rápido y sin navegador.
+    </p>
+
+    <hr>
+
+    <h3>
+      <i data-lucide="smartphone"></i>
+      Android (Chrome)
+    </h3>
+    <ol>
+      <li>Abre este sitio en <strong>Google Chrome</strong></li>
+      <li>Toca el menú <strong>⋮</strong> (arriba a la derecha)</li>
+      <li>Selecciona <strong> <strong>Agregar a pantalla principal</strong></li>
+      <li>Selecciona "instalar" (Encontrarás la aplicacion en tu cajon de aplicaciones); </li>
+    </ol>
+
+    <h3>
+      <i data-lucide="apple"></i>
+      iPhone (Safari)
+    </h3>
+    <ol>
+      <li>Abre este sitio en <strong>Safari</strong></li>
+      <li>Toca el botón <strong>Compartir</strong></li>
+      <li>Selecciona <strong>Añadir a pantalla de inicio</strong></li>
+      <li>Confirma tocando <strong>Agregar</strong></li>
+    </ol>
+
+    <h3>
+      <i data-lucide="monitor"></i>
+      Computador (Chrome / Edge)
+    </h3>
+    <ol>
+      <li>Abre este sitio en <strong>Google Chrome</strong> o <strong>Microsoft Edge</strong></li>
+       <li>Toca el menú <strong>⋮</strong> (arriba a la derecha)</li>
+      <li>Selecciona <strong>Enviar, guardar y compartir</strong></li>
+      <li>Instalar pagina como aplicación (o si deseas, como acceso directo)</li>
+    </ol>
+
+    <p class="note">
+      <i data-lucide="info"></i>
+      Si no ves la opción de instalar, asegúrate de usar un navegador actualizado.
+    </p>
+  </div>
+</div>
+
+
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  const installBtn = document.getElementById('btnInstallApp');
+  const modal = document.getElementById('installModal');
+  const closeModal = document.getElementById('closeModal');
+
+  if (!installBtn || !modal || !closeModal) {
+    console.error('Falta btnInstallApp o installModal');
+    return;
+  }
+
+  
+  installBtn.addEventListener('click', () => {
+    modal.classList.add('active');
+  });
+
+  
+  closeModal.addEventListener('click', () => {
+    modal.classList.remove('active');
+  });
+
+  
+  modal.addEventListener('click', (e) => {
+    if (e.target === modal) {
+      modal.classList.remove('active');
+    }
+  });
+});
+</script>
+
+    
 <button class="mobile-theme-toggle" onclick="toggleTheme()" aria-label="Cambiar tema">
     <i data-lucide="sun" class="icon-sun"></i>
     <i data-lucide="moon" class="icon-moon"></i>
